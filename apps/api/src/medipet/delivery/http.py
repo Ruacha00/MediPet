@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from medipet.agent.runtime import ModelAgentRuntime
+from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.config import ModelConfigurationError, ModelSettings
 from medipet.contracts import (
@@ -32,7 +32,7 @@ def create_app(*, model: ModelPort | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    assistant = MediPetAssistant(ModelAgentRuntime(model)) if model is not None else None
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model)) if model is not None else None
 
     @app.get("/health")
     async def health() -> dict[str, str]:

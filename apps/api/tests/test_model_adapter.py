@@ -19,6 +19,13 @@ def test_model_settings_require_a_complete_api_root() -> None:
             model="test-model",
         )
 
+    with pytest.raises(ModelConfigurationError):
+        ModelSettings(
+            base_url="https://provider.example/openai",
+            api_key="secret",
+            model="test-model",
+        )
+
 
 def _chunk(text: str) -> dict:
     return {
@@ -26,7 +33,12 @@ def _chunk(text: str) -> dict:
         "object": "chat.completion.chunk",
         "created": 1,
         "model": "test-model",
-        "choices": [{"index": 0, "delta": {"content": text}}],
+        "choices": [
+            {
+                "index": 0,
+                "delta": {"content": text, "reasoning_content": "Thought: private"},
+            }
+        ],
     }
 
 
@@ -59,6 +71,7 @@ async def test_chat_openai_adapter_streams_chat_completion_chunks() -> None:
         chunks = [chunk.text async for chunk in adapter.stream(request)]
 
     assert chunks == ["第一", "段"]
+    assert "Thought" not in "".join(chunks)
 
 
 @pytest.mark.asyncio

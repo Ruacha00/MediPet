@@ -2,7 +2,7 @@ from collections.abc import AsyncIterator
 
 import pytest
 
-from medipet.agent.runtime import ModelAgentRuntime
+from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.contracts import TurnCommand
 from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
@@ -29,7 +29,7 @@ class UnavailableModel(ModelPort):
 @pytest.mark.asyncio
 async def test_streams_model_text_with_outpatient_boundaries() -> None:
     model = DeterministicModel(["可以先", "描述主要不适。"])
-    assistant = MediPetAssistant(ModelAgentRuntime(model))
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model))
     turn = TurnCommand(
         visit_matter_id="visit-1",
         participant_id="participant-1",
@@ -54,7 +54,7 @@ async def test_streams_model_text_with_outpatient_boundaries() -> None:
 
 @pytest.mark.asyncio
 async def test_maps_model_failure_to_a_safe_terminal_event() -> None:
-    assistant = MediPetAssistant(ModelAgentRuntime(UnavailableModel()))
+    assistant = MediPetAssistant(LangGraphAgentRuntime(UnavailableModel()))
     turn = TurnCommand(
         visit_matter_id="visit-2",
         participant_id="participant-2",

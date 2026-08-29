@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from urllib.parse import urlsplit
@@ -22,7 +23,12 @@ class ModelSettings:
         parsed = urlsplit(base_url)
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
             raise ModelConfigurationError("模型 API 根地址必须是有效的 HTTP(S) URL")
-        if not parsed.path.strip("/") or parsed.query or parsed.fragment:
+        path_segments = parsed.path.strip("/").split("/")
+        has_version = any(
+            re.fullmatch(r"v\d+(?:\.\d+)?", segment, flags=re.IGNORECASE)
+            for segment in path_segments
+        )
+        if not has_version or parsed.query or parsed.fragment:
             raise ModelConfigurationError("模型 API 根地址必须包含版本路径且不能包含查询或片段")
         if not self.api_key.strip() or not self.model.strip():
             raise ModelConfigurationError("模型 Token 和模型名不能为空")
