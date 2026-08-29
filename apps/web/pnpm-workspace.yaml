@@ -1,0 +1,9 @@
+allowBuilds:
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@ai-sdk/gateway@4.0.68'
+  - '@ai-sdk/mcp@2.0.40'
+  - '@ai-sdk/provider-utils@5.0.33'
+  - '@ai-sdk/react@4.0.87'
+  - ai@7.0.84
+  - lucide-react@1.37.0
