@@ -22,9 +22,9 @@ import type {
 import { chatTransport, decideProposal } from "./transport";
 
 const suggestions = [
-  { label: "科室引导", prompt: "我头痛，应该去哪个科室？", note: "描述主要不适，获取候选科室" },
-  { label: "查询号源", prompt: "请帮我查询近期号源", note: "查看演示医生、时间和费用" },
-  { label: "院内导航", prompt: "去全科医学科怎么走？", note: "获取到院后的路线步骤" },
+  { label: '整理症状', prompt: '请帮我整理这次就诊要描述的主要不适', note: '把症状和时间线说清楚' },
+  { label: '准备提问', prompt: '初次门诊前，我应该准备向医生询问哪些问题？', note: '整理就诊前的问题清单' },
+  { label: '了解流程', prompt: '请介绍一般门诊就诊前需要做哪些准备', note: '了解通用流程，不使用医院数据' },
 ];
 
 export function ChatShell() {
@@ -97,9 +97,9 @@ export function ChatShell() {
         <header className="chat-header">
           <div>
             <h2 className="chat-title">门诊协助</h2>
-            <p className="chat-subtitle">演示医院 · 诊前阶段</p>
+            <p className="chat-subtitle">模型连接验证 · 诊前阶段</p>
           </div>
-          <span className="online-badge">服务可用</span>
+          <span className="online-badge">开发环境</span>
         </header>
 
         <div className="thread" aria-live="polite">
@@ -108,8 +108,8 @@ export function ChatShell() {
               <div className="welcome-orbit"><Bot size={34} aria-hidden="true" /></div>
               <h1>把复杂的门诊流程，变成一次从容的对话。</h1>
               <p>
-                告诉我患者这次就诊最想解决的问题。我会协助科室引导、查询号源、
-                准备预约和查看院内路线。
+                告诉我患者这次就诊最想解决的问题。我可以协助整理症状陈述、
+                准备就诊问题和了解一般门诊流程。
               </p>
               <div className="suggestions">
                 {suggestions.map((suggestion) => (
@@ -168,7 +168,7 @@ export function ChatShell() {
           >
             <textarea
               aria-label="输入就诊需求"
-              placeholder="描述主要不适，或询问科室、号源和路线…"
+              placeholder="描述主要不适，或询问一般门诊准备…"
               rows={1}
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -211,8 +211,8 @@ export function ChatShell() {
 
         <section className="context-card">
           <h2>可用协助</h2>
-          <div className="context-row"><span><Building2 size={14} /> 科室引导</span><strong>可用</strong></div>
-          <div className="context-row"><span><ClipboardCheck size={14} /> 预约挂号</span><strong>需确认</strong></div>
+          <div className="context-row"><span><Building2 size={14} /> 对话协助</span><strong>可用</strong></div>
+          <div className="context-row"><span><ClipboardCheck size={14} /> 医院数据</span><strong>未配置</strong></div>
         </section>
       </aside>
     </main>

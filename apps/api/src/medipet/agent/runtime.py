@@ -4,7 +4,8 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
-from medipet.agent.graph import build_demo_graph
+from medipet.agent.prompts import OUTPATIENT_ASSISTANT_SYSTEM_PROMPT
+from medipet.model.port import ModelMessage, ModelPort, ModelRequest
 
 
 @dataclass(frozen=True)
@@ -22,15 +23,17 @@ class AgentRuntime(Protocol):
     def run(self, request: AgentRequest) -> AsyncIterator[AgentEvent]: ...
 
 
-class LangGraphAgentRuntime:
-    def __init__(self) -> None:
-        self._graph = build_demo_graph()
+class ModelAgentRuntime:
+    def __init__(self, model: ModelPort) -> None:
+        self._model = model
 
     async def run(self, request: AgentRequest) -> AsyncIterator[AgentEvent]:
-        yield AgentEvent("status", {"label": "正在整理本次就诊信息"})
-        result = await self._graph.ainvoke(
-            {"message": request.message, "reply": "", "data_parts": []}
+        yield AgentEvent("status", {"label": "正在连接门诊协助模型"})
+        model_request = ModelRequest(
+            messages=(
+                ModelMessage(role="system", content=OUTPATIENT_ASSISTANT_SYSTEM_PROMPT),
+                ModelMessage(role="user", content=request.message),
+            )
         )
-        yield AgentEvent("text", {"text": result["reply"]})
-        for part in result["data_parts"]:
-            yield AgentEvent("data", part)
+        async for chunk in self._model.stream(model_request):
+            yield AgentEvent("text", {"text": chunk.text})
