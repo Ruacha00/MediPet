@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
+from contextlib import aclosing
 from dataclasses import dataclass
-from typing import Any, Literal, Protocol, TypedDict
+from typing import Any, Literal, Protocol, TypedDict, cast
 
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
@@ -13,7 +14,7 @@ from medipet.model.port import ModelMessage, ModelPort, ModelRequest, ModelUnava
 
 @dataclass(frozen=True)
 class AgentRequest:
-    message: str
+    messages: tuple[ModelMessage, ...]
 
 
 @dataclass(frozen=True)
@@ -23,11 +24,11 @@ class AgentEvent:
 
 
 class AgentRuntime(Protocol):
-    def run(self, request: AgentRequest) -> AsyncIterator[AgentEvent]: ...
+    def run(self, request: AgentRequest) -> AsyncGenerator[AgentEvent, None]: ...
 
 
 class ModelAgentState(TypedDict):
-    message: str
+    messages: tuple[ModelMessage, ...]
     completed: bool
 
 
@@ -35,14 +36,20 @@ class LangGraphAgentRuntime:
     def __init__(self, model: ModelPort) -> None:
         self._graph = _build_model_graph(model)
 
-    async def run(self, request: AgentRequest) -> AsyncIterator[AgentEvent]:
+    async def run(self, request: AgentRequest) -> AsyncGenerator[AgentEvent, None]:
         yield AgentEvent("status", {"label": "正在连接门诊协助模型"})
         try:
-            async for event in self._graph.astream(
-                {"message": request.message, "completed": False},
-                stream_mode="custom",
-            ):
-                yield AgentEvent(kind=event["kind"], data=event["data"])
+            async with aclosing(
+                cast(
+                    AsyncGenerator[dict[str, Any], None],
+                    self._graph.astream(
+                        {"messages": request.messages, "completed": False},
+                        stream_mode="custom",
+                    ),
+                )
+            ) as graph_events:
+                async for event in graph_events:
+                    yield AgentEvent(kind=event["kind"], data=event["data"])
         except ModelUnavailableError:
             yield AgentEvent("failed", {"message": "模型服务暂时不可用，请稍后重试。"})
 
@@ -53,7 +60,7 @@ def _build_model_graph(model: ModelPort):
         model_request = ModelRequest(
             messages=(
                 ModelMessage(role="system", content=OUTPATIENT_ASSISTANT_SYSTEM_PROMPT),
-                ModelMessage(role="user", content=state["message"]),
+                *state["messages"],
             )
         )
         async for chunk in model.stream(model_request):

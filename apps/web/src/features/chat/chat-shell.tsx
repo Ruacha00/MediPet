@@ -14,12 +14,20 @@ import {
 } from "lucide-react";
 
 import { MessagePartView } from "./message-parts";
+import { loadConversationHistory } from "./history";
 import type {
+  ConversationMessageState,
   MediPetMessage,
   ProposalDecision,
   ProposalDecisionState,
 } from "./message-types";
-import { chatTransport, decideProposal } from "./transport";
+import {
+  backendBaseUrl,
+  chatTransport,
+  decideProposal,
+  demoParticipantId,
+  demoVisitMatterId,
+} from "./transport";
 
 const suggestions = [
   { label: '整理症状', prompt: '请帮我整理这次就诊要描述的主要不适', note: '把症状和时间线说清楚' },
@@ -30,6 +38,8 @@ const suggestions = [
 export function ChatShell() {
   const [input, setInput] = useState("");
   const [agentStatus, setAgentStatus] = useState<string | null>(null);
+  const [restoringHistory, setRestoringHistory] = useState(true);
+  const [historyError, setHistoryError] = useState(false);
   const [decisionStates, setDecisionStates] = useState<Record<string, ProposalDecisionState>>({});
   const threadEndRef = useRef<HTMLDivElement>(null);
 
@@ -47,12 +57,33 @@ export function ChatShell() {
   const active = status === "submitted" || status === "streaming";
 
   useEffect(() => {
+    let disposed = false;
+    loadConversationHistory(
+      backendBaseUrl,
+      demoVisitMatterId,
+      demoParticipantId,
+    )
+      .then((restoredMessages) => {
+        if (!disposed) setMessages(restoredMessages);
+      })
+      .catch(() => {
+        if (!disposed) setHistoryError(true);
+      })
+      .finally(() => {
+        if (!disposed) setRestoringHistory(false);
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [setMessages]);
+
+  useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, agentStatus]);
 
   async function submit(text: string) {
     const value = text.trim();
-    if (!value || active) return;
+    if (!value || active || restoringHistory) return;
     setInput("");
     await sendMessage({ text: value });
   }
@@ -147,11 +178,15 @@ export function ChatShell() {
                           />
                         );
                       })}
+                      <MessageLifecycleNote state={message.metadata?.state} />
                     </div>
                   </article>
                 );
               })}
               {agentStatus && <div className="status-line">{agentStatus}</div>}
+              {historyError && (
+                <div className="data-card urgent">历史对话暂时无法恢复，请稍后刷新重试。</div>
+              )}
               {error && <div className="data-card urgent">连接暂时中断，请检查后端服务后重试。</div>}
               <div ref={threadEndRef} />
             </div>
@@ -183,7 +218,7 @@ export function ChatShell() {
               className="send-button"
               type={active ? "button" : "submit"}
               aria-label={active ? "停止生成" : "发送消息"}
-              disabled={!active && !input.trim()}
+              disabled={restoringHistory || (!active && !input.trim())}
               onClick={active ? () => stop() : undefined}
             >
               {active ? <Square size={16} fill="currentColor" /> : <ArrowUp size={19} />}
@@ -217,4 +252,19 @@ export function ChatShell() {
       </aside>
     </main>
   );
+}
+
+function MessageLifecycleNote({
+  state,
+}: {
+  state: ConversationMessageState | undefined;
+}) {
+  const labels: Partial<Record<ConversationMessageState, string>> = {
+    pending: "上次生成尚未开始",
+    streaming: "上次生成未完成",
+    failed: "生成失败",
+    cancelled: "已停止生成",
+  };
+  const label = state ? labels[state] : undefined;
+  return label ? <small className="message-lifecycle">{label}</small> : null;
 }

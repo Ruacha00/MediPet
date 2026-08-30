@@ -1,17 +1,31 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+import asyncio
+from collections.abc import AsyncGenerator
+from contextlib import aclosing
 from uuid import uuid4
 
 from medipet.agent.runtime import AgentRequest, AgentRuntime
 from medipet.contracts import TurnCommand, TurnEvent
+from medipet.model.port import ModelMessage
+from medipet.persistence.conversation import VisitConversationStore
 
 
 class MediPetAssistant:
-    def __init__(self, agent_runtime: AgentRuntime) -> None:
+    def __init__(
+        self,
+        agent_runtime: AgentRuntime,
+        conversation_store: VisitConversationStore,
+        *,
+        context_message_limit: int = 20,
+        persistence_batch_characters: int = 256,
+    ) -> None:
         self._agent_runtime = agent_runtime
+        self._conversation_store = conversation_store
+        self._context_message_limit = context_message_limit
+        self._persistence_batch_characters = persistence_batch_characters
 
-    async def handle_turn(self, command: TurnCommand) -> AsyncIterator[TurnEvent]:
+    async def handle_turn(self, command: TurnCommand) -> AsyncGenerator[TurnEvent, None]:
         trace_id = f"trace-{uuid4().hex[:12]}"
 
         if command.confirmation is not None:
@@ -28,10 +42,94 @@ class MediPetAssistant:
             )
             return
 
-        async for event in self._agent_runtime.run(AgentRequest(message=command.message)):
-            if event.kind == "failed":
-                yield TurnEvent(kind="failed", data={**event.data, "traceId": trace_id})
-                return
-            yield TurnEvent(kind=event.kind, data=event.data)
+        await self._conversation_store.add_participant_message(
+            visit_matter_id=command.visit_matter_id,
+            participant_id=command.participant_id,
+            turn_id=command.idempotency_key,
+            content=command.message.strip(),
+        )
+        assistant_message = await self._conversation_store.add_assistant_message(
+            visit_matter_id=command.visit_matter_id,
+            participant_id=command.participant_id,
+            turn_id=command.idempotency_key,
+        )
+        completed_history = await self._conversation_store.list_completed_messages(
+            command.visit_matter_id,
+            limit=self._context_message_limit,
+        )
+        request = AgentRequest(
+            messages=tuple(
+                ModelMessage(role=message.role, content=message.content)
+                for message in completed_history
+            )
+        )
+        buffered_text: list[str] = []
+        buffered_characters = 0
+        streaming_started = False
+        terminal = False
 
-        yield TurnEvent(kind="completed", data={"traceId": trace_id})
+        async def flush_text() -> None:
+            nonlocal buffered_characters
+            if not buffered_text:
+                return
+            await self._conversation_store.append_assistant_text(
+                assistant_message.id,
+                "".join(buffered_text),
+            )
+            buffered_text.clear()
+            buffered_characters = 0
+
+        try:
+            async with aclosing(self._agent_runtime.run(request)) as runtime_events:
+                async for event in runtime_events:
+                    if event.kind == "text":
+                        if not streaming_started:
+                            await self._conversation_store.mark_assistant_streaming(
+                                assistant_message.id
+                            )
+                            streaming_started = True
+                        text = event.data["text"]
+                        buffered_text.append(text)
+                        buffered_characters += len(text)
+                        if buffered_characters >= self._persistence_batch_characters:
+                            await flush_text()
+
+                    if event.kind == "failed":
+                        await flush_text()
+                        await self._conversation_store.finish_assistant_message(
+                            assistant_message.id,
+                            "failed",
+                        )
+                        terminal = True
+                        yield TurnEvent(
+                            kind="failed",
+                            data={**event.data, "traceId": trace_id},
+                        )
+                        return
+                    yield TurnEvent(kind=event.kind, data=event.data)
+
+            if not streaming_started:
+                await self._conversation_store.mark_assistant_streaming(assistant_message.id)
+            await flush_text()
+            await self._conversation_store.finish_assistant_message(
+                assistant_message.id,
+                "completed",
+            )
+            terminal = True
+            yield TurnEvent(kind="completed", data={"traceId": trace_id})
+        except (asyncio.CancelledError, GeneratorExit):
+            await flush_text()
+            if not terminal:
+                await self._conversation_store.finish_assistant_message(
+                    assistant_message.id,
+                    "cancelled",
+                )
+            raise
+        except Exception:
+            await flush_text()
+            if not terminal:
+                await self._conversation_store.finish_assistant_message(
+                    assistant_message.id,
+                    "failed",
+                )
+            raise

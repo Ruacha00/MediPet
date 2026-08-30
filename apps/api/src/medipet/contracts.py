@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Literal
 from uuid import uuid4
 
@@ -69,3 +70,17 @@ class ActionDecisionResponse(BaseModel):
     proposal_id: str
     decision: Literal["confirm", "reject"]
     events: list[TurnEvent]
+
+
+class ConversationHistoryMessage(BaseModel):
+    id: str
+    role: Literal["user", "assistant"]
+    state: Literal["pending", "streaming", "completed", "failed", "cancelled"]
+    parts: list[UIMessagePart]
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConversationHistoryResponse(BaseModel):
+    visit_matter_id: str
+    messages: list[ConversationHistoryMessage]

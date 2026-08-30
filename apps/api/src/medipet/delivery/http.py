@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,17 +15,43 @@ from medipet.contracts import (
     ActionDecisionResponse,
     ChatTurnRequest,
     ConfirmationDecision,
+    ConversationHistoryMessage,
+    ConversationHistoryResponse,
     TurnCommand,
+    UIMessagePart,
 )
 from medipet.delivery.streaming import to_ui_message_stream
 from medipet.model.openai import ChatOpenAIModelAdapter
 from medipet.model.port import ModelPort
+from medipet.persistence.conversation import (
+    VisitConversationStore,
+    VisitMatterNotFoundError,
+)
+from medipet.persistence.postgres import (
+    DatabaseConfigurationError,
+    PostgresVisitConversationStore,
+)
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
+DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
 
 
-def create_app(*, model: ModelPort | None = None) -> FastAPI:
-    app = FastAPI(title="MediPet", version="0.1.0")
+def create_app(
+    *,
+    model: ModelPort | None = None,
+    conversation_store: VisitConversationStore | None = None,
+    close_conversation_store: bool = False,
+) -> FastAPI:
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        yield
+        if close_conversation_store and isinstance(
+            conversation_store,
+            PostgresVisitConversationStore,
+        ):
+            await conversation_store.close()
+
+    app = FastAPI(title="MediPet", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[os.getenv("MEDIPET_WEB_ORIGIN", "http://localhost:3000")],
@@ -32,7 +59,11 @@ def create_app(*, model: ModelPort | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    assistant = MediPetAssistant(LangGraphAgentRuntime(model)) if model is not None else None
+    assistant = (
+        MediPetAssistant(LangGraphAgentRuntime(model), conversation_store)
+        if model is not None and conversation_store is not None
+        else None
+    )
 
     @app.get("/health")
     async def health() -> dict[str, str]:
@@ -40,14 +71,25 @@ def create_app(*, model: ModelPort | None = None) -> FastAPI:
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
-        if assistant is None:
+        if model is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
+        if conversation_store is None or assistant is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            await conversation_store.ping()
+        except Exception as error:
+            raise HTTPException(
+                status_code=503,
+                detail=DATABASE_UNAVAILABLE_MESSAGE,
+            ) from error
         return {"status": "ready"}
 
     @app.post("/v1/chat/turns")
     async def chat_turn(request: ChatTurnRequest) -> StreamingResponse:
-        if assistant is None:
+        if model is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
+        if assistant is None or conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
         try:
             message = request.latest_participant_text()
         except ValueError as error:
@@ -59,6 +101,13 @@ def create_app(*, model: ModelPort | None = None) -> FastAPI:
             idempotency_key=request.idempotency_key,
             message=message,
         )
+        try:
+            await conversation_store.validate_visit_participant(
+                request.visit_matter_id,
+                request.participant_id,
+            )
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
         return StreamingResponse(
             to_ui_message_stream(assistant.handle_turn(command)),
             media_type="text/event-stream",
@@ -67,6 +116,43 @@ def create_app(*, model: ModelPort | None = None) -> FastAPI:
                 "Connection": "keep-alive",
                 "x-vercel-ai-ui-message-stream": "v1",
             },
+        )
+
+    @app.get(
+        "/v1/visit-matters/{visit_matter_id}/messages",
+        response_model=ConversationHistoryResponse,
+    )
+    async def conversation_history(
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> ConversationHistoryResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            await conversation_store.validate_visit_participant(
+                visit_matter_id,
+                participant_id,
+            )
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        messages = await conversation_store.list_messages(visit_matter_id)
+        return ConversationHistoryResponse(
+            visit_matter_id=visit_matter_id,
+            messages=[
+                ConversationHistoryMessage(
+                    id=message.id,
+                    role=message.role,
+                    state=message.state,
+                    parts=(
+                        [UIMessagePart(type="text", text=message.content)]
+                        if message.content
+                        else []
+                    ),
+                    created_at=message.created_at,
+                    updated_at=message.updated_at,
+                )
+                for message in messages
+            ],
         )
 
     @app.post(
@@ -106,4 +192,15 @@ def _model_from_environment() -> ModelPort | None:
     return ChatOpenAIModelAdapter(settings)
 
 
-app = create_app(model=_model_from_environment())
+def _store_from_environment() -> PostgresVisitConversationStore | None:
+    try:
+        return PostgresVisitConversationStore.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+    except DatabaseConfigurationError:
+        return None
+
+
+app = create_app(
+    model=_model_from_environment(),
+    conversation_store=_store_from_environment(),
+    close_conversation_store=True,
+)

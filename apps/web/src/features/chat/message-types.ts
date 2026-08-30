@@ -58,7 +58,18 @@ export type MediPetDataParts = {
   handoff: HandoffData;
 };
 
-export type MediPetMessage = UIMessage<never, MediPetDataParts>;
+export type ConversationMessageState =
+  | "pending"
+  | "streaming"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+export type MediPetMessageMetadata = {
+  state: ConversationMessageState;
+};
+
+export type MediPetMessage = UIMessage<MediPetMessageMetadata, MediPetDataParts>;
 export type MediPetMessagePart = MediPetMessage["parts"][number];
 export type ProposalDecision = "confirm" | "reject";
 export type ProposalDecisionState = ProposalDecision | "working" | null;

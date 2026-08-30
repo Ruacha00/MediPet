@@ -369,6 +369,11 @@ button {
   color: white;
 }
 
+.message-lifecycle {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
 .status-line {
   display: inline-flex;
   align-items: center;
