@@ -106,7 +106,7 @@ class MediPetAssistant:
 
         if command.confirmation is not None:
             try:
-                visit_stage = await self._conversation_store.visit_stage(
+                visit_context = await self._conversation_store.visit_context(
                     command.visit_matter_id,
                     command.participant_id,
                 )
@@ -124,7 +124,8 @@ class MediPetAssistant:
                     visit_matter_id=command.visit_matter_id,
                     participant_id=command.participant_id,
                     idempotency_key=command.idempotency_key,
-                    visit_stage=visit_stage,
+                    visit_stage=visit_context.visit_stage,
+                    patient_id=visit_context.patient_id,
                 ),
             )
             await self._audit_store.record(
@@ -189,7 +190,7 @@ class MediPetAssistant:
                 command.visit_matter_id,
                 limit=self._context_message_limit,
             )
-            visit_stage = await self._conversation_store.visit_stage(
+            visit_context = await self._conversation_store.visit_context(
                 command.visit_matter_id, command.participant_id
             )
             request = AgentRequest(
@@ -204,7 +205,8 @@ class MediPetAssistant:
                     visit_matter_id=command.visit_matter_id,
                     participant_id=command.participant_id,
                     idempotency_key=command.idempotency_key,
-                    visit_stage=visit_stage,
+                    visit_stage=visit_context.visit_stage,
+                    patient_id=visit_context.patient_id,
                 ),
                 trace_id=trace_id,
                 metrics=metrics,

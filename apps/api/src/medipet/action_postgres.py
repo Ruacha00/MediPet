@@ -38,14 +38,46 @@ class PostgresActionStore:
     async def close(self) -> None:
         await self._engine.dispose()
 
+    async def find_request_proposal(
+        self,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> ActionProposal | None:
+        if not context.patient_id.strip():
+            raise ActionDecisionError("写操作缺少权威患者作用域")
+        async with self._sessions() as session:
+            record = await session.scalar(
+                select(ActionProposalRecord).where(
+                    ActionProposalRecord.visit_matter_id == context.visit_matter_id,
+                    ActionProposalRecord.participant_id == context.participant_id,
+                    ActionProposalRecord.request_key == context.idempotency_key,
+                )
+            )
+            if record is None:
+                return None
+            if (
+                record.tool_id != tool.tool_id
+                or record.tool_version != tool.version
+                or record.arguments != arguments
+                or record.patient_id != context.patient_id
+                or record.profile_version != context.profile_version
+                or record.visit_stage != context.visit_stage
+            ):
+                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+            return self._to_proposal(record)
+
     async def create_proposal(
         self,
         tool: ToolDefinition,
         arguments: dict[str, object],
         context: ToolContext,
         *,
+        confirmation: dict[str, object] | None = None,
         expires_at: datetime,
     ) -> ActionProposal:
+        if not context.patient_id.strip():
+            raise ActionDecisionError("写操作缺少权威患者作用域")
         proposal_id = f"proposal-{uuid4().hex}"
         created_at = datetime.now(UTC)
         async with self._sessions.begin() as session:
@@ -56,12 +88,16 @@ class PostgresActionStore:
                         id=proposal_id,
                         visit_matter_id=context.visit_matter_id,
                         participant_id=context.participant_id,
+                        patient_id=context.patient_id,
                         request_key=context.idempotency_key,
                         idempotency_key=f"action-{proposal_id}",
                         tool_id=tool.tool_id,
                         tool_name=tool.name,
                         tool_version=tool.version,
                         arguments=dict(arguments),
+                        confirmation=(
+                            dict(confirmation) if confirmation is not None else None
+                        ),
                         profile_version=context.profile_version,
                         visit_stage=context.visit_stage,
                         status="pending",
@@ -87,6 +123,7 @@ class PostgresActionStore:
                 record.tool_id != tool.tool_id
                 or record.tool_version != tool.version
                 or record.arguments != arguments
+                or record.patient_id != context.patient_id
                 or record.profile_version != context.profile_version
                 or record.visit_stage != context.visit_stage
             ):
@@ -167,12 +204,37 @@ class PostgresActionStore:
             ):
                 failure = "操作参数、Tool 版本或作用域已变化，请重新发起"
             else:
+                confirmation_valid = not (
+                    tool.confirmation_schema is not None
+                    and (
+                        record.confirmation is None
+                        or validate_object(record.confirmation, tool.confirmation_schema)
+                        is not None
+                    )
+                )
+                if confirmation_valid and tool.revalidate_confirmation is not None:
+                    if record.confirmation is None:
+                        confirmation_valid = False
+                    else:
+                        try:
+                            confirmation_valid = await tool.revalidate_confirmation(
+                                dict(record.arguments),
+                                dict(record.confirmation),
+                                context,
+                            )
+                        except Exception:
+                            confirmation_valid = False
+                if not confirmation_valid:
+                    failure = "操作参数、Tool 版本或作用域已变化，请重新发起"
+
+            if failure is None and receipt is None:
                 execution_context = ToolContext(
                     visit_matter_id=context.visit_matter_id,
                     participant_id=context.participant_id,
                     idempotency_key=record.idempotency_key,
                     profile_version=context.profile_version,
                     visit_stage=context.visit_stage,
+                    patient_id=context.patient_id,
                 )
                 try:
                     result = await tool.execute(dict(record.arguments), execution_context)
@@ -285,6 +347,7 @@ class PostgresActionStore:
         if (
             record.visit_matter_id != context.visit_matter_id
             or record.participant_id != context.participant_id
+            or record.patient_id != context.patient_id
             or record.profile_version != context.profile_version
             or record.visit_stage != context.visit_stage
         ):
@@ -340,12 +403,16 @@ class PostgresActionStore:
             proposal_id=record.id,
             visit_matter_id=record.visit_matter_id,
             participant_id=record.participant_id,
+            patient_id=record.patient_id,
             request_key=record.request_key,
             idempotency_key=record.idempotency_key,
             tool_id=record.tool_id,
             tool_name=record.tool_name,
             tool_version=record.tool_version,
             arguments=dict(record.arguments),
+            confirmation=(
+                dict(record.confirmation) if record.confirmation is not None else None
+            ),
             profile_version=record.profile_version,
             visit_stage=record.visit_stage,
             status=cast(ActionProposalStatus, record.status),

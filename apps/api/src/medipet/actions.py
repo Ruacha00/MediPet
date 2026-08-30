@@ -26,12 +26,14 @@ class ActionProposal:
     proposal_id: str
     visit_matter_id: str
     participant_id: str
+    patient_id: str
     request_key: str
     idempotency_key: str
     tool_id: str
     tool_name: str
     tool_version: str
     arguments: dict[str, object]
+    confirmation: dict[str, object] | None
     profile_version: str
     visit_stage: str
     status: ActionProposalStatus
@@ -54,6 +56,8 @@ class ActionProposal:
             "idempotencyKey": self.idempotency_key,
             "expiresAt": self.expires_at.isoformat(),
         }
+        if self.confirmation is not None:
+            data["confirmation"] = self.confirmation
         if self.receipt_id is not None:
             data["receiptId"] = self.receipt_id
         return {"type": "data-action-proposal", "data": data}
@@ -84,12 +88,20 @@ class ActionDecisionError(ValueError):
 
 
 class ActionStore(Protocol):
+    async def find_request_proposal(
+        self,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> ActionProposal | None: ...
+
     async def create_proposal(
         self,
         tool: ToolDefinition,
         arguments: dict[str, object],
         context: ToolContext,
         *,
+        confirmation: dict[str, object] | None = None,
         expires_at: datetime,
     ) -> ActionProposal: ...
 
@@ -124,14 +136,47 @@ class InMemoryActionStore:
         self._receipts: dict[str, ActionReceipt] = {}
         self._audits: list[ActionAudit] = []
 
+    async def find_request_proposal(
+        self,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> ActionProposal | None:
+        if not context.patient_id.strip():
+            raise ActionDecisionError("写操作缺少权威患者作用域")
+        async with self._lock:
+            existing_id = self._request_proposals.get(
+                (
+                    context.visit_matter_id,
+                    context.participant_id,
+                    context.idempotency_key,
+                )
+            )
+            if existing_id is None:
+                return None
+            existing = self._proposals[existing_id]
+            if (
+                existing.tool_id != tool.tool_id
+                or existing.tool_version != tool.version
+                or existing.arguments != arguments
+                or existing.patient_id != context.patient_id
+                or existing.profile_version != context.profile_version
+                or existing.visit_stage != context.visit_stage
+            ):
+                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+            return existing
+
     async def create_proposal(
         self,
         tool: ToolDefinition,
         arguments: dict[str, object],
         context: ToolContext,
         *,
+        confirmation: dict[str, object] | None = None,
         expires_at: datetime,
     ) -> ActionProposal:
+        if not context.patient_id.strip():
+            raise ActionDecisionError("写操作缺少权威患者作用域")
         async with self._lock:
             request_identity = (
                 context.visit_matter_id,
@@ -145,6 +190,7 @@ class InMemoryActionStore:
                     existing.tool_id != tool.tool_id
                     or existing.tool_version != tool.version
                     or existing.arguments != arguments
+                    or existing.patient_id != context.patient_id
                     or existing.profile_version != context.profile_version
                     or existing.visit_stage != context.visit_stage
                 ):
@@ -155,12 +201,14 @@ class InMemoryActionStore:
                 proposal_id=proposal_id,
                 visit_matter_id=context.visit_matter_id,
                 participant_id=context.participant_id,
+                patient_id=context.patient_id,
                 request_key=context.idempotency_key,
                 idempotency_key=f"action-{proposal_id}",
                 tool_id=tool.tool_id,
                 tool_name=tool.name,
                 tool_version=tool.version,
                 arguments=dict(arguments),
+                confirmation=(dict(confirmation) if confirmation is not None else None),
                 profile_version=context.profile_version,
                 visit_stage=context.visit_stage,
                 status="pending",
@@ -233,6 +281,28 @@ class InMemoryActionStore:
                 raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
             if tool.revalidate is not None and not await tool.revalidate(context):
                 raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
+            if tool.confirmation_schema is not None and (
+                proposal.confirmation is None
+                or validate_object(proposal.confirmation, tool.confirmation_schema) is not None
+            ):
+                raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
+            if tool.revalidate_confirmation is not None:
+                if proposal.confirmation is None:
+                    raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
+                try:
+                    confirmation_valid = await tool.revalidate_confirmation(
+                        dict(proposal.arguments),
+                        dict(proposal.confirmation),
+                        context,
+                    )
+                except Exception as error:
+                    raise ActionDecisionError(
+                        "操作参数、Tool 版本或作用域已变化，请重新发起"
+                    ) from error
+                if not confirmation_valid:
+                    raise ActionDecisionError(
+                        "操作参数、Tool 版本或作用域已变化，请重新发起"
+                    )
             execution_context = replace(context, idempotency_key=proposal.idempotency_key)
             try:
                 result = await tool.execute(dict(proposal.arguments), execution_context)
@@ -313,6 +383,7 @@ class InMemoryActionStore:
         if (
             proposal.visit_matter_id != context.visit_matter_id
             or proposal.participant_id != context.participant_id
+            or proposal.patient_id != context.patient_id
             or proposal.profile_version != context.profile_version
             or proposal.visit_stage != context.visit_stage
         ):
@@ -361,15 +432,25 @@ class UnavailableActionStore:
     def _unavailable() -> ActionDecisionError:
         return ActionDecisionError("Action Proposal 持久化不可用")
 
+    async def find_request_proposal(
+        self,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> ActionProposal | None:
+        del tool, arguments, context
+        raise self._unavailable()
+
     async def create_proposal(
         self,
         tool: ToolDefinition,
         arguments: dict[str, object],
         context: ToolContext,
         *,
+        confirmation: dict[str, object] | None = None,
         expires_at: datetime,
     ) -> ActionProposal:
-        del tool, arguments, context, expires_at
+        del tool, arguments, context, confirmation, expires_at
         raise self._unavailable()
 
     async def get_proposal(self, proposal_id: str) -> ActionProposal:

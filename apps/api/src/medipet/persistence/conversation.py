@@ -58,6 +58,12 @@ class DevelopmentVisitMatter:
 
 
 @dataclass(frozen=True)
+class VisitContext:
+    patient_id: str
+    visit_stage: VisitStage
+
+
+@dataclass(frozen=True)
 class VisitTurn:
     visit_matter_id: str
     participant_id: str
@@ -86,6 +92,12 @@ class VisitConversationStore(Protocol):
         visit_matter_id: str,
         participant_id: str,
     ) -> None: ...
+
+    async def visit_context(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitContext: ...
 
     async def visit_stage(
         self, visit_matter_id: str, participant_id: str
@@ -154,6 +166,19 @@ class InMemoryVisitConversationStore:
         async with self._lock:
             self._require_participant(visit_matter_id, participant_id)
             return self._visit_matters[visit_matter_id].visit_stage
+
+    async def visit_context(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitContext:
+        async with self._lock:
+            self._require_participant(visit_matter_id, participant_id)
+            visit_matter = self._visit_matters[visit_matter_id]
+            return VisitContext(
+                patient_id=visit_matter.patient_id,
+                visit_stage=visit_matter.visit_stage,
+            )
 
     async def seed_development_visit_matter(
         self,

@@ -23,6 +23,7 @@ from medipet.persistence.conversation import (
     MessageTransitionError,
     StoredMessage,
     TerminalMessageState,
+    VisitContext,
     VisitMatterNotFoundError,
     VisitTurn,
     assistant_transition_source_states,
@@ -82,6 +83,20 @@ class PostgresVisitConversationStore:
                 session, visit_matter_id, participant_id
             )
             return cast(VisitStage, visit_matter.visit_stage)
+
+    async def visit_context(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitContext:
+        async with self._sessions() as session:
+            visit_matter = await self._require_visit_matter(
+                session, visit_matter_id, participant_id
+            )
+            return VisitContext(
+                patient_id=visit_matter.patient_id,
+                visit_stage=cast(VisitStage, visit_matter.visit_stage),
+            )
 
     async def seed_development_visit_matter(
         self,

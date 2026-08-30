@@ -5,7 +5,7 @@ from typing import cast
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from medipet.agent.capabilities import ToolContext
+from medipet.agent.capabilities import SkillDefinition, ToolContext
 from medipet.delivery.http import create_app
 from medipet.skills.capabilities import RegistryCapabilityProvider
 from medipet.skills.registry import InMemorySkillRegistry
@@ -258,3 +258,78 @@ async def test_registry_capability_snapshot_intersects_binding_enablement_and_au
         audit for audit in await tools.list_audits() if audit.action == "reject_invoke"
     )
     assert rejected.tool_id == "rogue_tool"
+
+
+@pytest.mark.asyncio
+async def test_registry_preserves_write_tool_confirmation_contract() -> None:
+    async def execute(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"saved": True}
+
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        return {"value": arguments["value"], "patient_id": context.patient_id}
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        return confirmation == {
+            "value": arguments["value"],
+            "patient_id": context.patient_id,
+        }
+
+    confirmation_schema = {
+        "type": "object",
+        "properties": {
+            "value": {"type": "string"},
+            "patient_id": {"type": "string"},
+        },
+        "required": ["value", "patient_id"],
+        "additionalProperties": False,
+    }
+    trusted = TrustedTool(
+        tool_id="test.write",
+        version="1",
+        name="test_write",
+        description="Test prepared write",
+        input_schema={"type": "object"},
+        output_schema={"type": "object"},
+        confirmation_schema=confirmation_schema,
+        effect="write",
+        approval_required=True,
+        execute=execute,
+        prepare_confirmation=prepare_confirmation,
+        revalidate_confirmation=revalidate_confirmation,
+    )
+    registry = InMemoryToolRegistry()
+    await registry.synchronize((trusted,), actor="deployment")
+    await registry.configure(
+        "test.write", "1", enabled=True, approval_required=True, actor="admin"
+    )
+    await registry.bind("skill-1", 1, "test.write", "1", actor="admin")
+
+    async def load_instructions() -> str:
+        return "Use the write Tool."
+
+    tools = await registry.runtime_tools(
+        (
+            SkillDefinition(
+                skill_id="skill-1",
+                slug="test-write",
+                version=1,
+                name="Test write",
+                description="Test write",
+                load_instructions=load_instructions,
+            ),
+        ),
+        ToolContext(patient_id="patient-1"),
+    )
+
+    assert tools[0].confirmation_schema == confirmation_schema
+    assert tools[0].prepare_confirmation is prepare_confirmation
+    assert tools[0].revalidate_confirmation is revalidate_confirmation

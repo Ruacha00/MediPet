@@ -14,9 +14,16 @@ class ToolContext:
     idempotency_key: str = ""
     profile_version: str = "static"
     visit_stage: VisitStage = "pre_visit"
+    patient_id: str = ""
 
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]
+ToolConfirmationPreparer = Callable[
+    [dict[str, object], ToolContext], Awaitable[dict[str, object]]
+]
+ToolConfirmationRevalidator = Callable[
+    [dict[str, object], dict[str, object], ToolContext], Awaitable[bool]
+]
 ToolAuthorizer = Callable[[ToolContext], bool]
 ToolRejectionRecorder = Callable[[ToolContext], Awaitable[None]]
 ToolAvailabilityValidator = Callable[[ToolContext], Awaitable[bool]]
@@ -38,6 +45,9 @@ class ToolDefinition:
     execute: ToolExecutor
     tool_id: str = ""
     output_schema: Mapping[str, object] | None = None
+    confirmation_schema: Mapping[str, object] | None = None
+    prepare_confirmation: ToolConfirmationPreparer | None = None
+    revalidate_confirmation: ToolConfirmationRevalidator | None = None
     approval_required: bool = False
     enabled: bool = True
     bound: bool = True

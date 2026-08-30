@@ -15,10 +15,10 @@ from medipet.agent.capabilities import (
     ToolDefinition,
     VisitStage,
 )
-from medipet.agent.runtime import LangGraphAgentRuntime
+from medipet.agent.runtime import AgentRequest, LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.contracts import ConfirmationDecision, TurnCommand
-from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelToolCall
+from medipet.model.port import ModelChunk, ModelMessage, ModelPort, ModelRequest, ModelToolCall
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
@@ -150,6 +150,7 @@ async def test_test_only_read_tool_returns_observation_to_the_model() -> None:
     assert [event.kind for event in events] == ["status", "status", "text", "completed"]
     assert executions[0][0] == {"query": "示例"}
     assert executions[0][1].visit_matter_id == "visit-1"
+    assert executions[0][1].patient_id == "patient-1"
     assert executions[0][1].profile_version == "profile-1"
     assert model.requests[0].tools[0].name == "dummy_read"
     observation = model.requests[1].messages[-1]
@@ -162,10 +163,28 @@ async def test_test_only_read_tool_returns_observation_to_the_model() -> None:
 async def test_write_tool_pauses_with_a_persisted_proposal_before_execution() -> None:
     executions: list[dict[str, object]] = []
 
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        return {
+            "patient_id": context.patient_id,
+            "summary": f"确认保存 {arguments['value']}",
+        }
+
     async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
         del context
         executions.append(arguments)
         return {"receipt": "committed"}
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        return confirmation == {
+            "patient_id": context.patient_id,
+            "summary": f"确认保存 {arguments['value']}",
+        }
 
     tool = ToolDefinition(
         tool_id="test.write",
@@ -184,9 +203,20 @@ async def test_write_tool_pauses_with_a_persisted_proposal_before_execution() ->
             "required": ["receipt"],
             "additionalProperties": False,
         },
+        confirmation_schema={
+            "type": "object",
+            "properties": {
+                "patient_id": {"type": "string"},
+                "summary": {"type": "string"},
+            },
+            "required": ["patient_id", "summary"],
+            "additionalProperties": False,
+        },
         effect="write",
         approval_required=True,
         execute=execute,
+        prepare_confirmation=prepare_confirmation,
+        revalidate_confirmation=revalidate_confirmation,
     )
     model = ScriptedModel(
         [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {"value": "A"}),))]]
@@ -205,11 +235,117 @@ async def test_write_tool_pauses_with_a_persisted_proposal_before_execution() ->
     assert proposal["data"]["toolId"] == "test.write"
     assert proposal["data"]["toolVersion"] == "1"
     assert proposal["data"]["arguments"] == {"value": "A"}
+    assert proposal["data"]["confirmation"] == {
+        "patient_id": "patient-1",
+        "summary": "确认保存 A",
+    }
     assert proposal["data"]["visitMatterId"] == "visit-1"
     assert proposal["data"]["participantId"] == "participant-1"
     assert proposal["data"]["idempotencyKey"]
     assert proposal["data"]["expiresAt"]
     assert executions == []
+
+
+@pytest.mark.asyncio
+async def test_invalid_server_confirmation_never_creates_a_proposal() -> None:
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"summary": 42}
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        del arguments, confirmation, context
+        return True
+
+    async def execute(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {}
+
+    action_store = InMemoryActionStore()
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试无效确认快照",
+        input_schema={"type": "object", "additionalProperties": False},
+        confirmation_schema={
+            "type": "object",
+            "properties": {"summary": {"type": "string"}},
+            "required": ["summary"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+        prepare_confirmation=prepare_confirmation,
+        revalidate_confirmation=revalidate_confirmation,
+    )
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+        action_store=action_store,
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert [event.kind for event in events] == ["status", "failed"]
+    assert events[-1].data["message"] == "待确认操作暂时无法创建，请重新发起。"
+    assert await action_store.list_proposals() == []
+
+
+@pytest.mark.asyncio
+async def test_incomplete_confirmation_contract_never_creates_a_proposal() -> None:
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"summary": "valid but cannot be revalidated"}
+
+    async def execute(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {}
+
+    action_store = InMemoryActionStore()
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试不完整确认契约",
+        input_schema={"type": "object", "additionalProperties": False},
+        confirmation_schema={
+            "type": "object",
+            "properties": {"summary": {"type": "string"}},
+            "required": ["summary"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+        prepare_confirmation=prepare_confirmation,
+    )
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+        action_store=action_store,
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert [event.kind for event in events] == ["status", "failed"]
+    assert await action_store.list_proposals() == []
 
 
 @pytest.mark.asyncio
@@ -271,6 +407,159 @@ async def test_confirming_a_write_proposal_commits_once_and_returns_one_receipt(
         "decision-1",
     ]
     assert {audit.profile_version for audit in terminal_audits} == {"profile-1"}
+
+
+@pytest.mark.asyncio
+async def test_changed_authoritative_confirmation_rejects_the_old_proposal() -> None:
+    authoritative_value = {"value": "A"}
+    executions = 0
+
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments
+        return {"patient_id": context.patient_id, **authoritative_value}
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        del arguments
+        return confirmation == {"patient_id": context.patient_id, **authoritative_value}
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        return {"result": "done"}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试权威确认快照",
+        input_schema={"type": "object", "additionalProperties": False},
+        confirmation_schema={
+            "type": "object",
+            "properties": {
+                "patient_id": {"type": "string"},
+                "value": {"type": "string"},
+            },
+            "required": ["patient_id", "value"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+        prepare_confirmation=prepare_confirmation,
+        revalidate_confirmation=revalidate_confirmation,
+    )
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+    )
+    proposed = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+    authoritative_value["value"] = "B"
+
+    result = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="confirm-changed",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+            )
+        )
+    ]
+
+    assert [event.kind for event in result] == ["failed"]
+    assert result[0].data["message"] == "操作参数、Tool 版本或作用域已变化，请重新发起"
+    assert executions == 0
+
+
+@pytest.mark.asyncio
+async def test_same_request_retry_returns_stored_proposal_without_preparing_again() -> None:
+    prepare_calls = 0
+    preparation_available = True
+
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        nonlocal prepare_calls
+        del arguments
+        prepare_calls += 1
+        if not preparation_available:
+            raise RuntimeError("authoritative source changed")
+        return {"patient_id": context.patient_id, "value": "A"}
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        del arguments
+        return confirmation == {"patient_id": context.patient_id, "value": "A"}
+
+    async def execute(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"result": "done"}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试提案请求幂等",
+        input_schema={"type": "object", "additionalProperties": False},
+        confirmation_schema={
+            "type": "object",
+            "properties": {
+                "patient_id": {"type": "string"},
+                "value": {"type": "string"},
+            },
+            "required": ["patient_id", "value"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+        prepare_confirmation=prepare_confirmation,
+        revalidate_confirmation=revalidate_confirmation,
+    )
+    action_store = InMemoryActionStore()
+    request = AgentRequest(
+        messages=(ModelMessage(role="user", content="执行写操作"),),
+        context=ToolContext(
+            visit_matter_id="visit-1",
+            participant_id="participant-1",
+            patient_id="patient-1",
+            idempotency_key="same-request",
+        ),
+    )
+
+    def runtime() -> LangGraphAgentRuntime:
+        return LangGraphAgentRuntime(
+            ScriptedModel(
+                [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+            ),
+            capability_provider=StaticCapabilityProvider(CapabilitySnapshot(tools=(tool,))),
+            action_store=action_store,
+        )
+
+    first = [event async for event in runtime().run(request)]
+    preparation_available = False
+    duplicate = [event async for event in runtime().run(request)]
+
+    assert [event.kind for event in first] == ["status", "data"]
+    assert [event.kind for event in duplicate] == ["status", "data"]
+    assert first[1].data == duplicate[1].data
+    assert prepare_calls == 1
 
 
 @pytest.mark.asyncio

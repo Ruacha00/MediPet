@@ -416,13 +416,45 @@ def _build_react_graph(
             assert tool is not None
             if tool.effect == "write":
                 try:
+                    existing_proposal = await action_store.find_request_proposal(
+                        tool,
+                        call.arguments,
+                        state["context"],
+                    )
+                    if existing_proposal is not None:
+                        writer({"kind": "data", "data": existing_proposal.event_data()})
+                        return {"terminal": True, "pending_calls": ()}
+                    confirmation_parts = (
+                        tool.confirmation_schema,
+                        tool.prepare_confirmation,
+                        tool.revalidate_confirmation,
+                    )
+                    if any(part is not None for part in confirmation_parts) and not all(
+                        part is not None for part in confirmation_parts
+                    ):
+                        raise ActionDecisionError("写 Tool 的确认契约不完整")
+                    confirmation: dict[str, object] | None = None
+                    if tool.prepare_confirmation is not None:
+                        if tool.confirmation_schema is None:
+                            raise ActionDecisionError(
+                                "写 Tool 的确认准备器缺少 confirmation Schema"
+                            )
+                        confirmation = await tool.prepare_confirmation(
+                            dict(call.arguments), state["context"]
+                        )
+                    if tool.confirmation_schema is not None and (
+                        confirmation is None
+                        or validate_object(confirmation, tool.confirmation_schema) is not None
+                    ):
+                        raise ActionDecisionError("写 Tool 的确认快照不符合 Schema")
                     proposal = await action_store.create_proposal(
                         tool,
                         call.arguments,
                         state["context"],
+                        confirmation=confirmation,
                         expires_at=proposal_expiry(),
                     )
-                except ActionDecisionError:
+                except Exception:
                     writer({"kind": "failed", "data": {"message": PROPOSAL_FAILURE}})
                     return {"terminal": True, "pending_calls": ()}
                 writer({"kind": "data", "data": proposal.event_data()})

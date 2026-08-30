@@ -8,6 +8,7 @@ from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
     MessageTransitionError,
+    VisitContext,
     VisitConversationStore,
     VisitTurn,
 )
@@ -19,6 +20,13 @@ async def exercise_store_contract(
 ) -> None:
     visit = seed()
     await store.seed_development_visit_matter(visit)
+    assert await store.visit_context(
+        visit.visit_matter_id,
+        visit.participant_id,
+    ) == VisitContext(
+        patient_id=visit.patient_id,
+        visit_stage=visit.visit_stage,
+    )
     turn = VisitTurn(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,

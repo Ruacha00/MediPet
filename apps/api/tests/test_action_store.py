@@ -14,7 +14,21 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
     async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
         nonlocal executions
         executions += 1
-        return {"value": arguments["value"], "actionKey": context.idempotency_key}
+        return {
+            "value": arguments["value"],
+            "actionKey": context.idempotency_key,
+            "patientId": context.patient_id,
+        }
+
+    async def revalidate_confirmation(
+        arguments: dict[str, object],
+        confirmation: dict[str, object],
+        context: ToolContext,
+    ) -> bool:
+        return confirmation == {
+            "patient_id": context.patient_id,
+            "value": arguments["value"],
+        }
 
     tool = ToolDefinition(
         tool_id="test.write",
@@ -22,25 +36,57 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
         version="1",
         description="测试专用写 Tool",
         input_schema={"type": "object"},
+        confirmation_schema={
+            "type": "object",
+            "properties": {
+                "patient_id": {"type": "string"},
+                "value": {"type": "string"},
+            },
+            "required": ["patient_id", "value"],
+            "additionalProperties": False,
+        },
         effect="write",
         approval_required=True,
         execute=execute,
+        revalidate_confirmation=revalidate_confirmation,
     )
     turn_context = ToolContext(
         visit_matter_id=f"visit-{suffix}",
         participant_id=f"participant-{suffix}",
         idempotency_key="turn-write",
+        patient_id=f"patient-{suffix}",
     )
     proposal = await store.create_proposal(
         tool,
         {"value": "A"},
         turn_context,
+        confirmation={
+            "patient_id": turn_context.patient_id,
+            "value": "A",
+        },
         expires_at=datetime.now(UTC) + timedelta(minutes=10),
     )
+    assert proposal.patient_id == turn_context.patient_id
+    duplicate_proposal = await store.create_proposal(
+        tool,
+        {"value": "A"},
+        turn_context,
+        confirmation={
+            "patient_id": turn_context.patient_id,
+            "value": "changed-after-first-proposal",
+        },
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    assert duplicate_proposal == proposal
+    assert proposal.confirmation == {
+        "patient_id": turn_context.patient_id,
+        "value": "A",
+    }
     decision_context = ToolContext(
         visit_matter_id=turn_context.visit_matter_id,
         participant_id=turn_context.participant_id,
         idempotency_key="decision-confirm",
+        patient_id=turn_context.patient_id,
     )
 
     confirmed, receipt = await store.confirm(
@@ -53,6 +99,7 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
     assert confirmed.status == duplicate.status == "confirmed"
     assert receipt == duplicate_receipt
     assert receipt.result["actionKey"] == proposal.idempotency_key
+    assert receipt.result["patientId"] == turn_context.patient_id
     assert executions == 1
     assert [
         item.action
@@ -71,6 +118,32 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
 @pytest.mark.asyncio
 async def test_in_memory_action_store_contract() -> None:
     await exercise_action_store_contract(InMemoryActionStore())
+
+
+@pytest.mark.asyncio
+async def test_write_proposal_requires_authoritative_patient_scope() -> None:
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写 Tool",
+        input_schema={"type": "object"},
+        effect="write",
+        approval_required=True,
+        execute=lambda arguments, context: _unused_execute(arguments, context),
+    )
+
+    with pytest.raises(ActionDecisionError, match="患者作用域"):
+        await InMemoryActionStore().create_proposal(
+            tool,
+            {},
+            ToolContext(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="turn-1",
+            ),
+            expires_at=datetime.now(UTC) + timedelta(minutes=10),
+        )
 
 
 @pytest.mark.asyncio
@@ -96,7 +169,9 @@ async def test_invalid_write_tool_output_never_creates_a_receipt() -> None:
         execute=execute,
     )
     store = InMemoryActionStore()
-    context = ToolContext("visit-1", "participant-1", "turn-1")
+    context = ToolContext(
+        "visit-1", "participant-1", "turn-1", patient_id="patient-1"
+    )
     proposal = await store.create_proposal(
         tool,
         {},
@@ -107,7 +182,9 @@ async def test_invalid_write_tool_output_never_creates_a_receipt() -> None:
     with pytest.raises(ActionDecisionError, match="操作暂时无法完成"):
         await store.confirm(
             proposal.proposal_id,
-            ToolContext("visit-1", "participant-1", "decision-1"),
+            ToolContext(
+                "visit-1", "participant-1", "decision-1", patient_id="patient-1"
+            ),
             tool,
         )
 
@@ -127,7 +204,9 @@ async def test_same_request_cannot_change_write_parameters() -> None:
         execute=lambda arguments, context: _unused_execute(arguments, context),
     )
     store = InMemoryActionStore()
-    context = ToolContext("visit-1", "participant-1", "turn-1")
+    context = ToolContext(
+        "visit-1", "participant-1", "turn-1", patient_id="patient-1"
+    )
     expires_at = datetime.now(UTC) + timedelta(minutes=10)
     await store.create_proposal(tool, {"value": "A"}, context, expires_at=expires_at)
 
@@ -151,13 +230,14 @@ async def test_visit_stage_and_profile_changes_invalidate_confirmation() -> None
     proposal = await store.create_proposal(
         tool,
         {},
-        ToolContext(
-            "visit-1",
-            "participant-1",
-            "turn-1",
-            profile_version="profile-1",
-            visit_stage="pre_visit",
-        ),
+            ToolContext(
+                "visit-1",
+                "participant-1",
+                "turn-1",
+                profile_version="profile-1",
+                visit_stage="pre_visit",
+                patient_id="patient-1",
+            ),
         expires_at=datetime.now(UTC) + timedelta(minutes=10),
     )
 
@@ -170,6 +250,45 @@ async def test_visit_stage_and_profile_changes_invalidate_confirmation() -> None
                 "decision-1",
                 profile_version="profile-2",
                 visit_stage="in_visit",
+                patient_id="patient-1",
+            ),
+            tool,
+        )
+
+
+@pytest.mark.asyncio
+async def test_patient_change_invalidates_confirmation() -> None:
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试患者作用域",
+        input_schema={"type": "object"},
+        effect="write",
+        approval_required=True,
+        execute=lambda arguments, context: _unused_execute(arguments, context),
+    )
+    store = InMemoryActionStore()
+    proposal = await store.create_proposal(
+        tool,
+        {},
+        ToolContext(
+            "visit-1",
+            "participant-1",
+            "turn-1",
+            patient_id="patient-1",
+        ),
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+
+    with pytest.raises(ActionDecisionError, match="作用域已变化"):
+        await store.confirm(
+            proposal.proposal_id,
+            ToolContext(
+                "visit-1",
+                "participant-1",
+                "decision-1",
+                patient_id="patient-2",
             ),
             tool,
         )
