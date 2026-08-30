@@ -8,7 +8,7 @@ Type: map
 | 02 持久化并恢复就诊事项对话 | resolved | 01 |
 | 03 支持开发环境 `.env` 热加载 | resolved | 01 |
 | 04 完成零能力 ReAct Runtime | resolved | 01 |
-| 05 管理版本化指令 Skills | ready-for-agent | 02, 04 |
+| 05 管理版本化指令 Skills | resolved | 02, 04 |
 | 06 导入导出并隔离 Skills | ready-for-agent | 05 |
 | 07 同步并治理受信 Tools | ready-for-agent | 02, 05 |
 | 08 暂停并确认有副作用 Tools | ready-for-agent | 02, 07 |

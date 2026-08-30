@@ -15,6 +15,7 @@ class ToolContext:
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]
 ToolAuthorizer = Callable[[ToolContext], bool]
+SkillInstructionLoader = Callable[[], Awaitable[str]]
 
 
 def _allow(_: ToolContext) -> bool:
@@ -35,8 +36,18 @@ class ToolDefinition:
 
 
 @dataclass(frozen=True)
+class SkillDefinition:
+    slug: str
+    version: int
+    name: str
+    description: str
+    load_instructions: SkillInstructionLoader
+
+
+@dataclass(frozen=True)
 class CapabilitySnapshot:
     skill_versions: tuple[str, ...] = ()
+    skills: tuple[SkillDefinition, ...] = ()
     tools: tuple[ToolDefinition, ...] = ()
 
     @classmethod

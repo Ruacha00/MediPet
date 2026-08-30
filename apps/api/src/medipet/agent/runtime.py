@@ -84,20 +84,62 @@ class LangGraphAgentRuntime:
         context = replace(request.context, profile_version=self._profile_version)
         try:
             source_capabilities = await self._capability_provider.snapshot(context)
+            pinned_skills = tuple(source_capabilities.skills)
+            platform_tools: tuple[ToolDefinition, ...] = ()
+            if pinned_skills:
+                skills_by_slug = {skill.slug: skill for skill in pinned_skills}
+                skill_catalog = "\n".join(
+                    f"- {skill.slug}: {skill.name} — {skill.description}"
+                    for skill in pinned_skills
+                )
+
+                async def load_skill(
+                    arguments: dict[str, object],
+                    _: ToolContext,
+                ) -> dict[str, object]:
+                    slug = cast(str, arguments["slug"])
+                    skill = skills_by_slug[slug]
+                    return {
+                        "skill": skill.slug,
+                        "version": skill.version,
+                        "instructions": await skill.load_instructions(),
+                    }
+
+                platform_tools = (
+                    ToolDefinition(
+                        name="load_skill",
+                        version="platform-1",
+                        description=(
+                            "根据名称和描述选择已发布 Skill，再按需加载完整指令：\n"
+                            f"{skill_catalog}"
+                        ),
+                        input_schema={
+                            "type": "object",
+                            "properties": {
+                                "slug": {
+                                    "type": "string",
+                                    "enum": [skill.slug for skill in pinned_skills],
+                                }
+                            },
+                            "required": ["slug"],
+                            "additionalProperties": False,
+                        },
+                        effect="read",
+                        execute=load_skill,
+                    ),
+                )
             capabilities = CapabilitySnapshot(
                 skill_versions=tuple(source_capabilities.skill_versions),
+                skills=pinned_skills,
                 tools=tuple(
                     replace(tool, input_schema=deepcopy(tool.input_schema))
-                    for tool in source_capabilities.tools
+                    for tool in (*source_capabilities.tools, *platform_tools)
                 ),
             )
             available_tool_names = tuple(
                 tool.name
                 for tool in capabilities.tools
-                if tool.enabled
-                and tool.bound
-                and tool.effect == "read"
-                and tool.authorize(context)
+                if tool.enabled and tool.bound and tool.effect == "read" and tool.authorize(context)
             )
         except Exception:
             yield AgentEvent("failed", {"message": CAPABILITY_FAILURE})
@@ -294,6 +336,9 @@ def _validate_arguments(arguments: dict[str, object], schema: Mapping[str, objec
         check = type_checks.get(expected)
         if check is not None and not check(value):
             return "type"
+        allowed_values = property_schema.get("enum")
+        if isinstance(allowed_values, (list, tuple)) and value not in allowed_values:
+            return "enum"
     return None
 
 

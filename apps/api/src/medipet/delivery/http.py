@@ -39,6 +39,10 @@ from medipet.persistence.postgres import (
     DatabaseConfigurationError,
     PostgresVisitConversationStore,
 )
+from medipet.skills.capabilities import RegistryCapabilityProvider
+from medipet.skills.http import management_router
+from medipet.skills.postgres import PostgresSkillRegistry
+from medipet.skills.registry import SkillRegistry
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
 DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
@@ -52,6 +56,10 @@ def create_app(
     runtime_config: RuntimeConfig | None = None,
     model_factory: Callable[[ModelSettings], ModelPort] = ChatOpenAIModelAdapter,
     capability_provider: CapabilityProvider | None = None,
+    skill_registry: SkillRegistry | None = None,
+    close_skill_registry: bool = False,
+    management_token: str | None = None,
+    environment: str = "development",
 ) -> FastAPI:
     if model is not None and runtime_config is not None:
         raise ValueError("model and runtime_config cannot both be provided")
@@ -64,6 +72,8 @@ def create_app(
             PostgresVisitConversationStore,
         ):
             await conversation_store.close()
+        if close_skill_registry and isinstance(skill_registry, PostgresSkillRegistry):
+            await skill_registry.close()
 
     app = FastAPI(title="MediPet", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
@@ -73,9 +83,12 @@ def create_app(
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    effective_capability_provider = capability_provider or (
+        RegistryCapabilityProvider(skill_registry) if skill_registry is not None else None
+    )
     static_assistant = (
         MediPetAssistant(
-            LangGraphAgentRuntime(model, capability_provider=capability_provider),
+            LangGraphAgentRuntime(model, capability_provider=effective_capability_provider),
             conversation_store,
         )
         if model is not None and conversation_store is not None
@@ -101,7 +114,7 @@ def create_app(
         return MediPetAssistant(
             LangGraphAgentRuntime(
                 model_factory(settings.model),
-                capability_provider=capability_provider,
+                capability_provider=effective_capability_provider,
                 max_steps=settings.max_steps,
                 profile_version=snapshot.fingerprint,
             ),
@@ -113,6 +126,9 @@ def create_app(
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    if environment.strip().lower() != "production" and skill_registry is not None:
+        app.include_router(management_router(skill_registry, management_token))
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
@@ -241,8 +257,19 @@ def _store_from_environment() -> PostgresVisitConversationStore | None:
         return None
 
 
+def _skill_registry_from_environment() -> PostgresSkillRegistry | None:
+    try:
+        return PostgresSkillRegistry.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+    except DatabaseConfigurationError:
+        return None
+
+
 app = create_app(
     runtime_config=runtime_config_from_startup_environment(os.environ),
     conversation_store=_store_from_environment(),
     close_conversation_store=True,
+    skill_registry=_skill_registry_from_environment(),
+    close_skill_registry=True,
+    management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
+    environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),
 )

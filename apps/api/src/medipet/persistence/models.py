@@ -4,6 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -136,3 +137,49 @@ class ConversationMessageRecord(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+
+
+class SkillRecord(Base):
+    __tablename__ = "skills"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    slug: Mapped[str] = mapped_column(String(128), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SkillVersionRecord(Base):
+    __tablename__ = "skill_versions"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('draft', 'in_review', 'published', 'retired')",
+            name="status",
+        ),
+        UniqueConstraint("skill_id", "version", name="skill_version"),
+    )
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    skill_id: Mapped[str] = mapped_column(
+        String(128), ForeignKey("skills.id", ondelete="CASCADE"), index=True
+    )
+    version: Mapped[int] = mapped_column(BigInteger)
+    name: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str] = mapped_column(Text)
+    instructions: Mapped[str] = mapped_column(Text)
+    change_note: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(16))
+    active: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SkillAuditRecord(Base):
+    __tablename__ = "skill_audits"
+    __table_args__ = (Index("ix_skill_audits_skill_created", "skill_id", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    action: Mapped[str] = mapped_column(String(64))
+    skill_id: Mapped[str] = mapped_column(String(128), ForeignKey("skills.id", ondelete="CASCADE"))
+    version: Mapped[int] = mapped_column(BigInteger)
+    actor: Mapped[str] = mapped_column(String(128))
+    visit_matter_id: Mapped[str | None] = mapped_column(String(128))
+    turn_id: Mapped[str | None] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
