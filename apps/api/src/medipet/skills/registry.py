@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, datetime
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 from uuid import uuid4
 
 from medipet.agent.capabilities import SkillDefinition, ToolContext
@@ -15,6 +15,9 @@ from medipet.skills.archive import (
     static_publish_blockers,
     validate_skill_content,
 )
+
+if TYPE_CHECKING:
+    from medipet.tools.registry import ToolRegistry
 
 SkillStatus = Literal["draft", "in_review", "published", "retired", "quarantined"]
 LifecycleAction = Literal["submit_review", "publish", "retire", "activate"]
@@ -93,6 +96,7 @@ class SkillRegistry(Protocol):
         description: str,
         instructions: str,
         change_note: str,
+        skill_type: Literal["instruction-only", "tool-assisted"] = "instruction-only",
         actor: str,
     ) -> SkillVersion: ...
 
@@ -128,9 +132,10 @@ class SkillRegistry(Protocol):
 
 
 class InMemorySkillRegistry:
-    def __init__(self) -> None:
+    def __init__(self, *, tool_registry: ToolRegistry | None = None) -> None:
         self._versions: dict[str, list[SkillVersion]] = {}
         self._audits: list[SkillAudit] = []
+        self._tool_registry = tool_registry
 
     async def list_skills(self) -> list[dict[str, object]]:
         return [
@@ -152,6 +157,7 @@ class InMemorySkillRegistry:
         description: str,
         instructions: str,
         change_note: str,
+        skill_type: Literal["instruction-only", "tool-assisted"] = "instruction-only",
         actor: str,
     ) -> SkillVersion:
         normalized_slug = validate_skill_slug(slug)
@@ -167,6 +173,7 @@ class InMemorySkillRegistry:
             "change_note": normalized_change_note,
             "risk_level": "standard",
             "required_approvals": 0,
+            "skill_type": skill_type,
         }
         validate_skill_content(
             slug=normalized_slug,
@@ -227,9 +234,7 @@ class InMemorySkillRegistry:
             created_at=datetime.now(UTC),
             resources=source.resources,
             governance=governance,
-            publish_blockers=publish_blockers_for(
-                normalized_instructions, source.resources
-            ),
+            publish_blockers=publish_blockers_for(normalized_instructions, source.resources),
         )
         versions.append(version)
         self._audit("edit", version, actor)
@@ -255,6 +260,15 @@ class InMemorySkillRegistry:
             reasons = "；".join(current.publish_blockers)
             self._audit("reject_publish", current, actor)
             raise SkillTransitionError(f"Skill 未通过静态发布检查：{reasons}")
+        if action == "publish" and current.governance.get("skill_type") == "tool-assisted":
+            if self._tool_registry is None:
+                self._audit("reject_publish", current, actor)
+                raise SkillTransitionError("tool-assisted Skill requires a Tool binding")
+            try:
+                await self._tool_registry.validate_bindings(skill_id, version)
+            except ValueError as error:
+                self._audit("reject_publish", current, actor)
+                raise SkillTransitionError(str(error)) from error
         target_status, active = transition_target(current.status, action)
         if action in {"publish", "activate"}:
             self._deactivate_other_versions(versions, version, actor)
@@ -299,9 +313,7 @@ class InMemorySkillRegistry:
             self._audit("quarantine", version, actor)
         return version
 
-    async def export_package(
-        self, skill_id: str, version: int, *, actor: str
-    ) -> tuple[str, bytes]:
+    async def export_package(self, skill_id: str, version: int, *, actor: str) -> tuple[str, bytes]:
         versions = self._require_skill(skill_id)
         selected = next((item for item in versions if item.version == version), None)
         if selected is None:
@@ -336,6 +348,7 @@ class InMemorySkillRegistry:
 
             definitions.append(
                 SkillDefinition(
+                    skill_id=version.skill_id,
                     slug=version.slug,
                     version=version.version,
                     name=version.name,

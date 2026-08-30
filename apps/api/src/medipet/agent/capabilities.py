@@ -11,10 +11,13 @@ class ToolContext:
     participant_id: str = ""
     idempotency_key: str = ""
     profile_version: str = "static"
+    diagnosis_stage: str = "pre_visit"
 
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]
 ToolAuthorizer = Callable[[ToolContext], bool]
+ToolRejectionRecorder = Callable[[ToolContext], Awaitable[None]]
+ToolAvailabilityValidator = Callable[[ToolContext], Awaitable[bool]]
 SkillInstructionLoader = Callable[[], Awaitable[str]]
 
 
@@ -30,13 +33,19 @@ class ToolDefinition:
     input_schema: Mapping[str, object]
     effect: Literal["read", "write"]
     execute: ToolExecutor
+    tool_id: str = ""
+    output_schema: Mapping[str, object] | None = None
+    approval_required: bool = False
     enabled: bool = True
     bound: bool = True
     authorize: ToolAuthorizer = _allow
+    record_rejection: ToolRejectionRecorder | None = None
+    revalidate: ToolAvailabilityValidator | None = None
 
 
 @dataclass(frozen=True)
 class SkillDefinition:
+    skill_id: str
     slug: str
     version: int
     name: str

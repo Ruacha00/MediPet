@@ -43,6 +43,9 @@ from medipet.skills.capabilities import RegistryCapabilityProvider
 from medipet.skills.http import management_router
 from medipet.skills.postgres import PostgresSkillRegistry
 from medipet.skills.registry import SkillRegistry
+from medipet.tools.http import tool_management_router
+from medipet.tools.postgres import PostgresToolRegistry
+from medipet.tools.registry import ToolProvider, ToolRegistry
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
 DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
@@ -60,12 +63,17 @@ def create_app(
     close_skill_registry: bool = False,
     management_token: str | None = None,
     environment: str = "development",
+    tool_registry: ToolRegistry | None = None,
+    tool_provider: ToolProvider | None = None,
+    close_tool_registry: bool = False,
 ) -> FastAPI:
     if model is not None and runtime_config is not None:
         raise ValueError("model and runtime_config cannot both be provided")
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
+        if tool_provider is not None and tool_registry is not None:
+            await tool_registry.synchronize(await tool_provider.tools(), actor="deployment")
         yield
         if close_conversation_store and isinstance(
             conversation_store,
@@ -74,6 +82,8 @@ def create_app(
             await conversation_store.close()
         if close_skill_registry and isinstance(skill_registry, PostgresSkillRegistry):
             await skill_registry.close()
+        if close_tool_registry and isinstance(tool_registry, PostgresToolRegistry):
+            await tool_registry.close()
 
     app = FastAPI(title="MediPet", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
@@ -84,7 +94,9 @@ def create_app(
         allow_headers=["*"],
     )
     effective_capability_provider = capability_provider or (
-        RegistryCapabilityProvider(skill_registry) if skill_registry is not None else None
+        RegistryCapabilityProvider(skill_registry, tool_registry)
+        if skill_registry is not None
+        else None
     )
     static_assistant = (
         MediPetAssistant(
@@ -129,6 +141,8 @@ def create_app(
 
     if environment.strip().lower() != "production" and skill_registry is not None:
         app.include_router(management_router(skill_registry, management_token))
+    if environment.strip().lower() != "production" and tool_registry is not None:
+        app.include_router(tool_management_router(tool_registry, management_token))
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
@@ -257,9 +271,21 @@ def _store_from_environment() -> PostgresVisitConversationStore | None:
         return None
 
 
+def _tool_registry_from_environment() -> PostgresToolRegistry | None:
+    try:
+        return PostgresToolRegistry.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+    except DatabaseConfigurationError:
+        return None
+
+
+_tool_registry = _tool_registry_from_environment()
+
+
 def _skill_registry_from_environment() -> PostgresSkillRegistry | None:
     try:
-        return PostgresSkillRegistry.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+        return PostgresSkillRegistry.from_url(
+            os.getenv("MEDIPET_DATABASE_URL", ""), tool_registry=_tool_registry
+        )
     except DatabaseConfigurationError:
         return None
 
@@ -270,6 +296,8 @@ app = create_app(
     close_conversation_store=True,
     skill_registry=_skill_registry_from_environment(),
     close_skill_registry=True,
+    tool_registry=_tool_registry,
+    close_tool_registry=True,
     management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
     environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),
 )

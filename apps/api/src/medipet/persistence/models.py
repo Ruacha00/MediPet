@@ -204,3 +204,60 @@ class SkillAuditRecord(Base):
     visit_matter_id: Mapped[str | None] = mapped_column(String(128))
     turn_id: Mapped[str | None] = mapped_column(String(128))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ToolRecord(Base):
+    __tablename__ = "tools"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ToolVersionRecord(Base):
+    __tablename__ = "tool_versions"
+    __table_args__ = (UniqueConstraint("tool_id", "version", name="tool_version"),)
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    tool_id: Mapped[str] = mapped_column(
+        String(128), ForeignKey("tools.id", ondelete="CASCADE"), index=True
+    )
+    version: Mapped[str] = mapped_column(String(64))
+    name: Mapped[str] = mapped_column(String(128))
+    description: Mapped[str] = mapped_column(Text)
+    input_schema: Mapped[dict[str, object]] = mapped_column(JSON)
+    output_schema: Mapped[dict[str, object]] = mapped_column(JSON)
+    effect: Mapped[str] = mapped_column(String(8))
+    allowed_stages: Mapped[list[str]] = mapped_column(JSON, default=list)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    available: Mapped[bool] = mapped_column(Boolean, default=True)
+    approval_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ToolBindingRecord(Base):
+    __tablename__ = "tool_bindings"
+    __table_args__ = (
+        UniqueConstraint(
+            "skill_id", "skill_version", "tool_id", "tool_version", name="skill_tool_binding"
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    skill_id: Mapped[str] = mapped_column(String(128))
+    skill_version: Mapped[int] = mapped_column(BigInteger)
+    tool_id: Mapped[str] = mapped_column(String(128))
+    tool_version: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ToolAuditRecord(Base):
+    __tablename__ = "tool_audits"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    action: Mapped[str] = mapped_column(String(64))
+    actor: Mapped[str] = mapped_column(String(128))
+    tool_id: Mapped[str | None] = mapped_column(String(128))
+    version: Mapped[str | None] = mapped_column(String(64))
+    visit_matter_id: Mapped[str | None] = mapped_column(String(128))
+    turn_id: Mapped[str | None] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

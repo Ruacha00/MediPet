@@ -89,8 +89,7 @@ class LangGraphAgentRuntime:
             if pinned_skills:
                 skills_by_slug = {skill.slug: skill for skill in pinned_skills}
                 skill_catalog = "\n".join(
-                    f"- {skill.slug}: {skill.name} — {skill.description}"
-                    for skill in pinned_skills
+                    f"- {skill.slug}: {skill.name} — {skill.description}" for skill in pinned_skills
                 )
 
                 async def load_skill(
@@ -110,8 +109,7 @@ class LangGraphAgentRuntime:
                         name="load_skill",
                         version="platform-1",
                         description=(
-                            "根据名称和描述选择已发布 Skill，再按需加载完整指令：\n"
-                            f"{skill_catalog}"
+                            f"根据名称和描述选择已发布 Skill，再按需加载完整指令：\n{skill_catalog}"
                         ),
                         input_schema={
                             "type": "object",
@@ -132,7 +130,11 @@ class LangGraphAgentRuntime:
                 skill_versions=tuple(source_capabilities.skill_versions),
                 skills=pinned_skills,
                 tools=tuple(
-                    replace(tool, input_schema=deepcopy(tool.input_schema))
+                    replace(
+                        tool,
+                        input_schema=deepcopy(tool.input_schema),
+                        output_schema=deepcopy(tool.output_schema),
+                    )
                     for tool in (*source_capabilities.tools, *platform_tools)
                 ),
             )
@@ -232,8 +234,18 @@ def _build_react_graph(model: ModelPort, *, max_steps: int):
                 tool,
                 call.arguments,
                 state["available_tool_names"],
+                state["context"],
             )
+            if (
+                rejection is None
+                and tool is not None
+                and tool.revalidate is not None
+                and not await tool.revalidate(state["context"])
+            ):
+                rejection = "unavailable"
             if rejection is not None:
+                if tool is not None and tool.record_rejection is not None:
+                    await tool.record_rejection(state["context"])
                 signature = _call_signature(call)
                 if correction_used or signature in invalid_signatures:
                     writer({"kind": "failed", "data": {"message": LOOP_FAILURE}})
@@ -253,6 +265,11 @@ def _build_react_graph(model: ModelPort, *, max_steps: int):
             writer({"kind": "status", "data": {"label": "正在查询可用信息"}})
             try:
                 observation = await tool.execute(call.arguments, state["context"])
+                if (
+                    tool.output_schema is not None
+                    and _validate_arguments(observation, tool.output_schema) is not None
+                ):
+                    raise ValueError("Tool output did not match its declared Schema")
                 observation_json = json.dumps(
                     observation,
                     ensure_ascii=False,
@@ -297,11 +314,14 @@ def _rejection_reason(
     tool: ToolDefinition | None,
     arguments: dict[str, object],
     available_tool_names: tuple[str, ...],
+    context: ToolContext,
 ) -> str | None:
     if tool is None:
         return "unknown"
     if tool.name not in available_tool_names:
         return "unavailable"
+    if not tool.enabled or not tool.bound or not tool.authorize(context):
+        return "unauthorized"
     return _validate_arguments(arguments, tool.input_schema)
 
 

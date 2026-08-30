@@ -20,6 +20,9 @@ from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
 )
+from medipet.skills.capabilities import RegistryCapabilityProvider
+from medipet.skills.registry import InMemorySkillRegistry
+from medipet.tools.registry import InMemoryToolRegistry, TrustedTool
 
 
 class ScriptedModel(ModelPort):
@@ -54,8 +57,7 @@ async def _assistant(
     runtime = LangGraphAgentRuntime(
         model,
         capability_provider=(
-            capability_provider
-            or StaticCapabilityProvider(snapshot or CapabilitySnapshot.empty())
+            capability_provider or StaticCapabilityProvider(snapshot or CapabilitySnapshot.empty())
         ),
         max_steps=max_steps,
         profile_version="profile-1",
@@ -143,9 +145,7 @@ async def test_tool_snapshot_is_pinned_for_the_entire_turn() -> None:
     used_versions: list[str] = []
 
     def versioned_tool(version: str) -> ToolDefinition:
-        async def execute(
-            arguments: dict[str, object], context: ToolContext
-        ) -> dict[str, object]:
+        async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
             del arguments, context
             used_versions.append(version)
             return {"version": version}
@@ -281,13 +281,7 @@ async def test_invalid_tool_arguments_are_rejected_before_execution() -> None:
     )
     model = ScriptedModel(
         [
-            [
-                ModelChunk(
-                    tool_calls=(
-                        ModelToolCall("call-1", "dummy_read", {"query": 42}),
-                    )
-                )
-            ],
+            [ModelChunk(tool_calls=(ModelToolCall("call-1", "dummy_read", {"query": 42}),))],
             [ModelChunk(text="安全回答")],
         ]
     )
@@ -313,9 +307,7 @@ async def test_model_call_budget_terminates_a_tool_loop() -> None:
         effect="read",
         execute=execute,
     )
-    model = ScriptedModel(
-        [[ModelChunk(tool_calls=(ModelToolCall("call-1", "dummy_read", {}),))]]
-    )
+    model = ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-1", "dummy_read", {}),))]])
     assistant, store = await _assistant(
         model,
         CapabilitySnapshot(tools=(tool,)),
@@ -388,3 +380,70 @@ async def test_capability_snapshot_failure_becomes_a_safe_terminal_event() -> No
     assert model.requests == []
     persisted = await store.list_messages("visit-1")
     assert persisted[-1].state == "failed"
+
+
+@pytest.mark.asyncio
+async def test_synced_bound_tool_runs_through_the_complete_react_path_and_is_audited() -> None:
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        del context
+        return {"value": arguments["query"]}
+
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await tools.synchronize(
+        (
+            TrustedTool(
+                tool_id="test.lookup",
+                version="1",
+                name="test_lookup",
+                description="Test-only lookup",
+                input_schema={
+                    "type": "object",
+                    "properties": {"query": {"type": "string"}},
+                    "required": ["query"],
+                    "additionalProperties": False,
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {"value": {"type": "string"}},
+                    "required": ["value"],
+                    "additionalProperties": False,
+                },
+                effect="read",
+                approval_required=False,
+                execute=execute,
+            ),
+        ),
+        actor="deployment",
+    )
+    await tools.configure("test.lookup", "1", enabled=True, approval_required=False, actor="admin")
+    skill = await skills.create_skill(
+        slug="lookup-helper",
+        name="Lookup helper",
+        description="Uses lookup",
+        instructions="Use the lookup Tool.",
+        change_note="Initial",
+        skill_type="tool-assisted",
+        actor="admin",
+    )
+    await tools.bind(skill.skill_id, 1, "test.lookup", "1", actor="admin")
+    await skills.transition(skill.skill_id, 1, "submit_review", actor="admin")
+    await skills.transition(skill.skill_id, 1, "publish", actor="admin")
+    model = ScriptedModel(
+        [
+            [ModelChunk(tool_calls=(ModelToolCall("call-1", "test_lookup", {"query": "result"}),))],
+            [ModelChunk(text="Done")],
+        ]
+    )
+    assistant, _ = await _assistant(
+        model, capability_provider=RegistryCapabilityProvider(skills, tools)
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+    audits = await tools.list_audits()
+
+    assert events[-1].kind == "completed"
+    assert json.loads(model.requests[1].messages[-1].content) == {"value": "result"}
+    invocation = next(audit for audit in audits if audit.action == "invoke")
+    assert invocation.visit_matter_id == "visit-1"
+    assert invocation.turn_id == "turn-1"

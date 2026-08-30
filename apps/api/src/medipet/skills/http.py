@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import secrets
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from medipet.skills.archive import SkillArchiveError
 from medipet.skills.registry import (
@@ -22,11 +23,14 @@ LIFECYCLE_ACTIONS: tuple[LifecycleAction, ...] = (
 
 
 class CreateSkillRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     slug: str
     name: str
     description: str
     instructions: str
     change_note: str
+    skill_type: Literal["instruction-only", "tool-assisted"] = "instruction-only"
 
 
 class EditSkillRequest(BaseModel):
@@ -55,9 +59,7 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
     @router.post("/skills", status_code=201, dependencies=protected)
     async def create_skill(request: CreateSkillRequest) -> dict[str, object]:
         try:
-            version = await registry.create_skill(
-                **request.model_dump(), actor="development-admin"
-            )
+            version = await registry.create_skill(**request.model_dump(), actor="development-admin")
         except (SkillArchiveError, SkillRegistryError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         return version.to_dict()
@@ -69,9 +71,7 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
             await registry.record_rejection("reject_import", actor="development-admin")
             raise HTTPException(status_code=415, detail="Skill 导入仅接受 application/zip")
         try:
-            version = await registry.import_package(
-                await request.body(), actor="development-admin"
-            )
+            version = await registry.import_package(await request.body(), actor="development-admin")
         except (SkillArchiveError, SkillRegistryError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         return version.to_dict()

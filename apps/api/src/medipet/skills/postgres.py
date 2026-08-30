@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Sequence
-from typing import cast
+from typing import TYPE_CHECKING, Literal, cast
 from uuid import uuid4
 
 from sqlalchemy import select
@@ -43,15 +43,24 @@ from medipet.skills.registry import (
     validate_skill_slug,
 )
 
+if TYPE_CHECKING:
+    from medipet.tools.registry import ToolRegistry
+
 
 class PostgresSkillRegistry:
-    def __init__(self, engine: AsyncEngine) -> None:
+    def __init__(self, engine: AsyncEngine, *, tool_registry: ToolRegistry | None = None) -> None:
         self._engine = engine
         self._sessions = async_sessionmaker(engine, expire_on_commit=False)
+        self._tool_registry = tool_registry
 
     @classmethod
-    def from_url(cls, url: str) -> PostgresSkillRegistry:
-        return cls(create_async_engine(postgres_async_url(url), pool_pre_ping=True))
+    def from_url(
+        cls, url: str, *, tool_registry: ToolRegistry | None = None
+    ) -> PostgresSkillRegistry:
+        return cls(
+            create_async_engine(postgres_async_url(url), pool_pre_ping=True),
+            tool_registry=tool_registry,
+        )
 
     async def close(self) -> None:
         await self._engine.dispose()
@@ -100,6 +109,7 @@ class PostgresSkillRegistry:
         description: str,
         instructions: str,
         change_note: str,
+        skill_type: Literal["instruction-only", "tool-assisted"] = "instruction-only",
         actor: str,
     ) -> SkillVersion:
         normalized_slug = validate_skill_slug(slug)
@@ -113,6 +123,7 @@ class PostgresSkillRegistry:
             "change_note": normalized_change_note,
             "risk_level": "standard",
             "required_approvals": 0,
+            "skill_type": skill_type,
         }
         validate_skill_content(
             slug=normalized_slug,
@@ -254,13 +265,25 @@ class PostgresSkillRegistry:
                 raise SkillNotFoundError("Skill 版本不存在")
             if record.status == "quarantined":
                 self._add_audit(session, "reject_transition", record, actor)
-                return_error = SkillTransitionError(
-                    "隔离的 Skill 版本不能进入审核或发布流程"
-                )
+                return_error = SkillTransitionError("隔离的 Skill 版本不能进入审核或发布流程")
             elif action == "publish" and record.publish_blockers:
                 self._add_audit(session, "reject_publish", record, actor)
                 reasons = "；".join(record.publish_blockers)
                 return_error = SkillTransitionError(f"Skill 未通过静态发布检查：{reasons}")
+            elif action == "publish" and record.governance.get("skill_type") == "tool-assisted":
+                if self._tool_registry is None:
+                    self._add_audit(session, "reject_publish", record, actor)
+                    return_error = SkillTransitionError(
+                        "tool-assisted Skill requires a Tool binding"
+                    )
+                else:
+                    try:
+                        await self._tool_registry.validate_bindings(skill_id, version)
+                    except ValueError as error:
+                        self._add_audit(session, "reject_publish", record, actor)
+                        return_error = SkillTransitionError(str(error))
+                    else:
+                        return_error = None
             else:
                 return_error = None
             if return_error is None:
@@ -308,9 +331,7 @@ class PostgresSkillRegistry:
             else:
                 duplicate = False
                 skill = SkillRecord(id=f"skill-{uuid4().hex}", slug=normalized_slug)
-                status: SkillStatus = (
-                    "quarantined" if package.quarantine_reasons else "draft"
-                )
+                status: SkillStatus = "quarantined" if package.quarantine_reasons else "draft"
                 record = SkillVersionRecord(
                     id=f"skill-version-{uuid4().hex}",
                     skill_id=skill.id,
@@ -348,9 +369,7 @@ class PostgresSkillRegistry:
         skill, record, resource_records = created
         return self._to_version(skill, record, resource_records)
 
-    async def export_package(
-        self, skill_id: str, version: int, *, actor: str
-    ) -> tuple[str, bytes]:
+    async def export_package(self, skill_id: str, version: int, *, actor: str) -> tuple[str, bytes]:
         async with self._sessions.begin() as session:
             skill = await self._require_skill(session, skill_id)
             record = await session.scalar(
@@ -414,6 +433,7 @@ class PostgresSkillRegistry:
 
                 definitions.append(
                     SkillDefinition(
+                        skill_id=skill_id,
                         slug=slug,
                         version=version,
                         name=name,

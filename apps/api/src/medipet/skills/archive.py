@@ -152,6 +152,7 @@ def parse_skill_archive(payload: bytes) -> ParsedSkillPackage:
         "change_note": change_note,
         "risk_level": metadata.get("risk_level", "standard"),
         "required_approvals": metadata.get("required_approvals", 0),
+        "skill_type": metadata.get("skill_type", "instruction-only"),
     }
     _validate_governance(governance)
 
@@ -165,12 +166,8 @@ def parse_skill_archive(payload: bytes) -> ParsedSkillPackage:
                 document = json.loads(resource.content)
             except json.JSONDecodeError as error:
                 kind = "Schema" if resource.media_type == "application/schema+json" else "JSON"
-                raise SkillArchiveError(
-                    f"Skill {kind} 不是有效的 JSON：{resource.path}"
-                ) from error
-            if resource.media_type == "application/schema+json" and not isinstance(
-                document, dict
-            ):
+                raise SkillArchiveError(f"Skill {kind} 不是有效的 JSON：{resource.path}") from error
+            if resource.media_type == "application/schema+json" and not isinstance(document, dict):
                 raise SkillArchiveError(f"Skill Schema 必须是 JSON 对象：{resource.path}")
     text_files = {"SKILL.md": instructions}
     text_files.update(
@@ -202,9 +199,7 @@ def export_skill_archive(
     resources: tuple[SkillResource, ...],
 ) -> bytes:
     manifest = _manifest_content(slug, description, instructions).encode()
-    metadata = json.dumps(
-        governance, ensure_ascii=False, indent=2, sort_keys=True
-    ).encode()
+    metadata = json.dumps(governance, ensure_ascii=False, indent=2, sort_keys=True).encode()
     validate_exportable_skill(manifest, metadata, resources)
     package = io.BytesIO()
     with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -343,9 +338,7 @@ def _parse_manifest(manifest: str) -> tuple[str, str, str]:
         if separator and key.strip() in {"name", "description"}:
             normalized_key = key.strip()
             if normalized_key in metadata:
-                raise SkillArchiveError(
-                    f"SKILL.md frontmatter 包含重复字段：{normalized_key}"
-                )
+                raise SkillArchiveError(f"SKILL.md frontmatter 包含重复字段：{normalized_key}")
             metadata[normalized_key] = _plain_yaml_string(value.strip())
     slug = metadata.get("name", "").strip()
     description = metadata.get("description", "").strip()
@@ -385,6 +378,7 @@ def _parse_metadata(content: bytes) -> dict[str, Any]:
         "change_note",
         "risk_level",
         "required_approvals",
+        "skill_type",
     }
     unknown = sorted(set(metadata) - allowed)
     if unknown:
@@ -407,6 +401,11 @@ def _validate_governance(governance: dict[str, object]) -> None:
     approvals = governance["required_approvals"]
     if not isinstance(approvals, int) or isinstance(approvals, bool) or not 0 <= approvals <= 2:
         raise SkillArchiveError("medipet.json 的 required_approvals 无效")
+    if governance.get("skill_type", "instruction-only") not in {
+        "instruction-only",
+        "tool-assisted",
+    }:
+        raise SkillArchiveError("medipet.json 的 skill_type 无效")
 
 
 def _write_file(
@@ -420,7 +419,4 @@ def _write_file(
 
 def _manifest_content(slug: str, description: str, instructions: str) -> str:
     quoted_description = json.dumps(description, ensure_ascii=False)
-    return (
-        f"---\nname: {slug}\ndescription: {quoted_description}\n---\n\n"
-        f"{instructions.rstrip()}\n"
-    )
+    return f"---\nname: {slug}\ndescription: {quoted_description}\n---\n\n{instructions.rstrip()}\n"
