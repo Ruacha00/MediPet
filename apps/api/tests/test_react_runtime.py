@@ -11,6 +11,7 @@ from medipet.agent.capabilities import (
     StaticCapabilityProvider,
     ToolContext,
     ToolDefinition,
+    VisitStage,
 )
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
@@ -42,6 +43,7 @@ async def _assistant(
     *,
     capability_provider: CapabilityProvider | None = None,
     max_steps: int = 8,
+    visit_stage: VisitStage = "pre_visit",
 ) -> tuple[MediPetAssistant, InMemoryVisitConversationStore]:
     store = InMemoryVisitConversationStore()
     await store.seed_development_visit_matter(
@@ -52,6 +54,7 @@ async def _assistant(
             participant_display_name="患者本人",
             visit_matter_id="visit-1",
             visit_matter_title="初次咨询",
+            visit_stage=visit_stage,
         )
     )
     runtime = LangGraphAgentRuntime(
@@ -412,6 +415,7 @@ async def test_synced_bound_tool_runs_through_the_complete_react_path_and_is_aud
                 effect="read",
                 approval_required=False,
                 execute=execute,
+                allowed_stages=("in_visit",),
             ),
         ),
         actor="deployment",
@@ -436,7 +440,9 @@ async def test_synced_bound_tool_runs_through_the_complete_react_path_and_is_aud
         ]
     )
     assistant, _ = await _assistant(
-        model, capability_provider=RegistryCapabilityProvider(skills, tools)
+        model,
+        capability_provider=RegistryCapabilityProvider(skills, tools),
+        visit_stage="in_visit",
     )
 
     events = [event async for event in assistant.handle_turn(_turn())]

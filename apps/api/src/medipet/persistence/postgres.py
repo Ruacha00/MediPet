@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from medipet.agent.capabilities import VisitStage
 from medipet.persistence.conversation import (
     AssistantMessageTargetState,
     DevelopmentVisitMatter,
@@ -73,6 +74,15 @@ class PostgresVisitConversationStore:
         async with self._sessions() as session:
             await self._require_visit_matter(session, visit_matter_id, participant_id)
 
+    async def visit_stage(
+        self, visit_matter_id: str, participant_id: str
+    ) -> VisitStage:
+        async with self._sessions() as session:
+            visit_matter = await self._require_visit_matter(
+                session, visit_matter_id, participant_id
+            )
+            return cast(VisitStage, visit_matter.visit_stage)
+
     async def seed_development_visit_matter(
         self,
         visit_matter: DevelopmentVisitMatter,
@@ -101,6 +111,7 @@ class PostgresVisitConversationStore:
                     "patient_id": visit_matter.patient_id,
                     "participant_id": visit_matter.participant_id,
                     "title": visit_matter.visit_matter_title,
+                    "visit_stage": visit_matter.visit_stage,
                 },
             )
 
@@ -279,15 +290,16 @@ class PostgresVisitConversationStore:
         session: AsyncSession,
         visit_matter_id: str,
         participant_id: str,
-    ) -> None:
-        exists = await session.scalar(
-            select(VisitMatterRecord.id).where(
+    ) -> VisitMatterRecord:
+        visit_matter = await session.scalar(
+            select(VisitMatterRecord).where(
                 VisitMatterRecord.id == visit_matter_id,
                 VisitMatterRecord.participant_id == participant_id,
             )
         )
-        if exists is None:
+        if visit_matter is None:
             raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
+        return visit_matter
 
     @staticmethod
     async def _seed_record(

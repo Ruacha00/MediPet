@@ -113,6 +113,9 @@ class MediPetAssistant:
                 command.visit_matter_id,
                 limit=self._context_message_limit,
             )
+            visit_stage = await self._conversation_store.visit_stage(
+                command.visit_matter_id, command.participant_id
+            )
             request = AgentRequest(
                 messages=tuple(
                     ModelMessage(
@@ -125,6 +128,7 @@ class MediPetAssistant:
                     visit_matter_id=command.visit_matter_id,
                     participant_id=command.participant_id,
                     idempotency_key=command.idempotency_key,
+                    visit_stage=visit_stage,
                 ),
             )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:

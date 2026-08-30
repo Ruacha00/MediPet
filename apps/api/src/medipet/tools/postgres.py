@@ -28,7 +28,7 @@ from medipet.tools.registry import (
     ToolRegistryError,
     ToolVersion,
     TrustedTool,
-    _validate_trusted_tool,
+    _validate_provider_tools,
 )
 
 
@@ -53,18 +53,24 @@ class PostgresToolRegistry:
         await self._engine.dispose()
 
     async def synchronize(self, tools: tuple[TrustedTool, ...], *, actor: str) -> None:
+        try:
+            _validate_provider_tools(tools)
+        except ToolRegistryError as error:
+            rejected = tools[0] if tools else None
+            await self._record_audit(
+                "reject_sync",
+                actor,
+                rejected.tool_id if rejected else "",
+                rejected.version if rejected else "",
+            )
+            raise error
         supplied: set[tuple[str, str]] = set()
         try:
             async with self._sessions.begin() as session:
                 existing = (await session.scalars(select(ToolVersionRecord))).all()
                 by_key = {(item.tool_id, item.version): item for item in existing}
                 for tool in tools:
-                    _validate_trusted_tool(tool)
                     key = (tool.tool_id, tool.version)
-                    if key in supplied:
-                        raise _SyncRejected(
-                            "ToolProvider returned duplicate Tool contracts", *key
-                        )
                     supplied.add(key)
                     record = by_key.get(key)
                     if record is not None:

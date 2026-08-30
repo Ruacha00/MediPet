@@ -12,6 +12,15 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
+    op.add_column(
+        "visit_matters",
+        sa.Column(
+            "visit_stage",
+            sa.String(16),
+            server_default="pre_visit",
+            nullable=False,
+        ),
+    )
     op.create_table(
         "tools",
         sa.Column("id", sa.String(128), primary_key=True),
@@ -71,3 +80,4 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_tool_versions_tool_id"), table_name="tool_versions")
     op.drop_table("tool_versions")
     op.drop_table("tools")
+    op.drop_column("visit_matters", "visit_stage")

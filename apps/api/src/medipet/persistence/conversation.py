@@ -6,6 +6,8 @@ from datetime import UTC, datetime
 from typing import Literal, Protocol
 from uuid import uuid4
 
+from medipet.agent.capabilities import VisitStage
+
 MessageRole = Literal["participant", "assistant"]
 MessageState = Literal["pending", "streaming", "completed", "failed", "cancelled"]
 TerminalMessageState = Literal["completed", "failed", "cancelled"]
@@ -52,6 +54,7 @@ class DevelopmentVisitMatter:
     participant_display_name: str
     visit_matter_id: str
     visit_matter_title: str
+    visit_stage: VisitStage = "pre_visit"
 
 
 @dataclass(frozen=True)
@@ -83,6 +86,10 @@ class VisitConversationStore(Protocol):
         visit_matter_id: str,
         participant_id: str,
     ) -> None: ...
+
+    async def visit_stage(
+        self, visit_matter_id: str, participant_id: str
+    ) -> VisitStage: ...
 
     async def seed_development_visit_matter(
         self,
@@ -140,6 +147,13 @@ class InMemoryVisitConversationStore:
     ) -> None:
         async with self._lock:
             self._require_participant(visit_matter_id, participant_id)
+
+    async def visit_stage(
+        self, visit_matter_id: str, participant_id: str
+    ) -> VisitStage:
+        async with self._lock:
+            self._require_participant(visit_matter_id, participant_id)
+            return self._visit_matters[visit_matter_id].visit_stage
 
     async def seed_development_visit_matter(
         self,

@@ -125,16 +125,21 @@ class InMemoryToolRegistry:
         self._frozen_bindings: set[tuple[str, int]] = set()
 
     async def synchronize(self, tools: tuple[TrustedTool, ...], *, actor: str) -> None:
+        try:
+            _validate_provider_tools(tools)
+        except ToolRegistryError:
+            rejected = tools[0] if tools else None
+            self._audit(
+                "reject_sync",
+                actor,
+                rejected.tool_id if rejected else "",
+                rejected.version if rejected else "",
+            )
+            raise
         supplied: set[tuple[str, str]] = set()
-        names: set[str] = set()
         for tool in tools:
-            _validate_trusted_tool(tool)
             key = (tool.tool_id, tool.version)
-            if key in supplied or tool.name in names:
-                self._audit("reject_sync", actor, tool.tool_id, tool.version)
-                raise ToolRegistryError("ToolProvider returned duplicate Tool contracts")
             supplied.add(key)
-            names.add(tool.name)
             versions = self._versions.setdefault(tool.tool_id, [])
             existing_index = next(
                 (index for index, item in enumerate(versions) if item.tool.version == tool.version),
@@ -389,3 +394,15 @@ def _validate_trusted_tool(tool: TrustedTool) -> None:
         raise ToolRegistryError("Tool output Schema must describe an object")
     if tool.effect == "write" and not tool.approval_required:
         raise ToolRegistryError("Write Tools must require approval")
+
+
+def _validate_provider_tools(tools: tuple[TrustedTool, ...]) -> None:
+    identities: set[tuple[str, str]] = set()
+    names: set[str] = set()
+    for tool in tools:
+        _validate_trusted_tool(tool)
+        identity = (tool.tool_id, tool.version)
+        if identity in identities or tool.name in names:
+            raise ToolRegistryError("ToolProvider returned duplicate Tool contracts")
+        identities.add(identity)
+        names.add(tool.name)
