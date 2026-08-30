@@ -263,3 +263,69 @@ class ToolAuditRecord(Base):
     visit_matter_id: Mapped[str | None] = mapped_column(String(128))
     turn_id: Mapped[str | None] = mapped_column(String(128))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ActionProposalRecord(Base):
+    __tablename__ = "action_proposals"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ("visit_matter_id", "participant_id"),
+            ("visit_matters.id", "visit_matters.participant_id"),
+            name="fk_action_proposals_visit_participant",
+            ondelete="CASCADE",
+        ),
+        UniqueConstraint(
+            "visit_matter_id",
+            "participant_id",
+            "request_key",
+            name="action_proposal_request",
+        ),
+        CheckConstraint(
+            "status IN ('pending', 'confirmed', 'rejected', 'expired')",
+            name="status",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    visit_matter_id: Mapped[str] = mapped_column(String(128))
+    participant_id: Mapped[str] = mapped_column(String(128))
+    request_key: Mapped[str] = mapped_column(String(128))
+    idempotency_key: Mapped[str] = mapped_column(String(160), unique=True)
+    tool_id: Mapped[str] = mapped_column(String(128))
+    tool_name: Mapped[str] = mapped_column(String(128))
+    tool_version: Mapped[str] = mapped_column(String(64))
+    arguments: Mapped[dict[str, object]] = mapped_column(JSON)
+    status: Mapped[str] = mapped_column(String(16))
+    receipt_id: Mapped[str | None] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
+class ActionReceiptRecord(Base):
+    __tablename__ = "action_receipts"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    proposal_id: Mapped[str] = mapped_column(
+        String(128),
+        ForeignKey("action_proposals.id", ondelete="RESTRICT"),
+        unique=True,
+    )
+    idempotency_key: Mapped[str] = mapped_column(String(160), unique=True)
+    result: Mapped[dict[str, object]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class ActionAuditRecord(Base):
+    __tablename__ = "action_audits"
+    __table_args__ = (Index("ix_action_audits_proposal_created", "proposal_id", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    action: Mapped[str] = mapped_column(String(64))
+    proposal_id: Mapped[str] = mapped_column(
+        String(128)
+    )
+    participant_id: Mapped[str] = mapped_column(String(128))
+    visit_matter_id: Mapped[str] = mapped_column(String(128))
+    decision_key: Mapped[str] = mapped_column(String(128))
+    receipt_id: Mapped[str | None] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

@@ -27,6 +27,14 @@ export type SlotOptionsData = {
 
 export type ActionProposalData = {
   proposalId: string;
+  visitMatterId?: string;
+  participantId?: string;
+  toolId?: string;
+  toolName?: string;
+  toolVersion?: string;
+  arguments?: Record<string, unknown>;
+  idempotencyKey?: string;
+  expiresAt?: string;
   action?: "create" | "cancel";
   patient?: string;
   department?: string;

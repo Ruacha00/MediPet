@@ -12,6 +12,7 @@ from medipet.model.port import ModelMessage
 from medipet.persistence.conversation import (
     TerminalMessageState,
     VisitConversationStore,
+    VisitMatterNotFoundError,
     VisitTurn,
 )
 
@@ -56,10 +57,30 @@ class MediPetAssistant:
     ) -> AsyncGenerator[TurnEvent, None]:
 
         if command.confirmation is not None:
-            yield TurnEvent(
-                kind="failed",
-                data={"message": "当前没有待确认的操作", "traceId": trace_id},
+            try:
+                visit_stage = await self._conversation_store.visit_stage(
+                    command.visit_matter_id,
+                    command.participant_id,
+                )
+            except VisitMatterNotFoundError as error:
+                yield TurnEvent(
+                    kind="failed",
+                    data={"message": str(error), "traceId": trace_id},
+                )
+                return
+            event = await self._agent_runtime.decide(
+                command.confirmation.proposal_id,
+                command.confirmation.decision,
+                ToolContext(
+                    visit_matter_id=command.visit_matter_id,
+                    participant_id=command.participant_id,
+                    idempotency_key=command.idempotency_key,
+                    visit_stage=visit_stage,
+                ),
             )
+            yield TurnEvent(kind=event.kind, data={**event.data, "traceId": trace_id})
+            if event.kind != "failed":
+                yield TurnEvent(kind="completed", data={"traceId": trace_id})
             return
 
         if command.message is None or not command.message.strip():

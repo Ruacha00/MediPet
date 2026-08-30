@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from medipet.actions import InMemoryActionStore
 from medipet.agent.capabilities import (
     CapabilityProvider,
     CapabilitySnapshot,
@@ -15,7 +17,7 @@ from medipet.agent.capabilities import (
 )
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
-from medipet.contracts import TurnCommand
+from medipet.contracts import ConfirmationDecision, TurnCommand
 from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelToolCall
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
@@ -42,6 +44,7 @@ async def _assistant(
     snapshot: CapabilitySnapshot | None = None,
     *,
     capability_provider: CapabilityProvider | None = None,
+    action_store: InMemoryActionStore | None = None,
     max_steps: int = 8,
     visit_stage: VisitStage = "pre_visit",
 ) -> tuple[MediPetAssistant, InMemoryVisitConversationStore]:
@@ -64,6 +67,7 @@ async def _assistant(
         ),
         max_steps=max_steps,
         profile_version="profile-1",
+        action_store=action_store or InMemoryActionStore(),
     )
     return MediPetAssistant(runtime, store), store
 
@@ -141,6 +145,417 @@ async def test_test_only_read_tool_returns_observation_to_the_model() -> None:
     assert observation.role == "tool"
     assert observation.tool_call_id == "call-1"
     assert json.loads(observation.content) == {"query": "示例", "value": "观测结果"}
+
+
+@pytest.mark.asyncio
+async def test_write_tool_pauses_with_a_persisted_proposal_before_execution() -> None:
+    executions: list[dict[str, object]] = []
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        del context
+        executions.append(arguments)
+        return {"receipt": "committed"}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={
+            "type": "object",
+            "properties": {"value": {"type": "string"}},
+            "required": ["value"],
+            "additionalProperties": False,
+        },
+        output_schema={
+            "type": "object",
+            "properties": {"receipt": {"type": "string"}},
+            "required": ["receipt"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    model = ScriptedModel(
+        [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {"value": "A"}),))]]
+    )
+    assistant, _ = await _assistant(
+        model,
+        CapabilitySnapshot(skill_versions=("test-skill@1",), tools=(tool,)),
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert [event.kind for event in events] == ["status", "data", "completed"]
+    proposal = events[1].data
+    assert proposal["type"] == "data-action-proposal"
+    assert proposal["data"]["status"] == "pending"
+    assert proposal["data"]["toolId"] == "test.write"
+    assert proposal["data"]["toolVersion"] == "1"
+    assert proposal["data"]["arguments"] == {"value": "A"}
+    assert proposal["data"]["visitMatterId"] == "visit-1"
+    assert proposal["data"]["participantId"] == "participant-1"
+    assert proposal["data"]["idempotencyKey"]
+    assert proposal["data"]["expiresAt"]
+    assert executions == []
+
+
+@pytest.mark.asyncio
+async def test_confirming_a_write_proposal_commits_once_and_returns_one_receipt() -> None:
+    executions: list[tuple[dict[str, object], ToolContext]] = []
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        executions.append((arguments, context))
+        return {"result": "done"}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={"type": "object", "additionalProperties": False},
+        output_schema={
+            "type": "object",
+            "properties": {"result": {"type": "string"}},
+            "required": ["result"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    action_store = InMemoryActionStore()
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(skill_versions=("test-skill@1",), tools=(tool,)),
+        action_store=action_store,
+    )
+    proposal_events = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposal_events[1].data["data"]["proposalId"]
+    confirmation = TurnCommand(
+        visit_matter_id="visit-1",
+        participant_id="participant-1",
+        idempotency_key="decision-1",
+        confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+    )
+
+    first = [event async for event in assistant.handle_turn(confirmation)]
+    duplicate = [event async for event in assistant.handle_turn(confirmation)]
+
+    assert [event.kind for event in first] == ["data", "completed"]
+    assert [event.kind for event in duplicate] == ["data", "completed"]
+    assert first[0].data["data"]["status"] == "confirmed"
+    assert first[0].data["data"]["receiptId"] == duplicate[0].data["data"]["receiptId"]
+    assert len(executions) == 1
+    assert executions[0][1].idempotency_key.startswith("action-proposal-")
+
+
+@pytest.mark.asyncio
+async def test_rejecting_a_write_proposal_never_executes_it() -> None:
+    executions = 0
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        return {"result": "done"}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+    )
+    proposed = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+
+    rejected = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="reject-1",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="reject"),
+            )
+        )
+    ]
+
+    assert [event.kind for event in rejected] == ["data", "completed"]
+    assert rejected[0].data["data"]["status"] == "rejected"
+    assert executions == 0
+
+
+@pytest.mark.asyncio
+async def test_expired_write_proposal_returns_a_safe_failure_without_execution() -> None:
+    now = [datetime.now(UTC)]
+    executions = 0
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        return {}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    action_store = InMemoryActionStore(now=lambda: now[0])
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+        action_store=action_store,
+    )
+    proposed = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+    now[0] += timedelta(minutes=11)
+
+    result = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="confirm-expired",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+            )
+        )
+    ]
+
+    assert [event.kind for event in result] == ["failed"]
+    assert result[0].data["message"] == "待确认操作已过期"
+    assert executions == 0
+
+
+@pytest.mark.asyncio
+async def test_missing_and_wrong_scope_proposals_return_safe_failures() -> None:
+    assistant, store = await _assistant(ScriptedModel([]))
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-2",
+            patient_display_name="另一患者",
+            participant_id="participant-2",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-2",
+            visit_matter_title="另一事项",
+        )
+    )
+    missing = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="missing",
+                confirmation=ConfirmationDecision(
+                    proposal_id="proposal-missing", decision="confirm"
+                ),
+            )
+        )
+    ]
+    action_store = InMemoryActionStore()
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=lambda arguments, context: _empty_result(arguments, context),
+    )
+    scoped_assistant, scoped_store = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+        action_store=action_store,
+    )
+    await scoped_store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-2",
+            patient_display_name="另一患者",
+            participant_id="participant-2",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-2",
+            visit_matter_title="另一事项",
+        )
+    )
+    proposed = [event async for event in scoped_assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+    wrong_scope = [
+        event
+        async for event in scoped_assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-2",
+                participant_id="participant-2",
+                idempotency_key="wrong-scope",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+            )
+        )
+    ]
+
+    assert missing[0].data["message"] == "待确认操作不存在"
+    assert wrong_scope[0].data["message"] == "该操作不属于当前就诊事项或参与者"
+
+
+async def _empty_result(
+    arguments: dict[str, object], context: ToolContext
+) -> dict[str, object]:
+    del arguments, context
+    return {}
+
+
+@pytest.mark.asyncio
+async def test_tool_version_drift_invalidates_confirmation() -> None:
+    executions = 0
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        return {}
+
+    def tool(version: str) -> ToolDefinition:
+        return ToolDefinition(
+            tool_id="test.write",
+            name="dummy_write",
+            version=version,
+            description="测试专用写工具",
+            input_schema={"type": "object", "additionalProperties": False},
+            effect="write",
+            approval_required=True,
+            execute=execute,
+        )
+
+    provider = StaticCapabilityProvider(CapabilitySnapshot(tools=(tool("1"),)))
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        capability_provider=provider,
+    )
+    proposed = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+    provider.replace(CapabilitySnapshot(tools=(tool("2"),)))
+
+    result = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="changed-version",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+            )
+        )
+    ]
+
+    assert result[0].data["message"] == "操作参数、Tool 版本或作用域已变化，请重新发起"
+    assert executions == 0
+
+
+@pytest.mark.asyncio
+async def test_failed_write_execution_is_not_automatically_retried() -> None:
+    executions = 0
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        raise RuntimeError("private provider failure")
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写工具",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    assistant, _ = await _assistant(
+        ScriptedModel(
+            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+        ),
+        CapabilitySnapshot(tools=(tool,)),
+    )
+    proposed = [event async for event in assistant.handle_turn(_turn())]
+    proposal_id = proposed[1].data["data"]["proposalId"]
+
+    result = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="failed-write",
+                confirmation=ConfirmationDecision(proposal_id=proposal_id, decision="confirm"),
+            )
+        )
+    ]
+
+    assert executions == 1
+    assert result[0].data["message"] == "操作暂时无法完成，请稍后重试"
+    assert "private provider failure" not in str(result[0].data)
+
+
+@pytest.mark.asyncio
+async def test_model_cannot_execute_a_write_tool_without_platform_approval() -> None:
+    executions = 0
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        nonlocal executions
+        del arguments, context
+        executions += 1
+        return {}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="未获平台批准的写 Tool",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=False,
+        execute=execute,
+    )
+    model = ScriptedModel(
+        [
+            [ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))],
+            [ModelChunk(text="已改为安全回答")],
+        ]
+    )
+    assistant, _ = await _assistant(model, CapabilitySnapshot(tools=(tool,)))
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert events[-1].kind == "completed"
+    assert model.requests[0].tools == ()
+    assert executions == 0
 
 
 @pytest.mark.asyncio

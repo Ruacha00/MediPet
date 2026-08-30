@@ -5,6 +5,7 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+from medipet.actions import InMemoryActionStore
 from medipet.agent.capabilities import (
     CapabilitySnapshot,
     StaticCapabilityProvider,
@@ -294,6 +295,83 @@ def test_chat_exposes_only_safe_tool_progress_and_final_text() -> None:
     assert "private_schema_result" not in response.text
     assert "secret-version" not in response.text
     assert "Thought" not in response.text
+
+
+def test_write_tool_streams_a_proposal_and_decision_endpoint_confirms_it_once() -> None:
+    executions: list[str] = []
+
+    class WriteCallingModel(ModelPort):
+        async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+            del request
+            yield ModelChunk(
+                tool_calls=(ModelToolCall("call-write", "private_dummy_write", {"value": "A"}),)
+            )
+
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        executions.append(context.idempotency_key)
+        return {"saved": arguments["value"]}
+
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="private_dummy_write",
+        version="1",
+        description="测试专用写 Tool",
+        input_schema={
+            "type": "object",
+            "properties": {"value": {"type": "string"}},
+            "required": ["value"],
+            "additionalProperties": False,
+        },
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    action_store = InMemoryActionStore()
+    client = TestClient(
+        create_app(
+            model=WriteCallingModel(),
+            conversation_store=seeded_store(),
+            capability_provider=StaticCapabilityProvider(CapabilitySnapshot(tools=(tool,))),
+            action_store=action_store,
+        )
+    )
+    proposal_response = client.post(
+        "/v1/chat/turns",
+        json={
+            "idempotency_key": "write-turn",
+            "messages": [
+                {
+                    "id": "message-write",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "执行测试写操作"}],
+                }
+            ],
+        },
+    )
+    payloads = [
+        json.loads(line.removeprefix("data: "))
+        for line in proposal_response.text.splitlines()
+        if line.startswith("data: {")
+    ]
+    proposal = next(payload for payload in payloads if payload["type"] == "data-action-proposal")
+    proposal_id = proposal["data"]["proposalId"]
+
+    first = client.post(
+        f"/v1/action-proposals/{proposal_id}/decision",
+        json={"decision": "confirm", "idempotency_key": "decision-write"},
+    )
+    duplicate = client.post(
+        f"/v1/action-proposals/{proposal_id}/decision",
+        json={"decision": "confirm", "idempotency_key": "decision-write"},
+    )
+
+    assert first.status_code == duplicate.status_code == 200
+    assert first.json()["events"][0]["data"]["data"]["status"] == "confirmed"
+    assert (
+        first.json()["events"][0]["data"]["data"]["receiptId"]
+        == duplicate.json()["events"][0]["data"]["data"]["receiptId"]
+    )
+    assert len(executions) == 1
 
 
 def test_chat_reports_unconfigured_model_without_leaking_configuration() -> None:

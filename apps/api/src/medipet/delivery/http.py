@@ -8,6 +8,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
+from medipet.action_postgres import PostgresActionStore
+from medipet.actions import ActionStore, InMemoryActionStore
 from medipet.agent.capabilities import CapabilityProvider
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
@@ -66,6 +68,8 @@ def create_app(
     tool_registry: ToolRegistry | None = None,
     tool_provider: ToolProvider | None = None,
     close_tool_registry: bool = False,
+    action_store: ActionStore | None = None,
+    close_action_store: bool = False,
 ) -> FastAPI:
     if model is not None and runtime_config is not None:
         raise ValueError("model and runtime_config cannot both be provided")
@@ -84,6 +88,8 @@ def create_app(
             await skill_registry.close()
         if close_tool_registry and isinstance(tool_registry, PostgresToolRegistry):
             await tool_registry.close()
+        if close_action_store and isinstance(action_store, PostgresActionStore):
+            await action_store.close()
 
     app = FastAPI(title="MediPet", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
@@ -98,9 +104,14 @@ def create_app(
         if skill_registry is not None
         else None
     )
+    effective_action_store = action_store or InMemoryActionStore()
     static_assistant = (
         MediPetAssistant(
-            LangGraphAgentRuntime(model, capability_provider=effective_capability_provider),
+            LangGraphAgentRuntime(
+                model,
+                capability_provider=effective_capability_provider,
+                action_store=effective_action_store,
+            ),
             conversation_store,
         )
         if model is not None and conversation_store is not None
@@ -129,6 +140,7 @@ def create_app(
                 capability_provider=effective_capability_provider,
                 max_steps=settings.max_steps,
                 profile_version=snapshot.fingerprint,
+                action_store=effective_action_store,
             ),
             conversation_store,
             context_message_limit=settings.context_message_limit,
@@ -283,6 +295,16 @@ def _tool_registry_from_environment() -> PostgresToolRegistry | None:
 _tool_registry = _tool_registry_from_environment()
 
 
+def _action_store_from_environment() -> PostgresActionStore | None:
+    try:
+        return PostgresActionStore.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+    except DatabaseConfigurationError:
+        return None
+
+
+_action_store = _action_store_from_environment()
+
+
 def _skill_registry_from_environment() -> PostgresSkillRegistry | None:
     try:
         return PostgresSkillRegistry.from_url(
@@ -301,6 +323,8 @@ app = create_app(
     tool_registry=_tool_registry,
     tool_provider=StaticToolProvider(),
     close_tool_registry=True,
+    action_store=_action_store,
+    close_action_store=True,
     management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
     environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),
 )
