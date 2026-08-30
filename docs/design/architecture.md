@@ -219,10 +219,11 @@ The model crosses a true external Seam:
 
 ```python
 class ModelPort(Protocol):
-    async def complete(self, request: ModelRequest) -> ModelResponse: ...
+    def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]: ...
 ```
 
-Production uses a provider Adapter. Tests use a deterministic fake Adapter.
+Production uses a provider Adapter. Tests use a deterministic fake Adapter. Provider response
+objects and reasoning metadata remain inside the Adapter; only mapped model chunks cross this Seam.
 
 ### 3. Skill Runtime
 
