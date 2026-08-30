@@ -1,14 +1,27 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import Any, cast
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langchain_core.messages import (
+    AIMessage,
+    AIMessageChunk,
+    BaseMessage,
+    HumanMessage,
+    SystemMessage,
+    ToolMessage,
+)
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 
 from medipet.config import ModelSettings
-from medipet.model.port import ModelChunk, ModelMessage, ModelRequest, ModelUnavailableError
+from medipet.model.port import (
+    ModelChunk,
+    ModelMessage,
+    ModelRequest,
+    ModelToolCall,
+    ModelUnavailableError,
+)
 
 
 class ChatOpenAIModelAdapter:
@@ -32,22 +45,64 @@ class ChatOpenAIModelAdapter:
 
     async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
         messages = [_to_provider_message(message) for message in request.messages]
+        runnable = self._model
+        if request.tools:
+            runnable = self._model.bind_tools(
+                [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": tool.name,
+                            "description": tool.description,
+                            "parameters": dict(tool.input_schema),
+                        },
+                    }
+                    for tool in request.tools
+                ]
+            )
+        aggregate: AIMessageChunk | None = None
         try:
-            async for chunk in self._model.astream(messages):
+            async for chunk in runnable.astream(messages):
+                aggregate = cast(
+                    AIMessageChunk,
+                    chunk if aggregate is None else aggregate + chunk,
+                )
                 text = _text_content(chunk.content)
                 if text:
                     yield ModelChunk(text=text)
+            if aggregate is not None:
+                tool_calls = tuple(
+                    ModelToolCall(
+                        id=str(call.get("id") or ""),
+                        name=str(call["name"]),
+                        arguments=(
+                            call["args"]
+                            if isinstance(call.get("args"), dict)
+                            else {"_invalid_arguments": call.get("args")}
+                        ),
+                    )
+                    for call in aggregate.tool_calls
+                )
+                if tool_calls:
+                    yield ModelChunk(tool_calls=tool_calls)
         except Exception:
             raise ModelUnavailableError("model request failed") from None
 
 
 def _to_provider_message(message: ModelMessage) -> BaseMessage:
-    message_types = {
-        "system": SystemMessage,
-        "user": HumanMessage,
-        "assistant": AIMessage,
-    }
-    return message_types[message.role](content=message.content)
+    if message.role == "system":
+        return SystemMessage(content=message.content)
+    if message.role == "user":
+        return HumanMessage(content=message.content)
+    if message.role == "tool":
+        return ToolMessage(content=message.content, tool_call_id=message.tool_call_id or "")
+    return AIMessage(
+        content=message.content,
+        tool_calls=[
+            {"id": call.id, "name": call.name, "args": call.arguments}
+            for call in message.tool_calls
+        ],
+    )
 
 
 def _text_content(content: str | list[str | dict[str, Any]]) -> str:

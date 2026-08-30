@@ -5,7 +5,13 @@ import pytest
 
 from medipet.config import ModelConfigurationError, ModelSettings
 from medipet.model.openai import ChatOpenAIModelAdapter
-from medipet.model.port import ModelMessage, ModelRequest, ModelUnavailableError
+from medipet.model.port import (
+    ModelMessage,
+    ModelRequest,
+    ModelTool,
+    ModelToolCall,
+    ModelUnavailableError,
+)
 
 
 def test_model_settings_require_a_complete_api_root() -> None:
@@ -106,3 +112,141 @@ async def test_chat_openai_adapter_hides_upstream_failure_details() -> None:
             _ = [chunk async for chunk in adapter.stream(request)]
 
     assert "provider secret" not in str(caught.value)
+
+
+@pytest.mark.asyncio
+async def test_chat_openai_adapter_streams_tool_calls_and_observations() -> None:
+    requests: list[dict] = []
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(request.content)
+        requests.append(payload)
+        if len(requests) == 1:
+            assert payload["tools"] == [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "dummy_read",
+                        "description": "test-only read",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {"query": {"type": "string"}},
+                            "required": ["query"],
+                            "additionalProperties": False,
+                        },
+                    },
+                }
+            ]
+            chunks = [
+                {
+                    "id": "chunk",
+                    "object": "chat.completion.chunk",
+                    "created": 1,
+                    "model": "test-model",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {
+                                "tool_calls": [
+                                    {
+                                        "index": 0,
+                                        "id": "call-1",
+                                        "type": "function",
+                                        "function": {
+                                            "name": "dummy_read",
+                                            "arguments": '{"query":',
+                                        },
+                                    }
+                                ]
+                            },
+                        }
+                    ],
+                },
+                {
+                    "id": "chunk",
+                    "object": "chat.completion.chunk",
+                    "created": 1,
+                    "model": "test-model",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {
+                                "tool_calls": [
+                                    {
+                                        "index": 0,
+                                        "function": {"arguments": '"示例"}'},
+                                    }
+                                ]
+                            },
+                        }
+                    ],
+                },
+            ]
+            events = "".join(f"data: {json.dumps(chunk)}\n\n" for chunk in chunks)
+            return httpx.Response(200, text=events + "data: [DONE]\n\n")
+
+        assert payload["messages"][-2]["tool_calls"][0]["function"]["name"] == "dummy_read"
+        assert payload["messages"][-1] == {
+            "role": "tool",
+            "content": '{"value":"观测结果"}',
+            "tool_call_id": "call-1",
+        }
+        event = f"data: {json.dumps(_chunk('最终回答'))}\n\ndata: [DONE]\n\n"
+        return httpx.Response(200, text=event)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        adapter = ChatOpenAIModelAdapter(
+            ModelSettings(
+                base_url="https://provider.example/openai/v1",
+                api_key="test-secret",
+                model="test-model",
+            ),
+            http_async_client=client,
+        )
+        tool = ModelTool(
+            name="dummy_read",
+            description="test-only read",
+            input_schema={
+                "type": "object",
+                "properties": {"query": {"type": "string"}},
+                "required": ["query"],
+                "additionalProperties": False,
+            },
+        )
+        first = [
+            chunk
+            async for chunk in adapter.stream(
+                ModelRequest(
+                    messages=(ModelMessage(role="user", content="query"),),
+                    tools=(tool,),
+                )
+            )
+        ]
+        assert len(first) == 1
+        assert first[0].tool_calls == (
+            ModelToolCall(id="call-1", name="dummy_read", arguments={"query": "示例"}),
+        )
+
+        second = [
+            chunk
+            async for chunk in adapter.stream(
+                ModelRequest(
+                    messages=(
+                        ModelMessage(role="user", content="query"),
+                        ModelMessage(
+                            role="assistant",
+                            content="",
+                            tool_calls=first[0].tool_calls,
+                        ),
+                        ModelMessage(
+                            role="tool",
+                            content='{"value":"观测结果"}',
+                            tool_call_id="call-1",
+                        ),
+                    ),
+                    tools=(tool,),
+                )
+            )
+        ]
+
+    assert [chunk.text for chunk in second] == ["最终回答"]

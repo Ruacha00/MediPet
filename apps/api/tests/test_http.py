@@ -5,9 +5,21 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+from medipet.agent.capabilities import (
+    CapabilitySnapshot,
+    StaticCapabilityProvider,
+    ToolContext,
+    ToolDefinition,
+)
 from medipet.config import DevelopmentRuntimeConfig, ModelSettings
 from medipet.delivery.http import create_app
-from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
+from medipet.model.port import (
+    ModelChunk,
+    ModelPort,
+    ModelRequest,
+    ModelToolCall,
+    ModelUnavailableError,
+)
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
@@ -27,6 +39,21 @@ class UnavailableModel(ModelPort):
         del request
         raise ModelUnavailableError("provider secret diagnostic body; Bearer test-secret")
         yield  # pragma: no cover
+
+
+class ToolCallingModel(ModelPort):
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        self.calls += 1
+        if self.calls == 1:
+            yield ModelChunk(
+                tool_calls=(ModelToolCall("call-1", "private_dummy_read", {}),)
+            )
+            return
+        yield ModelChunk(text="安全结果")
 
 
 class ReloadingModel(ModelPort):
@@ -222,6 +249,51 @@ def test_chat_uses_ai_sdk_ui_stream_protocol() -> None:
     assert lines[-1] == "[DONE]"
     assert "Thought" not in response.text
     assert "data-department-candidates" not in response.text
+
+
+def test_chat_exposes_only_safe_tool_progress_and_final_text() -> None:
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        del arguments, context
+        return {"private_schema_result": "not-for-browser"}
+
+    tool = ToolDefinition(
+        name="private_dummy_read",
+        version="secret-version",
+        description="private tool description",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="read",
+        execute=execute,
+    )
+    client = TestClient(
+        create_app(
+            model=ToolCallingModel(),
+            conversation_store=seeded_store(),
+            capability_provider=StaticCapabilityProvider(
+                CapabilitySnapshot(skill_versions=("private-skill@1",), tools=(tool,))
+            ),
+        )
+    )
+
+    response = client.post(
+        "/v1/chat/turns",
+        json={
+            "messages": [
+                {
+                    "id": "message-1",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "测试工具调用"}],
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 200
+    assert "正在查询可用信息" in response.text
+    assert "安全结果" in response.text
+    assert "private_dummy_read" not in response.text
+    assert "private_schema_result" not in response.text
+    assert "secret-version" not in response.text
+    assert "Thought" not in response.text
 
 
 def test_chat_reports_unconfigured_model_without_leaking_configuration() -> None:

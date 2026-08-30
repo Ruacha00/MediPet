@@ -5,6 +5,7 @@ from collections.abc import AsyncGenerator
 from contextlib import aclosing
 from uuid import uuid4
 
+from medipet.agent.capabilities import ToolContext
 from medipet.agent.runtime import AgentRequest, AgentRuntime
 from medipet.contracts import TurnCommand, TurnEvent
 from medipet.model.port import ModelMessage
@@ -119,7 +120,12 @@ class MediPetAssistant:
                         content=message.content,
                     )
                     for message in completed_history
-                )
+                ),
+                context=ToolContext(
+                    visit_matter_id=command.visit_matter_id,
+                    participant_id=command.participant_id,
+                    turn_id=command.idempotency_key,
+                ),
             )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:
                 async for event in runtime_events:

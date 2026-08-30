@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
+from medipet.agent.capabilities import CapabilityProvider
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.config import (
@@ -50,6 +51,7 @@ def create_app(
     close_conversation_store: bool = False,
     runtime_config: RuntimeConfig | None = None,
     model_factory: Callable[[ModelSettings], ModelPort] = ChatOpenAIModelAdapter,
+    capability_provider: CapabilityProvider | None = None,
 ) -> FastAPI:
     if model is not None and runtime_config is not None:
         raise ValueError("model and runtime_config cannot both be provided")
@@ -72,7 +74,10 @@ def create_app(
         allow_headers=["*"],
     )
     static_assistant = (
-        MediPetAssistant(LangGraphAgentRuntime(model), conversation_store)
+        MediPetAssistant(
+            LangGraphAgentRuntime(model, capability_provider=capability_provider),
+            conversation_store,
+        )
         if model is not None and conversation_store is not None
         else None
     )
@@ -96,7 +101,9 @@ def create_app(
         return MediPetAssistant(
             LangGraphAgentRuntime(
                 model_factory(settings.model),
+                capability_provider=capability_provider,
                 max_steps=settings.max_steps,
+                profile_version=snapshot.fingerprint,
             ),
             conversation_store,
             context_message_limit=settings.context_message_limit,
