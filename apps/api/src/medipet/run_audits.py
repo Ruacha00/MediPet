@@ -18,13 +18,34 @@ RunAuditKind = Literal[
 
 
 @dataclass(frozen=True)
-class RunAudit:
-    kind: RunAuditKind
+class RunAuditContext:
     trace_id: str
     visit_matter_id: str
     turn_id: str
     profile_version: str
+
+
+@dataclass(frozen=True)
+class RunAudit:
+    kind: RunAuditKind
+    context: RunAuditContext
     created_at: datetime
+
+    @property
+    def trace_id(self) -> str:
+        return self.context.trace_id
+
+    @property
+    def visit_matter_id(self) -> str:
+        return self.context.visit_matter_id
+
+    @property
+    def turn_id(self) -> str:
+        return self.context.turn_id
+
+    @property
+    def profile_version(self) -> str:
+        return self.context.profile_version
 
     def to_dict(self) -> dict[str, str]:
         return {
@@ -38,30 +59,14 @@ class RunAudit:
 
 
 class RunAuditStore(Protocol):
-    async def record(
-        self,
-        kind: RunAuditKind,
-        *,
-        trace_id: str,
-        visit_matter_id: str,
-        turn_id: str,
-        profile_version: str,
-    ) -> None: ...
+    async def record(self, kind: RunAuditKind, context: RunAuditContext) -> None: ...
 
     async def list_audits(self) -> list[RunAudit]: ...
 
 
 class NullRunAuditStore:
-    async def record(
-        self,
-        kind: RunAuditKind,
-        *,
-        trace_id: str,
-        visit_matter_id: str,
-        turn_id: str,
-        profile_version: str,
-    ) -> None:
-        del kind, trace_id, visit_matter_id, turn_id, profile_version
+    async def record(self, kind: RunAuditKind, context: RunAuditContext) -> None:
+        del kind, context
 
     async def list_audits(self) -> list[RunAudit]:
         return []
@@ -72,23 +77,12 @@ class InMemoryRunAuditStore:
         self._audits: list[RunAudit] = []
         self._lock = asyncio.Lock()
 
-    async def record(
-        self,
-        kind: RunAuditKind,
-        *,
-        trace_id: str,
-        visit_matter_id: str,
-        turn_id: str,
-        profile_version: str,
-    ) -> None:
+    async def record(self, kind: RunAuditKind, context: RunAuditContext) -> None:
         async with self._lock:
             self._audits.append(
                 RunAudit(
                     kind=kind,
-                    trace_id=trace_id,
-                    visit_matter_id=visit_matter_id,
-                    turn_id=turn_id,
-                    profile_version=profile_version,
+                    context=context,
                     created_at=datetime.now(UTC),
                 )
             )

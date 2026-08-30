@@ -113,6 +113,31 @@ class HistoryFailureStore(InMemoryVisitConversationStore):
 
 
 @pytest.mark.asyncio
+async def test_missing_participant_message_has_a_queryable_failed_terminal_audit() -> None:
+    audits = InMemoryRunAuditStore()
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(DeterministicModel(["unused"]), audit_store=audits),
+        await seeded_store(),
+        audit_store=audits,
+    )
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="missing-message",
+                message=" ",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["failed"]
+    assert [audit.kind for audit in await audits.list_audits()] == ["failed"]
+
+
+@pytest.mark.asyncio
 async def test_runtime_maps_model_failure_to_a_safe_event() -> None:
     runtime = LangGraphAgentRuntime(UnavailableModel())
 

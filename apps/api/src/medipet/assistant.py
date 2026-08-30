@@ -15,7 +15,7 @@ from medipet.persistence.conversation import (
     VisitMatterNotFoundError,
     VisitTurn,
 )
-from medipet.run_audits import NullRunAuditStore, RunAuditStore
+from medipet.run_audits import NullRunAuditStore, RunAuditContext, RunAuditStore
 
 
 class MediPetAssistant:
@@ -40,8 +40,14 @@ class MediPetAssistant:
 
     async def handle_turn(self, command: TurnCommand) -> AsyncGenerator[TurnEvent, None]:
         trace_id = f"trace-{uuid4().hex[:12]}"
+        audit_context = RunAuditContext(
+            trace_id=trace_id,
+            visit_matter_id=command.visit_matter_id,
+            turn_id=command.idempotency_key,
+            profile_version=self._profile_version,
+        )
         try:
-            async with aclosing(self._handle_turn(command, trace_id)) as events:
+            async with aclosing(self._handle_turn(command, audit_context)) as events:
                 if self._turn_timeout_seconds is None:
                     async for event in events:
                         yield event
@@ -50,13 +56,7 @@ class MediPetAssistant:
                     async for event in events:
                         yield event
         except TimeoutError:
-            await self._audit_store.record(
-                "turn_timeout",
-                trace_id=trace_id,
-                visit_matter_id=command.visit_matter_id,
-                turn_id=command.idempotency_key,
-                profile_version=self._profile_version,
-            )
+            await self._audit_store.record("turn_timeout", audit_context)
             yield TurnEvent(
                 kind="failed",
                 data={"message": "本次协助已超时，请重试。", "traceId": trace_id},
@@ -65,8 +65,9 @@ class MediPetAssistant:
     async def _handle_turn(
         self,
         command: TurnCommand,
-        trace_id: str,
+        audit_context: RunAuditContext,
     ) -> AsyncGenerator[TurnEvent, None]:
+        trace_id = audit_context.trace_id
 
         if command.confirmation is not None:
             try:
@@ -75,6 +76,7 @@ class MediPetAssistant:
                     command.participant_id,
                 )
             except VisitMatterNotFoundError as error:
+                await self._audit_store.record("failed", audit_context)
                 yield TurnEvent(
                     kind="failed",
                     data={"message": str(error), "traceId": trace_id},
@@ -90,12 +92,17 @@ class MediPetAssistant:
                     visit_stage=visit_stage,
                 ),
             )
+            await self._audit_store.record(
+                "failed" if event.kind == "failed" else "completed",
+                audit_context,
+            )
             yield TurnEvent(kind=event.kind, data={**event.data, "traceId": trace_id})
             if event.kind != "failed":
                 yield TurnEvent(kind="completed", data={"traceId": trace_id})
             return
 
         if command.message is None or not command.message.strip():
+            await self._audit_store.record("failed", audit_context)
             yield TurnEvent(
                 kind="failed",
                 data={"message": "缺少就诊参与者消息", "traceId": trace_id},
@@ -140,13 +147,7 @@ class MediPetAssistant:
                 state,
             )
             terminal = True
-            await self._audit_store.record(
-                state,
-                trace_id=trace_id,
-                visit_matter_id=command.visit_matter_id,
-                turn_id=command.idempotency_key,
-                profile_version=self._profile_version,
-            )
+            await self._audit_store.record(state, audit_context)
 
         try:
             completed_history = await self._conversation_store.list_completed_messages(

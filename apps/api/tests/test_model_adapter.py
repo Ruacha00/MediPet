@@ -1,10 +1,11 @@
+import asyncio
 import json
 
 import httpx
 import pytest
 
 from medipet.config import ModelConfigurationError, ModelSettings
-from medipet.model.openai import ChatOpenAIModelAdapter
+from medipet.model.openai import ChatOpenAIModelAdapter, _is_transient_upstream_error
 from medipet.model.port import (
     ModelMessage,
     ModelRequest,
@@ -139,6 +140,51 @@ async def test_chat_openai_adapter_marks_client_errors_as_non_retryable() -> Non
             ]
 
     assert caught.value.retryable is False
+
+
+def test_unknown_local_failures_are_not_classified_as_transient() -> None:
+    assert _is_transient_upstream_error(ValueError("local failure")) is False
+
+
+@pytest.mark.asyncio
+async def test_chat_openai_adapter_releases_the_http_request_when_cancelled() -> None:
+    started = asyncio.Event()
+    released = asyncio.Event()
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        del request
+        started.set()
+        try:
+            await asyncio.Event().wait()
+        finally:
+            released.set()
+        raise AssertionError("unreachable")  # pragma: no cover
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        adapter = ChatOpenAIModelAdapter(
+            ModelSettings(
+                base_url="https://provider.example/openai/v1",
+                api_key="test-secret",
+                model="test-model",
+            ),
+            http_async_client=client,
+        )
+
+        async def consume() -> None:
+            _ = [
+                chunk
+                async for chunk in adapter.stream(
+                    ModelRequest(messages=(ModelMessage(role="user", content="hello"),))
+                )
+            ]
+
+        task = asyncio.create_task(consume())
+        await asyncio.wait_for(started.wait(), timeout=1)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    await asyncio.wait_for(released.wait(), timeout=1)
 
 
 @pytest.mark.asyncio

@@ -93,8 +93,13 @@ def _is_transient_upstream_error(error: Exception) -> bool:
         )
         if isinstance(status_code, int):
             return status_code in {408, 409, 429} or status_code >= 500
+        if isinstance(current, (TimeoutError, ConnectionError)):
+            return True
+        error_type = type(current).__name__.lower()
+        if "timeout" in error_type or "connection" in error_type:
+            return True
         current = current.__cause__ or current.__context__
-    return True
+    return False
 
 
 def _to_provider_message(message: ModelMessage) -> BaseMessage:

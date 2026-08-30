@@ -9,6 +9,7 @@ from alembic import command
 from alembic.config import Config
 
 from medipet.run_audit_postgres import PostgresRunAuditStore
+from medipet.run_audits import RunAuditContext
 
 DATABASE_URL = os.getenv("MEDIPET_TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(
@@ -32,10 +33,12 @@ async def test_postgres_run_audits_survive_store_recreation() -> None:
     try:
         await first.record(
             "retry",
-            trace_id=f"trace-{suffix}",
-            visit_matter_id=f"visit-{suffix}",
-            turn_id=turn_id,
-            profile_version="profile-1",
+            RunAuditContext(
+                trace_id=f"trace-{suffix}",
+                visit_matter_id=f"visit-{suffix}",
+                turn_id=turn_id,
+                profile_version="profile-1",
+            ),
         )
     finally:
         await first.close()

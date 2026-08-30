@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async
 
 from medipet.persistence.models import RunAuditRecord
 from medipet.persistence.postgres import postgres_async_url
-from medipet.run_audits import RunAudit, RunAuditKind
+from medipet.run_audits import RunAudit, RunAuditContext, RunAuditKind
 
 
 class PostgresRunAuditStore:
@@ -23,24 +23,16 @@ class PostgresRunAuditStore:
     async def close(self) -> None:
         await self._engine.dispose()
 
-    async def record(
-        self,
-        kind: RunAuditKind,
-        *,
-        trace_id: str,
-        visit_matter_id: str,
-        turn_id: str,
-        profile_version: str,
-    ) -> None:
+    async def record(self, kind: RunAuditKind, context: RunAuditContext) -> None:
         async with self._sessions.begin() as session:
             session.add(
                 RunAuditRecord(
                     id=f"run-audit-{uuid4().hex}",
                     kind=kind,
-                    trace_id=trace_id,
-                    visit_matter_id=visit_matter_id,
-                    turn_id=turn_id,
-                    profile_version=profile_version,
+                    trace_id=context.trace_id,
+                    visit_matter_id=context.visit_matter_id,
+                    turn_id=context.turn_id,
+                    profile_version=context.profile_version,
                 )
             )
 
@@ -52,10 +44,12 @@ class PostgresRunAuditStore:
             return [
                 RunAudit(
                     kind=cast(RunAuditKind, record.kind),
-                    trace_id=record.trace_id,
-                    visit_matter_id=record.visit_matter_id,
-                    turn_id=record.turn_id,
-                    profile_version=record.profile_version,
+                    context=RunAuditContext(
+                        trace_id=record.trace_id,
+                        visit_matter_id=record.visit_matter_id,
+                        turn_id=record.turn_id,
+                        profile_version=record.profile_version,
+                    ),
                     created_at=record.created_at,
                 )
                 for record in records

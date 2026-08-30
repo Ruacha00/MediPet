@@ -72,7 +72,15 @@ async def _assistant(
         action_store=action_store or InMemoryActionStore(),
         audit_store=audit_store,
     )
-    return MediPetAssistant(runtime, store, audit_store=audit_store), store
+    return (
+        MediPetAssistant(
+            runtime,
+            store,
+            audit_store=audit_store,
+            profile_version="profile-1",
+        ),
+        store,
+    )
 
 
 def _turn(turn_id: str = "turn-1") -> TurnCommand:
@@ -229,12 +237,14 @@ async def test_confirming_a_write_proposal_commits_once_and_returns_one_receipt(
         execute=execute,
     )
     action_store = InMemoryActionStore()
+    audits = InMemoryRunAuditStore()
     assistant, _ = await _assistant(
         ScriptedModel(
             [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
         ),
         CapabilitySnapshot(skill_versions=("test-skill@1",), tools=(tool,)),
         action_store=action_store,
+        audit_store=audits,
     )
     proposal_events = [event async for event in assistant.handle_turn(_turn())]
     proposal_id = proposal_events[1].data["data"]["proposalId"]
@@ -254,6 +264,13 @@ async def test_confirming_a_write_proposal_commits_once_and_returns_one_receipt(
     assert first[0].data["data"]["receiptId"] == duplicate[0].data["data"]["receiptId"]
     assert len(executions) == 1
     assert executions[0][1].idempotency_key.startswith("action-proposal-")
+    terminal_audits = [audit for audit in await audits.list_audits() if audit.kind == "completed"]
+    assert [audit.turn_id for audit in terminal_audits] == [
+        "turn-1",
+        "decision-1",
+        "decision-1",
+    ]
+    assert {audit.profile_version for audit in terminal_audits} == {"profile-1"}
 
 
 @pytest.mark.asyncio

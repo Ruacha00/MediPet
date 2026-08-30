@@ -34,7 +34,12 @@ from medipet.model.port import (
     ModelToolCall,
     ModelUnavailableError,
 )
-from medipet.run_audits import NullRunAuditStore, RunAuditKind, RunAuditStore
+from medipet.run_audits import (
+    NullRunAuditStore,
+    RunAuditContext,
+    RunAuditKind,
+    RunAuditStore,
+)
 from medipet.schema import validate_object
 
 TOOL_REJECTION = {
@@ -269,10 +274,12 @@ def _build_react_graph(
     async def audit(kind: RunAuditKind, state: ReActState) -> None:
         await audit_store.record(
             kind,
-            trace_id=state["trace_id"],
-            visit_matter_id=state["context"].visit_matter_id,
-            turn_id=state["context"].idempotency_key,
-            profile_version=state["context"].profile_version,
+            RunAuditContext(
+                trace_id=state["trace_id"],
+                visit_matter_id=state["context"].visit_matter_id,
+                turn_id=state["context"].idempotency_key,
+                profile_version=state["context"].profile_version,
+            ),
         )
 
     async def call_model(state: ReActState) -> dict[str, object]:
