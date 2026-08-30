@@ -75,8 +75,26 @@ class ChatOpenAIModelAdapter:
                 tool_calls = _model_tool_calls(aggregate)
                 if tool_calls:
                     yield ModelChunk(tool_calls=tool_calls)
-        except Exception:
-            raise ModelUnavailableError("model request failed") from None
+        except Exception as error:
+            raise ModelUnavailableError(
+                "model request failed",
+                retryable=_is_transient_upstream_error(error),
+            ) from None
+
+
+def _is_transient_upstream_error(error: Exception) -> bool:
+    current: BaseException | None = error
+    visited: set[int] = set()
+    while current is not None and id(current) not in visited:
+        visited.add(id(current))
+        response = getattr(current, "response", None)
+        status_code = getattr(current, "status_code", None) or getattr(
+            response, "status_code", None
+        )
+        if isinstance(status_code, int):
+            return status_code in {408, 409, 429} or status_code >= 500
+        current = current.__cause__ or current.__context__
+    return True
 
 
 def _to_provider_message(message: ModelMessage) -> BaseMessage:

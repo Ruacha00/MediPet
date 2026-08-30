@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
+from contextlib import aclosing
 from uuid import uuid4
 
 from medipet.contracts import TurnEvent
@@ -14,50 +15,55 @@ def _sse(payload: dict | str) -> str:
     return f"data: {body}\n\n"
 
 
-async def to_ui_message_stream(events: AsyncIterator[TurnEvent]) -> AsyncIterator[str]:
+async def to_ui_message_stream(
+    events: AsyncGenerator[TurnEvent, None],
+) -> AsyncGenerator[str, None]:
     message_id = f"message-{uuid4().hex}"
     text_id = f"text-{uuid4().hex}"
     text_open = False
 
     yield _sse({"type": "start", "messageId": message_id})
 
-    async for event in events:
-        if event.kind == "status":
-            yield _sse(
-                {
-                    "type": "data-agent-status",
-                    "data": event.data,
-                    "transient": True,
-                }
-            )
-            continue
+    async with aclosing(events):
+        async for event in events:
+            if event.kind == "status":
+                yield _sse(
+                    {
+                        "type": "data-agent-status",
+                        "data": event.data,
+                        "transient": True,
+                    }
+                )
+                continue
 
-        if event.kind == "text":
-            if not text_open:
-                yield _sse({"type": "text-start", "id": text_id})
-                text_open = True
-            yield _sse({"type": "text-delta", "id": text_id, "delta": event.data["text"]})
-            continue
+            if event.kind == "text":
+                if not text_open:
+                    yield _sse({"type": "text-start", "id": text_id})
+                    text_open = True
+                yield _sse(
+                    {"type": "text-delta", "id": text_id, "delta": event.data["text"]}
+                )
+                continue
 
-        if event.kind == "data":
-            if text_open:
-                yield _sse({"type": "text-end", "id": text_id})
-                text_open = False
-            yield _sse(event.data)
-            continue
+            if event.kind == "data":
+                if text_open:
+                    yield _sse({"type": "text-end", "id": text_id})
+                    text_open = False
+                yield _sse(event.data)
+                continue
 
-        if event.kind == "failed":
-            if text_open:
-                yield _sse({"type": "text-end", "id": text_id})
-                text_open = False
-            yield _sse({"type": "error", "errorText": event.data["message"]})
-            continue
+            if event.kind == "failed":
+                if text_open:
+                    yield _sse({"type": "text-end", "id": text_id})
+                    text_open = False
+                yield _sse({"type": "error", "errorText": event.data["message"]})
+                continue
 
-        if event.kind == "completed":
-            if text_open:
-                yield _sse({"type": "text-end", "id": text_id})
-                text_open = False
-            yield _sse({"type": "finish", "finishReason": "stop"})
+            if event.kind == "completed":
+                if text_open:
+                    yield _sse({"type": "text-end", "id": text_id})
+                    text_open = False
+                yield _sse({"type": "finish", "finishReason": "stop"})
 
     if text_open:
         yield _sse({"type": "text-end", "id": text_id})

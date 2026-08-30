@@ -115,6 +115,33 @@ async def test_chat_openai_adapter_hides_upstream_failure_details() -> None:
 
 
 @pytest.mark.asyncio
+async def test_chat_openai_adapter_marks_client_errors_as_non_retryable() -> None:
+    async def handler(request: httpx.Request) -> httpx.Response:
+        del request
+        return httpx.Response(400, text="invalid request detail")
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        adapter = ChatOpenAIModelAdapter(
+            ModelSettings(
+                base_url="https://provider.example/openai/v1",
+                api_key="test-secret",
+                model="test-model",
+            ),
+            http_async_client=client,
+        )
+
+        with pytest.raises(ModelUnavailableError) as caught:
+            _ = [
+                chunk
+                async for chunk in adapter.stream(
+                    ModelRequest(messages=(ModelMessage(role="user", content="hello"),))
+                )
+            ]
+
+    assert caught.value.retryable is False
+
+
+@pytest.mark.asyncio
 async def test_chat_openai_adapter_streams_tool_calls_and_observations() -> None:
     requests: list[dict] = []
 

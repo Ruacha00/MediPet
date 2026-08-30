@@ -12,5 +12,5 @@ Type: map
 | 06 导入导出并隔离 Skills | resolved | 05 |
 | 07 同步并治理受信 Tools | resolved | 02, 05 |
 | 08 暂停并确认有副作用 Tools | resolved | 02, 07 |
-| 09 加固流取消、重试和预算 | ready-for-agent | 02, 04 |
+| 09 加固流取消、重试和预算 | resolved | 02, 04 |
 | 10 可观测性、基准和发布验证 | ready-for-agent | 03, 06, 08, 09 |

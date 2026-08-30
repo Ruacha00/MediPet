@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from collections.abc import AsyncGenerator
 from contextlib import aclosing
@@ -33,6 +34,7 @@ from medipet.model.port import (
     ModelToolCall,
     ModelUnavailableError,
 )
+from medipet.run_audits import NullRunAuditStore, RunAuditKind, RunAuditStore
 from medipet.schema import validate_object
 
 TOOL_REJECTION = {
@@ -50,6 +52,7 @@ PROPOSAL_FAILURE = "待确认操作暂时无法创建，请重新发起。"
 class AgentRequest:
     messages: tuple[ModelMessage, ...]
     context: ToolContext = ToolContext()
+    trace_id: str = ""
 
 
 @dataclass(frozen=True)
@@ -79,6 +82,7 @@ class ReActState(TypedDict):
     invalid_signatures: tuple[str, ...]
     model_calls: int
     terminal: bool
+    trace_id: str
 
 
 class LangGraphAgentRuntime:
@@ -90,12 +94,17 @@ class LangGraphAgentRuntime:
         max_steps: int = 8,
         profile_version: str = "static",
         action_store: ActionStore | None = None,
+        model_timeout_seconds: float = 30.0,
+        audit_store: RunAuditStore | None = None,
     ) -> None:
         self._action_store = action_store or UnavailableActionStore()
+        self._audit_store = audit_store or NullRunAuditStore()
         self._graph = _build_react_graph(
             model,
             max_steps=max_steps,
             action_store=self._action_store,
+            model_timeout_seconds=model_timeout_seconds,
+            audit_store=self._audit_store,
         )
         self._capability_provider = capability_provider or StaticCapabilityProvider()
         self._max_steps = max_steps
@@ -189,6 +198,7 @@ class LangGraphAgentRuntime:
                             "invalid_signatures": (),
                             "model_calls": 0,
                             "terminal": False,
+                            "trace_id": request.trace_id,
                         },
                         config={"recursion_limit": self._max_steps * 2 + 4},
                         stream_mode="custom",
@@ -199,6 +209,8 @@ class LangGraphAgentRuntime:
                     yield AgentEvent(kind=event["kind"], data=event["data"])
         except ModelUnavailableError:
             yield AgentEvent("failed", {"message": "模型服务暂时不可用，请稍后重试。"})
+        except ModelCallTimeoutError:
+            yield AgentEvent("failed", {"message": "模型响应已超时，请稍后重试。"})
         except GraphRecursionError:
             yield AgentEvent("failed", {"message": BUDGET_FAILURE})
 
@@ -242,10 +254,31 @@ class LangGraphAgentRuntime:
             return AgentEvent("failed", {"message": CAPABILITY_FAILURE})
 
 
-def _build_react_graph(model: ModelPort, *, max_steps: int, action_store: ActionStore):
+class ModelCallTimeoutError(RuntimeError):
+    pass
+
+
+def _build_react_graph(
+    model: ModelPort,
+    *,
+    max_steps: int,
+    action_store: ActionStore,
+    model_timeout_seconds: float,
+    audit_store: RunAuditStore,
+):
+    async def audit(kind: RunAuditKind, state: ReActState) -> None:
+        await audit_store.record(
+            kind,
+            trace_id=state["trace_id"],
+            visit_matter_id=state["context"].visit_matter_id,
+            turn_id=state["context"].idempotency_key,
+            profile_version=state["context"].profile_version,
+        )
+
     async def call_model(state: ReActState) -> dict[str, object]:
         writer = get_stream_writer()
         if state["model_calls"] >= max_steps:
+            await audit("budget_exhausted", state)
             writer({"kind": "failed", "data": {"message": BUDGET_FAILURE}})
             return {"terminal": True, "pending_calls": ()}
 
@@ -267,12 +300,28 @@ def _build_react_graph(model: ModelPort, *, max_steps: int, action_store: Action
         )
         response_text: list[str] = []
         calls: list[ModelToolCall] = []
-        async for chunk in model.stream(model_request):
-            if chunk.text:
-                response_text.append(chunk.text)
-                if not visible_tools:
-                    writer({"kind": "text", "data": {"text": chunk.text}})
-            calls.extend(chunk.tool_calls)
+        visible_text_started = False
+        for attempt in range(2):
+            response_text.clear()
+            calls.clear()
+            try:
+                async with asyncio.timeout(model_timeout_seconds):
+                    async for chunk in model.stream(model_request):
+                        if chunk.text:
+                            response_text.append(chunk.text)
+                            if not visible_tools:
+                                writer({"kind": "text", "data": {"text": chunk.text}})
+                                visible_text_started = True
+                        calls.extend(chunk.tool_calls)
+                break
+            except ModelUnavailableError as error:
+                if error.retryable and attempt == 0 and not visible_text_started:
+                    await audit("retry", state)
+                    continue
+                raise
+            except TimeoutError as error:
+                await audit("model_timeout", state)
+                raise ModelCallTimeoutError from error
         if visible_tools and not calls:
             for text in response_text:
                 writer({"kind": "text", "data": {"text": text}})
@@ -321,6 +370,7 @@ def _build_react_graph(model: ModelPort, *, max_steps: int, action_store: Action
                     )
                 signature = _call_signature(call)
                 if correction_used or signature in invalid_signatures:
+                    await audit("loop_detected", state)
                     writer({"kind": "failed", "data": {"message": LOOP_FAILURE}})
                     return {"terminal": True, "pending_calls": ()}
                 correction_used = True

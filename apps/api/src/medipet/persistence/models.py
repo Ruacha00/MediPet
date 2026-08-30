@@ -142,6 +142,22 @@ class ConversationMessageRecord(Base):
     )
 
 
+class RunAuditRecord(Base):
+    __tablename__ = "run_audits"
+    __table_args__ = (Index("ix_run_audits_turn_created", "turn_id", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(32))
+    trace_id: Mapped[str] = mapped_column(String(128))
+    visit_matter_id: Mapped[str] = mapped_column(String(128), index=True)
+    turn_id: Mapped[str] = mapped_column(String(128))
+    profile_version: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+
+
 class SkillRecord(Base):
     __tablename__ = "skills"
 

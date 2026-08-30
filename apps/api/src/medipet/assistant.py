@@ -15,6 +15,7 @@ from medipet.persistence.conversation import (
     VisitMatterNotFoundError,
     VisitTurn,
 )
+from medipet.run_audits import NullRunAuditStore, RunAuditStore
 
 
 class MediPetAssistant:
@@ -26,12 +27,16 @@ class MediPetAssistant:
         context_message_limit: int = 20,
         persistence_batch_characters: int = 256,
         turn_timeout_seconds: float | None = None,
+        audit_store: RunAuditStore | None = None,
+        profile_version: str = "static",
     ) -> None:
         self._agent_runtime = agent_runtime
         self._conversation_store = conversation_store
         self._context_message_limit = context_message_limit
         self._persistence_batch_characters = persistence_batch_characters
         self._turn_timeout_seconds = turn_timeout_seconds
+        self._audit_store = audit_store or NullRunAuditStore()
+        self._profile_version = profile_version
 
     async def handle_turn(self, command: TurnCommand) -> AsyncGenerator[TurnEvent, None]:
         trace_id = f"trace-{uuid4().hex[:12]}"
@@ -45,6 +50,13 @@ class MediPetAssistant:
                     async for event in events:
                         yield event
         except TimeoutError:
+            await self._audit_store.record(
+                "turn_timeout",
+                trace_id=trace_id,
+                visit_matter_id=command.visit_matter_id,
+                turn_id=command.idempotency_key,
+                profile_version=self._profile_version,
+            )
             yield TurnEvent(
                 kind="failed",
                 data={"message": "本次协助已超时，请重试。", "traceId": trace_id},
@@ -128,6 +140,13 @@ class MediPetAssistant:
                 state,
             )
             terminal = True
+            await self._audit_store.record(
+                state,
+                trace_id=trace_id,
+                visit_matter_id=command.visit_matter_id,
+                turn_id=command.idempotency_key,
+                profile_version=self._profile_version,
+            )
 
         try:
             completed_history = await self._conversation_store.list_completed_messages(
@@ -151,6 +170,7 @@ class MediPetAssistant:
                     idempotency_key=command.idempotency_key,
                     visit_stage=visit_stage,
                 ),
+                trace_id=trace_id,
             )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:
                 async for event in runtime_events:

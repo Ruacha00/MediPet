@@ -17,6 +17,7 @@ from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
 )
+from medipet.run_audits import InMemoryRunAuditStore
 
 
 class DeterministicModel(ModelPort):
@@ -57,11 +58,37 @@ class UnavailableModel(ModelPort):
         yield  # pragma: no cover
 
 
+class NonRetryableModel(ModelPort):
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        self.calls += 1
+        raise ModelUnavailableError("invalid request", retryable=False)
+        yield  # pragma: no cover
+
+
 class BlockingModel(ModelPort):
     async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
         del request
         await asyncio.Event().wait()
         yield ModelChunk(text="unreachable")  # pragma: no cover
+
+
+class FailOnceModel(ModelPort):
+    def __init__(self, *, fail_after_text: bool = False) -> None:
+        self.calls = 0
+        self.fail_after_text = fail_after_text
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        self.calls += 1
+        if self.calls == 1:
+            if self.fail_after_text:
+                yield ModelChunk(text="半截")
+            raise ModelUnavailableError("transient private failure")
+        yield ModelChunk(text="恢复成功")
 
 
 class CountingStore(InMemoryVisitConversationStore):
@@ -98,6 +125,85 @@ async def test_runtime_maps_model_failure_to_a_safe_event() -> None:
 
     assert [event.kind for event in events] == ["status", "failed"]
     assert events[-1].data == {"message": "模型服务暂时不可用，请稍后重试。"}
+
+
+@pytest.mark.asyncio
+async def test_runtime_retries_once_before_the_first_visible_token() -> None:
+    model = FailOnceModel()
+    audits = InMemoryRunAuditStore()
+    runtime = LangGraphAgentRuntime(model, audit_store=audits)
+
+    events = [
+        event
+        async for event in runtime.run(
+            AgentRequest(
+                messages=(ModelMessage(role="user", content="你好"),),
+                trace_id="trace-retry",
+            )
+        )
+    ]
+
+    assert model.calls == 2
+    assert [event.kind for event in events] == ["status", "text"]
+    assert events[-1].data == {"text": "恢复成功"}
+    assert [audit.kind for audit in await audits.list_audits()] == ["retry"]
+
+
+@pytest.mark.asyncio
+async def test_runtime_does_not_retry_a_non_transient_failure() -> None:
+    model = NonRetryableModel()
+    runtime = LangGraphAgentRuntime(model)
+
+    events = [
+        event
+        async for event in runtime.run(
+            AgentRequest(messages=(ModelMessage(role="user", content="你好"),))
+        )
+    ]
+
+    assert model.calls == 1
+    assert [event.kind for event in events] == ["status", "failed"]
+
+
+@pytest.mark.asyncio
+async def test_runtime_does_not_retry_after_a_visible_token() -> None:
+    model = FailOnceModel(fail_after_text=True)
+    runtime = LangGraphAgentRuntime(model)
+
+    events = [
+        event
+        async for event in runtime.run(
+            AgentRequest(messages=(ModelMessage(role="user", content="你好"),))
+        )
+    ]
+
+    assert model.calls == 1
+    assert [event.kind for event in events] == ["status", "text", "failed"]
+    assert [event.data["text"] for event in events if event.kind == "text"] == ["半截"]
+
+
+@pytest.mark.asyncio
+async def test_model_call_timeout_cancels_upstream_and_returns_a_safe_terminal_event() -> None:
+    audits = InMemoryRunAuditStore()
+    runtime = LangGraphAgentRuntime(
+        BlockingModel(),
+        model_timeout_seconds=0.01,
+        audit_store=audits,
+    )
+
+    events = [
+        event
+        async for event in runtime.run(
+            AgentRequest(
+                messages=(ModelMessage(role="user", content="你好"),),
+                trace_id="trace-model-timeout",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["status", "failed"]
+    assert events[-1].data == {"message": "模型响应已超时，请稍后重试。"}
+    assert [audit.kind for audit in await audits.list_audits()] == ["model_timeout"]
 
 
 @pytest.mark.asyncio
@@ -154,7 +260,12 @@ async def test_maps_model_failure_to_a_safe_terminal_event() -> None:
         participant_id="participant-2",
         visit_matter_id="visit-2",
     )
-    assistant = MediPetAssistant(LangGraphAgentRuntime(UnavailableModel()), store)
+    audits = InMemoryRunAuditStore()
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(UnavailableModel(), audit_store=audits),
+        store,
+        audit_store=audits,
+    )
     turn = TurnCommand(
         visit_matter_id="visit-2",
         participant_id="participant-2",
@@ -168,15 +279,18 @@ async def test_maps_model_failure_to_a_safe_terminal_event() -> None:
     assert events[-1].data["traceId"].startswith("trace-")
     persisted = await store.list_messages("visit-2")
     assert [message.state for message in persisted] == ["completed", "failed"]
+    assert [audit.kind for audit in await audits.list_audits()] == ["retry", "failed"]
 
 
 @pytest.mark.asyncio
 async def test_turn_timeout_stops_the_pinned_runtime_with_a_safe_failure() -> None:
     store = await seeded_store()
+    audits = InMemoryRunAuditStore()
     assistant = MediPetAssistant(
-        LangGraphAgentRuntime(BlockingModel()),
+        LangGraphAgentRuntime(BlockingModel(), audit_store=audits),
         store,
         turn_timeout_seconds=0.01,
+        audit_store=audits,
     )
 
     events = [
@@ -196,14 +310,20 @@ async def test_turn_timeout_stops_the_pinned_runtime_with_a_safe_failure() -> No
     assert "traceId" in events[-1].data
     persisted = await store.list_messages("visit-1")
     assert [message.state for message in persisted] == ["completed", "cancelled"]
+    assert [audit.kind for audit in await audits.list_audits()] == [
+        "cancelled",
+        "turn_timeout",
+    ]
 
 
 @pytest.mark.asyncio
 async def test_closing_stream_persists_partial_assistant_text_as_cancelled() -> None:
     store = await seeded_store()
+    audits = InMemoryRunAuditStore()
     assistant = MediPetAssistant(
         LangGraphAgentRuntime(DeterministicModel(["半截回答", "不应消费"])),
         store,
+        audit_store=audits,
     )
     stream = assistant.handle_turn(
         TurnCommand(
@@ -221,6 +341,7 @@ async def test_closing_stream_persists_partial_assistant_text_as_cancelled() -> 
     persisted = await store.list_messages("visit-1")
     assert persisted[-1].state == "cancelled"
     assert persisted[-1].content == "半截回答"
+    assert [audit.kind for audit in await audits.list_audits()] == ["cancelled"]
 
 
 @pytest.mark.asyncio

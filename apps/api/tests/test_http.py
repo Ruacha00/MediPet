@@ -26,6 +26,7 @@ from medipet.persistence.conversation import (
     InMemoryVisitConversationStore,
     VisitTurn,
 )
+from medipet.run_audits import InMemoryRunAuditStore
 
 
 class DeterministicModel(ModelPort):
@@ -421,6 +422,49 @@ def test_chat_streams_model_failure_safely() -> None:
     assert "provider secret" not in response.text
     assert "test-secret" not in response.text
     assert "Traceback" not in response.text
+
+
+def test_run_audits_are_queryable_through_the_protected_management_api() -> None:
+    audits = InMemoryRunAuditStore()
+    client = TestClient(
+        create_app(
+            model=DeterministicModel(),
+            conversation_store=seeded_store(),
+            run_audit_store=audits,
+            management_token="management-secret",
+        )
+    )
+    response = client.post(
+        "/v1/chat/turns",
+        json={
+            "idempotency_key": "audited-turn",
+            "messages": [
+                {
+                    "id": "message-audit",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "审计测试"}],
+                }
+            ],
+        },
+    )
+
+    unauthorized = client.get("/v1/admin/run-audits")
+    queried = client.get(
+        "/v1/admin/run-audits",
+        headers={"Authorization": "Bearer management-secret"},
+    )
+
+    assert response.status_code == 200
+    assert unauthorized.status_code == 401
+    assert queried.status_code == 200
+    assert queried.json()["audits"][-1] == {
+        "kind": "completed",
+        "traceId": queried.json()["audits"][-1]["traceId"],
+        "visitMatterId": "visit-matter-demo",
+        "turnId": "audited-turn",
+        "profileVersion": "static",
+        "createdAt": queried.json()["audits"][-1]["createdAt"],
+    }
 
 
 def test_history_survives_app_recreation_and_preserves_terminal_states() -> None:

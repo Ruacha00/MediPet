@@ -23,6 +23,7 @@ from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
 )
+from medipet.run_audits import InMemoryRunAuditStore, RunAuditStore
 from medipet.skills.capabilities import RegistryCapabilityProvider
 from medipet.skills.registry import InMemorySkillRegistry
 from medipet.tools.registry import InMemoryToolRegistry, TrustedTool
@@ -47,6 +48,7 @@ async def _assistant(
     action_store: InMemoryActionStore | None = None,
     max_steps: int = 8,
     visit_stage: VisitStage = "pre_visit",
+    audit_store: RunAuditStore | None = None,
 ) -> tuple[MediPetAssistant, InMemoryVisitConversationStore]:
     store = InMemoryVisitConversationStore()
     await store.seed_development_visit_matter(
@@ -68,8 +70,9 @@ async def _assistant(
         max_steps=max_steps,
         profile_version="profile-1",
         action_store=action_store or InMemoryActionStore(),
+        audit_store=audit_store,
     )
-    return MediPetAssistant(runtime, store), store
+    return MediPetAssistant(runtime, store, audit_store=audit_store), store
 
 
 def _turn(turn_id: str = "turn-1") -> TurnCommand:
@@ -704,7 +707,8 @@ async def test_repeated_invalid_tool_call_terminates_the_loop() -> None:
             [ModelChunk(tool_calls=(repeated,))],
         ]
     )
-    assistant, store = await _assistant(model)
+    audits = InMemoryRunAuditStore()
+    assistant, store = await _assistant(model, audit_store=audits)
 
     events = [event async for event in assistant.handle_turn(_turn())]
 
@@ -712,6 +716,10 @@ async def test_repeated_invalid_tool_call_terminates_the_loop() -> None:
     assert events[-1].data["message"] == "模型重复请求了不可用操作，本次协助已停止。"
     persisted = await store.list_messages("visit-1")
     assert persisted[-1].state == "failed"
+    assert [audit.kind for audit in await audits.list_audits()] == [
+        "loop_detected",
+        "failed",
+    ]
 
 
 @pytest.mark.asyncio
@@ -766,10 +774,12 @@ async def test_model_call_budget_terminates_a_tool_loop() -> None:
         execute=execute,
     )
     model = ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-1", "dummy_read", {}),))]])
+    audits = InMemoryRunAuditStore()
     assistant, store = await _assistant(
         model,
         CapabilitySnapshot(tools=(tool,)),
         max_steps=1,
+        audit_store=audits,
     )
 
     events = [event async for event in assistant.handle_turn(_turn())]
@@ -779,6 +789,10 @@ async def test_model_call_budget_terminates_a_tool_loop() -> None:
     assert len(model.requests) == 1
     persisted = await store.list_messages("visit-1")
     assert persisted[-1].state == "failed"
+    assert [audit.kind for audit in await audits.list_audits()] == [
+        "budget_exhausted",
+        "failed",
+    ]
 
 
 @pytest.mark.asyncio
