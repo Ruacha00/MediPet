@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,6 +32,9 @@ from medipet.contracts import (
     UIMessagePart,
 )
 from medipet.delivery.streaming import to_ui_message_stream
+from medipet.hospital.data_source import FakeHospitalDataSource
+from medipet.hospital.fake import FakeHospitalOperations
+from medipet.hospital.tools import HospitalToolProvider
 from medipet.model.openai import ChatOpenAIModelAdapter
 from medipet.model.port import ModelPort
 from medipet.persistence.conversation import (
@@ -52,7 +56,7 @@ from medipet.skills.postgres import PostgresSkillRegistry
 from medipet.skills.registry import SkillRegistry
 from medipet.tools.http import tool_management_router
 from medipet.tools.postgres import PostgresToolRegistry
-from medipet.tools.registry import StaticToolProvider, ToolProvider, ToolRegistry
+from medipet.tools.registry import ToolProvider, ToolRegistry
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
 DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
@@ -324,6 +328,10 @@ def _tool_registry_from_environment() -> PostgresToolRegistry | None:
 
 
 _tool_registry = _tool_registry_from_environment()
+_hospital_operations = FakeHospitalOperations(
+    FakeHospitalDataSource.load_default(),
+    clock=lambda: datetime.now(UTC),
+)
 
 
 def _action_store_from_environment() -> PostgresActionStore | None:
@@ -372,7 +380,7 @@ app = create_app(
     skill_registry=_skill_registry_from_environment(),
     close_skill_registry=True,
     tool_registry=_tool_registry,
-    tool_provider=StaticToolProvider(),
+    tool_provider=HospitalToolProvider(_hospital_operations),
     close_tool_registry=True,
     action_store=_action_store,
     close_action_store=True,
