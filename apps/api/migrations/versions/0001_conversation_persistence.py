@@ -12,6 +12,15 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
+    # Alembic creates this bookkeeping column as VARCHAR(32), while this
+    # repository intentionally uses descriptive revision identifiers.
+    op.alter_column(
+        "alembic_version",
+        "version_num",
+        existing_type=sa.String(length=32),
+        type_=sa.String(length=128),
+        existing_nullable=False,
+    )
     op.create_table(
         "patients",
         sa.Column("id", sa.String(length=128), nullable=False),

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import AsyncGenerator
 from contextlib import aclosing
 from uuid import uuid4
@@ -16,6 +17,14 @@ from medipet.persistence.conversation import (
     VisitTurn,
 )
 from medipet.run_audits import NullRunAuditStore, RunAuditContext, RunAuditStore
+from medipet.run_metrics import (
+    NullRunMetricStore,
+    RunMetricsRecorder,
+    RunMetricStore,
+    TerminalOutcome,
+)
+
+LOGGER = logging.getLogger(__name__)
 
 
 class MediPetAssistant:
@@ -29,6 +38,9 @@ class MediPetAssistant:
         turn_timeout_seconds: float | None = None,
         audit_store: RunAuditStore | None = None,
         profile_version: str = "static",
+        provider: str = "unknown",
+        model: str = "unknown",
+        metric_store: RunMetricStore | None = None,
     ) -> None:
         self._agent_runtime = agent_runtime
         self._conversation_store = conversation_store
@@ -37,9 +49,18 @@ class MediPetAssistant:
         self._turn_timeout_seconds = turn_timeout_seconds
         self._audit_store = audit_store or NullRunAuditStore()
         self._profile_version = profile_version
+        self._provider = provider
+        self._model = model
+        self._metric_store = metric_store or NullRunMetricStore()
 
     async def handle_turn(self, command: TurnCommand) -> AsyncGenerator[TurnEvent, None]:
         trace_id = f"trace-{uuid4().hex[:12]}"
+        metrics = RunMetricsRecorder(
+            provider=self._provider,
+            model=self._model,
+            profile_version=self._profile_version,
+        )
+        outcome: TerminalOutcome = "failed"
         audit_context = RunAuditContext(
             trace_id=trace_id,
             visit_matter_id=command.visit_matter_id,
@@ -47,25 +68,39 @@ class MediPetAssistant:
             profile_version=self._profile_version,
         )
         try:
-            async with aclosing(self._handle_turn(command, audit_context)) as events:
+            async with aclosing(self._handle_turn(command, audit_context, metrics)) as events:
                 if self._turn_timeout_seconds is None:
                     async for event in events:
+                        if event.kind == "completed":
+                            outcome = "completed"
                         yield event
                     return
                 async with asyncio.timeout(self._turn_timeout_seconds):
                     async for event in events:
+                        if event.kind == "completed":
+                            outcome = "completed"
                         yield event
         except TimeoutError:
+            outcome = "turn_timeout"
             await self._audit_store.record("turn_timeout", audit_context)
             yield TurnEvent(
                 kind="failed",
                 data={"message": "本次协助已超时，请重试。", "traceId": trace_id},
             )
+        except (asyncio.CancelledError, GeneratorExit):
+            outcome = "cancelled"
+            raise
+        finally:
+            try:
+                await self._metric_store.record_metric(metrics.finish(outcome))
+            except Exception:
+                LOGGER.warning("run_metric_record_failed")
 
     async def _handle_turn(
         self,
         command: TurnCommand,
         audit_context: RunAuditContext,
+        metrics: RunMetricsRecorder,
     ) -> AsyncGenerator[TurnEvent, None]:
         trace_id = audit_context.trace_id
 
@@ -172,6 +207,7 @@ class MediPetAssistant:
                     visit_stage=visit_stage,
                 ),
                 trace_id=trace_id,
+                metrics=metrics,
             )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:
                 async for event in runtime_events:

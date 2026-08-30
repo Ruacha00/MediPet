@@ -1,8 +1,9 @@
 import json
 import os
+import time
 from pathlib import Path
 
-from playwright.sync_api import Route, sync_playwright
+from playwright.sync_api import Error, Route, sync_playwright
 
 
 def _stream(*events: dict | str) -> str:
@@ -52,7 +53,15 @@ def main() -> None:
             else None,
         )
 
-        page.goto(web_url)
+        deadline = time.monotonic() + 30
+        while True:
+            try:
+                page.goto(web_url)
+                break
+            except Error:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.5)
         page.wait_for_load_state('networkidle')
         page.get_by_role('heading', name='把复杂的门诊流程，变成一次从容的对话。').wait_for()
         page.get_by_text('医院数据', exact=True).wait_for()

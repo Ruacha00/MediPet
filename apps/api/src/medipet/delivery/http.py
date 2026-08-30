@@ -44,6 +44,8 @@ from medipet.persistence.postgres import (
 from medipet.run_audit_http import run_audit_router
 from medipet.run_audit_postgres import PostgresRunAuditStore
 from medipet.run_audits import RunAuditStore
+from medipet.run_metric_postgres import PostgresRunMetricStore
+from medipet.run_metrics import RunMetricStore
 from medipet.skills.capabilities import RegistryCapabilityProvider
 from medipet.skills.http import management_router
 from medipet.skills.postgres import PostgresSkillRegistry
@@ -59,6 +61,8 @@ DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
 def create_app(
     *,
     model: ModelPort | None = None,
+    model_provider: str = "unknown",
+    model_name: str = "unknown",
     conversation_store: VisitConversationStore | None = None,
     close_conversation_store: bool = False,
     runtime_config: RuntimeConfig | None = None,
@@ -75,6 +79,8 @@ def create_app(
     close_action_store: bool = False,
     run_audit_store: RunAuditStore | None = None,
     close_run_audit_store: bool = False,
+    run_metric_store: RunMetricStore | None = None,
+    close_run_metric_store: bool = False,
 ) -> FastAPI:
     if model is not None and runtime_config is not None:
         raise ValueError("model and runtime_config cannot both be provided")
@@ -97,6 +103,8 @@ def create_app(
             await action_store.close()
         if close_run_audit_store and isinstance(run_audit_store, PostgresRunAuditStore):
             await run_audit_store.close()
+        if close_run_metric_store and isinstance(run_metric_store, PostgresRunMetricStore):
+            await run_metric_store.close()
 
     app = FastAPI(title="MediPet", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
@@ -122,6 +130,9 @@ def create_app(
             ),
             conversation_store,
             audit_store=run_audit_store,
+            provider=model_provider,
+            model=model_name,
+            metric_store=run_metric_store,
         )
         if model is not None and conversation_store is not None
         else None
@@ -158,6 +169,9 @@ def create_app(
             turn_timeout_seconds=settings.turn_timeout_seconds,
             audit_store=run_audit_store,
             profile_version=snapshot.fingerprint,
+            provider=settings.model.provider,
+            model=settings.model.model,
+            metric_store=run_metric_store,
         )
 
     @app.get("/health")
@@ -171,7 +185,9 @@ def create_app(
             tool_management_router(tool_registry, management_token, skill_registry)
         )
     if environment.strip().lower() != "production" and run_audit_store is not None:
-        app.include_router(run_audit_router(run_audit_store, management_token))
+        app.include_router(
+            run_audit_router(run_audit_store, management_token, run_metric_store)
+        )
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
@@ -330,6 +346,16 @@ def _run_audit_store_from_environment() -> PostgresRunAuditStore | None:
 _run_audit_store = _run_audit_store_from_environment()
 
 
+def _run_metric_store_from_environment() -> PostgresRunMetricStore | None:
+    try:
+        return PostgresRunMetricStore.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
+    except DatabaseConfigurationError:
+        return None
+
+
+_run_metric_store = _run_metric_store_from_environment()
+
+
 def _skill_registry_from_environment() -> PostgresSkillRegistry | None:
     try:
         return PostgresSkillRegistry.from_url(
@@ -352,6 +378,8 @@ app = create_app(
     close_action_store=True,
     run_audit_store=_run_audit_store,
     close_run_audit_store=True,
+    run_metric_store=_run_metric_store,
+    close_run_metric_store=True,
     management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
     environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),
 )

@@ -43,6 +43,8 @@ class ModelRequest:
 class ModelChunk:
     text: str = ""
     tool_calls: tuple[ModelToolCall, ...] = ()
+    input_tokens: int = 0
+    output_tokens: int = 0
 
 
 class ModelPort(Protocol):

@@ -158,6 +158,37 @@ class RunAuditRecord(Base):
     )
 
 
+class RunMetricRecord(Base):
+    __tablename__ = "run_metrics"
+    __table_args__ = (
+        Index(
+            "ix_run_metrics_model_profile_created",
+            "provider",
+            "model",
+            "profile_version",
+            "created_at",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(128))
+    model: Mapped[str] = mapped_column(String(256))
+    profile_version: Mapped[str] = mapped_column(String(128))
+    first_token_ms: Mapped[float | None] = mapped_column()
+    total_ms: Mapped[float] = mapped_column()
+    model_ms: Mapped[float] = mapped_column()
+    tool_ms: Mapped[float] = mapped_column()
+    model_requests: Mapped[int] = mapped_column()
+    input_tokens: Mapped[int] = mapped_column()
+    output_tokens: Mapped[int] = mapped_column()
+    agent_steps: Mapped[int] = mapped_column()
+    outcome: Mapped[str] = mapped_column(String(32))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+
+
 class SkillRecord(Base):
     __tablename__ = "skills"
 

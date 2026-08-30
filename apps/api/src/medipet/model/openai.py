@@ -39,7 +39,7 @@ class ChatOpenAIModelAdapter:
             temperature=settings.temperature,
             timeout=settings.timeout_seconds,
             max_retries=0,
-            stream_usage=False,
+            stream_usage=True,
             use_responses_api=False,
             http_async_client=http_async_client,
         )
@@ -73,8 +73,15 @@ class ChatOpenAIModelAdapter:
                     yield ModelChunk(text=text)
             if aggregate is not None:
                 tool_calls = _model_tool_calls(aggregate)
-                if tool_calls:
-                    yield ModelChunk(tool_calls=tool_calls)
+                usage = aggregate.usage_metadata or {}
+                input_tokens = int(usage.get("input_tokens", 0))
+                output_tokens = int(usage.get("output_tokens", 0))
+                if tool_calls or input_tokens or output_tokens:
+                    yield ModelChunk(
+                        tool_calls=tool_calls,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                    )
         except Exception as error:
             raise ModelUnavailableError(
                 "model request failed",

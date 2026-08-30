@@ -358,7 +358,9 @@ class PostgresSkillRegistry:
                     )
                     for resource in package.resources
                 ]
-                session.add_all((skill, record, *resource_records))
+                session.add_all((skill, record))
+                await session.flush()
+                session.add_all(resource_records)
                 await session.flush()
                 self._add_audit(session, "import", record, actor)
                 if status == "quarantined":

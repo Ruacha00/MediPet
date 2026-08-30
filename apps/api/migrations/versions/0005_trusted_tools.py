@@ -24,7 +24,12 @@ def upgrade() -> None:
     op.create_table(
         "tools",
         sa.Column("id", sa.String(128), primary_key=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
     )
     op.create_table(
         "tool_versions",
@@ -46,7 +51,12 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.false(),
         ),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["tool_id"], ["tools.id"], ondelete="CASCADE"),
         sa.UniqueConstraint("tool_id", "version", name="tool_version"),
     )
@@ -58,8 +68,19 @@ def upgrade() -> None:
         sa.Column("skill_version", sa.BigInteger(), nullable=False),
         sa.Column("tool_id", sa.String(128), nullable=False),
         sa.Column("tool_version", sa.String(64), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.UniqueConstraint("skill_id", "skill_version", "tool_id", "tool_version", name="skill_tool_binding"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.UniqueConstraint(
+            "skill_id",
+            "skill_version",
+            "tool_id",
+            "tool_version",
+            name="skill_tool_binding",
+        ),
     )
     op.create_table(
         "tool_audits",
@@ -70,7 +91,12 @@ def upgrade() -> None:
         sa.Column("version", sa.String(64)),
         sa.Column("visit_matter_id", sa.String(128)),
         sa.Column("turn_id", sa.String(128)),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
     )
 
 

@@ -12,7 +12,7 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    op.drop_constraint("ck_skill_versions_status", "skill_versions", type_="check")
+    op.drop_constraint(op.f("ck_skill_versions_status"), "skill_versions", type_="check")
     op.create_check_constraint(
         op.f("ck_skill_versions_status"),
         "skill_versions",
@@ -92,7 +92,7 @@ def downgrade() -> None:
     op.drop_column("skill_versions", "publish_blockers")
     op.drop_column("skill_versions", "quarantine_reasons")
     op.drop_column("skill_versions", "governance")
-    op.drop_constraint("ck_skill_versions_status", "skill_versions", type_="check")
+    op.drop_constraint(op.f("ck_skill_versions_status"), "skill_versions", type_="check")
     op.create_check_constraint(
         op.f("ck_skill_versions_status"),
         "skill_versions",

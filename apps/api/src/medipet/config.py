@@ -17,6 +17,7 @@ from urllib.parse import urlsplit
 LOGGER = logging.getLogger(__name__)
 
 HOT_RELOAD_ENV_DEFAULTS = {
+    "MEDIPET_LLM_PROVIDER": "openai-compatible",
     "MEDIPET_LLM_BASE_URL": "",
     "MEDIPET_LLM_API_KEY": "",
     "MEDIPET_LLM_MODEL": "",
@@ -37,6 +38,7 @@ class ModelSettings:
     base_url: str
     api_key: str = field(repr=False)
     model: str
+    provider: str = "openai-compatible"
     temperature: float = 0.0
     timeout_seconds: float = 30.0
 
@@ -52,7 +54,7 @@ class ModelSettings:
         )
         if not has_version or parsed.query or parsed.fragment:
             raise ModelConfigurationError("模型 API 根地址必须包含版本路径且不能包含查询或片段")
-        if not self.api_key.strip() or not self.model.strip():
+        if not self.api_key.strip() or not self.model.strip() or not self.provider.strip():
             raise ModelConfigurationError("模型 Token 和模型名不能为空")
         if not isfinite(self.temperature) or not 0 <= self.temperature <= 2:
             raise ModelConfigurationError("模型 temperature 必须在 0 到 2 之间")
@@ -61,6 +63,7 @@ class ModelSettings:
         object.__setattr__(self, "base_url", base_url)
         object.__setattr__(self, "api_key", self.api_key.strip())
         object.__setattr__(self, "model", self.model.strip())
+        object.__setattr__(self, "provider", self.provider.strip())
 
     @classmethod
     def from_environment(cls, environment: Mapping[str, str]) -> ModelSettings:
@@ -74,6 +77,7 @@ class ModelSettings:
             base_url=environment.get("MEDIPET_LLM_BASE_URL", ""),
             api_key=environment.get("MEDIPET_LLM_API_KEY", ""),
             model=environment.get("MEDIPET_LLM_MODEL", ""),
+            provider=environment.get("MEDIPET_LLM_PROVIDER", "openai-compatible"),
             temperature=temperature,
             timeout_seconds=timeout_seconds,
         )

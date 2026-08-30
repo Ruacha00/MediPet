@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: medipet
+          POSTGRES_PASSWORD: test-password
+          POSTGRES_DB: medipet_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U medipet -d medipet_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: apps/api
+    env:
+      PYTHONPATH: src
+      MEDIPET_TEST_DATABASE_URL: postgresql://medipet:test-password@localhost:5432/medipet_test
+      MEDIPET_BENCHMARK_DATABASE_URL: postgresql://medipet:test-password@localhost:5432/medipet_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run alembic upgrade head
+      - run: uv run pytest --basetemp .pytest-tmp
+      - run: uv run ruff check .
+      - run: uv run pyright
+      - run: uv run python -m medipet.benchmark fake --iterations 2
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm lint
+      - run: pnpm build
+
+  browser-smoke:
+    runs-on: ubuntu-latest
+    needs: web
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: uv run --with playwright playwright install --with-deps chromium
+      - run: pnpm start &
+      - run: uv run --with playwright python tests/browser/smoke.py

@@ -40,6 +40,7 @@ from medipet.run_audits import (
     RunAuditKind,
     RunAuditStore,
 )
+from medipet.run_metrics import RunMetricsRecorder
 from medipet.schema import validate_object
 
 TOOL_REJECTION = {
@@ -58,6 +59,7 @@ class AgentRequest:
     messages: tuple[ModelMessage, ...]
     context: ToolContext = ToolContext()
     trace_id: str = ""
+    metrics: RunMetricsRecorder | None = None
 
 
 @dataclass(frozen=True)
@@ -88,6 +90,7 @@ class ReActState(TypedDict):
     model_calls: int
     terminal: bool
     trace_id: str
+    metrics: RunMetricsRecorder | None
 
 
 class LangGraphAgentRuntime:
@@ -204,6 +207,7 @@ class LangGraphAgentRuntime:
                             "model_calls": 0,
                             "terminal": False,
                             "trace_id": request.trace_id,
+                            "metrics": request.metrics,
                         },
                         config={"recursion_limit": self._max_steps * 2 + 4},
                         stream_mode="custom",
@@ -284,6 +288,7 @@ def _build_react_graph(
 
     async def call_model(state: ReActState) -> dict[str, object]:
         writer = get_stream_writer()
+        metrics = state["metrics"]
         if state["model_calls"] >= max_steps:
             await audit("budget_exhausted", state)
             writer({"kind": "failed", "data": {"message": BUDGET_FAILURE}})
@@ -311,12 +316,19 @@ def _build_react_graph(
         for attempt in range(2):
             response_text.clear()
             calls.clear()
+            input_tokens = 0
+            output_tokens = 0
+            model_started = metrics.begin_model_call() if metrics is not None else None
             try:
                 async with asyncio.timeout(model_timeout_seconds):
                     async for chunk in model.stream(model_request):
+                        input_tokens += chunk.input_tokens
+                        output_tokens += chunk.output_tokens
                         if chunk.text:
                             response_text.append(chunk.text)
                             if not visible_tools:
+                                if metrics is not None:
+                                    metrics.mark_first_token()
                                 writer({"kind": "text", "data": {"text": chunk.text}})
                                 visible_text_started = True
                         calls.extend(chunk.tool_calls)
@@ -329,8 +341,17 @@ def _build_react_graph(
             except TimeoutError as error:
                 await audit("model_timeout", state)
                 raise ModelCallTimeoutError from error
+            finally:
+                if metrics is not None and model_started is not None:
+                    metrics.end_model_call(
+                        model_started,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                    )
         if visible_tools and not calls:
             for text in response_text:
+                if metrics is not None:
+                    metrics.mark_first_token()
                 writer({"kind": "text", "data": {"text": text}})
         assistant_message = ModelMessage(
             role="assistant",
@@ -345,6 +366,7 @@ def _build_react_graph(
 
     async def execute_tools(state: ReActState) -> dict[str, object]:
         writer = get_stream_writer()
+        metrics = state["metrics"]
         messages = list(state["messages"])
         correction_used = state["correction_used"]
         invalid_signatures = list(state["invalid_signatures"])
@@ -406,6 +428,7 @@ def _build_react_graph(
                 writer({"kind": "data", "data": proposal.event_data()})
                 return {"terminal": True, "pending_calls": ()}
             writer({"kind": "status", "data": {"label": "正在查询可用信息"}})
+            tool_started = metrics.begin_tool_call() if metrics is not None else None
             try:
                 observation = await tool.execute(call.arguments, state["context"])
                 if (
@@ -421,6 +444,9 @@ def _build_react_graph(
             except Exception:
                 writer({"kind": "failed", "data": {"message": TOOL_FAILURE}})
                 return {"terminal": True, "pending_calls": ()}
+            finally:
+                if metrics is not None and tool_started is not None:
+                    metrics.end_tool_call(tool_started)
             messages.append(
                 ModelMessage(
                     role="tool",
