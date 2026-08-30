@@ -14,12 +14,15 @@ import {
 } from "lucide-react";
 
 import { MessagePartView } from "./message-parts";
+import type { CapabilityStatus } from "./capabilities";
 import type { ConversationHistoryRestoration } from "./history";
 import type {
+  ActionProposalData,
   ConversationMessageState,
   MediPetMessage,
   ProposalDecision,
   ProposalDecisionState,
+  SlotOption,
 } from "./message-types";
 import {
   chatTransport,
@@ -31,13 +34,17 @@ const suggestions = [
   { label: '准备提问', prompt: '初次门诊前，我应该准备向医生询问哪些问题？', note: '整理就诊前的问题清单' },
   { label: '了解流程', prompt: '请介绍一般门诊就诊前需要做哪些准备', note: '了解通用流程，不使用医院数据' },
 ];
+const unavailableCapabilities = Promise.resolve({ hospitalDataAvailable: false });
 
 export function ChatShell({
   history,
+  capabilityStatus,
 }: {
   history: Promise<ConversationHistoryRestoration>;
+  capabilityStatus?: Promise<CapabilityStatus>;
 }) {
   const restoredHistory = use(history);
+  const capabilities = use(capabilityStatus ?? unavailableCapabilities);
   const [input, setInput] = useState("");
   const [agentStatus, setAgentStatus] = useState<string | null>(null);
   const [decisionStates, setDecisionStates] = useState<Record<string, ProposalDecisionState>>({});
@@ -72,8 +79,11 @@ export function ChatShell({
     setAgentStatus(null);
     setDecisionStates((current) => ({ ...current, [proposalId]: "working" }));
     try {
-      await decideProposal(proposalId, decision);
-      setDecisionStates((current) => ({ ...current, [proposalId]: decision }));
+      const updated = await decideProposal(proposalId, decision);
+      if (updated) {
+        setMessages((current) => replaceProposalData(current, proposalId, updated));
+      }
+      setDecisionStates((current) => ({ ...current, [proposalId]: null }));
     } catch (decisionError) {
       setDecisionStates((current) => ({ ...current, [proposalId]: null }));
       setAgentStatus(
@@ -82,6 +92,16 @@ export function ChatShell({
           : "操作方案处理失败，请稍后重试。",
       );
     }
+  }
+
+  async function handleSelectSlot(slot: SlotOption) {
+    if (active) return;
+    await sendMessage(
+      {
+        text: `我选择 ${slot.department} ${slot.doctor} 医生在 ${formatSlotTime(slot.startsAt)} 的号源`,
+      },
+      { body: { selected_slot_id: slot.id } },
+    );
   }
 
   return (
@@ -164,6 +184,7 @@ export function ChatShell({
                             part={part}
                             decisionState={proposalId ? decisionStates[proposalId] ?? null : null}
                             onDecision={handleDecision}
+                            onSelectSlot={handleSelectSlot}
                           />
                         );
                       })}
@@ -233,11 +254,38 @@ export function ChatShell({
         <section className="context-card">
           <h2>可用协助</h2>
           <div className="context-row"><span><Building2 size={14} /> 对话协助</span><strong>可用</strong></div>
-          <div className="context-row"><span><ClipboardCheck size={14} /> 医院数据</span><strong>未配置</strong></div>
+          <div className="context-row">
+            <span><ClipboardCheck size={14} /> 医院数据</span>
+            <strong>{capabilities.hospitalDataAvailable ? "已连接" : "未配置"}</strong>
+          </div>
         </section>
       </aside>
     </main>
   );
+}
+
+function replaceProposalData(
+  messages: MediPetMessage[],
+  proposalId: string,
+  data: ActionProposalData,
+) {
+  return messages.map((message) => ({
+    ...message,
+    parts: message.parts.map((part) => (
+      part.type === "data-action-proposal" && part.data.proposalId === proposalId
+        ? { ...part, data }
+        : part
+    )),
+  }));
+}
+
+function formatSlotTime(value: string) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
 function MessageLifecycleNote({

@@ -142,7 +142,7 @@ def parse_skill_archive(payload: bytes) -> ParsedSkillPackage:
     except KeyError:
         raise SkillArchiveError("Skill 归档根目录缺少 SKILL.md") from None
     manifest = _decode_text(manifest_bytes, "SKILL.md")
-    slug, description, instructions = _parse_manifest(manifest)
+    slug, description, instructions = parse_skill_manifest(manifest)
     metadata = _parse_metadata(files.pop("medipet.json", b"{}"))
     display_name = _metadata_text(metadata, "display_name", slug)
     change_note = _metadata_text(metadata, "change_note", "导入 Skill 归档")
@@ -328,7 +328,7 @@ def _decode_text(content: bytes, path: str) -> str:
         raise SkillArchiveError(f"Skill 文本文件必须使用 UTF-8：{path}") from error
 
 
-def _parse_manifest(manifest: str) -> tuple[str, str, str]:
+def parse_skill_manifest(manifest: str) -> tuple[str, str, str]:
     match = re.fullmatch(r"---\r?\n(.*?)\r?\n---\r?\n(.*)", manifest, re.DOTALL)
     if match is None:
         raise SkillArchiveError("SKILL.md 必须包含 YAML frontmatter")

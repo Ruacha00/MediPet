@@ -11,6 +11,7 @@ from medipet.agent.capabilities import (
     ToolContext,
     ToolDefinition,
     ToolExecutor,
+    ToolPresenter,
     VisitStage,
     _allow,
 )
@@ -30,6 +31,7 @@ class TrustedTool:
     approval_required: bool
     execute: ToolExecutor
     confirmation_contract: ToolConfirmationContract | None = None
+    present: ToolPresenter | None = None
     authorize: ToolAuthorizer = _allow
     allowed_stages: tuple[VisitStage, ...] = ("pre_visit", "in_visit")
 
@@ -111,6 +113,9 @@ class ToolRegistry(Protocol):
     async def bind(
         self, skill_id: str, skill_version: int, tool_id: str, tool_version: str, *, actor: str
     ) -> dict[str, object]: ...
+    async def binding_versions(
+        self, skill_id: str, skill_version: int
+    ) -> tuple[tuple[str, str], ...]: ...
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None: ...
 
     async def freeze_bindings(self, skill_id: str, skill_version: int) -> None: ...
@@ -263,6 +268,11 @@ class InMemoryToolRegistry:
                     "tool-assisted Skill binding must reference an enabled compatible Tool version"
                 )
 
+    async def binding_versions(
+        self, skill_id: str, skill_version: int
+    ) -> tuple[tuple[str, str], ...]:
+        return tuple(self._bindings.get((skill_id, skill_version), ()))
+
     async def freeze_bindings(self, skill_id: str, skill_version: int) -> None:
         self._frozen_bindings.add((skill_id, skill_version))
 
@@ -270,12 +280,18 @@ class InMemoryToolRegistry:
         self, skills: tuple[SkillDefinition, ...], context: ToolContext
     ) -> tuple[ToolDefinition, ...]:
         definitions: list[ToolDefinition] = []
-        seen: set[tuple[str, str]] = set()
+        definition_indexes: dict[tuple[str, str], int] = {}
         for skill in skills:
             for tool_id, version in self._bindings.get((skill.skill_id, skill.version), []):
-                if (tool_id, version) in seen:
+                key = (tool_id, version)
+                existing_index = definition_indexes.get(key)
+                if existing_index is not None:
+                    existing = definitions[existing_index]
+                    definitions[existing_index] = replace(
+                        existing,
+                        required_skill_ids=(*existing.required_skill_ids, skill.skill_id),
+                    )
                     continue
-                seen.add((tool_id, version))
                 selected = await self.resolve(tool_id, version)
                 tool = selected.tool
 
@@ -339,8 +355,11 @@ class InMemoryToolRegistry:
                         authorize=tool.authorize,
                         record_rejection=record_rejection,
                         revalidate=revalidate,
+                        present=tool.present,
+                        required_skill_ids=(skill.skill_id,),
                     )
                 )
+                definition_indexes[key] = len(definitions) - 1
         return tuple(definitions)
 
     async def record_invocation(

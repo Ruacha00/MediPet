@@ -14,6 +14,7 @@ from langgraph.graph import END, START, StateGraph
 
 from medipet.actions import (
     ActionDecisionError,
+    ActionProposalExpiredError,
     ActionStore,
     UnavailableActionStore,
     proposal_expiry,
@@ -25,7 +26,7 @@ from medipet.agent.capabilities import (
     ToolContext,
     ToolDefinition,
 )
-from medipet.agent.prompts import OUTPATIENT_ASSISTANT_SYSTEM_PROMPT
+from medipet.agent.prompts import outpatient_assistant_system_prompt
 from medipet.model.port import (
     ModelMessage,
     ModelPort,
@@ -76,6 +77,8 @@ class AgentRuntime(Protocol):
         proposal_id: str,
         decision: Literal["confirm", "reject"],
         context: ToolContext,
+        *,
+        proposal_visible: bool = True,
     ) -> AgentEvent: ...
 
 
@@ -84,6 +87,8 @@ class ReActState(TypedDict):
     context: ToolContext
     capabilities: CapabilitySnapshot
     available_tool_names: tuple[str, ...]
+    loaded_skill_ids: tuple[str, ...]
+    hospital_data_available: bool
     pending_calls: tuple[ModelToolCall, ...]
     correction_used: bool
     invalid_signatures: tuple[str, ...]
@@ -137,6 +142,7 @@ class LangGraphAgentRuntime:
                     slug = cast(str, arguments["slug"])
                     skill = skills_by_slug[slug]
                     return {
+                        "skill_id": skill.skill_id,
                         "skill": skill.slug,
                         "version": skill.version,
                         "instructions": await skill.load_instructions(),
@@ -179,14 +185,8 @@ class LangGraphAgentRuntime:
                     source_capabilities.record_unknown_tool_rejection
                 ),
             )
-            available_tool_names = tuple(
-                tool.name
-                for tool in capabilities.tools
-                if tool.enabled
-                and tool.bound
-                and (tool.effect == "read" or tool.approval_required)
-                and tool.authorize(context)
-            )
+            available_tool_names = _available_tool_names(capabilities, context, ())
+            hospital_data_is_available = _hospital_data_available(capabilities, context)
         except Exception:
             yield AgentEvent("failed", {"message": CAPABILITY_FAILURE})
             return
@@ -201,6 +201,8 @@ class LangGraphAgentRuntime:
                             "context": context,
                             "capabilities": capabilities,
                             "available_tool_names": available_tool_names,
+                            "loaded_skill_ids": (),
+                            "hospital_data_available": hospital_data_is_available,
                             "pending_calls": (),
                             "correction_used": False,
                             "invalid_signatures": (),
@@ -228,13 +230,21 @@ class LangGraphAgentRuntime:
         proposal_id: str,
         decision: Literal["confirm", "reject"],
         context: ToolContext,
+        *,
+        proposal_visible: bool = True,
     ) -> AgentEvent:
         context = replace(context, profile_version=self._profile_version)
         try:
+            persisted = await self._action_store.validate_decision_scope(
+                proposal_id, context
+            )
+            if not proposal_visible:
+                raise ActionDecisionError(
+                    "预约确认已不在当前聊天历史中，请重新发起。"
+                )
             if decision == "reject":
                 proposal = await self._action_store.reject(proposal_id, context)
             else:
-                persisted = await self._action_store.get_proposal(proposal_id)
                 capabilities = await self._capability_provider.snapshot(context)
                 tool = next(
                     (
@@ -255,6 +265,9 @@ class LangGraphAgentRuntime:
                     tool,
                 )
             return AgentEvent("data", proposal.event_data())
+        except ActionProposalExpiredError as error:
+            await self._action_store.record_decision_rejection(proposal_id, context)
+            return AgentEvent("data", error.proposal.event_data())
         except ActionDecisionError as error:
             await self._action_store.record_decision_rejection(proposal_id, context)
             return AgentEvent("failed", {"message": str(error)})
@@ -305,7 +318,12 @@ def _build_react_graph(
         )
         model_request = ModelRequest(
             messages=(
-                ModelMessage(role="system", content=OUTPATIENT_ASSISTANT_SYSTEM_PROMPT),
+                ModelMessage(
+                    role="system",
+                    content=outpatient_assistant_system_prompt(
+                        hospital_data_available=state["hospital_data_available"]
+                    ),
+                ),
                 *state["messages"],
             ),
             tools=visible_tools,
@@ -370,6 +388,7 @@ def _build_react_graph(
         messages = list(state["messages"])
         correction_used = state["correction_used"]
         invalid_signatures = list(state["invalid_signatures"])
+        loaded_skill_ids = list(state["loaded_skill_ids"])
         tools_by_name = {tool.name: tool for tool in state["capabilities"].tools}
 
         for call in state["pending_calls"]:
@@ -461,6 +480,16 @@ def _build_react_graph(
                     ensure_ascii=False,
                     sort_keys=True,
                 )
+                if call.name == "load_skill":
+                    loaded_skill_id = observation.get("skill_id")
+                    if (
+                        isinstance(loaded_skill_id, str)
+                        and loaded_skill_id not in loaded_skill_ids
+                    ):
+                        loaded_skill_ids.append(loaded_skill_id)
+                if tool.present is not None:
+                    for data_part in await tool.present(observation, state["context"]):
+                        writer({"kind": "data", "data": data_part})
             except Exception:
                 writer({"kind": "failed", "data": {"message": TOOL_FAILURE}})
                 return {"terminal": True, "pending_calls": ()}
@@ -480,6 +509,12 @@ def _build_react_graph(
             "pending_calls": (),
             "correction_used": correction_used,
             "invalid_signatures": tuple(invalid_signatures),
+            "loaded_skill_ids": tuple(loaded_skill_ids),
+            "available_tool_names": _available_tool_names(
+                state["capabilities"],
+                state["context"],
+                tuple(loaded_skill_ids),
+            ),
         }
 
     def route_after_model(state: ReActState) -> str:
@@ -512,6 +547,46 @@ def _rejection_reason(
     if not tool.enabled or not tool.bound or not tool.authorize(context):
         return "unauthorized"
     return validate_object(arguments, tool.input_schema)
+
+
+def _available_tool_names(
+    capabilities: CapabilitySnapshot,
+    context: ToolContext,
+    loaded_skill_ids: tuple[str, ...],
+) -> tuple[str, ...]:
+    loaded = set(loaded_skill_ids)
+    return tuple(
+        tool.name
+        for tool in capabilities.tools
+        if tool.enabled
+        and tool.bound
+        and (tool.effect == "read" or tool.approval_required)
+        and tool.authorize(context)
+        and (
+            not tool.required_skill_ids
+            or bool(loaded.intersection(tool.required_skill_ids))
+        )
+    )
+
+
+def hospital_data_available(
+    capabilities: CapabilitySnapshot,
+    context: ToolContext,
+) -> bool:
+    return _hospital_data_available(capabilities, context)
+
+
+def _hospital_data_available(
+    capabilities: CapabilitySnapshot,
+    context: ToolContext,
+) -> bool:
+    return any(
+        tool.tool_id.startswith("hospital.")
+        and tool.enabled
+        and tool.bound
+        and tool.authorize(context)
+        for tool in capabilities.tools
+    )
 
 
 def _call_signature(call: ModelToolCall) -> str:

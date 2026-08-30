@@ -3,16 +3,11 @@ import type {
   MediPetMessage,
 } from "./message-types";
 
-type HistoryTextPart = {
-  type: "text";
-  text: string;
-};
-
 type HistoryMessage = {
   id: string;
   role: "user" | "assistant";
   state: ConversationMessageState;
-  parts: HistoryTextPart[];
+  parts: MediPetMessage["parts"];
   created_at: string;
   updated_at: string;
 };
@@ -32,13 +27,17 @@ export function toMediPetMessages(history: ConversationHistory): MediPetMessage[
     id: message.id,
     role: message.role,
     metadata: { state: message.state },
-    parts: message.parts.map((part) => ({
-      ...part,
-      state:
-        message.state === "pending" || message.state === "streaming"
-          ? ("streaming" as const)
-          : ("done" as const),
-    })),
+    parts: message.parts.map((part) => (
+      part.type === "text"
+        ? {
+            ...part,
+            state:
+              message.state === "pending" || message.state === "streaming"
+                ? ("streaming" as const)
+                : ("done" as const),
+          }
+        : part
+    )),
   }));
 }
 

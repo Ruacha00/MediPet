@@ -125,6 +125,8 @@ class ConversationMessageRecord(Base):
     role: Mapped[str] = mapped_column(String(16))
     state: Mapped[str] = mapped_column(String(16))
     content: Mapped[str] = mapped_column(Text, default="")
+    selected_slot_id: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    parts: Mapped[list[dict[str, object]]] = mapped_column(JSON, default=list)
     sequence: Mapped[int] = mapped_column(
         BigInteger,
         Identity(),
@@ -340,6 +342,7 @@ class ActionProposalRecord(Base):
     patient_id: Mapped[str] = mapped_column(
         String(128), ForeignKey("patients.id", ondelete="RESTRICT")
     )
+    patient_display_name: Mapped[str] = mapped_column(String(200))
     request_key: Mapped[str] = mapped_column(String(128))
     idempotency_key: Mapped[str] = mapped_column(String(160), unique=True)
     tool_id: Mapped[str] = mapped_column(String(128))
@@ -375,9 +378,7 @@ class ActionAuditRecord(Base):
 
     id: Mapped[str] = mapped_column(String(128), primary_key=True)
     action: Mapped[str] = mapped_column(String(64))
-    proposal_id: Mapped[str] = mapped_column(
-        String(128)
-    )
+    proposal_id: Mapped[str] = mapped_column(String(128))
     participant_id: Mapped[str] = mapped_column(String(128))
     visit_matter_id: Mapped[str] = mapped_column(String(128))
     decision_key: Mapped[str] = mapped_column(String(128))

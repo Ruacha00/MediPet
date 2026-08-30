@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
+from typing import cast
 
 import pytest
 
@@ -22,6 +23,7 @@ from medipet.contracts import ConfirmationDecision, TurnCommand
 from medipet.model.port import ModelChunk, ModelMessage, ModelPort, ModelRequest, ModelToolCall
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
+    IdempotencyConflictError,
     InMemoryVisitConversationStore,
 )
 from medipet.run_audits import InMemoryRunAuditStore, RunAuditStore
@@ -265,9 +267,7 @@ async def test_invalid_server_confirmation_never_creates_a_proposal() -> None:
         del arguments, confirmation, context
         return True
 
-    async def execute(
-        arguments: dict[str, object], context: ToolContext
-    ) -> dict[str, object]:
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
         del arguments, context
         return {}
 
@@ -292,10 +292,8 @@ async def test_invalid_server_confirmation_never_creates_a_proposal() -> None:
         approval_required=True,
         execute=execute,
     )
-    assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+    assistant, conversation_store = await _assistant(
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
         action_store=action_store,
     )
@@ -334,9 +332,7 @@ async def test_confirming_a_write_proposal_commits_once_and_returns_one_receipt(
     action_store = InMemoryActionStore()
     audits = InMemoryRunAuditStore()
     assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(skill_versions=("test-skill@1",), tools=(tool,)),
         action_store=action_store,
         audit_store=audits,
@@ -417,9 +413,7 @@ async def test_changed_authoritative_confirmation_rejects_the_old_proposal() -> 
         execute=execute,
     )
     assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
     )
     proposed = [event async for event in assistant.handle_turn(_turn())]
@@ -466,9 +460,7 @@ async def test_same_request_retry_returns_stored_proposal_without_preparing_agai
         del arguments
         return confirmation == {"patient_id": context.patient_id, "value": "A"}
 
-    async def execute(
-        arguments: dict[str, object], context: ToolContext
-    ) -> dict[str, object]:
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
         del arguments, context
         return {"result": "done"}
 
@@ -546,9 +538,7 @@ async def test_rejecting_a_write_proposal_never_executes_it() -> None:
         execute=execute,
     )
     assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
     )
     proposed = [event async for event in assistant.handle_turn(_turn())]
@@ -572,7 +562,7 @@ async def test_rejecting_a_write_proposal_never_executes_it() -> None:
 
 
 @pytest.mark.asyncio
-async def test_expired_write_proposal_returns_a_safe_failure_without_execution() -> None:
+async def test_expired_write_proposal_updates_its_card_without_execution() -> None:
     now = [datetime.now(UTC)]
     executions = 0
 
@@ -593,10 +583,8 @@ async def test_expired_write_proposal_returns_a_safe_failure_without_execution()
         execute=execute,
     )
     action_store = InMemoryActionStore(now=lambda: now[0])
-    assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+    assistant, conversation_store = await _assistant(
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
         action_store=action_store,
     )
@@ -616,8 +604,17 @@ async def test_expired_write_proposal_returns_a_safe_failure_without_execution()
         )
     ]
 
-    assert [event.kind for event in result] == ["failed"]
-    assert result[0].data["message"] == "待确认操作已过期"
+    assert [event.kind for event in result] == ["data", "completed"]
+    assert result[0].data["data"]["status"] == "expired"
+    history = await conversation_store.list_messages("visit-1")
+    proposal_part = next(
+        part
+        for message in history
+        for part in message.parts
+        if part.get("type") == "data-action-proposal"
+    )
+    proposal_part_data = cast(dict[str, object], proposal_part["data"])
+    assert proposal_part_data["status"] == "expired"
     assert executions == 0
 
 
@@ -659,9 +656,7 @@ async def test_missing_and_wrong_scope_proposals_return_safe_failures() -> None:
         execute=lambda arguments, context: _empty_result(arguments, context),
     )
     scoped_assistant, scoped_store = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
         action_store=action_store,
     )
@@ -693,9 +688,7 @@ async def test_missing_and_wrong_scope_proposals_return_safe_failures() -> None:
     assert wrong_scope[0].data["message"] == "该操作不属于当前就诊事项或参与者"
 
 
-async def _empty_result(
-    arguments: dict[str, object], context: ToolContext
-) -> dict[str, object]:
+async def _empty_result(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
     del arguments, context
     return {}
 
@@ -724,9 +717,7 @@ async def test_tool_version_drift_invalidates_confirmation() -> None:
 
     provider = StaticCapabilityProvider(CapabilitySnapshot(tools=(tool("1"),)))
     assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         capability_provider=provider,
     )
     proposed = [event async for event in assistant.handle_turn(_turn())]
@@ -770,9 +761,7 @@ async def test_failed_write_execution_is_not_automatically_retried() -> None:
         execute=execute,
     )
     assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
+        ScriptedModel([[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]),
         CapabilitySnapshot(tools=(tool,)),
     )
     proposed = [event async for event in assistant.handle_turn(_turn())]
@@ -1173,6 +1162,11 @@ async def test_synced_bound_tool_runs_through_the_complete_react_path_and_is_aud
     await skills.transition(skill.skill_id, 1, "publish", actor="admin")
     model = ScriptedModel(
         [
+            [
+                ModelChunk(
+                    tool_calls=(ModelToolCall("load-1", "load_skill", {"slug": "lookup-helper"}),)
+                )
+            ],
             [ModelChunk(tool_calls=(ModelToolCall("call-1", "test_lookup", {"query": "result"}),))],
             [ModelChunk(text="Done")],
         ]
@@ -1187,7 +1181,48 @@ async def test_synced_bound_tool_runs_through_the_complete_react_path_and_is_aud
     audits = await tools.list_audits()
 
     assert events[-1].kind == "completed"
-    assert json.loads(model.requests[1].messages[-1].content) == {"value": "result"}
+    assert [tool.name for tool in model.requests[0].tools] == ["load_skill"]
+    assert "test_lookup" in [tool.name for tool in model.requests[1].tools]
+    assert json.loads(model.requests[2].messages[-1].content) == {"value": "result"}
     invocation = next(audit for audit in audits if audit.action == "invoke")
     assert invocation.visit_matter_id == "visit-1"
     assert invocation.turn_id == "turn-1"
+
+
+@pytest.mark.asyncio
+async def test_completed_turn_retry_replays_without_calling_the_model_again() -> None:
+    model = ScriptedModel([[ModelChunk(text="已完成的回答")]])
+    assistant, _ = await _assistant(model)
+    turn = _turn(turn_id="stable-turn")
+
+    first = [event async for event in assistant.handle_turn(turn)]
+    replay = [event async for event in assistant.handle_turn(turn)]
+
+    assert len(model.requests) == 1
+    assert [event.kind for event in replay] == ["text", "completed"]
+    assert replay[0].data == {"text": "已完成的回答"}
+    assert first[-1].kind == replay[-1].kind == "completed"
+
+
+@pytest.mark.asyncio
+async def test_turn_retry_rejects_a_different_selected_slot() -> None:
+    model = ScriptedModel([[ModelChunk(text="已按第一个号源处理")]])
+    assistant, _ = await _assistant(model)
+    original = TurnCommand(
+        visit_matter_id="visit-1",
+        participant_id="participant-1",
+        idempotency_key="stable-slot-turn",
+        message="我选择这个号源",
+        selected_slot_id="slot-1",
+    )
+    conflicting = original.model_copy(update={"selected_slot_id": "slot-2"})
+
+    await _collect(assistant.handle_turn(original))
+    with pytest.raises(IdempotencyConflictError):
+        await _collect(assistant.handle_turn(conflicting))
+
+    assert len(model.requests) == 1
+
+
+async def _collect(events: AsyncIterator[object]) -> list[object]:
+    return [event async for event in events]

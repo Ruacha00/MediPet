@@ -1,0 +1,8 @@
+{
+  "format_version": 1,
+  "display_name": "医院预约挂号协助",
+  "change_note": "激活已注册医院 Tool 的首个业务 Skill",
+  "risk_level": "standard",
+  "required_approvals": 0,
+  "skill_type": "tool-assisted"
+}

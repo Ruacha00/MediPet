@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from collections.abc import AsyncGenerator
 from contextlib import aclosing
@@ -117,6 +118,10 @@ class MediPetAssistant:
                     data={"message": str(error), "traceId": trace_id},
                 )
                 return
+            proposal_visible = await self._conversation_store.has_action_proposal_part(
+                command.visit_matter_id,
+                command.confirmation.proposal_id,
+            )
             event = await self._agent_runtime.decide(
                 command.confirmation.proposal_id,
                 command.confirmation.decision,
@@ -126,8 +131,22 @@ class MediPetAssistant:
                     idempotency_key=command.idempotency_key,
                     visit_stage=visit_context.visit_stage,
                     patient_id=visit_context.patient_id,
+                    patient_display_name=visit_context.patient_display_name,
                 ),
+                proposal_visible=proposal_visible,
             )
+            if event.kind == "data":
+                try:
+                    await self._conversation_store.update_action_proposal_part(
+                        command.visit_matter_id,
+                        command.confirmation.proposal_id,
+                        event.data,
+                    )
+                except Exception:
+                    LOGGER.warning(
+                        "action_proposal_history_update_failed",
+                        exc_info=True,
+                    )
             await self._audit_store.record(
                 "failed" if event.kind == "failed" else "completed",
                 audit_context,
@@ -153,10 +172,32 @@ class MediPetAssistant:
         await self._conversation_store.add_participant_message(
             turn=turn,
             content=command.message.strip(),
+            selected_slot_id=command.selected_slot_id,
         )
-        assistant_message = await self._conversation_store.add_assistant_message(
+        assistant_message, claimed = await self._conversation_store.claim_assistant_message(
             turn=turn,
         )
+        if not claimed:
+            if assistant_message.state == "completed":
+                for part in assistant_message.parts:
+                    yield TurnEvent(kind="data", data=part)
+                if assistant_message.content:
+                    yield TurnEvent(
+                        kind="text",
+                        data={"text": assistant_message.content},
+                    )
+                await self._audit_store.record("completed", audit_context)
+                yield TurnEvent(kind="completed", data={"traceId": trace_id})
+                return
+            await self._audit_store.record("failed", audit_context)
+            yield TurnEvent(
+                kind="failed",
+                data={
+                    "message": "该请求已在处理中或已结束，请稍后刷新聊天记录。",
+                    "traceId": trace_id,
+                },
+            )
+            return
         buffered_text: list[str] = []
         buffered_characters = 0
         streaming_started = False
@@ -197,7 +238,13 @@ class MediPetAssistant:
                 messages=tuple(
                     ModelMessage(
                         role="user" if message.role == "participant" else "assistant",
-                        content=message.content,
+                        content=(
+                            _selected_slot_message(message.content, command.selected_slot_id)
+                            if message.role == "participant"
+                            and message.turn_id == command.idempotency_key
+                            and command.selected_slot_id is not None
+                            else _model_message_content(message.content, message.parts)
+                        ),
                     )
                     for message in completed_history
                 ),
@@ -207,6 +254,7 @@ class MediPetAssistant:
                     idempotency_key=command.idempotency_key,
                     visit_stage=visit_context.visit_stage,
                     patient_id=visit_context.patient_id,
+                    patient_display_name=visit_context.patient_display_name,
                 ),
                 trace_id=trace_id,
                 metrics=metrics,
@@ -232,6 +280,11 @@ class MediPetAssistant:
                             data={**event.data, "traceId": trace_id},
                         )
                         return
+                    if event.kind == "data":
+                        await self._conversation_store.append_assistant_part(
+                            assistant_message.id,
+                            event.data,
+                        )
                     yield TurnEvent(kind=event.kind, data=event.data)
 
             if not streaming_started:
@@ -244,3 +297,23 @@ class MediPetAssistant:
         except Exception:
             await finalize("failed")
             raise
+
+
+def _selected_slot_message(content: str, slot_id: str) -> str:
+    return (
+        f"{content}\n\n"
+        "[本轮界面已选择号源；准确的 slot_id 为 "
+        f"{slot_id}。这只代表参与者的选择，仍须通过医院 Tool 生成权威确认。]"
+    )
+
+
+def _model_message_content(
+    content: str,
+    parts: tuple[dict[str, object], ...],
+) -> str:
+    slot_parts = [part for part in parts if part.get("type") == "data-slot-options"]
+    if not slot_parts:
+        return content
+    verified = json.dumps(slot_parts, ensure_ascii=False, separators=(",", ":"))
+    prefix = f"{content}\n\n" if content else ""
+    return f"{prefix}[此前由医院 Tool 验证并展示的号源，顺序保持不变：{verified}]"

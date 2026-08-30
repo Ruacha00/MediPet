@@ -27,6 +27,7 @@ class ActionProposal:
     visit_matter_id: str
     participant_id: str
     patient_id: str
+    patient_display_name: str
     request_key: str
     idempotency_key: str
     tool_id: str
@@ -57,7 +58,13 @@ class ActionProposal:
             "expiresAt": self.expires_at.isoformat(),
         }
         if self.confirmation is not None:
-            data["confirmation"] = self.confirmation
+            confirmation = dict(self.confirmation)
+            patient = confirmation.get("patient")
+            if isinstance(patient, dict) and "patient_id" in patient:
+                confirmation["patient"] = {
+                    "display_name": self.patient_display_name,
+                }
+            data["confirmation"] = confirmation
         if self.receipt_id is not None:
             data["receiptId"] = self.receipt_id
         return {"type": "data-action-proposal", "data": data}
@@ -87,6 +94,12 @@ class ActionDecisionError(ValueError):
     pass
 
 
+class ActionProposalExpiredError(ActionDecisionError):
+    def __init__(self, proposal: ActionProposal) -> None:
+        super().__init__("待确认操作已过期")
+        self.proposal = proposal
+
+
 class ActionStore(Protocol):
     async def find_request_proposal(
         self,
@@ -106,6 +119,10 @@ class ActionStore(Protocol):
     ) -> ActionProposal: ...
 
     async def get_proposal(self, proposal_id: str) -> ActionProposal: ...
+
+    async def validate_decision_scope(
+        self, proposal_id: str, context: ToolContext
+    ) -> ActionProposal: ...
 
     async def reject(
         self,
@@ -186,6 +203,9 @@ class InMemoryActionStore:
                 visit_matter_id=context.visit_matter_id,
                 participant_id=context.participant_id,
                 patient_id=context.patient_id,
+                patient_display_name=(
+                    context.patient_display_name.strip() or "当前患者"
+                ),
                 request_key=context.idempotency_key,
                 idempotency_key=f"action-{proposal_id}",
                 tool_id=tool.tool_id,
@@ -208,6 +228,14 @@ class InMemoryActionStore:
         async with self._lock:
             return self._require(proposal_id)
 
+    async def validate_decision_scope(
+        self, proposal_id: str, context: ToolContext
+    ) -> ActionProposal:
+        async with self._lock:
+            proposal = self._require(proposal_id)
+            self._validate_scope(proposal, context)
+            return proposal
+
     async def reject(
         self,
         proposal_id: str,
@@ -219,8 +247,8 @@ class InMemoryActionStore:
             if proposal.status == "confirmed":
                 raise ActionDecisionError("该操作已经确认，不能拒绝")
             if proposal.status == "expired" or self._now() >= proposal.expires_at:
-                self._expire(proposal, context.idempotency_key)
-                raise ActionDecisionError("待确认操作已过期")
+                expired = self._expire(proposal, context.idempotency_key)
+                raise ActionProposalExpiredError(expired)
             if proposal.status == "rejected":
                 self._audit("reject", proposal, context.idempotency_key)
                 return proposal
@@ -250,8 +278,8 @@ class InMemoryActionStore:
             if proposal.status == "rejected":
                 raise ActionDecisionError("待确认操作已被拒绝")
             if proposal.status == "expired" or self._now() >= proposal.expires_at:
-                self._expire(proposal, context.idempotency_key)
-                raise ActionDecisionError("待确认操作已过期")
+                expired = self._expire(proposal, context.idempotency_key)
+                raise ActionProposalExpiredError(expired)
             if (
                 tool.tool_id != proposal.tool_id
                 or tool.version != proposal.tool_version
@@ -396,11 +424,13 @@ class InMemoryActionStore:
                 raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
             raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
 
-    def _expire(self, proposal: ActionProposal, decision_key: str) -> None:
+    def _expire(self, proposal: ActionProposal, decision_key: str) -> ActionProposal:
         if proposal.status != "expired":
             expired = replace(proposal, status="expired")
             self._proposals[proposal.proposal_id] = expired
             self._audit("expire", expired, decision_key)
+            return expired
+        return proposal
 
     def _audit(
         self,
@@ -457,6 +487,12 @@ class UnavailableActionStore:
 
     async def get_proposal(self, proposal_id: str) -> ActionProposal:
         del proposal_id
+        raise self._unavailable()
+
+    async def validate_decision_scope(
+        self, proposal_id: str, context: ToolContext
+    ) -> ActionProposal:
+        del proposal_id, context
         raise self._unavailable()
 
     async def reject(self, proposal_id: str, context: ToolContext) -> ActionProposal:

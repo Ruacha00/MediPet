@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import replace
 from typing import cast
 from uuid import uuid4
 
@@ -213,6 +214,20 @@ class PostgresToolRegistry:
     async def freeze_bindings(self, skill_id: str, skill_version: int) -> None:
         del skill_id, skill_version
 
+    async def binding_versions(
+        self, skill_id: str, skill_version: int
+    ) -> tuple[tuple[str, str], ...]:
+        async with self._sessions() as session:
+            bindings = (
+                await session.scalars(
+                    select(ToolBindingRecord).where(
+                        ToolBindingRecord.skill_id == skill_id,
+                        ToolBindingRecord.skill_version == skill_version,
+                    )
+                )
+            ).all()
+        return tuple((binding.tool_id, binding.tool_version) for binding in bindings)
+
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None:
         async with self._sessions() as session:
             bindings = (
@@ -237,6 +252,7 @@ class PostgresToolRegistry:
         self, skills: tuple[SkillDefinition, ...], context: ToolContext
     ) -> tuple[ToolDefinition, ...]:
         definitions: list[ToolDefinition] = []
+        definition_indexes: dict[tuple[str, str], int] = {}
         async with self._sessions() as session:
             for skill in skills:
                 bindings = (
@@ -248,6 +264,18 @@ class PostgresToolRegistry:
                     )
                 ).all()
                 for binding in bindings:
+                    key = (binding.tool_id, binding.tool_version)
+                    existing_index = definition_indexes.get(key)
+                    if existing_index is not None:
+                        existing = definitions[existing_index]
+                        definitions[existing_index] = replace(
+                            existing,
+                            required_skill_ids=(
+                                *existing.required_skill_ids,
+                                skill.skill_id,
+                            ),
+                        )
+                        continue
                     record = await self._require(session, binding.tool_id, binding.tool_version)
                     implementation = self._implementations.get((record.tool_id, record.version))
                     if implementation is None:
@@ -314,8 +342,11 @@ class PostgresToolRegistry:
                             authorize=implementation.authorize,
                             record_rejection=reject,
                             revalidate=revalidate,
+                            present=implementation.present,
+                            required_skill_ids=(skill.skill_id,),
                         )
                     )
+                    definition_indexes[key] = len(definitions) - 1
         return tuple(definitions)
 
     async def record_invocation(

@@ -14,15 +14,31 @@ export type DepartmentCandidatesData = {
   uncertainty: string;
 };
 
-export type SlotOptionsData = {
+export type SlotOption = {
+  id: string;
   department: string;
-  slots: Array<{
-    id: string;
-    doctor: string;
-    date: string;
-    time: string;
-    fee: number;
-  }>;
+  doctor: string;
+  doctorTitle: string;
+  startsAt: string;
+  endsAt: string;
+  feeCents: number;
+  currency: "CNY";
+};
+
+export type SlotOptionsData = {
+  slots: SlotOption[];
+};
+
+export type AppointmentConfirmation = {
+  patient: { display_name: string };
+  hospital: { name: string; timezone: string };
+  department: { name: string };
+  doctor: { name: string; title: string };
+  slot_id: string;
+  starts_at: string;
+  ends_at: string;
+  fee_cents: number;
+  currency: "CNY";
 };
 
 export type ActionProposalData = {
@@ -37,6 +53,7 @@ export type ActionProposalData = {
   visitStage?: string;
   idempotencyKey?: string;
   expiresAt?: string;
+  confirmation?: AppointmentConfirmation;
   action?: "create" | "cancel";
   patient?: string;
   department?: string;
@@ -44,7 +61,7 @@ export type ActionProposalData = {
   date?: string;
   time?: string;
   fee?: number;
-  status: "pending" | "confirmed" | "rejected";
+  status: "pending" | "confirmed" | "rejected" | "expired";
   receiptId?: string;
 };
 

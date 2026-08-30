@@ -30,6 +30,7 @@ class ChatTurnRequest(BaseModel):
     visit_matter_id: str = "visit-matter-demo"
     participant_id: str = "participant-demo"
     idempotency_key: str = Field(default_factory=lambda: uuid4().hex)
+    selected_slot_id: str | None = Field(default=None, min_length=1, max_length=256)
 
     def latest_participant_text(self) -> str:
         for message in reversed(self.messages):
@@ -59,6 +60,7 @@ class TurnCommand(BaseModel):
     idempotency_key: str
     message: str | None = None
     confirmation: ConfirmationDecision | None = None
+    selected_slot_id: str | None = Field(default=None, min_length=1, max_length=256)
 
 
 class TurnEvent(BaseModel):

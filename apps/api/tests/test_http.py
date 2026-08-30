@@ -13,7 +13,7 @@ from medipet.agent.capabilities import (
     ToolDefinition,
 )
 from medipet.config import DevelopmentRuntimeConfig, ModelSettings
-from medipet.delivery.http import create_app
+from medipet.delivery.http import create_app, default_hospital_tool_provider
 from medipet.model.port import (
     ModelChunk,
     ModelPort,
@@ -122,6 +122,11 @@ def test_liveness_remains_available_without_model_configuration() -> None:
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+
+def test_default_fake_hospital_adapter_is_development_only() -> None:
+    assert default_hospital_tool_provider("production") is None
+    assert default_hospital_tool_provider(" development ") is not None
 
 
 def test_readiness_reports_missing_model_configuration_safely() -> None:

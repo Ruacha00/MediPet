@@ -114,6 +114,7 @@ async def test_runtime_discovers_published_skills_and_pins_lazy_instructions() -
     assert "版本一指令" not in str(model.requests[0])
     observation = model.requests[1].messages[-1]
     assert json.loads(observation.content) == {
+        "skill_id": skill_id,
         "instructions": "版本一指令",
         "skill": "visit-preparation",
         "version": 1,

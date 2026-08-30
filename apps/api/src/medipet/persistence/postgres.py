@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.orm.attributes import flag_modified
 
 from medipet.agent.capabilities import VisitStage
 from medipet.persistence.conversation import (
@@ -27,6 +28,7 @@ from medipet.persistence.conversation import (
     VisitMatterNotFoundError,
     VisitTurn,
     assistant_transition_source_states,
+    replace_proposal_part,
 )
 from medipet.persistence.models import (
     ConversationMessageRecord,
@@ -75,9 +77,7 @@ class PostgresVisitConversationStore:
         async with self._sessions() as session:
             await self._require_visit_matter(session, visit_matter_id, participant_id)
 
-    async def visit_stage(
-        self, visit_matter_id: str, participant_id: str
-    ) -> VisitStage:
+    async def visit_stage(self, visit_matter_id: str, participant_id: str) -> VisitStage:
         async with self._sessions() as session:
             visit_matter = await self._require_visit_matter(
                 session, visit_matter_id, participant_id
@@ -93,8 +93,12 @@ class PostgresVisitConversationStore:
             visit_matter = await self._require_visit_matter(
                 session, visit_matter_id, participant_id
             )
+            patient = await session.get(PatientRecord, visit_matter.patient_id)
+            if patient is None:
+                raise VisitMatterNotFoundError("就诊事项对应的患者不存在")
             return VisitContext(
                 patient_id=visit_matter.patient_id,
+                patient_display_name=patient.display_name,
                 visit_stage=cast(VisitStage, visit_matter.visit_stage),
             )
 
@@ -135,12 +139,14 @@ class PostgresVisitConversationStore:
         *,
         turn: VisitTurn,
         content: str,
+        selected_slot_id: str | None = None,
     ) -> StoredMessage:
         return await self._add_message(
             turn=turn,
             role="participant",
             state="completed",
             content=content,
+            selected_slot_id=selected_slot_id,
         )
 
     async def add_assistant_message(
@@ -148,7 +154,15 @@ class PostgresVisitConversationStore:
         *,
         turn: VisitTurn,
     ) -> StoredMessage:
-        return await self._add_message(
+        message, _ = await self.claim_assistant_message(turn=turn)
+        return message
+
+    async def claim_assistant_message(
+        self,
+        *,
+        turn: VisitTurn,
+    ) -> tuple[StoredMessage, bool]:
+        return await self._claim_message(
             turn=turn,
             role="assistant",
             state="pending",
@@ -177,6 +191,64 @@ class PostgresVisitConversationStore:
             )
             if result.scalar_one_or_none() is None:
                 raise MessageTransitionError("只有 streaming 助手消息可以追加文本")
+
+    async def append_assistant_part(self, message_id: str, part: dict[str, object]) -> None:
+        async with self._sessions.begin() as session:
+            record = await session.scalar(
+                select(ConversationMessageRecord)
+                .where(ConversationMessageRecord.id == message_id)
+                .with_for_update()
+            )
+            if (
+                record is None
+                or record.role != "assistant"
+                or record.state not in {"pending", "streaming"}
+            ):
+                raise MessageTransitionError("只有进行中的助手消息可以追加结构化内容")
+            record.parts = [*record.parts, dict(part)]
+            flag_modified(record, "parts")
+
+    async def update_action_proposal_part(
+        self,
+        visit_matter_id: str,
+        proposal_id: str,
+        part: dict[str, object],
+    ) -> None:
+        async with self._sessions.begin() as session:
+            records = (
+                await session.scalars(
+                    select(ConversationMessageRecord)
+                    .where(
+                        ConversationMessageRecord.visit_matter_id == visit_matter_id,
+                        ConversationMessageRecord.role == "assistant",
+                    )
+                    .order_by(ConversationMessageRecord.sequence)
+                    .with_for_update()
+                )
+            ).all()
+            for record in records:
+                updated = replace_proposal_part(tuple(record.parts), proposal_id, part)
+                if updated is None:
+                    continue
+                record.parts = list(updated)
+                flag_modified(record, "parts")
+                return
+            raise MessageTransitionError("聊天历史中不存在该预约确认")
+
+    async def has_action_proposal_part(self, visit_matter_id: str, proposal_id: str) -> bool:
+        async with self._sessions() as session:
+            records = (
+                await session.scalars(
+                    select(ConversationMessageRecord).where(
+                        ConversationMessageRecord.visit_matter_id == visit_matter_id,
+                        ConversationMessageRecord.role == "assistant",
+                    )
+                )
+            ).all()
+        return any(
+            replace_proposal_part(tuple(record.parts), proposal_id, {}) is not None
+            for record in records
+        )
 
     async def finish_assistant_message(
         self,
@@ -231,7 +303,26 @@ class PostgresVisitConversationStore:
         role: MessageRole,
         state: MessageState,
         content: str,
+        selected_slot_id: str | None = None,
     ) -> StoredMessage:
+        message, _ = await self._claim_message(
+            turn=turn,
+            role=role,
+            state=state,
+            content=content,
+            selected_slot_id=selected_slot_id,
+        )
+        return message
+
+    async def _claim_message(
+        self,
+        *,
+        turn: VisitTurn,
+        role: MessageRole,
+        state: MessageState,
+        content: str,
+        selected_slot_id: str | None = None,
+    ) -> tuple[StoredMessage, bool]:
         async with self._sessions.begin() as session:
             await self._require_visit_matter(
                 session,
@@ -249,6 +340,7 @@ class PostgresVisitConversationStore:
                     role=role,
                     state=state,
                     content=content,
+                    selected_slot_id=selected_slot_id,
                 )
                 .on_conflict_do_nothing(index_elements=("visit_matter_id", "turn_id", "role"))
                 .returning(ConversationMessageRecord.id)
@@ -263,8 +355,12 @@ class PostgresVisitConversationStore:
             )
             if record is None:
                 raise RuntimeError("消息写入后无法读取")
-            if inserted_id is None and role == "participant" and record.content != content:
-                raise IdempotencyConflictError("同一 turn 的参与者消息内容不一致")
+            if (
+                inserted_id is None
+                and role == "participant"
+                and (record.content != content or record.selected_slot_id != selected_slot_id)
+            ):
+                raise IdempotencyConflictError("同一 turn 的参与者消息输入不一致")
             if inserted_id is not None:
                 await session.execute(
                     update(VisitMatterRecord)
@@ -277,7 +373,7 @@ class PostgresVisitConversationStore:
                         updated_at=func.now(),
                     )
                 )
-            return self._to_message(record)
+            return self._to_message(record), inserted_id is not None
 
     async def _transition(
         self,
@@ -341,6 +437,8 @@ class PostgresVisitConversationStore:
             role=cast(MessageRole, record.role),
             state=cast(MessageState, record.state),
             content=record.content,
+            selected_slot_id=record.selected_slot_id,
+            parts=tuple(dict(part) for part in record.parts),
             sequence=record.sequence,
             created_at=record.created_at,
             updated_at=record.updated_at,

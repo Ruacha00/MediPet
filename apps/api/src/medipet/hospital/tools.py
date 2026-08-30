@@ -186,6 +186,54 @@ class HospitalToolProvider:
             )
             return {"slots": [_slot_data(item) for item in slots]}
 
+        async def present_slots(
+            observation: dict[str, object], context: ToolContext
+        ) -> tuple[dict[str, object], ...]:
+            del context
+            departments = {
+                item.department_id: item
+                for item in await self._operations.query(ListDepartmentsQuery())
+            }
+            doctors = {
+                item.doctor_id: item
+                for item in await self._operations.query(ListDoctorsQuery())
+            }
+            raw_slots = observation.get("slots")
+            if not isinstance(raw_slots, list):
+                return ()
+            slots: list[dict[str, object]] = []
+            for raw_slot in raw_slots:
+                if not isinstance(raw_slot, dict):
+                    continue
+                department_id = raw_slot.get("department_id")
+                doctor_id = raw_slot.get("doctor_id")
+                department = (
+                    departments.get(department_id)
+                    if isinstance(department_id, str)
+                    else None
+                )
+                doctor = doctors.get(doctor_id) if isinstance(doctor_id, str) else None
+                if department is None or doctor is None:
+                    continue
+                slots.append(
+                    {
+                        "id": raw_slot["slot_id"],
+                        "department": department.name,
+                        "doctor": doctor.name,
+                        "doctorTitle": doctor.title,
+                        "startsAt": raw_slot["starts_at"],
+                        "endsAt": raw_slot["ends_at"],
+                        "feeCents": raw_slot["fee_cents"],
+                        "currency": raw_slot["currency"],
+                    }
+                )
+            return (
+                {
+                    "type": "data-slot-options",
+                    "data": {"slots": slots},
+                },
+            )
+
         async def get_appointment(
             arguments: dict[str, object], context: ToolContext
         ) -> dict[str, object]:
@@ -335,6 +383,7 @@ class HospitalToolProvider:
                 effect="read",
                 approval_required=False,
                 execute=search_slots,
+                present=present_slots,
             ),
             TrustedTool(
                 tool_id="hospital.get_appointment",

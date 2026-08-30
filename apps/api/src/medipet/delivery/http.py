@@ -10,9 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from medipet.action_postgres import PostgresActionStore
-from medipet.actions import ActionStore, UnavailableActionStore
-from medipet.agent.capabilities import CapabilityProvider
-from medipet.agent.runtime import LangGraphAgentRuntime
+from medipet.actions import ActionDecisionError, ActionStore, UnavailableActionStore
+from medipet.agent.capabilities import CapabilityProvider, ToolContext
+from medipet.agent.runtime import LangGraphAgentRuntime, hospital_data_available
 from medipet.assistant import MediPetAssistant
 from medipet.config import (
     ModelConfigurationError,
@@ -182,16 +182,26 @@ def create_app(
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @app.get("/v1/capabilities/status")
+    async def capability_status() -> dict[str, bool]:
+        if effective_capability_provider is None:
+            return {"hospital_data_available": False}
+        try:
+            context = ToolContext()
+            capabilities = await effective_capability_provider.snapshot(context)
+        except Exception as error:
+            raise HTTPException(
+                status_code=503,
+                detail="运行时能力暂时不可用",
+            ) from error
+        return {"hospital_data_available": hospital_data_available(capabilities, context)}
+
     if environment.strip().lower() != "production" and skill_registry is not None:
         app.include_router(management_router(skill_registry, management_token))
     if environment.strip().lower() != "production" and tool_registry is not None:
-        app.include_router(
-            tool_management_router(tool_registry, management_token, skill_registry)
-        )
+        app.include_router(tool_management_router(tool_registry, management_token, skill_registry))
     if environment.strip().lower() != "production" and run_audit_store is not None:
-        app.include_router(
-            run_audit_router(run_audit_store, management_token, run_metric_store)
-        )
+        app.include_router(run_audit_router(run_audit_store, management_token, run_metric_store))
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
@@ -227,6 +237,7 @@ def create_app(
             participant_id=request.participant_id,
             idempotency_key=request.idempotency_key,
             message=message,
+            selected_slot_id=request.selected_slot_id,
         )
         try:
             await conversation_store.validate_visit_participant(
@@ -263,23 +274,45 @@ def create_app(
         except VisitMatterNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
         messages = await conversation_store.list_messages(visit_matter_id)
-        return ConversationHistoryResponse(
-            visit_matter_id=visit_matter_id,
-            messages=[
+        history_messages: list[ConversationHistoryMessage] = []
+        for message in messages:
+            authoritative_parts: list[dict[str, object]] = []
+            for part in message.parts:
+                authoritative_part = part
+                data = part.get("data")
+                proposal_id = data.get("proposalId") if isinstance(data, dict) else None
+                if part.get("type") == "data-action-proposal" and isinstance(proposal_id, str):
+                    try:
+                        proposal = await effective_action_store.get_proposal(proposal_id)
+                    except ActionDecisionError:
+                        pass
+                    else:
+                        if (
+                            proposal.visit_matter_id == visit_matter_id
+                            and proposal.participant_id == participant_id
+                        ):
+                            authoritative_part = proposal.event_data()
+                authoritative_parts.append(authoritative_part)
+            history_messages.append(
                 ConversationHistoryMessage(
                     id=message.id,
                     role="user" if message.role == "participant" else "assistant",
                     state=message.state,
-                    parts=(
-                        [UIMessagePart(type="text", text=message.content)]
-                        if message.content
-                        else []
-                    ),
+                    parts=[
+                        *(UIMessagePart.model_validate(part) for part in authoritative_parts),
+                        *(
+                            [UIMessagePart(type="text", text=message.content)]
+                            if message.content
+                            else []
+                        ),
+                    ],
                     created_at=message.created_at,
                     updated_at=message.updated_at,
                 )
-                for message in messages
-            ],
+            )
+        return ConversationHistoryResponse(
+            visit_matter_id=visit_matter_id,
+            messages=history_messages,
         )
 
     @app.post(
@@ -327,11 +360,18 @@ def _tool_registry_from_environment() -> PostgresToolRegistry | None:
         return None
 
 
+def default_hospital_tool_provider(environment: str) -> ToolProvider | None:
+    if environment.strip().lower() == "production":
+        return None
+    operations = FakeHospitalOperations(
+        FakeHospitalDataSource.load_default(),
+        clock=lambda: datetime.now(UTC),
+    )
+    return HospitalToolProvider(operations)
+
+
 _tool_registry = _tool_registry_from_environment()
-_hospital_operations = FakeHospitalOperations(
-    FakeHospitalDataSource.load_default(),
-    clock=lambda: datetime.now(UTC),
-)
+_environment = os.getenv("MEDIPET_ENVIRONMENT", "development")
 
 
 def _action_store_from_environment() -> PostgresActionStore | None:
@@ -380,7 +420,7 @@ app = create_app(
     skill_registry=_skill_registry_from_environment(),
     close_skill_registry=True,
     tool_registry=_tool_registry,
-    tool_provider=HospitalToolProvider(_hospital_operations),
+    tool_provider=default_hospital_tool_provider(_environment),
     close_tool_registry=True,
     action_store=_action_store,
     close_action_store=True,
@@ -389,5 +429,5 @@ app = create_app(
     run_metric_store=_run_metric_store,
     close_run_metric_store=True,
     management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
-    environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),
+    environment=_environment,
 )

@@ -13,6 +13,7 @@ from medipet.actions import (
     ActionAuditKind,
     ActionDecisionError,
     ActionProposal,
+    ActionProposalExpiredError,
     ActionProposalStatus,
     ActionReceipt,
 )
@@ -81,6 +82,9 @@ class PostgresActionStore:
                         visit_matter_id=context.visit_matter_id,
                         participant_id=context.participant_id,
                         patient_id=context.patient_id,
+                        patient_display_name=(
+                            context.patient_display_name.strip() or "当前患者"
+                        ),
                         request_key=context.idempotency_key,
                         idempotency_key=f"action-{proposal_id}",
                         tool_id=tool.tool_id,
@@ -123,6 +127,16 @@ class PostgresActionStore:
                 raise ActionDecisionError("待确认操作不存在")
             return self._to_proposal(record)
 
+    async def validate_decision_scope(
+        self, proposal_id: str, context: ToolContext
+    ) -> ActionProposal:
+        async with self._sessions() as session:
+            record = await session.get(ActionProposalRecord, proposal_id)
+            if record is None:
+                raise ActionDecisionError("待确认操作不存在")
+            self._validate_scope(record, context)
+            return self._to_proposal(record)
+
     async def reject(
         self,
         proposal_id: str,
@@ -144,6 +158,8 @@ class PostgresActionStore:
                 self._add_audit(session, "reject", record, context.idempotency_key)
             else:
                 self._add_audit(session, "reject", record, context.idempotency_key)
+        if failure == "待确认操作已过期":
+            raise ActionProposalExpiredError(self._to_proposal(record))
         if failure is not None:
             raise ActionDecisionError(failure)
         return self._to_proposal(record)
@@ -220,6 +236,7 @@ class PostgresActionStore:
                     profile_version=context.profile_version,
                     visit_stage=context.visit_stage,
                     patient_id=context.patient_id,
+                    patient_display_name=context.patient_display_name,
                 )
                 try:
                     result = await tool.execute(dict(record.arguments), execution_context)
@@ -252,6 +269,8 @@ class PostgresActionStore:
                     )
                     await session.flush()
                     receipt = self._to_receipt(receipt_record)
+        if failure == "待确认操作已过期":
+            raise ActionProposalExpiredError(self._to_proposal(record))
         if failure is not None:
             error = ActionDecisionError(failure)
             if failure_cause is not None:
@@ -406,6 +425,7 @@ class PostgresActionStore:
             visit_matter_id=record.visit_matter_id,
             participant_id=record.participant_id,
             patient_id=record.patient_id,
+            patient_display_name=record.patient_display_name,
             request_key=record.request_key,
             idempotency_key=record.idempotency_key,
             tool_id=record.tool_id,

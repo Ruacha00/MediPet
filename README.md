@@ -8,7 +8,7 @@ MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一
 - API：FastAPI、Pydantic、LangGraph
 - 工具链：pnpm、uv、pytest、Ruff、Pyright、Vitest、Playwright
 
-当前环境不包含医院科室、医生、号源、费用、预约或路线数据，也不会生成演示医院结果。PostgreSQL 只保存开发患者、就诊参与者、就诊事项和对话消息。
+开发环境包含独立且明确标识为虚构的医院目录，并通过首方“医院预约挂号协助”Skill 提供医院、科室、医生、号源和当前患者预约查询，以及明确确认后的创建预约能力。服务医院事实只来自已绑定 Tool；当前仍不提供院内路线或症状到科室的医院导诊规则。
 
 ## 本地启动
 
@@ -47,7 +47,7 @@ development 环境会在 `/ready` 检查和每个新 turn 边界重新读取 `.e
 
 test 应通过依赖注入提供模型与配置；production 和 test 运行环境只使用进程启动时的静态配置，不监听 `.env`。`MEDIPET_DATABASE_URL`、`MEDIPET_ENVIRONMENT`、`MEDIPET_MANAGEMENT_TOKEN` 和 `MEDIPET_HOSPITAL_ADAPTER` 属于启动配置，修改后需要重启 API。
 
-`MEDIPET_DATABASE_URL` 必须是 PostgreSQL URL，修改后需要重启 API。Alembic 负责建表，应用启动时不会自动创建结构。开发 seed 可重复运行，只创建虚构患者、参与者和就诊事项，不创建业务 Skill、业务 Tool 或医院数据。生产环境没有 seed 命令，初始 Registry 保持为空。
+`MEDIPET_DATABASE_URL` 必须是 PostgreSQL URL，修改后需要重启 API。Alembic 负责建表，应用启动时不会自动创建结构。开发 seed 可重复运行：它创建虚构患者、参与者和就诊事项，同步并启用七个医院 Tool，并创建、绑定和发布仓库内的医院预约 Skill。生产部署不运行该 seed，也不会自动激活虚构医院能力。
 
 另开终端启动 Web：
 
@@ -88,7 +88,7 @@ corepack pnpm lint
 corepack pnpm build
 ```
 
-浏览器烟测脚本位于 `apps/web/tests/browser/smoke.py`，它验证聊天外壳和零医院能力提示，不会调用真实或收费模型。
+浏览器烟测脚本位于 `apps/web/tests/browser/smoke.py`，用于验证聊天外壳；自动测试不会调用真实或收费模型。
 
 ## 可观测性与基准
 

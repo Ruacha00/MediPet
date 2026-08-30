@@ -474,6 +474,11 @@ button {
   color: var(--ink-soft);
 }
 
+.slot-line .card-button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
 .card-actions {
   display: flex;
   gap: 8px;

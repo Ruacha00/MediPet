@@ -15,6 +15,7 @@ class ToolContext:
     profile_version: str = "static"
     visit_stage: VisitStage = "pre_visit"
     patient_id: str = ""
+    patient_display_name: str = ""
 
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]
@@ -23,6 +24,9 @@ ToolConfirmationPreparer = Callable[
 ]
 ToolConfirmationRevalidator = Callable[
     [dict[str, object], dict[str, object], ToolContext], Awaitable[bool]
+]
+ToolPresenter = Callable[
+    [dict[str, object], ToolContext], Awaitable[tuple[dict[str, object], ...]]
 ]
 ToolAuthorizer = Callable[[ToolContext], bool]
 ToolRejectionRecorder = Callable[[ToolContext], Awaitable[None]]
@@ -59,6 +63,8 @@ class ToolDefinition:
     authorize: ToolAuthorizer = _allow
     record_rejection: ToolRejectionRecorder | None = None
     revalidate: ToolAvailabilityValidator | None = None
+    present: ToolPresenter | None = None
+    required_skill_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

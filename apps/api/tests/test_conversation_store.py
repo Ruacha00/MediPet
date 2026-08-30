@@ -6,6 +6,7 @@ import pytest
 
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
+    IdempotencyConflictError,
     InMemoryVisitConversationStore,
     MessageTransitionError,
     VisitContext,
@@ -25,6 +26,7 @@ async def exercise_store_contract(
         visit.participant_id,
     ) == VisitContext(
         patient_id=visit.patient_id,
+        patient_display_name=visit.patient_display_name,
         visit_stage=visit.visit_stage,
     )
     turn = VisitTurn(
@@ -35,11 +37,36 @@ async def exercise_store_contract(
     participant = await store.add_participant_message(
         turn=turn,
         content="我这两天头痛",
+        selected_slot_id="slot-1",
     )
-    assistant = await store.add_assistant_message(turn=turn)
+    replayed_participant = await store.add_participant_message(
+        turn=turn,
+        content="我这两天头痛",
+        selected_slot_id="slot-1",
+    )
+    with pytest.raises(IdempotencyConflictError):
+        await store.add_participant_message(
+            turn=turn,
+            content="我这两天头痛",
+            selected_slot_id="slot-2",
+        )
+    assistant, claimed = await store.claim_assistant_message(turn=turn)
+    replayed_assistant, replayed_claim = await store.claim_assistant_message(turn=turn)
     assert participant.state == "completed"
+    assert participant.selected_slot_id == "slot-1"
+    assert replayed_participant.id == participant.id
     assert assistant.state == "pending"
+    assert claimed is True
+    assert replayed_claim is False
+    assert replayed_assistant.id == assistant.id
 
+    proposal_part = {
+        "type": "data-action-proposal",
+        "data": {"proposalId": "proposal-1", "status": "pending"},
+    }
+    assert not await store.has_action_proposal_part(visit.visit_matter_id, "proposal-1")
+    await store.append_assistant_part(assistant.id, proposal_part)
+    assert await store.has_action_proposal_part(visit.visit_matter_id, "proposal-1")
     await store.mark_assistant_streaming(assistant.id)
     await store.append_assistant_text(assistant.id, "可以先")
     await store.append_assistant_text(assistant.id, "记录持续时间。")
@@ -50,6 +77,22 @@ async def exercise_store_contract(
         ("participant", "completed", "我这两天头痛"),
         ("assistant", "completed", "可以先记录持续时间。"),
     ]
+    assert messages[-1].parts == (proposal_part,)
+    confirmed_part = {
+        "type": "data-action-proposal",
+        "data": {
+            "proposalId": "proposal-1",
+            "status": "confirmed",
+            "receiptId": "receipt-1",
+        },
+    }
+    await store.update_action_proposal_part(
+        visit.visit_matter_id,
+        "proposal-1",
+        confirmed_part,
+    )
+    updated = await store.list_messages(visit.visit_matter_id)
+    assert updated[-1].parts == (confirmed_part,)
     with pytest.raises(MessageTransitionError):
         await store.append_assistant_text(assistant.id, "不应再写入")
 

@@ -60,6 +60,7 @@ class DevelopmentVisitMatter:
 @dataclass(frozen=True)
 class VisitContext:
     patient_id: str
+    patient_display_name: str
     visit_stage: VisitStage
 
 
@@ -82,6 +83,8 @@ class StoredMessage:
     sequence: int
     created_at: datetime
     updated_at: datetime
+    parts: tuple[dict[str, object], ...] = ()
+    selected_slot_id: str | None = None
 
 
 class VisitConversationStore(Protocol):
@@ -99,9 +102,7 @@ class VisitConversationStore(Protocol):
         participant_id: str,
     ) -> VisitContext: ...
 
-    async def visit_stage(
-        self, visit_matter_id: str, participant_id: str
-    ) -> VisitStage: ...
+    async def visit_stage(self, visit_matter_id: str, participant_id: str) -> VisitStage: ...
 
     async def seed_development_visit_matter(
         self,
@@ -113,6 +114,7 @@ class VisitConversationStore(Protocol):
         *,
         turn: VisitTurn,
         content: str,
+        selected_slot_id: str | None = None,
     ) -> StoredMessage: ...
 
     async def add_assistant_message(
@@ -121,9 +123,26 @@ class VisitConversationStore(Protocol):
         turn: VisitTurn,
     ) -> StoredMessage: ...
 
+    async def claim_assistant_message(
+        self,
+        *,
+        turn: VisitTurn,
+    ) -> tuple[StoredMessage, bool]: ...
+
     async def mark_assistant_streaming(self, message_id: str) -> None: ...
 
     async def append_assistant_text(self, message_id: str, text: str) -> None: ...
+
+    async def append_assistant_part(self, message_id: str, part: dict[str, object]) -> None: ...
+
+    async def update_action_proposal_part(
+        self,
+        visit_matter_id: str,
+        proposal_id: str,
+        part: dict[str, object],
+    ) -> None: ...
+
+    async def has_action_proposal_part(self, visit_matter_id: str, proposal_id: str) -> bool: ...
 
     async def finish_assistant_message(
         self,
@@ -160,9 +179,7 @@ class InMemoryVisitConversationStore:
         async with self._lock:
             self._require_participant(visit_matter_id, participant_id)
 
-    async def visit_stage(
-        self, visit_matter_id: str, participant_id: str
-    ) -> VisitStage:
+    async def visit_stage(self, visit_matter_id: str, participant_id: str) -> VisitStage:
         async with self._lock:
             self._require_participant(visit_matter_id, participant_id)
             return self._visit_matters[visit_matter_id].visit_stage
@@ -177,6 +194,7 @@ class InMemoryVisitConversationStore:
             visit_matter = self._visit_matters[visit_matter_id]
             return VisitContext(
                 patient_id=visit_matter.patient_id,
+                patient_display_name=visit_matter.patient_display_name,
                 visit_stage=visit_matter.visit_stage,
             )
 
@@ -195,20 +213,22 @@ class InMemoryVisitConversationStore:
         *,
         turn: VisitTurn,
         content: str,
+        selected_slot_id: str | None = None,
     ) -> StoredMessage:
         async with self._lock:
             self._require_participant(turn.visit_matter_id, turn.participant_id)
             key = (turn, "participant")
             existing = self._message_for_turn(key)
             if existing is not None:
-                if existing.content != content:
-                    raise IdempotencyConflictError("同一 turn 的参与者消息内容不一致")
+                if existing.content != content or existing.selected_slot_id != selected_slot_id:
+                    raise IdempotencyConflictError("同一 turn 的参与者消息输入不一致")
                 return existing
             return self._insert_message(
                 turn=turn,
                 role="participant",
                 state="completed",
                 content=content,
+                selected_slot_id=selected_slot_id,
             )
 
     async def add_assistant_message(
@@ -216,17 +236,28 @@ class InMemoryVisitConversationStore:
         *,
         turn: VisitTurn,
     ) -> StoredMessage:
+        message, _ = await self.claim_assistant_message(turn=turn)
+        return message
+
+    async def claim_assistant_message(
+        self,
+        *,
+        turn: VisitTurn,
+    ) -> tuple[StoredMessage, bool]:
         async with self._lock:
             self._require_participant(turn.visit_matter_id, turn.participant_id)
             key = (turn, "assistant")
             existing = self._message_for_turn(key)
             if existing is not None:
-                return existing
-            return self._insert_message(
-                turn=turn,
-                role="assistant",
-                state="pending",
-                content="",
+                return existing, False
+            return (
+                self._insert_message(
+                    turn=turn,
+                    role="assistant",
+                    state="pending",
+                    content="",
+                ),
+                True,
             )
 
     async def mark_assistant_streaming(self, message_id: str) -> None:
@@ -242,6 +273,38 @@ class InMemoryVisitConversationStore:
             if message.role != "assistant" or message.state != "streaming":
                 raise MessageTransitionError("只有 streaming 助手消息可以追加文本")
             self._replace_message(message, content=message.content + text)
+
+    async def append_assistant_part(self, message_id: str, part: dict[str, object]) -> None:
+        async with self._lock:
+            message = self._require_message(message_id)
+            if message.role != "assistant" or message.state not in {"pending", "streaming"}:
+                raise MessageTransitionError("只有进行中的助手消息可以追加结构化内容")
+            self._replace_message(message, parts=(*message.parts, dict(part)))
+
+    async def update_action_proposal_part(
+        self,
+        visit_matter_id: str,
+        proposal_id: str,
+        part: dict[str, object],
+    ) -> None:
+        async with self._lock:
+            for message in self._messages.values():
+                if message.visit_matter_id != visit_matter_id or message.role != "assistant":
+                    continue
+                updated = replace_proposal_part(message.parts, proposal_id, part)
+                if updated is not None:
+                    self._replace_message(message, parts=updated)
+                    return
+            raise MessageTransitionError("聊天历史中不存在该预约确认")
+
+    async def has_action_proposal_part(self, visit_matter_id: str, proposal_id: str) -> bool:
+        async with self._lock:
+            return any(
+                message.visit_matter_id == visit_matter_id
+                and message.role == "assistant"
+                and replace_proposal_part(message.parts, proposal_id, {}) is not None
+                for message in self._messages.values()
+            )
 
     async def finish_assistant_message(
         self,
@@ -290,6 +353,7 @@ class InMemoryVisitConversationStore:
         role: MessageRole,
         state: MessageState,
         content: str,
+        selected_slot_id: str | None = None,
     ) -> StoredMessage:
         now = datetime.now(UTC)
         message = StoredMessage(
@@ -300,6 +364,7 @@ class InMemoryVisitConversationStore:
             role=role,
             state=state,
             content=content,
+            selected_slot_id=selected_slot_id,
             sequence=self._next_sequence,
             created_at=now,
             updated_at=now,
@@ -321,11 +386,13 @@ class InMemoryVisitConversationStore:
         *,
         state: MessageState | None = None,
         content: str | None = None,
+        parts: tuple[dict[str, object], ...] | None = None,
     ) -> None:
         self._messages[message.id] = replace(
             message,
             state=state if state is not None else message.state,
             content=content if content is not None else message.content,
+            parts=parts if parts is not None else message.parts,
             updated_at=datetime.now(UTC),
         )
 
@@ -339,3 +406,21 @@ class InMemoryVisitConversationStore:
         ):
             raise MessageTransitionError("助手消息状态转换无效")
         self._replace_message(message, state=to_state)
+
+
+def replace_proposal_part(
+    parts: tuple[dict[str, object], ...],
+    proposal_id: str,
+    replacement: dict[str, object],
+) -> tuple[dict[str, object], ...] | None:
+    updated = list(parts)
+    for index, existing in enumerate(updated):
+        data = existing.get("data")
+        if (
+            existing.get("type") == "data-action-proposal"
+            and isinstance(data, dict)
+            and data.get("proposalId") == proposal_id
+        ):
+            updated[index] = dict(replacement)
+            return tuple(updated)
+    return None

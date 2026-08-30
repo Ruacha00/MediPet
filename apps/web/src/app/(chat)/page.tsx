@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { ChatShell } from "@/features/chat/chat-shell";
+import { loadCapabilityStatus } from "@/features/chat/capabilities";
 import {
   backendBaseUrl,
   demoParticipantId,
@@ -16,10 +17,11 @@ export default function ChatPage() {
     demoVisitMatterId,
     demoParticipantId,
   );
+  const capabilityStatus = loadCapabilityStatus(backendBaseUrl);
 
   return (
     <Suspense fallback={<HistoryLoading />}>
-      <ChatShell history={history} />
+      <ChatShell history={history} capabilityStatus={capabilityStatus} />
     </Suspense>
   );
 }

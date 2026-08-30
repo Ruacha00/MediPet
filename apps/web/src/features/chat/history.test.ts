@@ -61,6 +61,40 @@ describe("toMediPetMessages", () => {
     );
   });
 
+  it("restores structured hospital cards without changing their server state", () => {
+    const [message] = toMediPetMessages({
+      visit_matter_id: "visit-matter-demo",
+      messages: [
+        {
+          id: "assistant-message",
+          role: "assistant",
+          state: "completed",
+          parts: [
+            {
+              type: "data-action-proposal",
+              data: {
+                proposalId: "proposal-1",
+                status: "confirmed",
+                receiptId: "receipt-1",
+              },
+            },
+          ],
+          created_at: "2026-08-30T08:00:00Z",
+          updated_at: "2026-08-30T08:00:00Z",
+        },
+      ],
+    });
+
+    expect(message.parts[0]).toEqual({
+      type: "data-action-proposal",
+      data: {
+        proposalId: "proposal-1",
+        status: "confirmed",
+        receiptId: "receipt-1",
+      },
+    });
+  });
+
   it("turns a history request failure into renderable restoration state", async () => {
     vi.stubGlobal(
       "fetch",

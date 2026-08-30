@@ -8,6 +8,7 @@ import type {
   MediPetMessagePart,
   ProposalDecision,
   ProposalDecisionState,
+  SlotOption,
   SlotOptionsData,
 } from "./message-types";
 
@@ -15,16 +16,22 @@ type MessagePartViewProps = {
   part: MediPetMessagePart;
   decisionState: ProposalDecisionState;
   onDecision: (proposalId: string, decision: ProposalDecision) => void;
+  onSelectSlot: (slot: SlotOption) => void;
 };
 
-export function MessagePartView({ part, decisionState, onDecision }: MessagePartViewProps) {
+export function MessagePartView({
+  part,
+  decisionState,
+  onDecision,
+  onSelectSlot,
+}: MessagePartViewProps) {
   switch (part.type) {
     case "text":
       return <div className="bubble">{part.text}</div>;
     case "data-department-candidates":
       return <DepartmentCandidatesCard data={part.data} />;
     case "data-slot-options":
-      return <SlotOptionsCard data={part.data} />;
+      return <SlotOptionsCard data={part.data} onSelect={onSelectSlot} />;
     case "data-action-proposal":
       return (
         <ActionProposalCard
@@ -60,19 +67,31 @@ export function DepartmentCandidatesCard({ data }: { data: DepartmentCandidatesD
   );
 }
 
-function SlotOptionsCard({ data }: { data: SlotOptionsData }) {
-  const slot = data.slots[0];
-  if (!slot) return null;
+export function SlotOptionsCard({
+  data,
+  onSelect,
+}: {
+  data: SlotOptionsData;
+  onSelect: (slot: SlotOption) => void;
+}) {
+  if (data.slots.length === 0) return null;
 
   return (
     <section className="data-card" aria-label="可选号源">
-      <p className="card-kicker">Available slot</p>
-      <h3><CalendarClock size={17} aria-hidden="true" /> {data.department}</h3>
-      <div className="slot-line">
-        <div><small>医生</small><strong>{slot.doctor}</strong></div>
-        <div><small>时间</small><strong>{slot.date} · {slot.time}</strong></div>
-        <div><small>挂号费</small><strong>¥{slot.fee}</strong></div>
-        <div><small>状态</small><strong>可预约</strong></div>
+      <p className="card-kicker">Available slots</p>
+      <h3><CalendarClock size={17} aria-hidden="true" /> 可预约号源</h3>
+      <div className="candidate-list">
+        {data.slots.map((slot) => (
+          <article className="slot-line" key={slot.id}>
+            <div><small>科室</small><strong>{slot.department}</strong></div>
+            <div><small>医生</small><strong>{slot.doctor} · {slot.doctorTitle}</strong></div>
+            <div><small>时间</small><strong>{formatDateTime(slot.startsAt)}</strong></div>
+            <div><small>挂号费</small><strong>{formatMoney(slot.feeCents)}</strong></div>
+            <button className="card-button primary" onClick={() => onSelect(slot)}>
+              选择此号源
+            </button>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -87,35 +106,53 @@ export function ActionProposalCard({
   decisionState: ProposalDecisionState;
   onDecision: (proposalId: string, decision: ProposalDecision) => void;
 }) {
-  const resolved = decisionState === "confirm" || decisionState === "reject";
+  const resolved = data.status !== "pending";
   const working = decisionState === "working";
   const operation = data.toolName ?? data.toolId ?? "受确认保护的操作";
   const version = data.toolVersion ? ` · v${data.toolVersion}` : "";
-  const argumentsText = JSON.stringify(data.arguments ?? {}, null, 2);
+  const confirmation = data.confirmation;
 
   return (
-    <section className="data-card" aria-label="操作确认">
+    <section className="data-card" aria-label="预约确认">
       <p className="card-kicker">Explicit confirmation</p>
-      <h3><Check size={17} aria-hidden="true" /> 请核对操作</h3>
+      <h3><Check size={17} aria-hidden="true" /> {proposalTitle(data.status, Boolean(confirmation))}</h3>
       <p><strong>{operation}{version}</strong></p>
-      <pre>{argumentsText}</pre>
-      {data.expiresAt && <small>确认有效期至 {data.expiresAt}</small>}
-      <div className="card-actions">
-        <button
-          className="card-button primary"
-          disabled={working || resolved}
-          onClick={() => onDecision(data.proposalId, "confirm")}
-        >
-          {decisionState === "confirm" ? "已确认" : working ? "处理中…" : "确认操作"}
-        </button>
-        <button
-          className="card-button"
-          disabled={working || resolved}
-          onClick={() => onDecision(data.proposalId, "reject")}
-        >
-          {decisionState === "reject" ? "已拒绝" : "拒绝操作"}
-        </button>
-      </div>
+      {confirmation ? (
+        <div className="proposal-grid">
+          <div><small>患者</small><strong>{confirmation.patient.display_name}</strong></div>
+          <div><small>服务医院</small><strong>{confirmation.hospital.name}</strong></div>
+          <div><small>科室</small><strong>{confirmation.department.name}</strong></div>
+          <div><small>医生</small><strong>{confirmation.doctor.name} · {confirmation.doctor.title}</strong></div>
+          <div><small>时间</small><strong>{formatDateTime(confirmation.starts_at)}</strong></div>
+          <div><small>挂号费</small><strong>{formatMoney(confirmation.fee_cents)}</strong></div>
+        </div>
+      ) : (
+        <pre>{JSON.stringify(data.arguments ?? {}, null, 2)}</pre>
+      )}
+      {data.status === "confirmed" && data.receiptId && (
+        <p><small>收据编号</small><br /><strong>{data.receiptId}</strong></p>
+      )}
+      {data.status === "pending" && data.expiresAt && (
+        <small>确认有效期至 {formatDateTime(data.expiresAt)}</small>
+      )}
+      {!resolved && (
+        <div className="card-actions">
+          <button
+            className="card-button primary"
+            disabled={working}
+            onClick={() => onDecision(data.proposalId, "confirm")}
+          >
+            {working ? "处理中…" : confirmation ? "确认预约" : "确认操作"}
+          </button>
+          <button
+            className="card-button"
+            disabled={working}
+            onClick={() => onDecision(data.proposalId, "reject")}
+          >
+            {confirmation ? "拒绝预约" : "拒绝操作"}
+          </button>
+        </div>
+      )}
     </section>
   );
 }
@@ -140,4 +177,28 @@ function HandoffCard({ data }: { data: HandoffData }) {
       <p>{data.description}</p>
     </section>
   );
+}
+
+function proposalTitle(status: ActionProposalData["status"], appointment: boolean) {
+  if (status === "confirmed") return "预约成功";
+  if (status === "rejected") return "已拒绝预约";
+  if (status === "expired") return "确认已过期";
+  return appointment ? "请核对预约挂号" : "请核对操作";
+}
+
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatMoney(feeCents: number) {
+  return new Intl.NumberFormat("zh-CN", {
+    style: "currency",
+    currency: "CNY",
+  }).format(feeCents / 100);
 }
