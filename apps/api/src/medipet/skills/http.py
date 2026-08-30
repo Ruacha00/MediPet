@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import secrets
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel
 
+from medipet.skills.archive import SkillArchiveError
 from medipet.skills.registry import (
     LifecycleAction,
     SkillNotFoundError,
@@ -60,6 +61,36 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
         except SkillRegistryError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         return version.to_dict()
+
+    @router.post("/skills/import", status_code=201, dependencies=protected)
+    async def import_skill(request: Request) -> dict[str, object]:
+        if request.headers.get("content-type", "").partition(";")[0] != "application/zip":
+            raise HTTPException(status_code=415, detail="Skill 导入仅接受 application/zip")
+        try:
+            version = await registry.import_package(
+                await request.body(), actor="development-admin"
+            )
+        except (SkillArchiveError, SkillRegistryError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return version.to_dict()
+
+    @router.get(
+        "/skills/{skill_id}/versions/{version}/export",
+        dependencies=protected,
+        response_class=Response,
+    )
+    async def export_skill(skill_id: str, version: int) -> Response:
+        try:
+            filename, content = await registry.export_package(
+                skill_id, version, actor="development-admin"
+            )
+        except SkillNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return Response(
+            content=content,
+            media_type="application/zip",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
 
     @router.patch("/skills/{skill_id}", status_code=201, dependencies=protected)
     async def edit_skill(skill_id: str, request: EditSkillRequest) -> dict[str, object]:

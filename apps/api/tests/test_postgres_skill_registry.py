@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import io
+import json
 import os
+import zipfile
 from uuid import uuid4
 
 import pytest
@@ -66,3 +69,53 @@ async def test_postgres_skill_registry_persists_versions_and_runtime_audits() ->
     assert first_version["status"] == "published"
     assert await selected[0].load_instructions() == "版本一指令"
     assert selection.turn_id == "turn-1"
+
+
+@pytest.mark.asyncio
+async def test_postgres_skill_registry_persists_and_exports_package_resources() -> None:
+    await _upgrade_database()
+    slug = f"archive-round-trip-{uuid4().hex}"
+    package = io.BytesIO()
+    with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr(
+            "SKILL.md",
+            f"---\nname: {slug}\ndescription: 归档往返\n---\n\n加载参考清单。\n",
+        )
+        archive.writestr(
+            "medipet.json",
+            json.dumps(
+                {
+                    "format_version": 1,
+                    "display_name": "归档往返",
+                    "change_note": "持久化资源",
+                    "risk_level": "low",
+                    "required_approvals": 0,
+                },
+                ensure_ascii=False,
+            ),
+        )
+        archive.writestr("references/checklist.md", "# 检查清单\n")
+
+    registry = PostgresSkillRegistry.from_url(DATABASE_URL or "")
+    try:
+        imported = await registry.import_package(package.getvalue(), actor="admin")
+    finally:
+        await registry.close()
+
+    restarted = PostgresSkillRegistry.from_url(DATABASE_URL or "")
+    try:
+        listed = await restarted.list_skills()
+        persisted = next(skill for skill in listed if skill["slug"] == slug)
+        _, exported = await restarted.export_package(imported.skill_id, 1, actor="admin")
+    finally:
+        await restarted.close()
+
+    versions = persisted["versions"]
+    assert isinstance(versions, list)
+    version = versions[0]
+    assert isinstance(version, dict)
+    assert version["resources"] == [
+        {"path": "references/checklist.md", "media_type": "text/markdown", "size": 15}
+    ]
+    with zipfile.ZipFile(io.BytesIO(exported)) as archive:
+        assert archive.read("references/checklist.md").decode() == "# 检查清单\n"

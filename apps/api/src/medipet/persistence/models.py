@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from sqlalchemy import (
+    JSON,
     BigInteger,
     Boolean,
     CheckConstraint,
@@ -11,6 +12,7 @@ from sqlalchemy import (
     ForeignKeyConstraint,
     Identity,
     Index,
+    LargeBinary,
     MetaData,
     String,
     Text,
@@ -151,7 +153,7 @@ class SkillVersionRecord(Base):
     __tablename__ = "skill_versions"
     __table_args__ = (
         CheckConstraint(
-            "status IN ('draft', 'in_review', 'published', 'retired')",
+            "status IN ('draft', 'in_review', 'published', 'retired', 'quarantined')",
             name="status",
         ),
         UniqueConstraint("skill_id", "version", name="skill_version"),
@@ -168,6 +170,23 @@ class SkillVersionRecord(Base):
     change_note: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(16))
     active: Mapped[bool] = mapped_column(Boolean, default=False)
+    governance: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    quarantine_reasons: Mapped[list[str]] = mapped_column(JSON, default=list)
+    publish_blockers: Mapped[list[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class SkillResourceRecord(Base):
+    __tablename__ = "skill_resources"
+    __table_args__ = (UniqueConstraint("skill_version_id", "path", name="skill_resource_path"),)
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    skill_version_id: Mapped[str] = mapped_column(
+        String(128), ForeignKey("skill_versions.id", ondelete="CASCADE"), index=True
+    )
+    path: Mapped[str] = mapped_column(String(512))
+    media_type: Mapped[str] = mapped_column(String(128))
+    content: Mapped[bytes] = mapped_column(LargeBinary)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -177,8 +196,10 @@ class SkillAuditRecord(Base):
 
     id: Mapped[str] = mapped_column(String(128), primary_key=True)
     action: Mapped[str] = mapped_column(String(64))
-    skill_id: Mapped[str] = mapped_column(String(128), ForeignKey("skills.id", ondelete="CASCADE"))
-    version: Mapped[int] = mapped_column(BigInteger)
+    skill_id: Mapped[str | None] = mapped_column(
+        String(128), ForeignKey("skills.id", ondelete="CASCADE")
+    )
+    version: Mapped[int | None] = mapped_column(BigInteger)
     actor: Mapped[str] = mapped_column(String(128))
     visit_matter_id: Mapped[str | None] = mapped_column(String(128))
     turn_id: Mapped[str | None] = mapped_column(String(128))

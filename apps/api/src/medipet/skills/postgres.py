@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Sequence
 from typing import cast
 from uuid import uuid4
 
@@ -13,15 +14,29 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from medipet.agent.capabilities import SkillDefinition, ToolContext
-from medipet.persistence.models import SkillAuditRecord, SkillRecord, SkillVersionRecord
+from medipet.persistence.models import (
+    SkillAuditRecord,
+    SkillRecord,
+    SkillResourceRecord,
+    SkillVersionRecord,
+)
 from medipet.persistence.postgres import postgres_async_url
+from medipet.skills.archive import (
+    SkillArchiveError,
+    SkillResource,
+    export_skill_archive,
+    parse_skill_archive,
+    static_publish_blockers,
+)
 from medipet.skills.registry import (
     LifecycleAction,
     SkillAudit,
     SkillNotFoundError,
     SkillRegistryError,
     SkillStatus,
+    SkillTransitionError,
     SkillVersion,
+    publish_blockers_for,
     required_text,
     transition_target,
     validate_skill_slug,
@@ -49,6 +64,14 @@ class PostgresSkillRegistry:
                     .order_by(SkillRecord.created_at, SkillVersionRecord.version)
                 )
             ).all()
+            resources = (
+                await session.scalars(
+                    select(SkillResourceRecord).order_by(SkillResourceRecord.path)
+                )
+            ).all()
+        resources_by_version: dict[str, list[SkillResourceRecord]] = defaultdict(list)
+        for resource in resources:
+            resources_by_version[resource.skill_version_id].append(resource)
         grouped: dict[str, list[tuple[SkillRecord, SkillVersionRecord]]] = defaultdict(list)
         for skill, version in rows:
             grouped[skill.id].append((skill, version))
@@ -59,7 +82,10 @@ class PostgresSkillRegistry:
                 "name": pairs[-1][1].name,
                 "description": pairs[-1][1].description,
                 "versions": [
-                    self._to_version(skill, version).to_dict() for skill, version in pairs
+                    self._to_version(
+                        skill, version, resources_by_version.get(version.id, [])
+                    ).to_dict()
+                    for skill, version in pairs
                 ],
             }
             for skill_id, pairs in grouped.items()
@@ -93,6 +119,15 @@ class PostgresSkillRegistry:
                 change_note=required_text(change_note, "变更说明不能为空"),
                 status="draft",
                 active=False,
+                governance={
+                    "format_version": 1,
+                    "display_name": required_text(name, "Skill 名称不能为空"),
+                    "change_note": required_text(change_note, "变更说明不能为空"),
+                    "risk_level": "standard",
+                    "required_approvals": 0,
+                },
+                quarantine_reasons=[],
+                publish_blockers=list(static_publish_blockers({"SKILL.md": instructions})),
             )
             session.add_all((skill, record))
             await session.flush()
@@ -118,6 +153,23 @@ class PostgresSkillRegistry:
             )
             if source is None:
                 raise SkillNotFoundError("Skill 版本不存在")
+            if source.status == "quarantined":
+                raise SkillTransitionError("隔离的 Skill 版本不能编辑")
+            source_resources = (
+                await session.scalars(
+                    select(SkillResourceRecord)
+                    .where(SkillResourceRecord.skill_version_id == source.id)
+                    .order_by(SkillResourceRecord.path)
+                )
+            ).all()
+            copied_skill_resources = tuple(
+                SkillResource(
+                    path=resource.path,
+                    media_type=resource.media_type,
+                    content=resource.content,
+                )
+                for resource in source_resources
+            )
             record = SkillVersionRecord(
                 id=f"skill-version-{uuid4().hex}",
                 skill_id=skill_id,
@@ -128,11 +180,27 @@ class PostgresSkillRegistry:
                 change_note=required_text(change_note, "变更说明不能为空"),
                 status="draft",
                 active=False,
+                governance={**source.governance, "change_note": change_note.strip()},
+                quarantine_reasons=[],
+                publish_blockers=list(
+                    publish_blockers_for(instructions, copied_skill_resources)
+                ),
             )
             session.add(record)
             await session.flush()
+            copied_resources = [
+                SkillResourceRecord(
+                    id=f"skill-resource-{uuid4().hex}",
+                    skill_version_id=record.id,
+                    path=resource.path,
+                    media_type=resource.media_type,
+                    content=resource.content,
+                )
+                for resource in source_resources
+            ]
+            session.add_all(copied_resources)
             self._add_audit(session, "edit", record, actor)
-        return self._to_version(skill, record)
+        return self._to_version(skill, record, copied_resources)
 
     async def transition(
         self,
@@ -157,17 +225,31 @@ class PostgresSkillRegistry:
             record = next((item for item in records if item.version == version), None)
             if record is None:
                 raise SkillNotFoundError("Skill 版本不存在")
-            status, active = transition_target(record.status, action)
-            if active:
-                for previous in records:
-                    if previous.version != version and previous.active:
-                        previous.status = "retired"
-                        previous.active = False
-                        self._add_audit(session, "retire", previous, actor)
-            record.status = status
-            record.active = active
-            self._add_audit(session, action, record, actor)
+            if record.status == "quarantined":
+                self._add_audit(session, "reject_transition", record, actor)
+                return_error = SkillTransitionError(
+                    "隔离的 Skill 版本不能进入审核或发布流程"
+                )
+            elif action == "publish" and record.publish_blockers:
+                self._add_audit(session, "reject_publish", record, actor)
+                reasons = "；".join(record.publish_blockers)
+                return_error = SkillTransitionError(f"Skill 未通过静态发布检查：{reasons}")
+            else:
+                return_error = None
+            if return_error is None:
+                status, active = transition_target(record.status, action)
+                if active:
+                    for previous in records:
+                        if previous.version != version and previous.active:
+                            previous.status = "retired"
+                            previous.active = False
+                            self._add_audit(session, "retire", previous, actor)
+                record.status = status
+                record.active = active
+                self._add_audit(session, action, record, actor)
             await session.flush()
+        if return_error is not None:
+            raise return_error
         return self._to_version(skill, record)
 
     async def list_audits(self) -> list[SkillAudit]:
@@ -180,6 +262,97 @@ class PostgresSkillRegistry:
                 )
             ).all()
         return [self._to_audit(record) for record in records]
+
+    async def import_package(self, payload: bytes, *, actor: str) -> SkillVersion:
+        try:
+            package = parse_skill_archive(payload)
+            normalized_slug = validate_skill_slug(package.slug)
+        except (SkillArchiveError, SkillRegistryError):
+            await self._record_audit("reject_import", actor=actor)
+            raise
+
+        created: tuple[SkillRecord, SkillVersionRecord, list[SkillResourceRecord]] | None = None
+        async with self._sessions.begin() as session:
+            if await session.scalar(
+                select(SkillRecord.id).where(SkillRecord.slug == normalized_slug)
+            ):
+                self._add_audit_action(session, "reject_import", actor=actor)
+                duplicate = True
+            else:
+                duplicate = False
+                skill = SkillRecord(id=f"skill-{uuid4().hex}", slug=normalized_slug)
+                status: SkillStatus = (
+                    "quarantined" if package.quarantine_reasons else "draft"
+                )
+                record = SkillVersionRecord(
+                    id=f"skill-version-{uuid4().hex}",
+                    skill_id=skill.id,
+                    version=1,
+                    name=package.name,
+                    description=package.description,
+                    instructions=package.instructions,
+                    change_note=package.change_note,
+                    status=status,
+                    active=False,
+                    governance=package.governance,
+                    quarantine_reasons=list(package.quarantine_reasons),
+                    publish_blockers=list(package.publish_blockers),
+                )
+                resource_records = [
+                    SkillResourceRecord(
+                        id=f"skill-resource-{uuid4().hex}",
+                        skill_version_id=record.id,
+                        path=resource.path,
+                        media_type=resource.media_type,
+                        content=resource.content,
+                    )
+                    for resource in package.resources
+                ]
+                session.add_all((skill, record, *resource_records))
+                await session.flush()
+                self._add_audit(session, "import", record, actor)
+                if status == "quarantined":
+                    self._add_audit(session, "quarantine", record, actor)
+                created = (skill, record, resource_records)
+        if duplicate:
+            raise SkillRegistryError("Skill slug 已存在，导入不能覆盖现有版本")
+        if created is None:
+            raise RuntimeError("Skill 导入未创建版本")
+        skill, record, resource_records = created
+        return self._to_version(skill, record, resource_records)
+
+    async def export_package(
+        self, skill_id: str, version: int, *, actor: str
+    ) -> tuple[str, bytes]:
+        async with self._sessions.begin() as session:
+            skill = await self._require_skill(session, skill_id)
+            record = await session.scalar(
+                select(SkillVersionRecord).where(
+                    SkillVersionRecord.skill_id == skill_id,
+                    SkillVersionRecord.version == version,
+                )
+            )
+            if record is None:
+                raise SkillNotFoundError("Skill 版本不存在")
+            resource_records = (
+                await session.scalars(
+                    select(SkillResourceRecord)
+                    .where(SkillResourceRecord.skill_version_id == record.id)
+                    .order_by(SkillResourceRecord.path)
+                )
+            ).all()
+            self._add_audit(session, "export", record, actor)
+        selected = self._to_version(skill, record, resource_records)
+        return (
+            f"{selected.slug}-v{selected.version}.zip",
+            export_skill_archive(
+                slug=selected.slug,
+                description=selected.description,
+                instructions=selected.instructions,
+                governance=selected.governance,
+                resources=selected.resources,
+            ),
+        )
 
     async def published_skills(self, context: ToolContext) -> tuple[SkillDefinition, ...]:
         async with self._sessions.begin() as session:
@@ -254,18 +427,43 @@ class PostgresSkillRegistry:
     def _add_audit(
         session: AsyncSession, action: str, record: SkillVersionRecord, actor: str
     ) -> None:
+        PostgresSkillRegistry._add_audit_action(
+            session,
+            action,
+            actor=actor,
+            skill_id=record.skill_id,
+            version=record.version,
+        )
+
+    @staticmethod
+    def _add_audit_action(
+        session: AsyncSession,
+        action: str,
+        *,
+        actor: str,
+        skill_id: str | None = None,
+        version: int | None = None,
+    ) -> None:
         session.add(
             SkillAuditRecord(
                 id=f"skill-audit-{uuid4().hex}",
                 action=action,
-                skill_id=record.skill_id,
-                version=record.version,
+                skill_id=skill_id,
+                version=version,
                 actor=actor,
             )
         )
 
+    async def _record_audit(self, action: str, *, actor: str) -> None:
+        async with self._sessions.begin() as session:
+            self._add_audit_action(session, action, actor=actor)
+
     @staticmethod
-    def _to_version(skill: SkillRecord, record: SkillVersionRecord) -> SkillVersion:
+    def _to_version(
+        skill: SkillRecord,
+        record: SkillVersionRecord,
+        resources: Sequence[SkillResourceRecord] | None = None,
+    ) -> SkillVersion:
         return SkillVersion(
             skill_id=skill.id,
             version=record.version,
@@ -277,6 +475,17 @@ class PostgresSkillRegistry:
             status=cast(SkillStatus, record.status),
             active=record.active,
             created_at=record.created_at,
+            resources=tuple(
+                SkillResource(
+                    path=resource.path,
+                    media_type=resource.media_type,
+                    content=resource.content,
+                )
+                for resource in resources or []
+            ),
+            governance=dict(record.governance),
+            quarantine_reasons=tuple(record.quarantine_reasons),
+            publish_blockers=tuple(record.publish_blockers),
         )
 
     @staticmethod
