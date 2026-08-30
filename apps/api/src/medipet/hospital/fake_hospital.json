@@ -1,0 +1,98 @@
+{
+  "hospital": {
+    "id": "hospital-minghe",
+    "name": "明和虚构医院",
+    "timezone": "Asia/Shanghai"
+  },
+  "departments": [
+    {
+      "id": "department-general",
+      "name": "全科医学科",
+      "description": "提供常见健康问题的门诊评估与连续照护。"
+    },
+    {
+      "id": "department-pediatrics",
+      "name": "儿科",
+      "description": "提供儿童与青少年的门诊医疗服务。"
+    },
+    {
+      "id": "department-orthopedics",
+      "name": "骨科",
+      "description": "提供骨骼、关节与运动系统相关的门诊服务。"
+    },
+    {
+      "id": "department-dermatology",
+      "name": "皮肤科",
+      "description": "提供皮肤、毛发与指甲相关的门诊服务。"
+    }
+  ],
+  "doctors": [
+    {
+      "id": "doctor-chen-mingyuan",
+      "department_id": "department-general",
+      "name": "陈明远",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-zhou-an",
+      "department_id": "department-pediatrics",
+      "name": "周安",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-lin-qiao",
+      "department_id": "department-orthopedics",
+      "name": "林乔",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-su-he",
+      "department_id": "department-dermatology",
+      "name": "苏禾",
+      "title": "主治医师"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "general-morning",
+      "doctor_id": "doctor-chen-mingyuan",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["09:00", "09:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "pediatrics-afternoon",
+      "doctor_id": "doctor-zhou-an",
+      "day_offsets": [1, 2, 4, 6, 8, 10, 12, 14],
+      "times": ["14:00", "14:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2000
+    },
+    {
+      "id": "orthopedics-morning",
+      "doctor_id": "doctor-lin-qiao",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["10:00", "10:30"],
+      "duration_minutes": 30,
+      "fee_cents": 4000
+    },
+    {
+      "id": "dermatology-afternoon",
+      "doctor_id": "doctor-su-he",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["15:00", "15:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3000
+    }
+  ],
+  "initial_bookings": [
+    {
+      "appointment_id": "appointment-seed-001",
+      "patient_id": "patient-seed",
+      "template_id": "general-morning",
+      "day_offset": 1,
+      "time": "09:00"
+    }
+  ]
+}
