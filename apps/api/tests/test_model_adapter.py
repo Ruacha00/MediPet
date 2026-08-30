@@ -27,6 +27,17 @@ def test_model_settings_require_a_complete_api_root() -> None:
         )
 
 
+@pytest.mark.parametrize("timeout_seconds", [float("nan"), float("inf"), float("-inf")])
+def test_model_settings_reject_non_finite_timeout(timeout_seconds: float) -> None:
+    with pytest.raises(ModelConfigurationError):
+        ModelSettings(
+            base_url="https://provider.example/v1",
+            api_key="secret",
+            model="test-model",
+            timeout_seconds=timeout_seconds,
+        )
+
+
 def _chunk(text: str) -> dict:
     return {
         "id": "chunk",

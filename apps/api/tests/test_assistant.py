@@ -2,7 +2,7 @@ from collections.abc import AsyncIterator
 
 import pytest
 
-from medipet.agent.runtime import LangGraphAgentRuntime
+from medipet.agent.runtime import AgentRequest, LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.contracts import TurnCommand
 from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
@@ -22,8 +22,18 @@ class DeterministicModel(ModelPort):
 class UnavailableModel(ModelPort):
     async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
         del request
-        raise ModelUnavailableError
+        raise ModelUnavailableError("provider secret diagnostic body")
         yield  # pragma: no cover
+
+
+@pytest.mark.asyncio
+async def test_runtime_maps_model_failure_to_a_safe_event() -> None:
+    runtime = LangGraphAgentRuntime(UnavailableModel())
+
+    events = [event async for event in runtime.run(AgentRequest(message="你好"))]
+
+    assert [event.kind for event in events] == ["status", "failed"]
+    assert events[-1].data == {"message": "模型服务暂时不可用，请稍后重试。"}
 
 
 @pytest.mark.asyncio
@@ -64,4 +74,5 @@ async def test_maps_model_failure_to_a_safe_terminal_event() -> None:
     events = [event async for event in assistant.handle_turn(turn)]
 
     assert [event.kind for event in events] == ["status", "failed"]
-    assert events[-1].data == {"message": "模型服务暂时不可用，请稍后重试。"}
+    assert events[-1].data["message"] == "模型服务暂时不可用，请稍后重试。"
+    assert events[-1].data["traceId"].startswith("trace-")

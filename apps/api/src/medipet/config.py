@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from math import isfinite
 from urllib.parse import urlsplit
 
 
@@ -34,7 +35,7 @@ class ModelSettings:
             raise ModelConfigurationError("模型 Token 和模型名不能为空")
         if not 0 <= self.temperature <= 2:
             raise ModelConfigurationError("模型 temperature 必须在 0 到 2 之间")
-        if self.timeout_seconds <= 0:
+        if not isfinite(self.timeout_seconds) or self.timeout_seconds <= 0:
             raise ModelConfigurationError("模型超时必须大于零")
         object.__setattr__(self, "base_url", base_url)
         object.__setattr__(self, "api_key", self.api_key.strip())

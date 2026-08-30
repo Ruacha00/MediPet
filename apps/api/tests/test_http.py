@@ -4,7 +4,7 @@ from collections.abc import AsyncIterator
 from fastapi.testclient import TestClient
 
 from medipet.delivery.http import create_app
-from medipet.model.port import ModelChunk, ModelPort, ModelRequest
+from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
 
 
 class DeterministicModel(ModelPort):
@@ -12,6 +12,13 @@ class DeterministicModel(ModelPort):
         del request
         yield ModelChunk(text="第一段")
         yield ModelChunk(text="，第二段。")
+
+
+class UnavailableModel(ModelPort):
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        raise ModelUnavailableError("provider secret diagnostic body; Bearer test-secret")
+        yield  # pragma: no cover
 
 
 def test_liveness_remains_available_without_model_configuration() -> None:
@@ -79,3 +86,33 @@ def test_chat_reports_unconfigured_model_without_leaking_configuration() -> None
 
     assert response.status_code == 503
     assert response.json() == {"detail": "模型服务配置不可用"}
+
+
+def test_chat_streams_model_failure_safely() -> None:
+    client = TestClient(create_app(model=UnavailableModel()))
+    response = client.post(
+        "/v1/chat/turns",
+        json={
+            "messages": [
+                {
+                    "id": "message-1",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "你好"}],
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 200
+    lines = [line.removeprefix("data: ") for line in response.text.splitlines() if line]
+    payloads = [json.loads(line) for line in lines[:-1]]
+    assert [payload["type"] for payload in payloads] == [
+        "start",
+        "data-agent-status",
+        "error",
+    ]
+    assert payloads[-1]["errorText"] == "模型服务暂时不可用，请稍后重试。"
+    assert lines[-1] == "[DONE]"
+    assert "provider secret" not in response.text
+    assert "test-secret" not in response.text
+    assert "Traceback" not in response.text

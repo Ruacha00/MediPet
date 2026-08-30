@@ -8,7 +8,7 @@ from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 
 from medipet.agent.prompts import OUTPATIENT_ASSISTANT_SYSTEM_PROMPT
-from medipet.model.port import ModelMessage, ModelPort, ModelRequest
+from medipet.model.port import ModelMessage, ModelPort, ModelRequest, ModelUnavailableError
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,7 @@ class AgentRequest:
 
 @dataclass(frozen=True)
 class AgentEvent:
-    kind: Literal["status", "text", "data"]
+    kind: Literal["status", "text", "data", "failed"]
     data: dict[str, Any]
 
 
@@ -37,11 +37,14 @@ class LangGraphAgentRuntime:
 
     async def run(self, request: AgentRequest) -> AsyncIterator[AgentEvent]:
         yield AgentEvent("status", {"label": "正在连接门诊协助模型"})
-        async for event in self._graph.astream(
-            {"message": request.message, "completed": False},
-            stream_mode="custom",
-        ):
-            yield AgentEvent(kind=event["kind"], data=event["data"])
+        try:
+            async for event in self._graph.astream(
+                {"message": request.message, "completed": False},
+                stream_mode="custom",
+            ):
+                yield AgentEvent(kind=event["kind"], data=event["data"])
+        except ModelUnavailableError:
+            yield AgentEvent("failed", {"message": "模型服务暂时不可用，请稍后重试。"})
 
 
 def _build_model_graph(model: ModelPort):
