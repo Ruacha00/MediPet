@@ -160,12 +160,17 @@ def parse_skill_archive(payload: bytes) -> ParsedSkillPackage:
         for path, content in sorted(files.items())
     )
     for resource in resources:
-        if resource.media_type == "application/schema+json":
+        if resource.media_type in {"application/json", "application/schema+json"}:
             try:
-                schema = json.loads(resource.content)
+                document = json.loads(resource.content)
             except json.JSONDecodeError as error:
-                raise SkillArchiveError(f"Skill Schema 不是有效的 JSON：{resource.path}") from error
-            if not isinstance(schema, dict):
+                kind = "Schema" if resource.media_type == "application/schema+json" else "JSON"
+                raise SkillArchiveError(
+                    f"Skill {kind} 不是有效的 JSON：{resource.path}"
+                ) from error
+            if resource.media_type == "application/schema+json" and not isinstance(
+                document, dict
+            ):
                 raise SkillArchiveError(f"Skill Schema 必须是 JSON 对象：{resource.path}")
     text_files = {"SKILL.md": instructions}
     text_files.update(
@@ -196,18 +201,56 @@ def export_skill_archive(
     governance: dict[str, object],
     resources: tuple[SkillResource, ...],
 ) -> bytes:
+    manifest = _manifest_content(slug, description, instructions).encode()
+    metadata = json.dumps(
+        governance, ensure_ascii=False, indent=2, sort_keys=True
+    ).encode()
+    validate_exportable_skill(manifest, metadata, resources)
     package = io.BytesIO()
-    manifest = f"---\nname: {slug}\ndescription: {description}\n---\n\n{instructions.rstrip()}\n"
     with zipfile.ZipFile(package, "w", zipfile.ZIP_DEFLATED) as archive:
-        _write_file(archive, "SKILL.md", manifest.encode())
-        _write_file(
-            archive,
-            "medipet.json",
-            json.dumps(governance, ensure_ascii=False, indent=2, sort_keys=True).encode(),
-        )
+        _write_file(archive, "SKILL.md", manifest)
+        _write_file(archive, "medipet.json", metadata)
         for resource in sorted(resources, key=lambda item: item.path):
-            _write_file(archive, resource.path, resource.content)
+            _write_file(
+                archive,
+                resource.path,
+                resource.content,
+                executable=resource.media_type == "application/octet-stream",
+            )
     return package.getvalue()
+
+
+def validate_exportable_skill(
+    manifest: bytes,
+    metadata: bytes,
+    resources: tuple[SkillResource, ...],
+) -> None:
+    files = (("SKILL.md", manifest), ("medipet.json", metadata)) + tuple(
+        (resource.path, resource.content) for resource in resources
+    )
+    if len(files) > MAX_FILES:
+        raise SkillArchiveError("Skill 归档文件数量超过限制")
+    for path, content in files:
+        _validated_path(path)
+        if len(content) > MAX_FILE_SIZE:
+            raise SkillArchiveError(f"Skill 文件超过大小限制：{path}")
+    if sum(len(content) for _, content in files) > MAX_TOTAL_SIZE:
+        raise SkillArchiveError("Skill 归档解压后超过总大小限制")
+
+
+def validate_skill_content(
+    *,
+    slug: str,
+    description: str,
+    instructions: str,
+    governance: dict[str, object],
+    resources: tuple[SkillResource, ...] = (),
+) -> None:
+    validate_exportable_skill(
+        _manifest_content(slug, description, instructions).encode(),
+        json.dumps(governance, ensure_ascii=False, indent=2, sort_keys=True).encode(),
+        resources,
+    )
 
 
 def static_publish_blockers(files: dict[str, str]) -> tuple[str, ...]:
@@ -298,7 +341,12 @@ def _parse_manifest(manifest: str) -> tuple[str, str, str]:
     for line in match.group(1).splitlines():
         key, separator, value = line.partition(":")
         if separator and key.strip() in {"name", "description"}:
-            metadata[key.strip()] = _plain_yaml_string(value.strip())
+            normalized_key = key.strip()
+            if normalized_key in metadata:
+                raise SkillArchiveError(
+                    f"SKILL.md frontmatter 包含重复字段：{normalized_key}"
+                )
+            metadata[normalized_key] = _plain_yaml_string(value.strip())
     slug = metadata.get("name", "").strip()
     description = metadata.get("description", "").strip()
     instructions = match.group(2).strip()
@@ -361,8 +409,18 @@ def _validate_governance(governance: dict[str, object]) -> None:
         raise SkillArchiveError("medipet.json 的 required_approvals 无效")
 
 
-def _write_file(archive: zipfile.ZipFile, path: str, content: bytes) -> None:
+def _write_file(
+    archive: zipfile.ZipFile, path: str, content: bytes, *, executable: bool = False
+) -> None:
     entry = zipfile.ZipInfo(path, date_time=(1980, 1, 1, 0, 0, 0))
     entry.compress_type = zipfile.ZIP_DEFLATED
-    entry.external_attr = 0o600 << 16
+    entry.external_attr = (0o700 if executable else 0o600) << 16
     archive.writestr(entry, content)
+
+
+def _manifest_content(slug: str, description: str, instructions: str) -> str:
+    quoted_description = json.dumps(description, ensure_ascii=False)
+    return (
+        f"---\nname: {slug}\ndescription: {quoted_description}\n---\n\n"
+        f"{instructions.rstrip()}\n"
+    )

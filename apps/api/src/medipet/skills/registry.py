@@ -13,6 +13,7 @@ from medipet.skills.archive import (
     export_skill_archive,
     parse_skill_archive,
     static_publish_blockers,
+    validate_skill_content,
 )
 
 SkillStatus = Literal["draft", "in_review", "published", "retired", "quarantined"]
@@ -121,6 +122,8 @@ class SkillRegistry(Protocol):
         self, skill_id: str, version: int, *, actor: str
     ) -> tuple[str, bytes]: ...
 
+    async def record_rejection(self, action: str, *, actor: str) -> None: ...
+
     async def published_skills(self, context: ToolContext) -> tuple[SkillDefinition, ...]: ...
 
 
@@ -152,27 +155,38 @@ class InMemorySkillRegistry:
         actor: str,
     ) -> SkillVersion:
         normalized_slug = validate_skill_slug(slug)
+        normalized_name = required_text(name, "Skill 名称不能为空")
+        normalized_description = required_text(description, "Skill 描述不能为空")
+        normalized_instructions = required_text(instructions, "Skill 指令不能为空")
+        normalized_change_note = required_text(change_note, "变更说明不能为空")
         if any(versions[0].slug == normalized_slug for versions in self._versions.values()):
             raise SkillRegistryError("Skill slug 已存在")
+        governance = {
+            "format_version": 1,
+            "display_name": normalized_name,
+            "change_note": normalized_change_note,
+            "risk_level": "standard",
+            "required_approvals": 0,
+        }
+        validate_skill_content(
+            slug=normalized_slug,
+            description=normalized_description,
+            instructions=normalized_instructions,
+            governance=governance,
+        )
         version = SkillVersion(
             skill_id=f"skill-{uuid4().hex}",
             version=1,
             slug=normalized_slug,
-            name=required_text(name, "Skill 名称不能为空"),
-            description=required_text(description, "Skill 描述不能为空"),
-            instructions=required_text(instructions, "Skill 指令不能为空"),
-            change_note=required_text(change_note, "变更说明不能为空"),
+            name=normalized_name,
+            description=normalized_description,
+            instructions=normalized_instructions,
+            change_note=normalized_change_note,
             status="draft",
             active=False,
             created_at=datetime.now(UTC),
-            governance={
-                "format_version": 1,
-                "display_name": required_text(name, "Skill 名称不能为空"),
-                "change_note": required_text(change_note, "变更说明不能为空"),
-                "risk_level": "standard",
-                "required_approvals": 0,
-            },
-            publish_blockers=static_publish_blockers({"SKILL.md": instructions}),
+            governance=governance,
+            publish_blockers=static_publish_blockers({"SKILL.md": normalized_instructions}),
         )
         self._versions[version.skill_id] = [version]
         self._audit("create", version, actor)
@@ -190,23 +204,32 @@ class InMemorySkillRegistry:
         source = versions[-1]
         if source.status == "quarantined":
             raise SkillTransitionError("隔离的 Skill 版本不能编辑")
+        normalized_instructions = required_text(instructions, "Skill 指令不能为空")
+        normalized_change_note = required_text(change_note, "变更说明不能为空")
+        governance = {**source.governance, "change_note": normalized_change_note}
+        validate_skill_content(
+            slug=source.slug,
+            description=source.description,
+            instructions=normalized_instructions,
+            governance=governance,
+            resources=source.resources,
+        )
         version = SkillVersion(
             skill_id=skill_id,
             version=source.version + 1,
             slug=source.slug,
             name=source.name,
             description=source.description,
-            instructions=required_text(instructions, "Skill 指令不能为空"),
-            change_note=required_text(change_note, "变更说明不能为空"),
+            instructions=normalized_instructions,
+            change_note=normalized_change_note,
             status="draft",
             active=False,
             created_at=datetime.now(UTC),
             resources=source.resources,
-            governance={
-                **source.governance,
-                "change_note": required_text(change_note, "变更说明不能为空"),
-            },
-            publish_blockers=publish_blockers_for(instructions, source.resources),
+            governance=governance,
+            publish_blockers=publish_blockers_for(
+                normalized_instructions, source.resources
+            ),
         )
         versions.append(version)
         self._audit("edit", version, actor)
@@ -294,6 +317,9 @@ class InMemorySkillRegistry:
                 resources=selected.resources,
             ),
         )
+
+    async def record_rejection(self, action: str, *, actor: str) -> None:
+        self._audit_action(action, actor=actor)
 
     async def published_skills(self, context: ToolContext) -> tuple[SkillDefinition, ...]:
         selected = tuple(

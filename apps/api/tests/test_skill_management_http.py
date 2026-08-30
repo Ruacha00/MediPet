@@ -43,6 +43,20 @@ def _raw_archive(files: dict[str, bytes | str]) -> bytes:
     return package.getvalue()
 
 
+def _mark_archive_entry_executable(package: bytes, target: str) -> bytes:
+    rewritten = io.BytesIO()
+    with (
+        zipfile.ZipFile(io.BytesIO(package)) as source,
+        zipfile.ZipFile(rewritten, "w", zipfile.ZIP_DEFLATED) as destination,
+    ):
+        for source_entry in source.infolist():
+            entry = zipfile.ZipInfo(source_entry.filename)
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = (0o700 if source_entry.filename == target else 0o600) << 16
+            destination.writestr(entry, source.read(source_entry))
+    return rewritten.getvalue()
+
+
 @pytest.mark.asyncio
 async def test_management_skill_list_requires_the_configured_bearer_token() -> None:
     app = create_app(
@@ -235,7 +249,7 @@ async def test_skill_archive_round_trip_preserves_resources_and_governance_metad
 
     with zipfile.ZipFile(io.BytesIO(exported.content)) as archive:
         assert archive.read("SKILL.md").decode() == (
-            "---\nname: visit-preparation\ndescription: 帮助参与者准备门诊就诊\n---\n\n"
+            '---\nname: visit-preparation\ndescription: "帮助参与者准备门诊就诊"\n---\n\n'
             "询问需要携带的材料，并说明医院数据尚未配置。\n"
         )
         assert archive.read("references/checklist.md").decode() == "# 清单\n\n- 病历\n"
@@ -276,12 +290,16 @@ async def test_executable_skill_archive_is_quarantined_and_cannot_enter_lifecycl
         environment="development",
     )
     authorization = {"Authorization": "Bearer management-secret"}
+    executable = _mark_archive_entry_executable(
+        _skill_archive(files={"references/collect.txt": "print('never run')"}),
+        "references/collect.txt",
+    )
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         imported = await client.post(
             "/v1/admin/skills/import",
             headers={**authorization, "Content-Type": "application/zip"},
-            content=_skill_archive(files={"scripts/collect.py": "print('never run')"}),
+            content=executable,
         )
         skill_id = imported.json()["skill_id"]
         reviewed = await client.post(
@@ -295,18 +313,35 @@ async def test_executable_skill_archive_is_quarantined_and_cannot_enter_lifecycl
     assert imported.status_code == 201
     assert imported.json()["status"] == "quarantined"
     assert imported.json()["quarantine_reasons"] == [
-        "包包含二进制或可执行内容：scripts/collect.py"
+        "包包含二进制或可执行内容：references/collect.txt"
     ]
     assert reviewed.status_code == 409
     assert reviewed.json() == {"detail": "隔离的 Skill 版本不能进入审核或发布流程"}
     with zipfile.ZipFile(io.BytesIO(exported.content)) as archive:
-        assert archive.read("scripts/collect.py") == b"print('never run')"
+        assert archive.read("references/collect.txt") == b"print('never run')"
     assert [audit["action"] for audit in audits.json()["audits"]] == [
         "import",
         "quarantine",
         "reject_transition",
         "export",
     ]
+
+    restored_registry = InMemorySkillRegistry()
+    restored_app = create_app(
+        skill_registry=restored_registry,
+        management_token="management-secret",
+        environment="development",
+    )
+    async with AsyncClient(
+        transport=ASGITransport(app=restored_app), base_url="http://test"
+    ) as client:
+        restored = await client.post(
+            "/v1/admin/skills/import",
+            headers={**authorization, "Content-Type": "application/zip"},
+            content=exported.content,
+        )
+
+    assert restored.json()["status"] == "quarantined"
 
 
 @pytest.mark.asyncio
@@ -387,6 +422,7 @@ async def test_static_privilege_violation_blocks_imported_skill_publication() ->
         published = await client.post(
             f"/v1/admin/skills/{skill_id}/versions/1/publish", headers=authorization
         )
+        audits = await client.get("/v1/admin/skill-audits", headers=authorization)
 
     assert imported.status_code == 201
     assert imported.json()["publish_blockers"] == [
@@ -401,6 +437,111 @@ async def test_static_privilege_violation_blocks_imported_skill_publication() ->
             "SKILL.md 包含请求泄露敏感信息的内容"
         )
     }
+    assert audits.json()["audits"][-1]["action"] == "reject_publish"
+
+
+@pytest.mark.asyncio
+async def test_direct_skill_export_quotes_multiline_description_for_reimport() -> None:
+    registry = InMemorySkillRegistry()
+    app = create_app(
+        skill_registry=registry,
+        management_token="management-secret",
+        environment="development",
+    )
+    authorization = {"Authorization": "Bearer management-secret"}
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        created = await client.post(
+            "/v1/admin/skills",
+            headers=authorization,
+            json={
+                "slug": "safe-export",
+                "name": "安全导出",
+                "description": "第一行\nname: platform",
+                "instructions": "保持原始指令。",
+                "change_note": "验证 YAML 转义",
+            },
+        )
+        exported = await client.get(
+            f"/v1/admin/skills/{created.json()['skill_id']}/versions/1/export",
+            headers=authorization,
+        )
+
+    restored = InMemorySkillRegistry()
+    restored_app = create_app(
+        skill_registry=restored,
+        management_token="management-secret",
+        environment="development",
+    )
+    async with AsyncClient(
+        transport=ASGITransport(app=restored_app), base_url="http://test"
+    ) as client:
+        imported = await client.post(
+            "/v1/admin/skills/import",
+            headers={**authorization, "Content-Type": "application/zip"},
+            content=exported.content,
+        )
+
+    assert imported.status_code == 201
+    assert imported.json()["slug"] == "safe-export"
+    assert imported.json()["description"] == "第一行\nname: platform"
+
+
+@pytest.mark.asyncio
+async def test_direct_skill_content_must_fit_export_package_limits_before_save() -> None:
+    registry = InMemorySkillRegistry()
+    app = create_app(
+        skill_registry=registry,
+        management_token="management-secret",
+        environment="development",
+    )
+    authorization = {"Authorization": "Bearer management-secret"}
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        rejected = await client.post(
+            "/v1/admin/skills",
+            headers=authorization,
+            json={
+                "slug": "oversized-skill",
+                "name": "超限 Skill",
+                "description": "大小校验",
+                "instructions": "x" * (256 * 1024 + 1),
+                "change_note": "不应保存",
+            },
+        )
+        listed = await client.get("/v1/admin/skills", headers=authorization)
+
+    assert rejected.status_code == 422
+    assert rejected.json() == {"detail": "Skill 文件超过大小限制：SKILL.md"}
+    assert listed.json() == {"skills": []}
+
+
+@pytest.mark.asyncio
+async def test_rejected_import_media_type_and_missing_export_are_audited() -> None:
+    registry = InMemorySkillRegistry()
+    app = create_app(
+        skill_registry=registry,
+        management_token="management-secret",
+        environment="development",
+    )
+    authorization = {"Authorization": "Bearer management-secret"}
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        wrong_media = await client.post(
+            "/v1/admin/skills/import",
+            headers={**authorization, "Content-Type": "application/json"},
+            content=b"{}",
+        )
+        missing_export = await client.get(
+            "/v1/admin/skills/missing/versions/1/export", headers=authorization
+        )
+        audits = await client.get("/v1/admin/skill-audits", headers=authorization)
+
+    assert wrong_media.status_code == 415
+    assert missing_export.status_code == 404
+    assert [audit["action"] for audit in audits.json()["audits"]] == [
+        "reject_import",
+        "reject_export",
+    ]
 
 
 @pytest.mark.parametrize(

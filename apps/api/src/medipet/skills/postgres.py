@@ -27,6 +27,7 @@ from medipet.skills.archive import (
     export_skill_archive,
     parse_skill_archive,
     static_publish_blockers,
+    validate_skill_content,
 )
 from medipet.skills.registry import (
     LifecycleAction,
@@ -102,6 +103,23 @@ class PostgresSkillRegistry:
         actor: str,
     ) -> SkillVersion:
         normalized_slug = validate_skill_slug(slug)
+        normalized_name = required_text(name, "Skill 名称不能为空")
+        normalized_description = required_text(description, "Skill 描述不能为空")
+        normalized_instructions = required_text(instructions, "Skill 指令不能为空")
+        normalized_change_note = required_text(change_note, "变更说明不能为空")
+        governance = {
+            "format_version": 1,
+            "display_name": normalized_name,
+            "change_note": normalized_change_note,
+            "risk_level": "standard",
+            "required_approvals": 0,
+        }
+        validate_skill_content(
+            slug=normalized_slug,
+            description=normalized_description,
+            instructions=normalized_instructions,
+            governance=governance,
+        )
         skill_id = f"skill-{uuid4().hex}"
         async with self._sessions.begin() as session:
             if await session.scalar(
@@ -113,21 +131,17 @@ class PostgresSkillRegistry:
                 id=f"skill-version-{uuid4().hex}",
                 skill_id=skill_id,
                 version=1,
-                name=required_text(name, "Skill 名称不能为空"),
-                description=required_text(description, "Skill 描述不能为空"),
-                instructions=required_text(instructions, "Skill 指令不能为空"),
-                change_note=required_text(change_note, "变更说明不能为空"),
+                name=normalized_name,
+                description=normalized_description,
+                instructions=normalized_instructions,
+                change_note=normalized_change_note,
                 status="draft",
                 active=False,
-                governance={
-                    "format_version": 1,
-                    "display_name": required_text(name, "Skill 名称不能为空"),
-                    "change_note": required_text(change_note, "变更说明不能为空"),
-                    "risk_level": "standard",
-                    "required_approvals": 0,
-                },
+                governance=governance,
                 quarantine_reasons=[],
-                publish_blockers=list(static_publish_blockers({"SKILL.md": instructions})),
+                publish_blockers=list(
+                    static_publish_blockers({"SKILL.md": normalized_instructions})
+                ),
             )
             session.add_all((skill, record))
             await session.flush()
@@ -170,20 +184,33 @@ class PostgresSkillRegistry:
                 )
                 for resource in source_resources
             )
+            normalized_instructions = required_text(instructions, "Skill 指令不能为空")
+            normalized_change_note = required_text(change_note, "变更说明不能为空")
+            governance = {
+                **source.governance,
+                "change_note": normalized_change_note,
+            }
+            validate_skill_content(
+                slug=skill.slug,
+                description=source.description,
+                instructions=normalized_instructions,
+                governance=governance,
+                resources=copied_skill_resources,
+            )
             record = SkillVersionRecord(
                 id=f"skill-version-{uuid4().hex}",
                 skill_id=skill_id,
                 version=source.version + 1,
                 name=source.name,
                 description=source.description,
-                instructions=required_text(instructions, "Skill 指令不能为空"),
-                change_note=required_text(change_note, "变更说明不能为空"),
+                instructions=normalized_instructions,
+                change_note=normalized_change_note,
                 status="draft",
                 active=False,
-                governance={**source.governance, "change_note": change_note.strip()},
+                governance=governance,
                 quarantine_reasons=[],
                 publish_blockers=list(
-                    publish_blockers_for(instructions, copied_skill_resources)
+                    publish_blockers_for(normalized_instructions, copied_skill_resources)
                 ),
             )
             session.add(record)
@@ -353,6 +380,9 @@ class PostgresSkillRegistry:
                 resources=selected.resources,
             ),
         )
+
+    async def record_rejection(self, action: str, *, actor: str) -> None:
+        await self._record_audit(action, actor=actor)
 
     async def published_skills(self, context: ToolContext) -> tuple[SkillDefinition, ...]:
         async with self._sessions.begin() as session:

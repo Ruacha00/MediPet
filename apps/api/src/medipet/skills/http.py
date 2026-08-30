@@ -58,13 +58,15 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
             version = await registry.create_skill(
                 **request.model_dump(), actor="development-admin"
             )
-        except SkillRegistryError as error:
+        except (SkillArchiveError, SkillRegistryError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         return version.to_dict()
 
     @router.post("/skills/import", status_code=201, dependencies=protected)
     async def import_skill(request: Request) -> dict[str, object]:
-        if request.headers.get("content-type", "").partition(";")[0] != "application/zip":
+        media_type = request.headers.get("content-type", "").partition(";")[0].strip().lower()
+        if media_type != "application/zip":
+            await registry.record_rejection("reject_import", actor="development-admin")
             raise HTTPException(status_code=415, detail="Skill 导入仅接受 application/zip")
         try:
             version = await registry.import_package(
@@ -85,7 +87,11 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
                 skill_id, version, actor="development-admin"
             )
         except SkillNotFoundError as error:
+            await registry.record_rejection("reject_export", actor="development-admin")
             raise HTTPException(status_code=404, detail=str(error)) from error
+        except SkillArchiveError as error:
+            await registry.record_rejection("reject_export", actor="development-admin")
+            raise HTTPException(status_code=422, detail=str(error)) from error
         return Response(
             content=content,
             media_type="application/zip",
@@ -100,7 +106,7 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
             )
         except SkillNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
-        except SkillRegistryError as error:
+        except (SkillArchiveError, SkillRegistryError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         return version.to_dict()
 
