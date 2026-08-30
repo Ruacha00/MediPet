@@ -19,17 +19,32 @@ MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一
 ```powershell
 cd apps/api
 uv sync
+$env:MEDIPET_ENVIRONMENT = 'development'
 $env:MEDIPET_DATABASE_URL = 'postgresql://medipet:replace-with-development-password@localhost/medipet'
-$env:MEDIPET_LLM_BASE_URL = 'https://api.example.com/v1'
-$env:MEDIPET_LLM_API_KEY = 'replace-with-development-token'
-$env:MEDIPET_LLM_MODEL = 'provider-model-name'
 uv run alembic upgrade head
 $env:PYTHONPATH = 'src'
 uv run python -m medipet.persistence.seed
 uv run uvicorn medipet.delivery.http:app --app-dir src --reload
 ```
 
-`MEDIPET_LLM_BASE_URL` 是包含版本路径的完整 API 根地址；Adapter 会在其后请求 `chat/completions`。可选配置为 `MEDIPET_LLM_TEMPERATURE`（默认 `0`）和 `MEDIPET_LLM_TIMEOUT_SECONDS`（默认 `30`）。不要提交真实 Token。
+在 `apps/api/.env` 中放置可热加载的模型运行配置：
+
+```dotenv
+MEDIPET_LLM_BASE_URL=https://api.example.com/v1
+MEDIPET_LLM_API_KEY=replace-with-development-token
+MEDIPET_LLM_MODEL=provider-model-name
+MEDIPET_LLM_TEMPERATURE=0
+MEDIPET_LLM_TIMEOUT_SECONDS=30
+MEDIPET_TURN_TIMEOUT_SECONDS=60
+MEDIPET_AGENT_MAX_STEPS=8
+MEDIPET_CONTEXT_MESSAGE_LIMIT=20
+```
+
+`MEDIPET_LLM_BASE_URL` 是包含版本路径的完整 API 根地址；Adapter 会在其后请求 `chat/completions`。不要提交真实 Token。
+
+development 环境会在 `/ready` 检查和每个新 turn 边界重新读取 `.env`。每个 turn 固定自己的配置快照，文件修改只影响后续 turn；无效的新配置会让 readiness 和新 turn 返回 `503`，修正文件后自动恢复。进程环境变量优先于 `.env`，因此通过 PowerShell 或部署环境注入的同名字段不会被文件覆盖。配置变化日志只包含版本指纹、来源和字段名。
+
+test 应通过依赖注入提供模型与配置；production 和 test 运行环境只使用进程启动时的静态配置，不监听 `.env`。`MEDIPET_DATABASE_URL`、`MEDIPET_ENVIRONMENT`、`MEDIPET_MANAGEMENT_TOKEN` 和 `MEDIPET_HOSPITAL_ADAPTER` 属于启动配置，修改后需要重启 API。
 
 `MEDIPET_DATABASE_URL` 必须是 PostgreSQL URL，修改后需要重启 API。Alembic 负责建表，应用启动时不会自动创建结构。开发 seed 可重复运行，只创建演示患者、参与者和就诊事项，不创建业务 Skill 或 Tool。
 

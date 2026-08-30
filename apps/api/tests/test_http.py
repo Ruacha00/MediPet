@@ -1,9 +1,11 @@
 import asyncio
 import json
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+from medipet.config import DevelopmentRuntimeConfig, ModelSettings
 from medipet.delivery.http import create_app
 from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
 from medipet.persistence.conversation import (
@@ -25,6 +27,46 @@ class UnavailableModel(ModelPort):
         del request
         raise ModelUnavailableError("provider secret diagnostic body; Bearer test-secret")
         yield  # pragma: no cover
+
+
+class ReloadingModel(ModelPort):
+    def __init__(self, settings: ModelSettings, env_file: Path) -> None:
+        self._settings = settings
+        self._env_file = env_file
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        yield ModelChunk(text=self._settings.model)
+        if self._settings.model == "model-one":
+            self._env_file.write_text(
+                _runtime_env(model="model-two", temperature="0.8"),
+                encoding="utf-8",
+            )
+        yield ModelChunk(text=f"/{self._settings.model}")
+
+
+def _runtime_env(*, model: str = "model-one", temperature: str = "0.2") -> str:
+    return "\n".join(
+        [
+            "MEDIPET_LLM_BASE_URL=https://provider.example/v1",
+            "MEDIPET_LLM_API_KEY=file-secret",
+            f"MEDIPET_LLM_MODEL={model}",
+            f"MEDIPET_LLM_TEMPERATURE={temperature}",
+            "MEDIPET_LLM_TIMEOUT_SECONDS=30",
+            "MEDIPET_TURN_TIMEOUT_SECONDS=60",
+            "MEDIPET_AGENT_MAX_STEPS=8",
+            "MEDIPET_CONTEXT_MESSAGE_LIMIT=20",
+        ]
+    )
+
+
+def _streamed_text(response_text: str) -> str:
+    payloads = [
+        json.loads(line.removeprefix("data: "))
+        for line in response_text.splitlines()
+        if line.startswith("data: {")
+    ]
+    return "".join(payload.get("delta", "") for payload in payloads)
 
 
 def seeded_store() -> InMemoryVisitConversationStore:
@@ -60,6 +102,96 @@ def test_readiness_reports_missing_model_configuration_safely() -> None:
 
     assert response.status_code == 503
     assert response.json() == {"detail": "模型服务配置不可用"}
+
+
+def test_invalid_hot_reload_makes_readiness_and_new_turns_unavailable(tmp_path) -> None:
+    env_file = tmp_path / ".env"
+    env_file.write_text(_runtime_env(), encoding="utf-8")
+    runtime_config = DevelopmentRuntimeConfig(env_file, process_environment={})
+    client = TestClient(
+        create_app(
+            conversation_store=seeded_store(),
+            runtime_config=runtime_config,
+            model_factory=lambda settings: ReloadingModel(settings, env_file),
+        )
+    )
+    assert client.get("/ready").status_code == 200
+
+    env_file.write_text(_runtime_env(temperature="invalid"), encoding="utf-8")
+
+    readiness = client.get("/ready")
+    turn = client.post(
+        "/v1/chat/turns",
+        json={
+            "messages": [
+                {
+                    "id": "message-1",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "你好"}],
+                }
+            ]
+        },
+    )
+    assert readiness.status_code == 503
+    assert readiness.json() == {"detail": "模型服务配置不可用"}
+    assert turn.status_code == 503
+    assert "file-secret" not in readiness.text + turn.text
+    assert "invalid" not in readiness.text + turn.text
+
+
+def test_file_change_during_stream_is_pinned_until_the_next_turn(tmp_path) -> None:
+    env_file = tmp_path / ".env"
+    env_file.write_text(_runtime_env(), encoding="utf-8")
+    runtime_config = DevelopmentRuntimeConfig(
+        env_file,
+        process_environment={"MEDIPET_LLM_API_KEY": "process-secret"},
+    )
+    configured_models: list[tuple[str, str, float]] = []
+
+    def model_factory(settings: ModelSettings) -> ModelPort:
+        configured_models.append((settings.model, settings.api_key, settings.temperature))
+        return ReloadingModel(settings, env_file)
+
+    client = TestClient(
+        create_app(
+            conversation_store=seeded_store(),
+            runtime_config=runtime_config,
+            model_factory=model_factory,
+        )
+    )
+    first = client.post(
+        "/v1/chat/turns",
+        json={
+            "idempotency_key": "turn-one",
+            "messages": [
+                {
+                    "id": "message-1",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "第一轮"}],
+                }
+            ],
+        },
+    )
+    second = client.post(
+        "/v1/chat/turns",
+        json={
+            "idempotency_key": "turn-two",
+            "messages": [
+                {
+                    "id": "message-2",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "第二轮"}],
+                }
+            ],
+        },
+    )
+
+    assert _streamed_text(first.text) == "model-one/model-one"
+    assert _streamed_text(second.text) == "model-two/model-two"
+    assert configured_models == [
+        ("model-one", "process-secret", 0.2),
+        ("model-two", "process-secret", 0.8),
+    ]
 
 
 def test_chat_uses_ai_sdk_ui_stream_protocol() -> None:

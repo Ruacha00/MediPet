@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -9,7 +10,13 @@ from fastapi.responses import StreamingResponse
 
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
-from medipet.config import ModelConfigurationError, ModelSettings
+from medipet.config import (
+    ModelConfigurationError,
+    ModelSettings,
+    RuntimeConfig,
+    RuntimeConfigSnapshot,
+    runtime_config_from_startup_environment,
+)
 from medipet.contracts import (
     ActionDecisionRequest,
     ActionDecisionResponse,
@@ -41,7 +48,12 @@ def create_app(
     model: ModelPort | None = None,
     conversation_store: VisitConversationStore | None = None,
     close_conversation_store: bool = False,
+    runtime_config: RuntimeConfig | None = None,
+    model_factory: Callable[[ModelSettings], ModelPort] = ChatOpenAIModelAdapter,
 ) -> FastAPI:
+    if model is not None and runtime_config is not None:
+        raise ValueError("model and runtime_config cannot both be provided")
+
     @asynccontextmanager
     async def lifespan(_: FastAPI):
         yield
@@ -59,11 +71,34 @@ def create_app(
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    assistant = (
+    static_assistant = (
         MediPetAssistant(LangGraphAgentRuntime(model), conversation_store)
         if model is not None and conversation_store is not None
         else None
     )
+
+    def runtime_snapshot() -> RuntimeConfigSnapshot | None:
+        if runtime_config is None:
+            return None
+        return runtime_config.snapshot()
+
+    def assistant_for_new_turn(
+        snapshot: RuntimeConfigSnapshot | None,
+    ) -> MediPetAssistant | None:
+        if snapshot is None:
+            return static_assistant
+        if conversation_store is None:
+            return None
+        settings = snapshot.settings
+        return MediPetAssistant(
+            LangGraphAgentRuntime(
+                model_factory(settings.model),
+                max_steps=settings.max_steps,
+            ),
+            conversation_store,
+            context_message_limit=settings.context_message_limit,
+            turn_timeout_seconds=settings.turn_timeout_seconds,
+        )
 
     @app.get("/health")
     async def health() -> dict[str, str]:
@@ -71,9 +106,13 @@ def create_app(
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
-        if model is None:
+        try:
+            snapshot = runtime_snapshot()
+        except ModelConfigurationError as error:
+            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        if model is None and snapshot is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
-        if conversation_store is None or assistant is None:
+        if conversation_store is None:
             raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
         try:
             await conversation_store.ping()
@@ -86,8 +125,13 @@ def create_app(
 
     @app.post("/v1/chat/turns")
     async def chat_turn(request: ChatTurnRequest) -> StreamingResponse:
-        if model is None:
+        try:
+            snapshot = runtime_snapshot()
+        except ModelConfigurationError as error:
+            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        if model is None and snapshot is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
+        assistant = assistant_for_new_turn(snapshot)
         if assistant is None or conversation_store is None:
             raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
         try:
@@ -163,6 +207,11 @@ def create_app(
         proposal_id: str,
         request: ActionDecisionRequest,
     ) -> ActionDecisionResponse:
+        try:
+            snapshot = runtime_snapshot()
+        except ModelConfigurationError as error:
+            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        assistant = assistant_for_new_turn(snapshot)
         if assistant is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
         command = TurnCommand(
@@ -184,14 +233,6 @@ def create_app(
     return app
 
 
-def _model_from_environment() -> ModelPort | None:
-    try:
-        settings = ModelSettings.from_environment(os.environ)
-    except ModelConfigurationError:
-        return None
-    return ChatOpenAIModelAdapter(settings)
-
-
 def _store_from_environment() -> PostgresVisitConversationStore | None:
     try:
         return PostgresVisitConversationStore.from_url(os.getenv("MEDIPET_DATABASE_URL", ""))
@@ -200,7 +241,7 @@ def _store_from_environment() -> PostgresVisitConversationStore | None:
 
 
 app = create_app(
-    model=_model_from_environment(),
+    runtime_config=runtime_config_from_startup_environment(os.environ),
     conversation_store=_store_from_environment(),
     close_conversation_store=True,
 )

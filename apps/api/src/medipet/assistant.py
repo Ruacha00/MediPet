@@ -23,14 +23,36 @@ class MediPetAssistant:
         *,
         context_message_limit: int = 20,
         persistence_batch_characters: int = 256,
+        turn_timeout_seconds: float | None = None,
     ) -> None:
         self._agent_runtime = agent_runtime
         self._conversation_store = conversation_store
         self._context_message_limit = context_message_limit
         self._persistence_batch_characters = persistence_batch_characters
+        self._turn_timeout_seconds = turn_timeout_seconds
 
     async def handle_turn(self, command: TurnCommand) -> AsyncGenerator[TurnEvent, None]:
         trace_id = f"trace-{uuid4().hex[:12]}"
+        try:
+            async with aclosing(self._handle_turn(command, trace_id)) as events:
+                if self._turn_timeout_seconds is None:
+                    async for event in events:
+                        yield event
+                    return
+                async with asyncio.timeout(self._turn_timeout_seconds):
+                    async for event in events:
+                        yield event
+        except TimeoutError:
+            yield TurnEvent(
+                kind="failed",
+                data={"message": "本次协助已超时，请重试。", "traceId": trace_id},
+            )
+
+    async def _handle_turn(
+        self,
+        command: TurnCommand,
+        trace_id: str,
+    ) -> AsyncGenerator[TurnEvent, None]:
 
         if command.confirmation is not None:
             yield TurnEvent(

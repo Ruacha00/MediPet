@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncIterator
 
 import pytest
@@ -54,6 +55,13 @@ class UnavailableModel(ModelPort):
         del request
         raise ModelUnavailableError("provider secret diagnostic body")
         yield  # pragma: no cover
+
+
+class BlockingModel(ModelPort):
+    async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+        del request
+        await asyncio.Event().wait()
+        yield ModelChunk(text="unreachable")  # pragma: no cover
 
 
 class CountingStore(InMemoryVisitConversationStore):
@@ -145,6 +153,34 @@ async def test_maps_model_failure_to_a_safe_terminal_event() -> None:
     assert events[-1].data["traceId"].startswith("trace-")
     persisted = await store.list_messages("visit-2")
     assert [message.state for message in persisted] == ["completed", "failed"]
+
+
+@pytest.mark.asyncio
+async def test_turn_timeout_stops_the_pinned_runtime_with_a_safe_failure() -> None:
+    store = await seeded_store()
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(BlockingModel()),
+        store,
+        turn_timeout_seconds=0.01,
+    )
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="timeout-turn",
+                message="超时测试",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["status", "failed"]
+    assert events[-1].data["message"] == "本次协助已超时，请重试。"
+    assert "traceId" in events[-1].data
+    persisted = await store.list_messages("visit-1")
+    assert [message.state for message in persisted] == ["completed", "cancelled"]
 
 
 @pytest.mark.asyncio

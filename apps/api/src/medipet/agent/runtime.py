@@ -33,8 +33,9 @@ class ModelAgentState(TypedDict):
 
 
 class LangGraphAgentRuntime:
-    def __init__(self, model: ModelPort) -> None:
+    def __init__(self, model: ModelPort, *, max_steps: int = 8) -> None:
         self._graph = _build_model_graph(model)
+        self._max_steps = max_steps
 
     async def run(self, request: AgentRequest) -> AsyncGenerator[AgentEvent, None]:
         yield AgentEvent("status", {"label": "正在连接门诊协助模型"})
@@ -44,6 +45,7 @@ class LangGraphAgentRuntime:
                     AsyncGenerator[dict[str, Any], None],
                     self._graph.astream(
                         {"messages": request.messages, "completed": False},
+                        config={"recursion_limit": self._max_steps},
                         stream_mode="custom",
                     ),
                 )
