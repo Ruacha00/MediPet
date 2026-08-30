@@ -68,7 +68,7 @@ class PostgresVisitConversationStore:
         participant_id: str,
     ) -> None:
         async with self._sessions() as session:
-            await self._require_visit(session, visit_matter_id, participant_id)
+            await self._require_visit_matter(session, visit_matter_id, participant_id)
 
     async def seed_development_visit_matter(
         self,
@@ -219,7 +219,7 @@ class PostgresVisitConversationStore:
         content: str,
     ) -> StoredMessage:
         async with self._sessions.begin() as session:
-            await self._require_visit(session, visit_matter_id, participant_id)
+            await self._require_visit_matter(session, visit_matter_id, participant_id)
             message_id = f"message-{uuid4().hex}"
             statement = (
                 insert(ConversationMessageRecord)
@@ -283,7 +283,7 @@ class PostgresVisitConversationStore:
                 raise MessageTransitionError("助手消息状态转换无效")
 
     @staticmethod
-    async def _require_visit(
+    async def _require_visit_matter(
         session: AsyncSession,
         visit_matter_id: str,
         participant_id: str,

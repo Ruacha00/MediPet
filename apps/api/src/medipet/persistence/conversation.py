@@ -105,7 +105,7 @@ class VisitConversationStore(Protocol):
 class InMemoryVisitConversationStore:
     def __init__(self) -> None:
         self._lock = asyncio.Lock()
-        self._visits: dict[str, DevelopmentVisitMatter] = {}
+        self._visit_matters: dict[str, DevelopmentVisitMatter] = {}
         self._messages: dict[str, StoredMessage] = {}
         self._turn_messages: dict[tuple[str, str, MessageRole], str] = {}
         self._next_sequence = 1
@@ -126,10 +126,10 @@ class InMemoryVisitConversationStore:
         visit_matter: DevelopmentVisitMatter,
     ) -> None:
         async with self._lock:
-            existing = self._visits.get(visit_matter.visit_matter_id)
+            existing = self._visit_matters.get(visit_matter.visit_matter_id)
             if existing is not None and existing != visit_matter:
                 raise IdempotencyConflictError("就诊事项 seed 与现有数据冲突")
-            self._visits[visit_matter.visit_matter_id] = visit_matter
+            self._visit_matters[visit_matter.visit_matter_id] = visit_matter
 
     async def add_participant_message(
         self,
@@ -227,8 +227,8 @@ class InMemoryVisitConversationStore:
         return [message for message in messages if message.state == "completed"][-limit:]
 
     def _require_participant(self, visit_matter_id: str, participant_id: str) -> None:
-        visit = self._visits.get(visit_matter_id)
-        if visit is None or visit.participant_id != participant_id:
+        visit_matter = self._visit_matters.get(visit_matter_id)
+        if visit_matter is None or visit_matter.participant_id != participant_id:
             raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
 
     def _message_for_turn(
