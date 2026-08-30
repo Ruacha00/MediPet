@@ -7,8 +7,7 @@ from typing import Literal, Protocol
 from medipet.agent.capabilities import (
     SkillDefinition,
     ToolAuthorizer,
-    ToolConfirmationPreparer,
-    ToolConfirmationRevalidator,
+    ToolConfirmationContract,
     ToolContext,
     ToolDefinition,
     ToolExecutor,
@@ -30,9 +29,7 @@ class TrustedTool:
     effect: ToolEffect
     approval_required: bool
     execute: ToolExecutor
-    confirmation_schema: dict[str, object] | None = None
-    prepare_confirmation: ToolConfirmationPreparer | None = None
-    revalidate_confirmation: ToolConfirmationRevalidator | None = None
+    confirmation_contract: ToolConfirmationContract | None = None
     authorize: ToolAuthorizer = _allow
     allowed_stages: tuple[VisitStage, ...] = ("pre_visit", "in_visit")
 
@@ -44,7 +41,11 @@ class TrustedTool:
             "description": self.description,
             "input_schema": self.input_schema,
             "output_schema": self.output_schema,
-            "confirmation_schema": self.confirmation_schema,
+            "confirmation_schema": (
+                dict(self.confirmation_contract.schema)
+                if self.confirmation_contract is not None
+                else None
+            ),
             "effect": self.effect,
             "allowed_stages": list(self.allowed_stages),
             "provider_approval_required": self.approval_required,
@@ -328,11 +329,9 @@ class InMemoryToolRegistry:
                         description=tool.description,
                         input_schema=tool.input_schema,
                         output_schema=tool.output_schema,
-                        confirmation_schema=tool.confirmation_schema,
+                        confirmation_contract=tool.confirmation_contract,
                         effect=tool.effect,
                         execute=execute,
-                        prepare_confirmation=tool.prepare_confirmation,
-                        revalidate_confirmation=tool.revalidate_confirmation,
                         tool_id=tool.tool_id,
                         approval_required=selected.approval_required,
                         enabled=authorized,
@@ -401,18 +400,10 @@ def _validate_trusted_tool(tool: TrustedTool) -> None:
         raise ToolRegistryError("Tool input Schema must describe an object")
     if tool.output_schema.get("type") != "object":
         raise ToolRegistryError("Tool output Schema must describe an object")
-    confirmation_parts = (
-        tool.confirmation_schema,
-        tool.prepare_confirmation,
-        tool.revalidate_confirmation,
-    )
-    if any(part is not None for part in confirmation_parts):
-        if tool.effect != "write" or not all(part is not None for part in confirmation_parts):
-            raise ToolRegistryError(
-                "Prepared confirmations require a write Tool, Schema, preparer, and revalidator"
-            )
-        assert tool.confirmation_schema is not None
-        if tool.confirmation_schema.get("type") != "object":
+    if tool.confirmation_contract is not None:
+        if tool.effect != "write":
+            raise ToolRegistryError("Prepared confirmations require a write Tool")
+        if tool.confirmation_contract.schema.get("type") != "object":
             raise ToolRegistryError("Tool confirmation Schema must describe an object")
     if tool.effect == "write" and not tool.approval_required:
         raise ToolRegistryError("Write Tools must require approval")

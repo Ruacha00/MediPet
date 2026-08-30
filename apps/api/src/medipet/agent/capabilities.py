@@ -36,6 +36,13 @@ def _allow(_: ToolContext) -> bool:
 
 
 @dataclass(frozen=True)
+class ToolConfirmationContract:
+    schema: Mapping[str, object]
+    prepare: ToolConfirmationPreparer
+    revalidate: ToolConfirmationRevalidator
+
+
+@dataclass(frozen=True)
 class ToolDefinition:
     name: str
     version: str
@@ -45,9 +52,7 @@ class ToolDefinition:
     execute: ToolExecutor
     tool_id: str = ""
     output_schema: Mapping[str, object] | None = None
-    confirmation_schema: Mapping[str, object] | None = None
-    prepare_confirmation: ToolConfirmationPreparer | None = None
-    revalidate_confirmation: ToolConfirmationRevalidator | None = None
+    confirmation_contract: ToolConfirmationContract | None = None
     approval_required: bool = False
     enabled: bool = True
     bound: bool = True

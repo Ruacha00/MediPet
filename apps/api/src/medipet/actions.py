@@ -155,15 +155,7 @@ class InMemoryActionStore:
             if existing_id is None:
                 return None
             existing = self._proposals[existing_id]
-            if (
-                existing.tool_id != tool.tool_id
-                or existing.tool_version != tool.version
-                or existing.arguments != arguments
-                or existing.patient_id != context.patient_id
-                or existing.profile_version != context.profile_version
-                or existing.visit_stage != context.visit_stage
-            ):
-                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+            self._validate_request_match(existing, tool, arguments, context)
             return existing
 
     async def create_proposal(
@@ -186,15 +178,7 @@ class InMemoryActionStore:
             existing_id = self._request_proposals.get(request_identity)
             if existing_id is not None:
                 existing = self._proposals[existing_id]
-                if (
-                    existing.tool_id != tool.tool_id
-                    or existing.tool_version != tool.version
-                    or existing.arguments != arguments
-                    or existing.patient_id != context.patient_id
-                    or existing.profile_version != context.profile_version
-                    or existing.visit_stage != context.visit_stage
-                ):
-                    raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+                self._validate_request_match(existing, tool, arguments, context)
                 return existing
             proposal_id = f"proposal-{uuid4().hex}"
             proposal = ActionProposal(
@@ -281,16 +265,17 @@ class InMemoryActionStore:
                 raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
             if tool.revalidate is not None and not await tool.revalidate(context):
                 raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
-            if tool.confirmation_schema is not None and (
+            confirmation_contract = tool.confirmation_contract
+            if confirmation_contract is not None and (
                 proposal.confirmation is None
-                or validate_object(proposal.confirmation, tool.confirmation_schema) is not None
+                or validate_object(proposal.confirmation, confirmation_contract.schema) is not None
             ):
                 raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
-            if tool.revalidate_confirmation is not None:
+            if confirmation_contract is not None:
                 if proposal.confirmation is None:
                     raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
                 try:
-                    confirmation_valid = await tool.revalidate_confirmation(
+                    confirmation_valid = await confirmation_contract.revalidate(
                         dict(proposal.arguments),
                         dict(proposal.confirmation),
                         context,
@@ -335,6 +320,23 @@ class InMemoryActionStore:
                 receipt_id=receipt.receipt_id,
             )
             return confirmed, receipt
+
+    @staticmethod
+    def _validate_request_match(
+        proposal: ActionProposal,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> None:
+        if (
+            proposal.tool_id != tool.tool_id
+            or proposal.tool_version != tool.version
+            or proposal.arguments != arguments
+            or proposal.patient_id != context.patient_id
+            or proposal.profile_version != context.profile_version
+            or proposal.visit_stage != context.visit_stage
+        ):
+            raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
 
     async def list_proposals(self) -> list[ActionProposal]:
         async with self._lock:

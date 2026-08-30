@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async
 
 from medipet.agent.capabilities import (
     SkillDefinition,
+    ToolConfirmationContract,
     ToolContext,
     ToolDefinition,
     VisitStage,
@@ -96,7 +97,11 @@ class PostgresToolRegistry:
                             description=tool.description,
                             input_schema=tool.input_schema,
                             output_schema=tool.output_schema,
-                            confirmation_schema=tool.confirmation_schema,
+                            confirmation_schema=(
+                                dict(tool.confirmation_contract.schema)
+                                if tool.confirmation_contract is not None
+                                else None
+                            ),
                             effect=tool.effect,
                             allowed_stages=list(tool.allowed_stages),
                             enabled=False,
@@ -297,11 +302,9 @@ class PostgresToolRegistry:
                             description=record.description,
                             input_schema=record.input_schema,
                             output_schema=record.output_schema,
-                            confirmation_schema=record.confirmation_schema,
+                            confirmation_contract=implementation.confirmation_contract,
                             effect=cast(ToolEffect, record.effect),
                             execute=execute,
-                            prepare_confirmation=implementation.prepare_confirmation,
-                            revalidate_confirmation=implementation.revalidate_confirmation,
                             tool_id=record.tool_id,
                             approval_required=record.approval_required,
                             enabled=record.enabled
@@ -408,6 +411,26 @@ class PostgresToolRegistry:
                 del arguments, context
                 raise ToolRegistryError("Tool implementation is unavailable")
 
+            async def confirmation_unavailable(arguments, context):
+                del arguments, context
+                raise ToolRegistryError("Tool implementation is unavailable")
+
+            async def confirmation_revalidation_unavailable(
+                arguments, confirmation, context
+            ):
+                del arguments, confirmation, context
+                return False
+
+            confirmation_contract = (
+                ToolConfirmationContract(
+                    schema=record.confirmation_schema,
+                    prepare=confirmation_unavailable,
+                    revalidate=confirmation_revalidation_unavailable,
+                )
+                if record.confirmation_schema is not None
+                else None
+            )
+
             implementation = TrustedTool(
                 tool_id=record.tool_id,
                 version=record.version,
@@ -415,7 +438,7 @@ class PostgresToolRegistry:
                 description=record.description,
                 input_schema=record.input_schema,
                 output_schema=record.output_schema,
-                confirmation_schema=record.confirmation_schema,
+                confirmation_contract=confirmation_contract,
                 effect=cast(ToolEffect, record.effect),
                 approval_required=record.approval_required,
                 execute=unavailable,

@@ -5,7 +5,11 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from medipet.actions import ActionDecisionError, InMemoryActionStore
-from medipet.agent.capabilities import ToolContext, ToolDefinition
+from medipet.agent.capabilities import (
+    ToolConfirmationContract,
+    ToolContext,
+    ToolDefinition,
+)
 
 
 async def exercise_action_store_contract(store, *, suffix: str = "memory") -> None:
@@ -30,25 +34,36 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
             "value": arguments["value"],
         }
 
+    async def prepare_confirmation(
+        arguments: dict[str, object], context: ToolContext
+    ) -> dict[str, object]:
+        return {
+            "patient_id": context.patient_id,
+            "value": arguments["value"],
+        }
+
     tool = ToolDefinition(
         tool_id="test.write",
         name="dummy_write",
         version="1",
         description="测试专用写 Tool",
         input_schema={"type": "object"},
-        confirmation_schema={
-            "type": "object",
-            "properties": {
-                "patient_id": {"type": "string"},
-                "value": {"type": "string"},
+        confirmation_contract=ToolConfirmationContract(
+            schema={
+                "type": "object",
+                "properties": {
+                    "patient_id": {"type": "string"},
+                    "value": {"type": "string"},
+                },
+                "required": ["patient_id", "value"],
+                "additionalProperties": False,
             },
-            "required": ["patient_id", "value"],
-            "additionalProperties": False,
-        },
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        revalidate_confirmation=revalidate_confirmation,
     )
     turn_context = ToolContext(
         visit_matter_id=f"visit-{suffix}",

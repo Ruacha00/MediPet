@@ -11,6 +11,7 @@ from medipet.agent.capabilities import (
     CapabilityProvider,
     CapabilitySnapshot,
     StaticCapabilityProvider,
+    ToolConfirmationContract,
     ToolContext,
     ToolDefinition,
     VisitStage,
@@ -203,20 +204,22 @@ async def test_write_tool_pauses_with_a_persisted_proposal_before_execution() ->
             "required": ["receipt"],
             "additionalProperties": False,
         },
-        confirmation_schema={
-            "type": "object",
-            "properties": {
-                "patient_id": {"type": "string"},
-                "summary": {"type": "string"},
+        confirmation_contract=ToolConfirmationContract(
+            schema={
+                "type": "object",
+                "properties": {
+                    "patient_id": {"type": "string"},
+                    "summary": {"type": "string"},
+                },
+                "required": ["patient_id", "summary"],
+                "additionalProperties": False,
             },
-            "required": ["patient_id", "summary"],
-            "additionalProperties": False,
-        },
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        prepare_confirmation=prepare_confirmation,
-        revalidate_confirmation=revalidate_confirmation,
     )
     model = ScriptedModel(
         [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {"value": "A"}),))]]
@@ -275,17 +278,19 @@ async def test_invalid_server_confirmation_never_creates_a_proposal() -> None:
         version="1",
         description="测试无效确认快照",
         input_schema={"type": "object", "additionalProperties": False},
-        confirmation_schema={
-            "type": "object",
-            "properties": {"summary": {"type": "string"}},
-            "required": ["summary"],
-            "additionalProperties": False,
-        },
+        confirmation_contract=ToolConfirmationContract(
+            schema={
+                "type": "object",
+                "properties": {"summary": {"type": "string"}},
+                "required": ["summary"],
+                "additionalProperties": False,
+            },
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        prepare_confirmation=prepare_confirmation,
-        revalidate_confirmation=revalidate_confirmation,
     )
     assistant, _ = await _assistant(
         ScriptedModel(
@@ -299,52 +304,6 @@ async def test_invalid_server_confirmation_never_creates_a_proposal() -> None:
 
     assert [event.kind for event in events] == ["status", "failed"]
     assert events[-1].data["message"] == "待确认操作暂时无法创建，请重新发起。"
-    assert await action_store.list_proposals() == []
-
-
-@pytest.mark.asyncio
-async def test_incomplete_confirmation_contract_never_creates_a_proposal() -> None:
-    async def prepare_confirmation(
-        arguments: dict[str, object], context: ToolContext
-    ) -> dict[str, object]:
-        del arguments, context
-        return {"summary": "valid but cannot be revalidated"}
-
-    async def execute(
-        arguments: dict[str, object], context: ToolContext
-    ) -> dict[str, object]:
-        del arguments, context
-        return {}
-
-    action_store = InMemoryActionStore()
-    tool = ToolDefinition(
-        tool_id="test.write",
-        name="dummy_write",
-        version="1",
-        description="测试不完整确认契约",
-        input_schema={"type": "object", "additionalProperties": False},
-        confirmation_schema={
-            "type": "object",
-            "properties": {"summary": {"type": "string"}},
-            "required": ["summary"],
-            "additionalProperties": False,
-        },
-        effect="write",
-        approval_required=True,
-        execute=execute,
-        prepare_confirmation=prepare_confirmation,
-    )
-    assistant, _ = await _assistant(
-        ScriptedModel(
-            [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
-        ),
-        CapabilitySnapshot(tools=(tool,)),
-        action_store=action_store,
-    )
-
-    events = [event async for event in assistant.handle_turn(_turn())]
-
-    assert [event.kind for event in events] == ["status", "failed"]
     assert await action_store.list_proposals() == []
 
 
@@ -440,20 +399,22 @@ async def test_changed_authoritative_confirmation_rejects_the_old_proposal() -> 
         version="1",
         description="测试权威确认快照",
         input_schema={"type": "object", "additionalProperties": False},
-        confirmation_schema={
-            "type": "object",
-            "properties": {
-                "patient_id": {"type": "string"},
-                "value": {"type": "string"},
+        confirmation_contract=ToolConfirmationContract(
+            schema={
+                "type": "object",
+                "properties": {
+                    "patient_id": {"type": "string"},
+                    "value": {"type": "string"},
+                },
+                "required": ["patient_id", "value"],
+                "additionalProperties": False,
             },
-            "required": ["patient_id", "value"],
-            "additionalProperties": False,
-        },
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        prepare_confirmation=prepare_confirmation,
-        revalidate_confirmation=revalidate_confirmation,
     )
     assistant, _ = await _assistant(
         ScriptedModel(
@@ -517,20 +478,22 @@ async def test_same_request_retry_returns_stored_proposal_without_preparing_agai
         version="1",
         description="测试提案请求幂等",
         input_schema={"type": "object", "additionalProperties": False},
-        confirmation_schema={
-            "type": "object",
-            "properties": {
-                "patient_id": {"type": "string"},
-                "value": {"type": "string"},
+        confirmation_contract=ToolConfirmationContract(
+            schema={
+                "type": "object",
+                "properties": {
+                    "patient_id": {"type": "string"},
+                    "value": {"type": "string"},
+                },
+                "required": ["patient_id", "value"],
+                "additionalProperties": False,
             },
-            "required": ["patient_id", "value"],
-            "additionalProperties": False,
-        },
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        prepare_confirmation=prepare_confirmation,
-        revalidate_confirmation=revalidate_confirmation,
     )
     action_store = InMemoryActionStore()
     request = AgentRequest(

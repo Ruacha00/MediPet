@@ -56,15 +56,7 @@ class PostgresActionStore:
             )
             if record is None:
                 return None
-            if (
-                record.tool_id != tool.tool_id
-                or record.tool_version != tool.version
-                or record.arguments != arguments
-                or record.patient_id != context.patient_id
-                or record.profile_version != context.profile_version
-                or record.visit_stage != context.visit_stage
-            ):
-                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+            self._validate_request_match(record, tool, arguments, context)
             return self._to_proposal(record)
 
     async def create_proposal(
@@ -119,15 +111,7 @@ class PostgresActionStore:
             )
             if record is None:
                 raise RuntimeError("Action Proposal 写入后无法读取")
-            if (
-                record.tool_id != tool.tool_id
-                or record.tool_version != tool.version
-                or record.arguments != arguments
-                or record.patient_id != context.patient_id
-                or record.profile_version != context.profile_version
-                or record.visit_stage != context.visit_stage
-            ):
-                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
+            self._validate_request_match(record, tool, arguments, context)
             if inserted is not None:
                 self._add_audit(session, "propose", record, context.idempotency_key)
             return self._to_proposal(record)
@@ -204,20 +188,21 @@ class PostgresActionStore:
             ):
                 failure = "操作参数、Tool 版本或作用域已变化，请重新发起"
             else:
+                confirmation_contract = tool.confirmation_contract
                 confirmation_valid = not (
-                    tool.confirmation_schema is not None
+                    confirmation_contract is not None
                     and (
                         record.confirmation is None
-                        or validate_object(record.confirmation, tool.confirmation_schema)
+                        or validate_object(record.confirmation, confirmation_contract.schema)
                         is not None
                     )
                 )
-                if confirmation_valid and tool.revalidate_confirmation is not None:
+                if confirmation_valid and confirmation_contract is not None:
                     if record.confirmation is None:
                         confirmation_valid = False
                     else:
                         try:
-                            confirmation_valid = await tool.revalidate_confirmation(
+                            confirmation_valid = await confirmation_contract.revalidate(
                                 dict(record.arguments),
                                 dict(record.confirmation),
                                 context,
@@ -357,6 +342,23 @@ class PostgresActionStore:
             ):
                 raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
             raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
+
+    @staticmethod
+    def _validate_request_match(
+        record: ActionProposalRecord,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> None:
+        if (
+            record.tool_id != tool.tool_id
+            or record.tool_version != tool.version
+            or record.arguments != arguments
+            or record.patient_id != context.patient_id
+            or record.profile_version != context.profile_version
+            or record.visit_stage != context.visit_stage
+        ):
+            raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
 
     @staticmethod
     def _matches_tool(

@@ -5,7 +5,11 @@ from typing import cast
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from medipet.agent.capabilities import SkillDefinition, ToolContext
+from medipet.agent.capabilities import (
+    SkillDefinition,
+    ToolConfirmationContract,
+    ToolContext,
+)
 from medipet.delivery.http import create_app
 from medipet.skills.capabilities import RegistryCapabilityProvider
 from medipet.skills.registry import InMemorySkillRegistry
@@ -299,12 +303,14 @@ async def test_registry_preserves_write_tool_confirmation_contract() -> None:
         description="Test prepared write",
         input_schema={"type": "object"},
         output_schema={"type": "object"},
-        confirmation_schema=confirmation_schema,
+        confirmation_contract=ToolConfirmationContract(
+            schema=confirmation_schema,
+            prepare=prepare_confirmation,
+            revalidate=revalidate_confirmation,
+        ),
         effect="write",
         approval_required=True,
         execute=execute,
-        prepare_confirmation=prepare_confirmation,
-        revalidate_confirmation=revalidate_confirmation,
     )
     registry = InMemoryToolRegistry()
     await registry.synchronize((trusted,), actor="deployment")
@@ -330,6 +336,4 @@ async def test_registry_preserves_write_tool_confirmation_contract() -> None:
         ToolContext(patient_id="patient-1"),
     )
 
-    assert tools[0].confirmation_schema == confirmation_schema
-    assert tools[0].prepare_confirmation is prepare_confirmation
-    assert tools[0].revalidate_confirmation is revalidate_confirmation
+    assert tools[0].confirmation_contract == trusted.confirmation_contract

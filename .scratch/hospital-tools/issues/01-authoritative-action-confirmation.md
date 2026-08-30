@@ -4,11 +4,15 @@
 
 **Type:** implementation
 
-**Status:** claimed
+**Status:** resolved
 
-- [ ] 就诊存储可以通过一次已校验读取返回患者 ID 与就诊阶段，`ToolContext` 携带患者 ID。
-- [ ] `ActionProposal` 持久化患者 ID 和独立确认快照；内存与 PostgreSQL 实现及 migration 保持一致。
-- [ ] 写 Tool 支持服务器侧准备、Schema 验证和提交前重新校验确认快照，而无需把权威资料加入模型参数。
-- [ ] 相同请求重试返回原提案，患者、阶段、Tool 版本、快照变化、过期或不可用均拒绝旧提案。
-- [ ] Action Store 保持医院无关，通用读 Tool 和现有写 Tool 行为不回归。
-- [ ] 公共契约测试、API 测试、Ruff 和 Pyright 通过。
+- [x] 就诊存储可以通过一次已校验读取返回患者 ID 与就诊阶段，`ToolContext` 携带患者 ID。
+- [x] `ActionProposal` 持久化患者 ID 和独立确认快照；内存与 PostgreSQL 实现及 migration 保持一致。
+- [x] 写 Tool 支持服务器侧准备、Schema 验证和提交前重新校验确认快照，而无需把权威资料加入模型参数。
+- [x] 相同请求重试返回原提案，患者、阶段、Tool 版本、快照变化、过期或不可用均拒绝旧提案。
+- [x] Action Store 保持医院无关，通用读 Tool 和现有写 Tool 行为不回归。
+- [x] 公共契约测试、API 测试、Ruff 和 Pyright 通过。
+
+## Answer
+
+已实现权威患者作用域与服务器确认快照协议。就诊上下文一次读取患者与阶段，写 Tool 通过不可拆分的确认契约准备、校验并在提交前复核快照；Action Proposal 在内存与 PostgreSQL 中持久化患者和快照，并保持请求幂等与旧提案失效保护。数据库迁移、公共 Store 契约测试、运行时/API 回归测试及静态检查均已通过。
