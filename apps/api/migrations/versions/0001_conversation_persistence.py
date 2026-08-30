@@ -106,11 +106,11 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.CheckConstraint(
-            "(role = 'user' AND state = 'completed') OR role = 'assistant'",
+            "(role = 'participant' AND state = 'completed') OR role = 'assistant'",
             name=op.f("ck_conversation_messages_participant_completed"),
         ),
         sa.CheckConstraint(
-            "role IN ('user', 'assistant')",
+            "role IN ('participant', 'assistant')",
             name=op.f("ck_conversation_messages_role"),
         ),
         sa.CheckConstraint(

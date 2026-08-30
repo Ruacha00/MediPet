@@ -119,7 +119,7 @@ async def test_streams_model_text_with_outpatient_boundaries() -> None:
     assert "医院数据尚未配置" in messages[0].content
     persisted = await store.list_messages("visit-1")
     assert [(message.role, message.state, message.content) for message in persisted] == [
-        ("user", "completed", "我这两天头痛"),
+        ("participant", "completed", "我这两天头痛"),
         ("assistant", "completed", "可以先描述主要不适。"),
     ]
 

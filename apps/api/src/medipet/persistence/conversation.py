@@ -6,9 +6,26 @@ from datetime import UTC, datetime
 from typing import Literal, Protocol
 from uuid import uuid4
 
-MessageRole = Literal["user", "assistant"]
+MessageRole = Literal["participant", "assistant"]
 MessageState = Literal["pending", "streaming", "completed", "failed", "cancelled"]
 TerminalMessageState = Literal["completed", "failed", "cancelled"]
+AssistantMessageTargetState = Literal["streaming", "completed", "failed", "cancelled"]
+
+_ASSISTANT_TRANSITION_SOURCES: dict[
+    AssistantMessageTargetState,
+    tuple[MessageState, ...],
+] = {
+    "streaming": ("pending",),
+    "completed": ("streaming",),
+    "failed": ("pending", "streaming"),
+    "cancelled": ("pending", "streaming"),
+}
+
+
+def assistant_transition_source_states(
+    to_state: AssistantMessageTargetState,
+) -> tuple[MessageState, ...]:
+    return _ASSISTANT_TRANSITION_SOURCES[to_state]
 
 
 class ConversationStoreError(RuntimeError):
@@ -35,6 +52,13 @@ class DevelopmentVisitMatter:
     participant_display_name: str
     visit_matter_id: str
     visit_matter_title: str
+
+
+@dataclass(frozen=True)
+class VisitTurn:
+    visit_matter_id: str
+    participant_id: str
+    turn_id: str
 
 
 @dataclass(frozen=True)
@@ -68,18 +92,14 @@ class VisitConversationStore(Protocol):
     async def add_participant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
         content: str,
     ) -> StoredMessage: ...
 
     async def add_assistant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
     ) -> StoredMessage: ...
 
     async def mark_assistant_streaming(self, message_id: str) -> None: ...
@@ -107,7 +127,7 @@ class InMemoryVisitConversationStore:
         self._lock = asyncio.Lock()
         self._visit_matters: dict[str, DevelopmentVisitMatter] = {}
         self._messages: dict[str, StoredMessage] = {}
-        self._turn_messages: dict[tuple[str, str, MessageRole], str] = {}
+        self._turn_messages: dict[tuple[VisitTurn, MessageRole], str] = {}
         self._next_sequence = 1
 
     async def ping(self) -> None:
@@ -134,24 +154,20 @@ class InMemoryVisitConversationStore:
     async def add_participant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
         content: str,
     ) -> StoredMessage:
         async with self._lock:
-            self._require_participant(visit_matter_id, participant_id)
-            key = (visit_matter_id, turn_id, "user")
+            self._require_participant(turn.visit_matter_id, turn.participant_id)
+            key = (turn, "participant")
             existing = self._message_for_turn(key)
             if existing is not None:
                 if existing.content != content:
                     raise IdempotencyConflictError("同一 turn 的参与者消息内容不一致")
                 return existing
             return self._insert_message(
-                visit_matter_id=visit_matter_id,
-                participant_id=participant_id,
-                turn_id=turn_id,
-                role="user",
+                turn=turn,
+                role="participant",
                 state="completed",
                 content=content,
             )
@@ -159,20 +175,16 @@ class InMemoryVisitConversationStore:
     async def add_assistant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
     ) -> StoredMessage:
         async with self._lock:
-            self._require_participant(visit_matter_id, participant_id)
-            key = (visit_matter_id, turn_id, "assistant")
+            self._require_participant(turn.visit_matter_id, turn.participant_id)
+            key = (turn, "assistant")
             existing = self._message_for_turn(key)
             if existing is not None:
                 return existing
             return self._insert_message(
-                visit_matter_id=visit_matter_id,
-                participant_id=participant_id,
-                turn_id=turn_id,
+                turn=turn,
                 role="assistant",
                 state="pending",
                 content="",
@@ -181,9 +193,7 @@ class InMemoryVisitConversationStore:
     async def mark_assistant_streaming(self, message_id: str) -> None:
         async with self._lock:
             message = self._require_message(message_id)
-            if message.role != "assistant" or message.state != "pending":
-                raise MessageTransitionError("只有 pending 助手消息可以进入 streaming")
-            self._replace_message(message, state="streaming")
+            self._transition_assistant_message(message, "streaming")
 
     async def append_assistant_text(self, message_id: str, text: str) -> None:
         if not text:
@@ -201,11 +211,7 @@ class InMemoryVisitConversationStore:
     ) -> None:
         async with self._lock:
             message = self._require_message(message_id)
-            if message.role != "assistant" or message.state not in {"pending", "streaming"}:
-                raise MessageTransitionError("只有进行中的助手消息可以进入终态")
-            if state == "completed" and message.state != "streaming":
-                raise MessageTransitionError("completed 助手消息必须经历 streaming")
-            self._replace_message(message, state=state)
+            self._transition_assistant_message(message, state)
 
     async def list_messages(self, visit_matter_id: str) -> list[StoredMessage]:
         async with self._lock:
@@ -233,7 +239,7 @@ class InMemoryVisitConversationStore:
 
     def _message_for_turn(
         self,
-        key: tuple[str, str, MessageRole],
+        key: tuple[VisitTurn, MessageRole],
     ) -> StoredMessage | None:
         message_id = self._turn_messages.get(key)
         return self._messages.get(message_id) if message_id is not None else None
@@ -241,9 +247,7 @@ class InMemoryVisitConversationStore:
     def _insert_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
         role: MessageRole,
         state: MessageState,
         content: str,
@@ -251,9 +255,9 @@ class InMemoryVisitConversationStore:
         now = datetime.now(UTC)
         message = StoredMessage(
             id=f"message-{uuid4().hex}",
-            visit_matter_id=visit_matter_id,
-            participant_id=participant_id,
-            turn_id=turn_id,
+            visit_matter_id=turn.visit_matter_id,
+            participant_id=turn.participant_id,
+            turn_id=turn.turn_id,
             role=role,
             state=state,
             content=content,
@@ -263,7 +267,7 @@ class InMemoryVisitConversationStore:
         )
         self._next_sequence += 1
         self._messages[message.id] = message
-        self._turn_messages[(visit_matter_id, turn_id, role)] = message.id
+        self._turn_messages[(turn, role)] = message.id
         return message
 
     def _require_message(self, message_id: str) -> StoredMessage:
@@ -285,3 +289,14 @@ class InMemoryVisitConversationStore:
             content=content if content is not None else message.content,
             updated_at=datetime.now(UTC),
         )
+
+    def _transition_assistant_message(
+        self,
+        message: StoredMessage,
+        to_state: AssistantMessageTargetState,
+    ) -> None:
+        if message.role != "assistant" or message.state not in assistant_transition_source_states(
+            to_state
+        ):
+            raise MessageTransitionError("助手消息状态转换无效")
+        self._replace_message(message, state=to_state)

@@ -9,6 +9,7 @@ from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavail
 from medipet.persistence.conversation import (
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
+    VisitTurn,
 )
 
 
@@ -177,15 +178,19 @@ def test_history_survives_app_recreation_and_preserves_terminal_states() -> None
 
 async def _add_cancelled_message(store: InMemoryVisitConversationStore) -> None:
     failed = await store.add_assistant_message(
-        visit_matter_id="visit-matter-demo",
-        participant_id="participant-demo",
-        turn_id="failed-turn",
+        turn=VisitTurn(
+            visit_matter_id="visit-matter-demo",
+            participant_id="participant-demo",
+            turn_id="failed-turn",
+        )
     )
     await store.finish_assistant_message(failed.id, "failed")
     assistant = await store.add_assistant_message(
-        visit_matter_id="visit-matter-demo",
-        participant_id="participant-demo",
-        turn_id="cancelled-turn",
+        turn=VisitTurn(
+            visit_matter_id="visit-matter-demo",
+            participant_id="participant-demo",
+            turn_id="cancelled-turn",
+        )
     )
     await store.mark_assistant_streaming(assistant.id)
     await store.append_assistant_text(assistant.id, "半截回答")

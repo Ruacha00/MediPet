@@ -9,7 +9,7 @@ from alembic import command
 from alembic.config import Config
 from test_conversation_store import exercise_store_contract
 
-from medipet.persistence.conversation import DevelopmentVisitMatter
+from medipet.persistence.conversation import DevelopmentVisitMatter, VisitTurn
 from medipet.persistence.postgres import PostgresVisitConversationStore
 
 DATABASE_URL = os.getenv("MEDIPET_TEST_DATABASE_URL")
@@ -70,14 +70,18 @@ async def test_interleaved_turn_completion_preserves_each_message() -> None:
     try:
         await store.seed_development_visit_matter(visit)
         older = await store.add_assistant_message(
-            visit_matter_id=visit.visit_matter_id,
-            participant_id=visit.participant_id,
-            turn_id="older-turn",
+            turn=VisitTurn(
+                visit_matter_id=visit.visit_matter_id,
+                participant_id=visit.participant_id,
+                turn_id="older-turn",
+            )
         )
         newer = await store.add_assistant_message(
-            visit_matter_id=visit.visit_matter_id,
-            participant_id=visit.participant_id,
-            turn_id="newer-turn",
+            turn=VisitTurn(
+                visit_matter_id=visit.visit_matter_id,
+                participant_id=visit.participant_id,
+                turn_id="newer-turn",
+            )
         )
         for message, text in ((newer, "较新回答"), (older, "较早回答")):
             await store.mark_assistant_streaming(message.id)
@@ -107,30 +111,35 @@ async def test_terminal_history_survives_store_recreation() -> None:
     )
     first_store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
     await first_store.seed_development_visit_matter(visit)
-    await first_store.add_participant_message(
+    restart_turn = VisitTurn(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,
         turn_id="restart-turn",
+    )
+    await first_store.add_participant_message(
+        turn=restart_turn,
         content="重启前消息",
     )
     assistant = await first_store.add_assistant_message(
-        visit_matter_id=visit.visit_matter_id,
-        participant_id=visit.participant_id,
-        turn_id="restart-turn",
+        turn=restart_turn,
     )
     await first_store.mark_assistant_streaming(assistant.id)
     await first_store.append_assistant_text(assistant.id, "重启后仍可见")
     await first_store.finish_assistant_message(assistant.id, "completed")
     failed = await first_store.add_assistant_message(
-        visit_matter_id=visit.visit_matter_id,
-        participant_id=visit.participant_id,
-        turn_id="failed-turn",
+        turn=VisitTurn(
+            visit_matter_id=visit.visit_matter_id,
+            participant_id=visit.participant_id,
+            turn_id="failed-turn",
+        )
     )
     await first_store.finish_assistant_message(failed.id, "failed")
     cancelled = await first_store.add_assistant_message(
-        visit_matter_id=visit.visit_matter_id,
-        participant_id=visit.participant_id,
-        turn_id="cancelled-turn",
+        turn=VisitTurn(
+            visit_matter_id=visit.visit_matter_id,
+            participant_id=visit.participant_id,
+            turn_id="cancelled-turn",
+        )
     )
     await first_store.mark_assistant_streaming(cancelled.id)
     await first_store.append_assistant_text(cancelled.id, "取消前的半截回答")
@@ -141,7 +150,7 @@ async def test_terminal_history_survives_store_recreation() -> None:
     try:
         messages = await restarted_store.list_messages(visit.visit_matter_id)
         assert [(message.role, message.state, message.content) for message in messages] == [
-            ("user", "completed", "重启前消息"),
+            ("participant", "completed", "重启前消息"),
             ("assistant", "completed", "重启后仍可见"),
             ("assistant", "failed", ""),
             ("assistant", "cancelled", "取消前的半截回答"),

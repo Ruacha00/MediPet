@@ -141,7 +141,7 @@ def create_app(
             messages=[
                 ConversationHistoryMessage(
                     id=message.id,
-                    role=message.role,
+                    role="user" if message.role == "participant" else "assistant",
                     state=message.state,
                     parts=(
                         [UIMessagePart(type="text", text=message.content)]

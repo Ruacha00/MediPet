@@ -11,6 +11,7 @@ from medipet.model.port import ModelMessage
 from medipet.persistence.conversation import (
     TerminalMessageState,
     VisitConversationStore,
+    VisitTurn,
 )
 
 
@@ -45,16 +46,17 @@ class MediPetAssistant:
             )
             return
 
-        await self._conversation_store.add_participant_message(
+        turn = VisitTurn(
             visit_matter_id=command.visit_matter_id,
             participant_id=command.participant_id,
             turn_id=command.idempotency_key,
+        )
+        await self._conversation_store.add_participant_message(
+            turn=turn,
             content=command.message.strip(),
         )
         assistant_message = await self._conversation_store.add_assistant_message(
-            visit_matter_id=command.visit_matter_id,
-            participant_id=command.participant_id,
-            turn_id=command.idempotency_key,
+            turn=turn,
         )
         buffered_text: list[str] = []
         buffered_characters = 0
@@ -90,7 +92,10 @@ class MediPetAssistant:
             )
             request = AgentRequest(
                 messages=tuple(
-                    ModelMessage(role=message.role, content=message.content)
+                    ModelMessage(
+                        role="user" if message.role == "participant" else "assistant",
+                        content=message.content,
+                    )
                     for message in completed_history
                 )
             )

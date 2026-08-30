@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from medipet.persistence.conversation import (
+    AssistantMessageTargetState,
     DevelopmentVisitMatter,
     IdempotencyConflictError,
     MessageRole,
@@ -22,6 +23,8 @@ from medipet.persistence.conversation import (
     StoredMessage,
     TerminalMessageState,
     VisitMatterNotFoundError,
+    VisitTurn,
+    assistant_transition_source_states,
 )
 from medipet.persistence.models import (
     ConversationMessageRecord,
@@ -104,16 +107,12 @@ class PostgresVisitConversationStore:
     async def add_participant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
         content: str,
     ) -> StoredMessage:
         return await self._add_message(
-            visit_matter_id=visit_matter_id,
-            participant_id=participant_id,
-            turn_id=turn_id,
-            role="user",
+            turn=turn,
+            role="participant",
             state="completed",
             content=content,
         )
@@ -121,25 +120,17 @@ class PostgresVisitConversationStore:
     async def add_assistant_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
     ) -> StoredMessage:
         return await self._add_message(
-            visit_matter_id=visit_matter_id,
-            participant_id=participant_id,
-            turn_id=turn_id,
+            turn=turn,
             role="assistant",
             state="pending",
             content="",
         )
 
     async def mark_assistant_streaming(self, message_id: str) -> None:
-        await self._transition(
-            message_id,
-            from_states=("pending",),
-            to_state="streaming",
-        )
+        await self._transition(message_id, to_state="streaming")
 
     async def append_assistant_text(self, message_id: str, text: str) -> None:
         if not text:
@@ -166,8 +157,7 @@ class PostgresVisitConversationStore:
         message_id: str,
         state: TerminalMessageState,
     ) -> None:
-        from_states = ("streaming",) if state == "completed" else ("pending", "streaming")
-        await self._transition(message_id, from_states=from_states, to_state=state)
+        await self._transition(message_id, to_state=state)
 
     async def list_messages(self, visit_matter_id: str) -> list[StoredMessage]:
         async with self._sessions() as session:
@@ -211,23 +201,25 @@ class PostgresVisitConversationStore:
     async def _add_message(
         self,
         *,
-        visit_matter_id: str,
-        participant_id: str,
-        turn_id: str,
+        turn: VisitTurn,
         role: MessageRole,
         state: MessageState,
         content: str,
     ) -> StoredMessage:
         async with self._sessions.begin() as session:
-            await self._require_visit_matter(session, visit_matter_id, participant_id)
+            await self._require_visit_matter(
+                session,
+                turn.visit_matter_id,
+                turn.participant_id,
+            )
             message_id = f"message-{uuid4().hex}"
             statement = (
                 insert(ConversationMessageRecord)
                 .values(
                     id=message_id,
-                    visit_matter_id=visit_matter_id,
-                    participant_id=participant_id,
-                    turn_id=turn_id,
+                    visit_matter_id=turn.visit_matter_id,
+                    participant_id=turn.participant_id,
+                    turn_id=turn.turn_id,
                     role=role,
                     state=state,
                     content=content,
@@ -238,19 +230,19 @@ class PostgresVisitConversationStore:
             inserted_id = (await session.execute(statement)).scalar_one_or_none()
             record = await session.scalar(
                 select(ConversationMessageRecord).where(
-                    ConversationMessageRecord.visit_matter_id == visit_matter_id,
-                    ConversationMessageRecord.turn_id == turn_id,
+                    ConversationMessageRecord.visit_matter_id == turn.visit_matter_id,
+                    ConversationMessageRecord.turn_id == turn.turn_id,
                     ConversationMessageRecord.role == role,
                 )
             )
             if record is None:
                 raise RuntimeError("消息写入后无法读取")
-            if inserted_id is None and role == "user" and record.content != content:
+            if inserted_id is None and role == "participant" and record.content != content:
                 raise IdempotencyConflictError("同一 turn 的参与者消息内容不一致")
             if inserted_id is not None:
                 await session.execute(
                     update(VisitMatterRecord)
-                    .where(VisitMatterRecord.id == visit_matter_id)
+                    .where(VisitMatterRecord.id == turn.visit_matter_id)
                     .values(
                         latest_message_sequence=func.greatest(
                             func.coalesce(VisitMatterRecord.latest_message_sequence, 0),
@@ -265,9 +257,9 @@ class PostgresVisitConversationStore:
         self,
         message_id: str,
         *,
-        from_states: tuple[MessageState, ...],
-        to_state: MessageState,
+        to_state: AssistantMessageTargetState,
     ) -> None:
+        from_states = assistant_transition_source_states(to_state)
         async with self._sessions.begin() as session:
             result = await session.execute(
                 update(ConversationMessageRecord)

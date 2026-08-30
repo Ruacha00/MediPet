@@ -99,7 +99,7 @@ class ConversationMessageRecord(Base):
             ondelete="CASCADE",
         ),
         CheckConstraint(
-            "role IN ('user', 'assistant')",
+            "role IN ('participant', 'assistant')",
             name="role",
         ),
         CheckConstraint(
@@ -107,7 +107,7 @@ class ConversationMessageRecord(Base):
             name="state",
         ),
         CheckConstraint(
-            "(role = 'user' AND state = 'completed') OR role = 'assistant'",
+            "(role = 'participant' AND state = 'completed') OR role = 'assistant'",
             name="participant_completed",
         ),
         UniqueConstraint("visit_matter_id", "turn_id", "role", name="turn_role"),

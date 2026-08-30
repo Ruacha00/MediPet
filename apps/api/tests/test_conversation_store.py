@@ -9,6 +9,7 @@ from medipet.persistence.conversation import (
     InMemoryVisitConversationStore,
     MessageTransitionError,
     VisitConversationStore,
+    VisitTurn,
 )
 
 
@@ -18,17 +19,16 @@ async def exercise_store_contract(
 ) -> None:
     visit = seed()
     await store.seed_development_visit_matter(visit)
-    participant = await store.add_participant_message(
+    turn = VisitTurn(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,
         turn_id="turn-1",
+    )
+    participant = await store.add_participant_message(
+        turn=turn,
         content="我这两天头痛",
     )
-    assistant = await store.add_assistant_message(
-        visit_matter_id=visit.visit_matter_id,
-        participant_id=visit.participant_id,
-        turn_id="turn-1",
-    )
+    assistant = await store.add_assistant_message(turn=turn)
     assert participant.state == "completed"
     assert assistant.state == "pending"
 
@@ -39,7 +39,7 @@ async def exercise_store_contract(
 
     messages = await store.list_messages(visit.visit_matter_id)
     assert [(message.role, message.state, message.content) for message in messages] == [
-        ("user", "completed", "我这两天头痛"),
+        ("participant", "completed", "我这两天头痛"),
         ("assistant", "completed", "可以先记录持续时间。"),
     ]
     with pytest.raises(MessageTransitionError):
@@ -81,24 +81,25 @@ async def test_completed_context_is_isolated_by_visit_and_limited() -> None:
         await store.seed_development_visit_matter(visit)
 
     for index in range(12):
-        turn_id = f"turn-{index}"
-        await store.add_participant_message(
+        turn = VisitTurn(
             visit_matter_id="visit-1",
             participant_id="participant-1",
-            turn_id=turn_id,
+            turn_id=f"turn-{index}",
+        )
+        await store.add_participant_message(
+            turn=turn,
             content=f"问题 {index}",
         )
-        assistant = await store.add_assistant_message(
-            visit_matter_id="visit-1",
-            participant_id="participant-1",
-            turn_id=turn_id,
-        )
+        assistant = await store.add_assistant_message(turn=turn)
         await store.finish_assistant_message(assistant.id, "failed")
 
-    await store.add_participant_message(
+    other_turn = VisitTurn(
         visit_matter_id="visit-2",
         participant_id="participant-2",
         turn_id="other-turn",
+    )
+    await store.add_participant_message(
+        turn=other_turn,
         content="另一个事项的内容",
     )
 
@@ -107,5 +108,5 @@ async def test_completed_context_is_isolated_by_visit_and_limited() -> None:
     assert len(context) == 10
     assert context[0].content == "问题 2"
     assert context[-1].content == "问题 11"
-    assert all(message.role == "user" for message in context)
+    assert all(message.role == "participant" for message in context)
     assert all("另一个事项" not in message.content for message in context)

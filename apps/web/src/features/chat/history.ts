@@ -22,6 +22,11 @@ export type ConversationHistory = {
   messages: HistoryMessage[];
 };
 
+export type ConversationHistoryRestoration = {
+  messages: MediPetMessage[];
+  failed: boolean;
+};
+
 export function toMediPetMessages(history: ConversationHistory): MediPetMessage[] {
   return history.messages.map((message) => ({
     id: message.id,
@@ -50,4 +55,26 @@ export async function loadConversationHistory(
     throw new Error("历史对话恢复失败");
   }
   return toMediPetMessages((await response.json()) as ConversationHistory);
+}
+
+export async function restoreConversationHistory(
+  backendBaseUrl: string,
+  visitMatterId: string,
+  participantId: string,
+): Promise<ConversationHistoryRestoration> {
+  try {
+    return {
+      messages: await loadConversationHistory(
+        backendBaseUrl,
+        visitMatterId,
+        participantId,
+      ),
+      failed: false,
+    };
+  } catch {
+    return {
+      messages: [],
+      failed: true,
+    };
+  }
 }

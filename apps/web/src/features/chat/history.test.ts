@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { loadConversationHistory, toMediPetMessages } from "./history";
+import {
+  loadConversationHistory,
+  restoreConversationHistory,
+  toMediPetMessages,
+} from "./history";
 
 describe("toMediPetMessages", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -55,5 +59,25 @@ describe("toMediPetMessages", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "http://localhost:8000/v1/visit-matters/visit-matter-demo/messages?participant_id=participant-demo",
     );
+  });
+
+  it("turns a history request failure into renderable restoration state", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+      })),
+    );
+
+    await expect(
+      restoreConversationHistory(
+        "http://localhost:8000",
+        "visit-matter-demo",
+        "participant-demo",
+      ),
+    ).resolves.toEqual({
+      messages: [],
+      failed: true,
+    });
   });
 });
