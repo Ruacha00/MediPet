@@ -5,7 +5,7 @@ from collections.abc import Callable
 import pytest
 
 from medipet.persistence.conversation import (
-    DevelopmentVisit,
+    DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
     MessageTransitionError,
     VisitConversationStore,
@@ -14,10 +14,10 @@ from medipet.persistence.conversation import (
 
 async def exercise_store_contract(
     store: VisitConversationStore,
-    seed: Callable[[], DevelopmentVisit],
+    seed: Callable[[], DevelopmentVisitMatter],
 ) -> None:
     visit = seed()
-    await store.seed_development_visit(visit)
+    await store.seed_development_visit_matter(visit)
     participant = await store.add_participant_message(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,
@@ -50,8 +50,8 @@ async def exercise_store_contract(
 async def test_in_memory_store_satisfies_conversation_contract() -> None:
     store = InMemoryVisitConversationStore()
 
-    def seed() -> DevelopmentVisit:
-        return DevelopmentVisit(
+    def seed() -> DevelopmentVisitMatter:
+        return DevelopmentVisitMatter(
             patient_id="patient-1",
             patient_display_name="演示患者",
             participant_id="participant-1",
@@ -67,7 +67,7 @@ async def test_in_memory_store_satisfies_conversation_contract() -> None:
 async def test_completed_context_is_isolated_by_visit_and_limited() -> None:
     store = InMemoryVisitConversationStore()
     visits = [
-        DevelopmentVisit(
+        DevelopmentVisitMatter(
             patient_id=f"patient-{index}",
             patient_display_name=f"演示患者 {index}",
             participant_id=f"participant-{index}",
@@ -78,7 +78,7 @@ async def test_completed_context_is_isolated_by_visit_and_limited() -> None:
         for index in (1, 2)
     ]
     for visit in visits:
-        await store.seed_development_visit(visit)
+        await store.seed_development_visit_matter(visit)
 
     for index in range(12):
         turn_id = f"turn-{index}"

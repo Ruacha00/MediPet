@@ -12,7 +12,10 @@ from medipet.model.port import (
     ModelRequest,
     ModelUnavailableError,
 )
-from medipet.persistence.conversation import DevelopmentVisit, InMemoryVisitConversationStore
+from medipet.persistence.conversation import (
+    DevelopmentVisitMatter,
+    InMemoryVisitConversationStore,
+)
 
 
 class DeterministicModel(ModelPort):
@@ -33,8 +36,8 @@ async def seeded_store(
     visit_matter_id: str = "visit-1",
 ) -> InMemoryVisitConversationStore:
     store = InMemoryVisitConversationStore()
-    await store.seed_development_visit(
-        DevelopmentVisit(
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
             patient_id=patient_id,
             patient_display_name="演示患者",
             participant_id=participant_id,
@@ -61,6 +64,17 @@ class CountingStore(InMemoryVisitConversationStore):
     async def append_assistant_text(self, message_id: str, text: str) -> None:
         self.append_calls += 1
         await super().append_assistant_text(message_id, text)
+
+
+class HistoryFailureStore(InMemoryVisitConversationStore):
+    async def list_completed_messages(
+        self,
+        visit_matter_id: str,
+        *,
+        limit: int,
+    ):
+        del visit_matter_id, limit
+        raise RuntimeError("history unavailable")
 
 
 @pytest.mark.asyncio
@@ -161,8 +175,8 @@ async def test_closing_stream_persists_partial_assistant_text_as_cancelled() -> 
 @pytest.mark.asyncio
 async def test_assistant_text_is_persisted_in_batches_instead_of_per_chunk() -> None:
     store = CountingStore()
-    await store.seed_development_visit(
-        DevelopmentVisit(
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
             patient_id="patient-1",
             patient_display_name="演示患者",
             participant_id="participant-1",
@@ -220,3 +234,35 @@ async def test_next_turn_receives_completed_history_from_the_same_visit() -> Non
         ("assistant", "收到"),
         ("user", "第二问"),
     ]
+
+
+@pytest.mark.asyncio
+async def test_history_load_failure_marks_created_assistant_message_failed() -> None:
+    store = HistoryFailureStore()
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-1",
+            patient_display_name="演示患者",
+            participant_id="participant-1",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-1",
+            visit_matter_title="初次咨询",
+        )
+    )
+    assistant = MediPetAssistant(LangGraphAgentRuntime(DeterministicModel(["不会调用"])), store)
+
+    with pytest.raises(RuntimeError, match="history unavailable"):
+        _ = [
+            event
+            async for event in assistant.handle_turn(
+                TurnCommand(
+                    visit_matter_id="visit-1",
+                    participant_id="participant-1",
+                    idempotency_key="history-failure-turn",
+                    message="历史加载失败测试",
+                )
+            )
+        ]
+
+    persisted = await store.list_messages("visit-1")
+    assert [message.state for message in persisted] == ["completed", "failed"]

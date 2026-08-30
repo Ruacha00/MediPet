@@ -6,7 +6,10 @@ from fastapi.testclient import TestClient
 
 from medipet.delivery.http import create_app
 from medipet.model.port import ModelChunk, ModelPort, ModelRequest, ModelUnavailableError
-from medipet.persistence.conversation import DevelopmentVisit, InMemoryVisitConversationStore
+from medipet.persistence.conversation import (
+    DevelopmentVisitMatter,
+    InMemoryVisitConversationStore,
+)
 
 
 class DeterministicModel(ModelPort):
@@ -26,8 +29,8 @@ class UnavailableModel(ModelPort):
 def seeded_store() -> InMemoryVisitConversationStore:
     store = InMemoryVisitConversationStore()
     asyncio.run(
-        store.seed_development_visit(
-            DevelopmentVisit(
+        store.seed_development_visit_matter(
+            DevelopmentVisitMatter(
                 patient_id="patient-demo",
                 patient_display_name="演示患者",
                 participant_id="participant-demo",
@@ -166,12 +169,19 @@ def test_history_survives_app_recreation_and_preserves_terminal_states() -> None
     assert [(message["role"], message["state"]) for message in messages] == [
         ("user", "completed"),
         ("assistant", "completed"),
+        ("assistant", "failed"),
         ("assistant", "cancelled"),
     ]
     assert messages[-1]["parts"] == [{"type": "text", "text": "半截回答"}]
 
 
 async def _add_cancelled_message(store: InMemoryVisitConversationStore) -> None:
+    failed = await store.add_assistant_message(
+        visit_matter_id="visit-matter-demo",
+        participant_id="participant-demo",
+        turn_id="failed-turn",
+    )
+    await store.finish_assistant_message(failed.id, "failed")
     assistant = await store.add_assistant_message(
         visit_matter_id="visit-matter-demo",
         participant_id="participant-demo",

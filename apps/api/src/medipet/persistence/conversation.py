@@ -28,7 +28,7 @@ class IdempotencyConflictError(ConversationStoreError):
 
 
 @dataclass(frozen=True)
-class DevelopmentVisit:
+class DevelopmentVisitMatter:
     patient_id: str
     patient_display_name: str
     participant_id: str
@@ -60,7 +60,10 @@ class VisitConversationStore(Protocol):
         participant_id: str,
     ) -> None: ...
 
-    async def seed_development_visit(self, visit: DevelopmentVisit) -> None: ...
+    async def seed_development_visit_matter(
+        self,
+        visit_matter: DevelopmentVisitMatter,
+    ) -> None: ...
 
     async def add_participant_message(
         self,
@@ -102,7 +105,7 @@ class VisitConversationStore(Protocol):
 class InMemoryVisitConversationStore:
     def __init__(self) -> None:
         self._lock = asyncio.Lock()
-        self._visits: dict[str, DevelopmentVisit] = {}
+        self._visits: dict[str, DevelopmentVisitMatter] = {}
         self._messages: dict[str, StoredMessage] = {}
         self._turn_messages: dict[tuple[str, str, MessageRole], str] = {}
         self._next_sequence = 1
@@ -118,12 +121,15 @@ class InMemoryVisitConversationStore:
         async with self._lock:
             self._require_participant(visit_matter_id, participant_id)
 
-    async def seed_development_visit(self, visit: DevelopmentVisit) -> None:
+    async def seed_development_visit_matter(
+        self,
+        visit_matter: DevelopmentVisitMatter,
+    ) -> None:
         async with self._lock:
-            existing = self._visits.get(visit.visit_matter_id)
-            if existing is not None and existing != visit:
+            existing = self._visits.get(visit_matter.visit_matter_id)
+            if existing is not None and existing != visit_matter:
                 raise IdempotencyConflictError("就诊事项 seed 与现有数据冲突")
-            self._visits[visit.visit_matter_id] = visit
+            self._visits[visit_matter.visit_matter_id] = visit_matter
 
     async def add_participant_message(
         self,

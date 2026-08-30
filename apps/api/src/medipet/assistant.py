@@ -8,7 +8,10 @@ from uuid import uuid4
 from medipet.agent.runtime import AgentRequest, AgentRuntime
 from medipet.contracts import TurnCommand, TurnEvent
 from medipet.model.port import ModelMessage
-from medipet.persistence.conversation import VisitConversationStore
+from medipet.persistence.conversation import (
+    TerminalMessageState,
+    VisitConversationStore,
+)
 
 
 class MediPetAssistant:
@@ -53,16 +56,6 @@ class MediPetAssistant:
             participant_id=command.participant_id,
             turn_id=command.idempotency_key,
         )
-        completed_history = await self._conversation_store.list_completed_messages(
-            command.visit_matter_id,
-            limit=self._context_message_limit,
-        )
-        request = AgentRequest(
-            messages=tuple(
-                ModelMessage(role=message.role, content=message.content)
-                for message in completed_history
-            )
-        )
         buffered_text: list[str] = []
         buffered_characters = 0
         streaming_started = False
@@ -79,7 +72,28 @@ class MediPetAssistant:
             buffered_text.clear()
             buffered_characters = 0
 
+        async def finalize(state: TerminalMessageState) -> None:
+            nonlocal terminal
+            await flush_text()
+            if terminal:
+                return
+            await self._conversation_store.finish_assistant_message(
+                assistant_message.id,
+                state,
+            )
+            terminal = True
+
         try:
+            completed_history = await self._conversation_store.list_completed_messages(
+                command.visit_matter_id,
+                limit=self._context_message_limit,
+            )
+            request = AgentRequest(
+                messages=tuple(
+                    ModelMessage(role=message.role, content=message.content)
+                    for message in completed_history
+                )
+            )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:
                 async for event in runtime_events:
                     if event.kind == "text":
@@ -95,12 +109,7 @@ class MediPetAssistant:
                             await flush_text()
 
                     if event.kind == "failed":
-                        await flush_text()
-                        await self._conversation_store.finish_assistant_message(
-                            assistant_message.id,
-                            "failed",
-                        )
-                        terminal = True
+                        await finalize("failed")
                         yield TurnEvent(
                             kind="failed",
                             data={**event.data, "traceId": trace_id},
@@ -110,26 +119,11 @@ class MediPetAssistant:
 
             if not streaming_started:
                 await self._conversation_store.mark_assistant_streaming(assistant_message.id)
-            await flush_text()
-            await self._conversation_store.finish_assistant_message(
-                assistant_message.id,
-                "completed",
-            )
-            terminal = True
+            await finalize("completed")
             yield TurnEvent(kind="completed", data={"traceId": trace_id})
         except (asyncio.CancelledError, GeneratorExit):
-            await flush_text()
-            if not terminal:
-                await self._conversation_store.finish_assistant_message(
-                    assistant_message.id,
-                    "cancelled",
-                )
+            await finalize("cancelled")
             raise
         except Exception:
-            await flush_text()
-            if not terminal:
-                await self._conversation_store.finish_assistant_message(
-                    assistant_message.id,
-                    "failed",
-                )
+            await finalize("failed")
             raise

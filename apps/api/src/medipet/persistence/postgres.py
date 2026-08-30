@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from medipet.persistence.conversation import (
-    DevelopmentVisit,
+    DevelopmentVisitMatter,
     IdempotencyConflictError,
     MessageRole,
     MessageState,
@@ -70,31 +70,34 @@ class PostgresVisitConversationStore:
         async with self._sessions() as session:
             await self._require_visit(session, visit_matter_id, participant_id)
 
-    async def seed_development_visit(self, visit: DevelopmentVisit) -> None:
+    async def seed_development_visit_matter(
+        self,
+        visit_matter: DevelopmentVisitMatter,
+    ) -> None:
         async with self._sessions.begin() as session:
             await self._seed_record(
                 session,
                 PatientRecord,
-                visit.patient_id,
-                {"display_name": visit.patient_display_name},
+                visit_matter.patient_id,
+                {"display_name": visit_matter.patient_display_name},
             )
             await self._seed_record(
                 session,
                 VisitParticipantRecord,
-                visit.participant_id,
+                visit_matter.participant_id,
                 {
-                    "patient_id": visit.patient_id,
-                    "display_name": visit.participant_display_name,
+                    "patient_id": visit_matter.patient_id,
+                    "display_name": visit_matter.participant_display_name,
                 },
             )
             await self._seed_record(
                 session,
                 VisitMatterRecord,
-                visit.visit_matter_id,
+                visit_matter.visit_matter_id,
                 {
-                    "patient_id": visit.patient_id,
-                    "participant_id": visit.participant_id,
-                    "title": visit.visit_matter_title,
+                    "patient_id": visit_matter.patient_id,
+                    "participant_id": visit_matter.participant_id,
+                    "title": visit_matter.visit_matter_title,
                 },
             )
 

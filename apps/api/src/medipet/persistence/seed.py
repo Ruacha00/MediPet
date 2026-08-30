@@ -3,13 +3,13 @@ from __future__ import annotations
 import asyncio
 import os
 
-from medipet.persistence.conversation import DevelopmentVisit
+from medipet.persistence.conversation import DevelopmentVisitMatter
 from medipet.persistence.postgres import (
     DatabaseConfigurationError,
     PostgresVisitConversationStore,
 )
 
-DEVELOPMENT_VISIT = DevelopmentVisit(
+DEVELOPMENT_VISIT_MATTER = DevelopmentVisitMatter(
     patient_id="patient-demo",
     patient_display_name="演示患者",
     participant_id="participant-demo",
@@ -25,7 +25,7 @@ async def seed() -> None:
         raise DatabaseConfigurationError("缺少 MEDIPET_DATABASE_URL")
     store = PostgresVisitConversationStore.from_url(database_url)
     try:
-        await store.seed_development_visit(DEVELOPMENT_VISIT)
+        await store.seed_development_visit_matter(DEVELOPMENT_VISIT_MATTER)
     finally:
         await store.close()
 

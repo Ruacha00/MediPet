@@ -9,7 +9,7 @@ from alembic import command
 from alembic.config import Config
 from test_conversation_store import exercise_store_contract
 
-from medipet.persistence.conversation import DevelopmentVisit
+from medipet.persistence.conversation import DevelopmentVisitMatter
 from medipet.persistence.postgres import PostgresVisitConversationStore
 
 DATABASE_URL = os.getenv("MEDIPET_TEST_DATABASE_URL")
@@ -37,8 +37,8 @@ async def test_migrations_and_postgres_store_contract_are_repeatable() -> None:
     store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
     suffix = uuid4().hex
 
-    def seed() -> DevelopmentVisit:
-        return DevelopmentVisit(
+    def seed() -> DevelopmentVisitMatter:
+        return DevelopmentVisitMatter(
             patient_id=f"patient-{suffix}",
             patient_display_name="演示患者",
             participant_id=f"participant-{suffix}",
@@ -49,7 +49,7 @@ async def test_migrations_and_postgres_store_contract_are_repeatable() -> None:
 
     try:
         await exercise_store_contract(store, seed)
-        await store.seed_development_visit(seed())
+        await store.seed_development_visit_matter(seed())
     finally:
         await store.close()
 
@@ -59,7 +59,7 @@ async def test_interleaved_turn_completion_preserves_each_message() -> None:
     await upgrade_database()
     store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
     suffix = uuid4().hex
-    visit = DevelopmentVisit(
+    visit = DevelopmentVisitMatter(
         patient_id=f"patient-{suffix}",
         patient_display_name="演示患者",
         participant_id=f"participant-{suffix}",
@@ -68,7 +68,7 @@ async def test_interleaved_turn_completion_preserves_each_message() -> None:
         visit_matter_title="并发咨询",
     )
     try:
-        await store.seed_development_visit(visit)
+        await store.seed_development_visit_matter(visit)
         older = await store.add_assistant_message(
             visit_matter_id=visit.visit_matter_id,
             participant_id=visit.participant_id,
@@ -94,10 +94,10 @@ async def test_interleaved_turn_completion_preserves_each_message() -> None:
 
 
 @pytest.mark.asyncio
-async def test_completed_history_survives_store_recreation() -> None:
+async def test_terminal_history_survives_store_recreation() -> None:
     await upgrade_database()
     suffix = uuid4().hex
-    visit = DevelopmentVisit(
+    visit = DevelopmentVisitMatter(
         patient_id=f"patient-{suffix}",
         patient_display_name="演示患者",
         participant_id=f"participant-{suffix}",
@@ -106,7 +106,7 @@ async def test_completed_history_survives_store_recreation() -> None:
         visit_matter_title="重启恢复",
     )
     first_store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
-    await first_store.seed_development_visit(visit)
+    await first_store.seed_development_visit_matter(visit)
     await first_store.add_participant_message(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,
@@ -121,14 +121,30 @@ async def test_completed_history_survives_store_recreation() -> None:
     await first_store.mark_assistant_streaming(assistant.id)
     await first_store.append_assistant_text(assistant.id, "重启后仍可见")
     await first_store.finish_assistant_message(assistant.id, "completed")
+    failed = await first_store.add_assistant_message(
+        visit_matter_id=visit.visit_matter_id,
+        participant_id=visit.participant_id,
+        turn_id="failed-turn",
+    )
+    await first_store.finish_assistant_message(failed.id, "failed")
+    cancelled = await first_store.add_assistant_message(
+        visit_matter_id=visit.visit_matter_id,
+        participant_id=visit.participant_id,
+        turn_id="cancelled-turn",
+    )
+    await first_store.mark_assistant_streaming(cancelled.id)
+    await first_store.append_assistant_text(cancelled.id, "取消前的半截回答")
+    await first_store.finish_assistant_message(cancelled.id, "cancelled")
     await first_store.close()
 
     restarted_store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
     try:
         messages = await restarted_store.list_messages(visit.visit_matter_id)
-        assert [(message.role, message.content) for message in messages] == [
-            ("user", "重启前消息"),
-            ("assistant", "重启后仍可见"),
+        assert [(message.role, message.state, message.content) for message in messages] == [
+            ("user", "completed", "重启前消息"),
+            ("assistant", "completed", "重启后仍可见"),
+            ("assistant", "failed", ""),
+            ("assistant", "cancelled", "取消前的半截回答"),
         ]
     finally:
         await restarted_store.close()
