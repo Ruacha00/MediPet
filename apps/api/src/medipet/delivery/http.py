@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from medipet.action_postgres import PostgresActionStore
-from medipet.actions import ActionStore, InMemoryActionStore
+from medipet.actions import ActionStore, UnavailableActionStore
 from medipet.agent.capabilities import CapabilityProvider
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
@@ -104,7 +104,7 @@ def create_app(
         if skill_registry is not None
         else None
     )
-    effective_action_store = action_store or InMemoryActionStore()
+    effective_action_store = action_store or UnavailableActionStore()
     static_assistant = (
         MediPetAssistant(
             LangGraphAgentRuntime(

@@ -31,8 +31,15 @@ export async function decideProposal(proposalId: string, decision: ProposalDecis
   );
 
   if (!response.ok) {
-    throw new Error("预约方案处理失败，请稍后重试。 ");
+    throw new Error("操作方案处理失败，请稍后重试。");
   }
 
-  return response.json();
+  const result = await response.json() as {
+    events?: Array<{ kind?: string; data?: { message?: string } }>;
+  };
+  const failure = result.events?.find((event) => event.kind === "failed");
+  if (failure) {
+    throw new Error(failure.data?.message ?? "操作方案处理失败，请稍后重试。");
+  }
+  return result;
 }

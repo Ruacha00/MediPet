@@ -69,12 +69,18 @@ export function ChatShell({
   }
 
   async function handleDecision(proposalId: string, decision: ProposalDecision) {
+    setAgentStatus(null);
     setDecisionStates((current) => ({ ...current, [proposalId]: "working" }));
     try {
       await decideProposal(proposalId, decision);
       setDecisionStates((current) => ({ ...current, [proposalId]: decision }));
-    } catch {
+    } catch (decisionError) {
       setDecisionStates((current) => ({ ...current, [proposalId]: null }));
+      setAgentStatus(
+        decisionError instanceof Error
+          ? decisionError.message
+          : "操作方案处理失败，请稍后重试。",
+      );
     }
   }
 

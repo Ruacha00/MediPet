@@ -33,6 +33,8 @@ export type ActionProposalData = {
   toolName?: string;
   toolVersion?: string;
   arguments?: Record<string, unknown>;
+  profileVersion?: string;
+  visitStage?: string;
   idempotencyKey?: string;
   expiresAt?: string;
   action?: "create" | "cancel";

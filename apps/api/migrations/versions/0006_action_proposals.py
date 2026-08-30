@@ -23,6 +23,8 @@ def upgrade() -> None:
         sa.Column("tool_name", sa.String(128), nullable=False),
         sa.Column("tool_version", sa.String(64), nullable=False),
         sa.Column("arguments", sa.JSON(), nullable=False),
+        sa.Column("profile_version", sa.String(128), nullable=False),
+        sa.Column("visit_stage", sa.String(16), nullable=False),
         sa.Column("status", sa.String(16), nullable=False),
         sa.Column("receipt_id", sa.String(128)),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),

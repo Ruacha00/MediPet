@@ -1,10 +1,10 @@
 # 08: 暂停并确认有副作用的 Tool
 
+Type: implementation
+Status: resolved
+Blocked by: 02, 07
+
 **What to build:** 让任何 write Tool 在执行前生成精确、持久化且可审核的 Action Proposal，并且只有就诊参与者明确确认后才能幂等提交；本阶段用 dummy write Tool 证明完整行为。
-
-**Blocked by:** 02/持久化并恢复就诊事项对话, 07/同步和治理受信任 Tools.
-
-**Status:** resolved
 
 - [x] Tool 契约明确区分 read 和 write，模型或 Skill 不能自行改变影响等级。
 - [x] write Tool 的首次调用只创建 Action Proposal，不执行实际副作用。

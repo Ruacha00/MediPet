@@ -78,7 +78,7 @@ function SlotOptionsCard({ data }: { data: SlotOptionsData }) {
   );
 }
 
-function ActionProposalCard({
+export function ActionProposalCard({
   data,
   decisionState,
   onDecision,
@@ -89,31 +89,31 @@ function ActionProposalCard({
 }) {
   const resolved = decisionState === "confirm" || decisionState === "reject";
   const working = decisionState === "working";
+  const operation = data.toolName ?? data.toolId ?? "受确认保护的操作";
+  const version = data.toolVersion ? ` · v${data.toolVersion}` : "";
+  const argumentsText = JSON.stringify(data.arguments ?? {}, null, 2);
 
   return (
-    <section className="data-card" aria-label="预约确认">
+    <section className="data-card" aria-label="操作确认">
       <p className="card-kicker">Explicit confirmation</p>
-      <h3><Check size={17} aria-hidden="true" /> 请核对预约信息</h3>
-      <div className="proposal-grid">
-        <div><small>患者</small><strong>{data.patient}</strong></div>
-        <div><small>科室</small><strong>{data.department}</strong></div>
-        <div><small>医生</small><strong>{data.doctor}</strong></div>
-        <div><small>时间</small><strong>{data.date} · {data.time}</strong></div>
-      </div>
+      <h3><Check size={17} aria-hidden="true" /> 请核对操作</h3>
+      <p><strong>{operation}{version}</strong></p>
+      <pre>{argumentsText}</pre>
+      {data.expiresAt && <small>确认有效期至 {data.expiresAt}</small>}
       <div className="card-actions">
         <button
           className="card-button primary"
           disabled={working || resolved}
           onClick={() => onDecision(data.proposalId, "confirm")}
         >
-          {decisionState === "confirm" ? "已确认" : working ? "处理中…" : "确认挂号"}
+          {decisionState === "confirm" ? "已确认" : working ? "处理中…" : "确认操作"}
         </button>
         <button
           className="card-button"
           disabled={working || resolved}
           onClick={() => onDecision(data.proposalId, "reject")}
         >
-          {decisionState === "reject" ? "已取消" : "暂不挂号"}
+          {decisionState === "reject" ? "已拒绝" : "拒绝操作"}
         </button>
       </div>
     </section>

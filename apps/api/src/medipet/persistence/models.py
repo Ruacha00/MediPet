@@ -295,6 +295,8 @@ class ActionProposalRecord(Base):
     tool_name: Mapped[str] = mapped_column(String(128))
     tool_version: Mapped[str] = mapped_column(String(64))
     arguments: Mapped[dict[str, object]] = mapped_column(JSON)
+    profile_version: Mapped[str] = mapped_column(String(128))
+    visit_stage: Mapped[str] = mapped_column(String(16))
     status: Mapped[str] = mapped_column(String(16))
     receipt_id: Mapped[str | None] = mapped_column(String(128))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

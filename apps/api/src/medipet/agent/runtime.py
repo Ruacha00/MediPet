@@ -14,7 +14,7 @@ from langgraph.graph import END, START, StateGraph
 from medipet.actions import (
     ActionDecisionError,
     ActionStore,
-    InMemoryActionStore,
+    UnavailableActionStore,
     proposal_expiry,
 )
 from medipet.agent.capabilities import (
@@ -91,7 +91,7 @@ class LangGraphAgentRuntime:
         profile_version: str = "static",
         action_store: ActionStore | None = None,
     ) -> None:
-        self._action_store = action_store or InMemoryActionStore()
+        self._action_store = action_store or UnavailableActionStore()
         self._graph = _build_react_graph(
             model,
             max_steps=max_steps,

@@ -559,6 +559,46 @@ async def test_model_cannot_execute_a_write_tool_without_platform_approval() -> 
 
 
 @pytest.mark.asyncio
+async def test_write_tool_fails_safely_when_durable_action_storage_is_not_configured() -> None:
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写 Tool",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=_empty_result,
+    )
+    model = ScriptedModel(
+        [[ModelChunk(tool_calls=(ModelToolCall("call-write", "dummy_write", {}),))]]
+    )
+    store = InMemoryVisitConversationStore()
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-1",
+            patient_display_name="演示患者",
+            participant_id="participant-1",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-1",
+            visit_matter_title="初次咨询",
+        )
+    )
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(
+            model,
+            capability_provider=StaticCapabilityProvider(CapabilitySnapshot(tools=(tool,))),
+        ),
+        store,
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert events[-1].kind == "failed"
+    assert events[-1].data["message"] == "待确认操作暂时无法创建，请重新发起。"
+
+
+@pytest.mark.asyncio
 async def test_tool_snapshot_is_pinned_for_the_entire_turn() -> None:
     used_versions: list[str] = []
 

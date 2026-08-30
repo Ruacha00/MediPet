@@ -11,6 +11,14 @@ from medipet.agent.capabilities import ToolContext, ToolDefinition
 from medipet.schema import validate_object
 
 ActionProposalStatus = Literal["pending", "confirmed", "rejected", "expired"]
+ActionAuditKind = Literal[
+    "propose",
+    "confirm",
+    "reject",
+    "expire",
+    "commit_failed",
+    "reject_decision",
+]
 
 
 @dataclass(frozen=True)
@@ -24,6 +32,8 @@ class ActionProposal:
     tool_name: str
     tool_version: str
     arguments: dict[str, object]
+    profile_version: str
+    visit_stage: str
     status: ActionProposalStatus
     created_at: datetime
     expires_at: datetime
@@ -38,6 +48,8 @@ class ActionProposal:
             "toolName": self.tool_name,
             "toolVersion": self.tool_version,
             "arguments": self.arguments,
+            "profileVersion": self.profile_version,
+            "visitStage": self.visit_stage,
             "status": self.status,
             "idempotencyKey": self.idempotency_key,
             "expiresAt": self.expires_at.isoformat(),
@@ -58,7 +70,7 @@ class ActionReceipt:
 
 @dataclass(frozen=True)
 class ActionAudit:
-    action: str
+    action: ActionAuditKind
     proposal_id: str
     participant_id: str
     visit_matter_id: str
@@ -133,8 +145,10 @@ class InMemoryActionStore:
                     existing.tool_id != tool.tool_id
                     or existing.tool_version != tool.version
                     or existing.arguments != arguments
+                    or existing.profile_version != context.profile_version
+                    or existing.visit_stage != context.visit_stage
                 ):
-                    raise ActionDecisionError("同一请求不能改变操作参数或 Tool 版本")
+                    raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
                 return existing
             proposal_id = f"proposal-{uuid4().hex}"
             proposal = ActionProposal(
@@ -147,6 +161,8 @@ class InMemoryActionStore:
                 tool_name=tool.name,
                 tool_version=tool.version,
                 arguments=dict(arguments),
+                profile_version=context.profile_version,
+                visit_stage=context.visit_stage,
                 status="pending",
                 created_at=self._now(),
                 expires_at=expires_at,
@@ -174,6 +190,7 @@ class InMemoryActionStore:
                 self._expire(proposal, context.idempotency_key)
                 raise ActionDecisionError("待确认操作已过期")
             if proposal.status == "rejected":
+                self._audit("reject", proposal, context.idempotency_key)
                 return proposal
             rejected = replace(proposal, status="rejected")
             self._proposals[proposal_id] = rejected
@@ -191,6 +208,12 @@ class InMemoryActionStore:
             self._validate_scope(proposal, context)
             if proposal.status == "confirmed":
                 assert proposal.receipt_id is not None
+                self._audit(
+                    "confirm",
+                    proposal,
+                    context.idempotency_key,
+                    receipt_id=proposal.receipt_id,
+                )
                 return proposal, self._receipts[proposal.receipt_id]
             if proposal.status == "rejected":
                 raise ActionDecisionError("待确认操作已被拒绝")
@@ -290,8 +313,15 @@ class InMemoryActionStore:
         if (
             proposal.visit_matter_id != context.visit_matter_id
             or proposal.participant_id != context.participant_id
+            or proposal.profile_version != context.profile_version
+            or proposal.visit_stage != context.visit_stage
         ):
-            raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
+            if (
+                proposal.visit_matter_id != context.visit_matter_id
+                or proposal.participant_id != context.participant_id
+            ):
+                raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
+            raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
 
     def _expire(self, proposal: ActionProposal, decision_key: str) -> None:
         if proposal.status != "expired":
@@ -301,7 +331,7 @@ class InMemoryActionStore:
 
     def _audit(
         self,
-        action: str,
+        action: ActionAuditKind,
         proposal: ActionProposal,
         decision_key: str,
         *,
@@ -322,3 +352,46 @@ class InMemoryActionStore:
 
 def proposal_expiry(*, now: datetime | None = None, minutes: int = 10) -> datetime:
     return (now or datetime.now(UTC)) + timedelta(minutes=minutes)
+
+
+class UnavailableActionStore:
+    """Fail closed when durable Action Proposal persistence is not configured."""
+
+    @staticmethod
+    def _unavailable() -> ActionDecisionError:
+        return ActionDecisionError("Action Proposal 持久化不可用")
+
+    async def create_proposal(
+        self,
+        tool: ToolDefinition,
+        arguments: dict[str, object],
+        context: ToolContext,
+        *,
+        expires_at: datetime,
+    ) -> ActionProposal:
+        del tool, arguments, context, expires_at
+        raise self._unavailable()
+
+    async def get_proposal(self, proposal_id: str) -> ActionProposal:
+        del proposal_id
+        raise self._unavailable()
+
+    async def reject(self, proposal_id: str, context: ToolContext) -> ActionProposal:
+        del proposal_id, context
+        raise self._unavailable()
+
+    async def confirm(
+        self,
+        proposal_id: str,
+        context: ToolContext,
+        tool: ToolDefinition,
+    ) -> tuple[ActionProposal, ActionReceipt]:
+        del proposal_id, context, tool
+        raise self._unavailable()
+
+    async def record_decision_rejection(
+        self,
+        proposal_id: str,
+        context: ToolContext,
+    ) -> None:
+        del proposal_id, context

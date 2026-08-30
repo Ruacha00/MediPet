@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async
 
 from medipet.actions import (
     ActionAudit,
+    ActionAuditKind,
     ActionDecisionError,
     ActionProposal,
     ActionProposalStatus,
@@ -61,6 +62,8 @@ class PostgresActionStore:
                         tool_name=tool.name,
                         tool_version=tool.version,
                         arguments=dict(arguments),
+                        profile_version=context.profile_version,
+                        visit_stage=context.visit_stage,
                         status="pending",
                         created_at=created_at,
                         expires_at=expires_at,
@@ -84,8 +87,10 @@ class PostgresActionStore:
                 record.tool_id != tool.tool_id
                 or record.tool_version != tool.version
                 or record.arguments != arguments
+                or record.profile_version != context.profile_version
+                or record.visit_stage != context.visit_stage
             ):
-                raise ActionDecisionError("同一请求不能改变操作参数或 Tool 版本")
+                raise ActionDecisionError("同一请求不能改变操作参数、Tool 版本或作用域")
             if inserted is not None:
                 self._add_audit(session, "propose", record, context.idempotency_key)
             return self._to_proposal(record)
@@ -116,6 +121,8 @@ class PostgresActionStore:
             elif record.status == "pending":
                 record.status = "rejected"
                 self._add_audit(session, "reject", record, context.idempotency_key)
+            else:
+                self._add_audit(session, "reject", record, context.idempotency_key)
         if failure is not None:
             raise ActionDecisionError(failure)
         return self._to_proposal(record)
@@ -141,6 +148,13 @@ class PostgresActionStore:
                 if receipt_record is None:
                     raise RuntimeError("已确认操作缺少 receipt")
                 receipt = self._to_receipt(receipt_record)
+                self._add_audit(
+                    session,
+                    "confirm",
+                    record,
+                    context.idempotency_key,
+                    receipt_id=receipt_record.id,
+                )
             elif record.status == "rejected":
                 failure = "待确认操作已被拒绝"
             elif record.status == "expired" or datetime.now(UTC) >= record.expires_at:
@@ -226,7 +240,7 @@ class PostgresActionStore:
             ).all()
             return [
                 ActionAudit(
-                    action=record.action,
+                    action=cast(ActionAuditKind, record.action),
                     proposal_id=record.proposal_id,
                     participant_id=record.participant_id,
                     visit_matter_id=record.visit_matter_id,
@@ -271,8 +285,15 @@ class PostgresActionStore:
         if (
             record.visit_matter_id != context.visit_matter_id
             or record.participant_id != context.participant_id
+            or record.profile_version != context.profile_version
+            or record.visit_stage != context.visit_stage
         ):
-            raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
+            if (
+                record.visit_matter_id != context.visit_matter_id
+                or record.participant_id != context.participant_id
+            ):
+                raise ActionDecisionError("该操作不属于当前就诊事项或参与者")
+            raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
 
     @staticmethod
     def _matches_tool(
@@ -294,7 +315,7 @@ class PostgresActionStore:
     @staticmethod
     def _add_audit(
         session,
-        action: str,
+        action: ActionAuditKind,
         proposal: ActionProposalRecord,
         decision_key: str,
         *,
@@ -325,6 +346,8 @@ class PostgresActionStore:
             tool_name=record.tool_name,
             tool_version=record.tool_version,
             arguments=dict(record.arguments),
+            profile_version=record.profile_version,
+            visit_stage=record.visit_stage,
             status=cast(ActionProposalStatus, record.status),
             receipt_id=record.receipt_id,
             created_at=record.created_at,

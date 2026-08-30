@@ -54,8 +54,18 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
     assert receipt == duplicate_receipt
     assert receipt.result["actionKey"] == proposal.idempotency_key
     assert executions == 1
-    assert [item.action for item in await store.list_audits()] == ["propose", "confirm"]
-    assert await store.list_receipts() == [receipt]
+    assert [
+        item.action
+        for item in await store.list_audits()
+        if item.proposal_id == proposal.proposal_id
+    ] == [
+        "propose",
+        "confirm",
+        "confirm",
+    ]
+    assert [
+        item for item in await store.list_receipts() if item.proposal_id == proposal.proposal_id
+    ] == [receipt]
 
 
 @pytest.mark.asyncio
@@ -123,6 +133,46 @@ async def test_same_request_cannot_change_write_parameters() -> None:
 
     with pytest.raises(ActionDecisionError, match="不能改变操作参数"):
         await store.create_proposal(tool, {"value": "B"}, context, expires_at=expires_at)
+
+
+@pytest.mark.asyncio
+async def test_visit_stage_and_profile_changes_invalidate_confirmation() -> None:
+    tool = ToolDefinition(
+        tool_id="test.write",
+        name="dummy_write",
+        version="1",
+        description="测试专用写 Tool",
+        input_schema={"type": "object"},
+        effect="write",
+        approval_required=True,
+        execute=lambda arguments, context: _unused_execute(arguments, context),
+    )
+    store = InMemoryActionStore()
+    proposal = await store.create_proposal(
+        tool,
+        {},
+        ToolContext(
+            "visit-1",
+            "participant-1",
+            "turn-1",
+            profile_version="profile-1",
+            visit_stage="pre_visit",
+        ),
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+
+    with pytest.raises(ActionDecisionError, match="作用域已变化"):
+        await store.confirm(
+            proposal.proposal_id,
+            ToolContext(
+                "visit-1",
+                "participant-1",
+                "decision-1",
+                profile_version="profile-2",
+                visit_stage="in_visit",
+            ),
+            tool,
+        )
 
 
 async def _unused_execute(
