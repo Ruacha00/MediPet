@@ -35,6 +35,7 @@ TOOL_REJECTION = {
 LOOP_FAILURE = "模型重复请求了不可用操作，本次协助已停止。"
 BUDGET_FAILURE = "本次协助已达到步骤上限，请重新发起请求。"
 TOOL_FAILURE = "查询暂时无法完成，请稍后重试。"
+CAPABILITY_FAILURE = "运行时能力暂时不可用，请稍后重试。"
 
 
 @dataclass(frozen=True)
@@ -81,19 +82,26 @@ class LangGraphAgentRuntime:
 
     async def run(self, request: AgentRequest) -> AsyncGenerator[AgentEvent, None]:
         context = replace(request.context, profile_version=self._profile_version)
-        source_capabilities = await self._capability_provider.snapshot(context)
-        capabilities = CapabilitySnapshot(
-            skill_versions=tuple(source_capabilities.skill_versions),
-            tools=tuple(
-                replace(tool, input_schema=deepcopy(tool.input_schema))
-                for tool in source_capabilities.tools
-            ),
-        )
-        available_tool_names = tuple(
-            tool.name
-            for tool in capabilities.tools
-            if tool.enabled and tool.bound and tool.effect == "read" and tool.authorize(context)
-        )
+        try:
+            source_capabilities = await self._capability_provider.snapshot(context)
+            capabilities = CapabilitySnapshot(
+                skill_versions=tuple(source_capabilities.skill_versions),
+                tools=tuple(
+                    replace(tool, input_schema=deepcopy(tool.input_schema))
+                    for tool in source_capabilities.tools
+                ),
+            )
+            available_tool_names = tuple(
+                tool.name
+                for tool in capabilities.tools
+                if tool.enabled
+                and tool.bound
+                and tool.effect == "read"
+                and tool.authorize(context)
+            )
+        except Exception:
+            yield AgentEvent("failed", {"message": CAPABILITY_FAILURE})
+            return
         yield AgentEvent("status", {"label": "正在连接门诊协助模型"})
         try:
             async with aclosing(
@@ -152,8 +160,12 @@ def _build_react_graph(model: ModelPort, *, max_steps: int):
         async for chunk in model.stream(model_request):
             if chunk.text:
                 response_text.append(chunk.text)
-                writer({"kind": "text", "data": {"text": chunk.text}})
+                if not visible_tools:
+                    writer({"kind": "text", "data": {"text": chunk.text}})
             calls.extend(chunk.tool_calls)
+        if visible_tools and not calls:
+            for text in response_text:
+                writer({"kind": "text", "data": {"text": text}})
         assistant_message = ModelMessage(
             role="assistant",
             content="".join(response_text),

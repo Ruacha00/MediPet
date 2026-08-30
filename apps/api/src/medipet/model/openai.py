@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import AsyncIterator
 from typing import Any, cast
 
@@ -71,18 +72,7 @@ class ChatOpenAIModelAdapter:
                 if text:
                     yield ModelChunk(text=text)
             if aggregate is not None:
-                tool_calls = tuple(
-                    ModelToolCall(
-                        id=str(call.get("id") or ""),
-                        name=str(call["name"]),
-                        arguments=(
-                            call["args"]
-                            if isinstance(call.get("args"), dict)
-                            else {"_invalid_arguments": call.get("args")}
-                        ),
-                    )
-                    for call in aggregate.tool_calls
-                )
+                tool_calls = _model_tool_calls(aggregate)
                 if tool_calls:
                     yield ModelChunk(tool_calls=tool_calls)
         except Exception:
@@ -115,3 +105,41 @@ def _text_content(content: str | list[str | dict[str, Any]]) -> str:
         elif block.get("type") in {"text", "output_text"} and isinstance(block.get("text"), str):
             parts.append(block["text"])
     return "".join(parts)
+
+
+def _model_tool_calls(message: AIMessageChunk) -> tuple[ModelToolCall, ...]:
+    if message.tool_call_chunks:
+        calls: list[ModelToolCall] = []
+        for call in message.tool_call_chunks:
+            raw_arguments = call.get("args") or ""
+            try:
+                parsed_arguments = json.loads(raw_arguments) if raw_arguments else {}
+            except (json.JSONDecodeError, TypeError):
+                parsed_arguments = None
+            arguments: dict[str, object]
+            if isinstance(parsed_arguments, dict) and all(
+                isinstance(key, str) for key in parsed_arguments
+            ):
+                arguments = dict(parsed_arguments)
+            else:
+                arguments = {"_invalid_arguments": raw_arguments}
+            calls.append(
+                ModelToolCall(
+                    id=str(call.get("id") or ""),
+                    name=str(call.get("name") or ""),
+                    arguments=arguments,
+                )
+            )
+        return tuple(calls)
+    return tuple(
+        ModelToolCall(
+            id=str(call.get("id") or ""),
+            name=str(call["name"]),
+            arguments=(
+                call["args"]
+                if isinstance(call.get("args"), dict)
+                else {"_invalid_arguments": call.get("args")}
+            ),
+        )
+        for call in message.tool_calls
+    )

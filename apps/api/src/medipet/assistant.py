@@ -124,7 +124,7 @@ class MediPetAssistant:
                 context=ToolContext(
                     visit_matter_id=command.visit_matter_id,
                     participant_id=command.participant_id,
-                    turn_id=command.idempotency_key,
+                    idempotency_key=command.idempotency_key,
                 ),
             )
             async with aclosing(self._agent_runtime.run(request)) as runtime_events:

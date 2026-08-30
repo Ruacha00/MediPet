@@ -250,3 +250,68 @@ async def test_chat_openai_adapter_streams_tool_calls_and_observations() -> None
         ]
 
     assert [chunk.text for chunk in second] == ["最终回答"]
+
+
+@pytest.mark.asyncio
+async def test_chat_openai_adapter_preserves_malformed_tool_calls_for_runtime_rejection() -> None:
+    async def handler(request: httpx.Request) -> httpx.Response:
+        del request
+        chunk = {
+            "id": "chunk",
+            "object": "chat.completion.chunk",
+            "created": 1,
+            "model": "test-model",
+            "choices": [
+                {
+                    "index": 0,
+                    "delta": {
+                        "tool_calls": [
+                            {
+                                "index": 0,
+                                "id": "call-bad",
+                                "type": "function",
+                                "function": {
+                                    "name": "dummy_read",
+                                    "arguments": '{"query":',
+                                },
+                            }
+                        ]
+                    },
+                }
+            ],
+        }
+        event = f"data: {json.dumps(chunk)}\n\ndata: [DONE]\n\n"
+        return httpx.Response(200, text=event)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        adapter = ChatOpenAIModelAdapter(
+            ModelSettings(
+                base_url="https://provider.example/openai/v1",
+                api_key="test-secret",
+                model="test-model",
+            ),
+            http_async_client=client,
+        )
+        chunks = [
+            chunk
+            async for chunk in adapter.stream(
+                ModelRequest(
+                    messages=(ModelMessage(role="user", content="query"),),
+                    tools=(
+                        ModelTool(
+                            name="dummy_read",
+                            description="test-only read",
+                            input_schema={"type": "object"},
+                        ),
+                    ),
+                )
+            )
+        ]
+
+    assert chunks[0].tool_calls == (
+        ModelToolCall(
+            id="call-bad",
+            name="dummy_read",
+            arguments={"_invalid_arguments": '{"query":'},
+        ),
+    )

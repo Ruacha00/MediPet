@@ -329,3 +329,62 @@ async def test_model_call_budget_terminates_a_tool_loop() -> None:
     assert len(model.requests) == 1
     persisted = await store.list_messages("visit-1")
     assert persisted[-1].state == "failed"
+
+
+@pytest.mark.asyncio
+async def test_tool_action_preamble_is_not_exposed_or_persisted() -> None:
+    async def execute(arguments: dict[str, object], context: ToolContext) -> dict[str, object]:
+        del arguments, context
+        return {"value": "observation"}
+
+    tool = ToolDefinition(
+        name="dummy_read",
+        version="1",
+        description="测试安全输出",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="read",
+        execute=execute,
+    )
+    model = ScriptedModel(
+        [
+            [
+                ModelChunk(text="Thought: call private tool"),
+                ModelChunk(tool_calls=(ModelToolCall("call-1", "dummy_read", {}),)),
+            ],
+            [ModelChunk(text="参与者可见的最终回答")],
+        ]
+    )
+    assistant, store = await _assistant(model, CapabilitySnapshot(tools=(tool,)))
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert [event.data["text"] for event in events if event.kind == "text"] == [
+        "参与者可见的最终回答"
+    ]
+    assert "Thought" not in str([event.data for event in events])
+    persisted = await store.list_messages("visit-1")
+    assert persisted[-1].content == "参与者可见的最终回答"
+
+
+class FailingCapabilityProvider:
+    async def snapshot(self, context: ToolContext) -> CapabilitySnapshot:
+        del context
+        raise RuntimeError("private capability diagnostic")
+
+
+@pytest.mark.asyncio
+async def test_capability_snapshot_failure_becomes_a_safe_terminal_event() -> None:
+    model = ScriptedModel([[ModelChunk(text="not called")]])
+    assistant, store = await _assistant(
+        model,
+        capability_provider=FailingCapabilityProvider(),
+    )
+
+    events = [event async for event in assistant.handle_turn(_turn())]
+
+    assert [event.kind for event in events] == ["failed"]
+    assert events[-1].data["message"] == "运行时能力暂时不可用，请稍后重试。"
+    assert "private" not in str(events[-1].data)
+    assert model.requests == []
+    persisted = await store.list_messages("visit-1")
+    assert persisted[-1].state == "failed"

@@ -9,7 +9,7 @@ from typing import Literal, Protocol
 class ToolContext:
     visit_matter_id: str = ""
     participant_id: str = ""
-    turn_id: str = ""
+    idempotency_key: str = ""
     profile_version: str = "static"
 
 
