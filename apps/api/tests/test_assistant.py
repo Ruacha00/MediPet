@@ -101,6 +101,21 @@ async def test_runtime_maps_model_failure_to_a_safe_event() -> None:
 
 
 @pytest.mark.asyncio
+async def test_one_configured_agent_step_allows_one_model_call() -> None:
+    runtime = LangGraphAgentRuntime(DeterministicModel(["一步完成"]), max_steps=1)
+
+    events = [
+        event
+        async for event in runtime.run(
+            AgentRequest(messages=(ModelMessage(role="user", content="你好"),))
+        )
+    ]
+
+    assert [event.kind for event in events] == ["status", "text"]
+    assert events[-1].data == {"text": "一步完成"}
+
+
+@pytest.mark.asyncio
 async def test_streams_model_text_with_outpatient_boundaries() -> None:
     model = DeterministicModel(["可以先", "描述主要不适。"])
     store = await seeded_store()

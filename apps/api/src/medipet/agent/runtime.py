@@ -45,7 +45,7 @@ class LangGraphAgentRuntime:
                     AsyncGenerator[dict[str, Any], None],
                     self._graph.astream(
                         {"messages": request.messages, "completed": False},
-                        config={"recursion_limit": self._max_steps},
+                        config={"recursion_limit": self._max_steps + 1},
                         stream_mode="custom",
                     ),
                 )

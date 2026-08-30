@@ -90,6 +90,15 @@ def test_invalid_reloaded_config_fails_instead_of_reusing_last_valid_snapshot(tm
     assert config.snapshot().settings.model.temperature == 0.4
 
 
+def test_invalid_env_file_encoding_is_a_configuration_error(tmp_path) -> None:
+    env_file = tmp_path / ".env"
+    env_file.write_bytes(b"MEDIPET_LLM_MODEL=invalid-\xff")
+    config = DevelopmentRuntimeConfig(env_file, process_environment={})
+
+    with pytest.raises(ModelConfigurationError):
+        config.snapshot()
+
+
 def test_config_change_log_contains_only_fingerprint_sources_and_field_names(
     tmp_path,
     caplog: pytest.LogCaptureFixture,
@@ -130,8 +139,8 @@ def test_non_hot_fields_do_not_change_the_runtime_snapshot(tmp_path) -> None:
 
     env_file.write_text(
         _env_text()
-        + "MEDIPET_DATABASE_URL=postgresql://second\n"
-        + "MEDIPET_MANAGEMENT_TOKEN=changed\n"
+        + 'MEDIPET_DATABASE_URL="unterminated\n'
+        + 'MEDIPET_MANAGEMENT_TOKEN="unterminated\n'
         + "MEDIPET_HOSPITAL_ADAPTER=changed\n"
         + "MEDIPET_ENVIRONMENT=test\n",
         encoding="utf-8",

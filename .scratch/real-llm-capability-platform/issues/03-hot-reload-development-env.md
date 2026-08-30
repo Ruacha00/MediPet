@@ -2,7 +2,7 @@
 
 **What to build:** 让开发者修改本地 .env 中允许的模型运行参数后，无需重启 API 即可在下一个 turn 验证新配置，同时保证当前 turn 的行为稳定且错误配置不会被静默忽略。
 
-**Blocked by:** 01/接通真实模型流式对话.
+Blocked by: 01
 
 **Status:** resolved
 

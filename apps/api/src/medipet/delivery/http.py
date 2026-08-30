@@ -77,10 +77,13 @@ def create_app(
         else None
     )
 
-    def runtime_snapshot() -> RuntimeConfigSnapshot | None:
-        if runtime_config is None:
-            return None
-        return runtime_config.snapshot()
+    def runtime_snapshot_or_unavailable() -> RuntimeConfigSnapshot | None:
+        try:
+            if runtime_config is None:
+                return None
+            return runtime_config.snapshot()
+        except ModelConfigurationError as error:
+            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
 
     def assistant_for_new_turn(
         snapshot: RuntimeConfigSnapshot | None,
@@ -106,10 +109,7 @@ def create_app(
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
-        try:
-            snapshot = runtime_snapshot()
-        except ModelConfigurationError as error:
-            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        snapshot = runtime_snapshot_or_unavailable()
         if model is None and snapshot is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
         if conversation_store is None:
@@ -125,10 +125,7 @@ def create_app(
 
     @app.post("/v1/chat/turns")
     async def chat_turn(request: ChatTurnRequest) -> StreamingResponse:
-        try:
-            snapshot = runtime_snapshot()
-        except ModelConfigurationError as error:
-            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        snapshot = runtime_snapshot_or_unavailable()
         if model is None and snapshot is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
         assistant = assistant_for_new_turn(snapshot)
@@ -207,10 +204,7 @@ def create_app(
         proposal_id: str,
         request: ActionDecisionRequest,
     ) -> ActionDecisionResponse:
-        try:
-            snapshot = runtime_snapshot()
-        except ModelConfigurationError as error:
-            raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE) from error
+        snapshot = runtime_snapshot_or_unavailable()
         assistant = assistant_for_new_turn(snapshot)
         if assistant is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)

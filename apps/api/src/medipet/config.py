@@ -248,7 +248,7 @@ def _effective_runtime_environment(
 def _read_env_file(path: Path) -> dict[str, str]:
     try:
         contents = path.read_text(encoding="utf-8-sig") if path.exists() else ""
-    except OSError:
+    except (OSError, UnicodeError):
         raise ModelConfigurationError("无法读取开发环境配置文件") from None
 
     environment: dict[str, str] = {}
@@ -259,9 +259,13 @@ def _read_env_file(path: Path) -> dict[str, str]:
         if stripped.startswith("export "):
             stripped = stripped.removeprefix("export ").lstrip()
         if "=" not in stripped:
-            raise ModelConfigurationError(f"开发环境配置文件第 {line_number} 行格式无效")
+            if stripped in HOT_RELOAD_ENV_DEFAULTS:
+                raise ModelConfigurationError(f"开发环境配置文件第 {line_number} 行格式无效")
+            continue
         name, raw_value = stripped.split("=", 1)
         name = name.strip()
+        if name not in HOT_RELOAD_ENV_DEFAULTS:
+            continue
         if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
             raise ModelConfigurationError(f"开发环境配置文件第 {line_number} 行格式无效")
         environment[name] = _parse_env_value(raw_value, line_number=line_number)
