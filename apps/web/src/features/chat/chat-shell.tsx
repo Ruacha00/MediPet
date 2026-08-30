@@ -114,6 +114,9 @@ export function ChatShell({
         </header>
 
         <div className="thread" aria-live="polite">
+          {restoredHistory.failed && (
+            <div className="data-card urgent">历史对话暂时无法恢复，请稍后刷新重试。</div>
+          )}
           {messages.length === 0 ? (
             <section className="welcome">
               <div className="welcome-orbit"><Bot size={34} aria-hidden="true" /></div>
@@ -164,9 +167,6 @@ export function ChatShell({
                 );
               })}
               {agentStatus && <div className="status-line">{agentStatus}</div>}
-              {restoredHistory.failed && (
-                <div className="data-card urgent">历史对话暂时无法恢复，请稍后刷新重试。</div>
-              )}
               {error && <div className="data-card urgent">连接暂时中断，请检查后端服务后重试。</div>}
               <div ref={threadEndRef} />
             </div>
