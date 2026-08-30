@@ -10,6 +10,7 @@ from medipet.agent.capabilities import (
     ToolContext,
     ToolDefinition,
     ToolExecutor,
+    VisitStage,
     _allow,
 )
 
@@ -28,7 +29,7 @@ class TrustedTool:
     approval_required: bool
     execute: ToolExecutor
     authorize: ToolAuthorizer = _allow
-    allowed_stages: tuple[str, ...] = ("pre_visit", "in_visit")
+    allowed_stages: tuple[VisitStage, ...] = ("pre_visit", "in_visit")
 
     def contract(self) -> dict[str, object]:
         return {
@@ -40,11 +41,20 @@ class TrustedTool:
             "output_schema": self.output_schema,
             "effect": self.effect,
             "allowed_stages": list(self.allowed_stages),
+            "provider_approval_required": self.approval_required,
         }
 
 
 class ToolProvider(Protocol):
     async def tools(self) -> tuple[TrustedTool, ...]: ...
+
+
+class StaticToolProvider:
+    def __init__(self, tools: tuple[TrustedTool, ...] = ()) -> None:
+        self._tools = tools
+
+    async def tools(self) -> tuple[TrustedTool, ...]:
+        return self._tools
 
 
 @dataclass(frozen=True)
@@ -95,10 +105,16 @@ class ToolRegistry(Protocol):
         self, skill_id: str, skill_version: int, tool_id: str, tool_version: str, *, actor: str
     ) -> dict[str, object]: ...
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None: ...
+
+    async def freeze_bindings(self, skill_id: str, skill_version: int) -> None: ...
     async def runtime_tools(
         self, skills: tuple[SkillDefinition, ...], context: ToolContext
     ) -> tuple[ToolDefinition, ...]: ...
     async def list_audits(self) -> list[ToolAudit]: ...
+
+    async def record_unknown_rejection(
+        self, tool_name: str, context: ToolContext
+    ) -> None: ...
 
 
 class InMemoryToolRegistry:
@@ -106,6 +122,7 @@ class InMemoryToolRegistry:
         self._versions: dict[str, list[ToolVersion]] = {}
         self._audits: list[ToolAudit] = []
         self._bindings: dict[tuple[str, int], list[tuple[str, str]]] = {}
+        self._frozen_bindings: set[tuple[str, int]] = set()
 
     async def synchronize(self, tools: tuple[TrustedTool, ...], *, actor: str) -> None:
         supplied: set[tuple[str, str]] = set()
@@ -209,6 +226,8 @@ class InMemoryToolRegistry:
     ) -> dict[str, object]:
         selected = await self.resolve(tool_id, tool_version)
         key = (skill_id, skill_version)
+        if key in self._frozen_bindings:
+            raise ToolRegistryError("Published Skill Tool bindings are immutable")
         binding = (tool_id, tool_version)
         bindings = self._bindings.setdefault(key, [])
         if binding not in bindings:
@@ -231,6 +250,9 @@ class InMemoryToolRegistry:
                 raise ToolRegistryError(
                     "tool-assisted Skill binding must reference an enabled compatible Tool version"
                 )
+
+    async def freeze_bindings(self, skill_id: str, skill_version: int) -> None:
+        self._frozen_bindings.add((skill_id, skill_version))
 
     async def runtime_tools(
         self, skills: tuple[SkillDefinition, ...], context: ToolContext
@@ -278,14 +300,14 @@ class InMemoryToolRegistry:
                     return (
                         current.enabled
                         and current.available
-                        and validation_context.diagnosis_stage in pinned.allowed_stages
+                        and validation_context.visit_stage in pinned.allowed_stages
                         and pinned.authorize(validation_context)
                     )
 
                 authorized = (
                     selected.enabled
                     and selected.available
-                    and context.diagnosis_stage in tool.allowed_stages
+                    and context.visit_stage in tool.allowed_stages
                     and tool.authorize(context)
                 )
                 definitions.append(
@@ -318,6 +340,20 @@ class InMemoryToolRegistry:
                 created_at=datetime.now(UTC),
                 tool_id=tool_id,
                 version=version,
+                visit_matter_id=context.visit_matter_id,
+                turn_id=context.idempotency_key,
+            )
+        )
+
+    async def record_unknown_rejection(
+        self, tool_name: str, context: ToolContext
+    ) -> None:
+        self._audits.append(
+            ToolAudit(
+                action="reject_invoke",
+                actor="runtime",
+                created_at=datetime.now(UTC),
+                tool_id=tool_name,
                 visit_matter_id=context.visit_matter_id,
                 turn_id=context.idempotency_key,
             )

@@ -25,4 +25,9 @@ class RegistryCapabilityProvider:
             skill_versions=tuple(f"{skill.slug}@{skill.version}" for skill in skills),
             skills=skills,
             tools=tools,
+            record_unknown_tool_rejection=(
+                self._tool_registry.record_unknown_rejection
+                if self._tool_registry is not None
+                else None
+            ),
         )

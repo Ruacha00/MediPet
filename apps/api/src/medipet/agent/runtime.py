@@ -137,6 +137,9 @@ class LangGraphAgentRuntime:
                     )
                     for tool in (*source_capabilities.tools, *platform_tools)
                 ),
+                record_unknown_tool_rejection=(
+                    source_capabilities.record_unknown_tool_rejection
+                ),
             )
             available_tool_names = tuple(
                 tool.name
@@ -246,6 +249,13 @@ def _build_react_graph(model: ModelPort, *, max_steps: int):
             if rejection is not None:
                 if tool is not None and tool.record_rejection is not None:
                     await tool.record_rejection(state["context"])
+                elif (
+                    tool is None
+                    and state["capabilities"].record_unknown_tool_rejection is not None
+                ):
+                    await state["capabilities"].record_unknown_tool_rejection(
+                        call.name, state["context"]
+                    )
                 signature = _call_signature(call)
                 if correction_used or signature in invalid_signatures:
                     writer({"kind": "failed", "data": {"message": LOOP_FAILURE}})

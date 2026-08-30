@@ -5,6 +5,11 @@ import secrets
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict
 
+from medipet.skills.registry import (
+    SkillNotFoundError,
+    SkillRegistry,
+    SkillRegistryError,
+)
 from medipet.tools.registry import (
     ToolNotFoundError,
     ToolRegistry,
@@ -26,7 +31,11 @@ class BindToolRequest(BaseModel):
     tool_version: str
 
 
-def tool_management_router(registry: ToolRegistry, token: str | None) -> APIRouter:
+def tool_management_router(
+    registry: ToolRegistry,
+    token: str | None,
+    skill_registry: SkillRegistry | None = None,
+) -> APIRouter:
     router = APIRouter(prefix="/v1/admin")
 
     def require_management_token(request: Request) -> None:
@@ -74,6 +83,9 @@ def tool_management_router(registry: ToolRegistry, token: str | None) -> APIRout
         skill_id: str, skill_version: int, request: BindToolRequest
     ) -> dict[str, object]:
         try:
+            if skill_registry is None:
+                raise ToolRegistryError("Skill Registry is unavailable")
+            await skill_registry.assert_tool_bindings_mutable(skill_id, skill_version)
             return await registry.bind(
                 skill_id,
                 skill_version,
@@ -81,7 +93,9 @@ def tool_management_router(registry: ToolRegistry, token: str | None) -> APIRout
                 request.tool_version,
                 actor="development-admin",
             )
-        except ToolNotFoundError as error:
+        except (ToolNotFoundError, SkillNotFoundError) as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
+        except (ToolRegistryError, SkillRegistryError) as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
 
     return router

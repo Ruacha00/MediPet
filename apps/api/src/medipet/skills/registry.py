@@ -130,6 +130,8 @@ class SkillRegistry(Protocol):
 
     async def published_skills(self, context: ToolContext) -> tuple[SkillDefinition, ...]: ...
 
+    async def assert_tool_bindings_mutable(self, skill_id: str, version: int) -> None: ...
+
 
 class InMemorySkillRegistry:
     def __init__(self, *, tool_registry: ToolRegistry | None = None) -> None:
@@ -270,6 +272,8 @@ class InMemorySkillRegistry:
                 self._audit("reject_publish", current, actor)
                 raise SkillTransitionError(str(error)) from error
         target_status, active = transition_target(current.status, action)
+        if action == "publish" and self._tool_registry is not None:
+            await self._tool_registry.freeze_bindings(skill_id, version)
         if action in {"publish", "activate"}:
             self._deactivate_other_versions(versions, version, actor)
         updated = replace(current, status=target_status, active=active)
@@ -368,6 +372,14 @@ class InMemorySkillRegistry:
                 )
             )
         return tuple(definitions)
+
+    async def assert_tool_bindings_mutable(self, skill_id: str, version: int) -> None:
+        versions = self._require_skill(skill_id)
+        selected = next((item for item in versions if item.version == version), None)
+        if selected is None:
+            raise SkillNotFoundError("Skill version does not exist")
+        if selected.status in {"published", "retired"}:
+            raise SkillTransitionError("Published Skill Tool bindings are immutable")
 
     def _require_skill(self, skill_id: str) -> list[SkillVersion]:
         try:

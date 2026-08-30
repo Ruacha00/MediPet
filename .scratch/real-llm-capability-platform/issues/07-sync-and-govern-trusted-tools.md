@@ -1,10 +1,10 @@
 # 07: 同步和治理受信任 Tools
 
+Type: implementation
+Status: resolved
+Blocked by: 04, 05
+
 **What to build:** 让部署代码提供的受信任 ToolProvider 把版本化 Tool 契约同步到管理平台，使管理员能够查看、启停和绑定，而不能通过后台上传代码或任意 URL 创建执行能力。
-
-**Blocked by:** 04/建立零业务能力的完整 ReAct Runtime, 05/管理版本化 instruction-only Skills.
-
-**Status:** resolved
 
 ## Answer
 

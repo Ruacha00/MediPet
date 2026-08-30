@@ -45,7 +45,7 @@ from medipet.skills.postgres import PostgresSkillRegistry
 from medipet.skills.registry import SkillRegistry
 from medipet.tools.http import tool_management_router
 from medipet.tools.postgres import PostgresToolRegistry
-from medipet.tools.registry import ToolProvider, ToolRegistry
+from medipet.tools.registry import StaticToolProvider, ToolProvider, ToolRegistry
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
 DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
@@ -142,7 +142,9 @@ def create_app(
     if environment.strip().lower() != "production" and skill_registry is not None:
         app.include_router(management_router(skill_registry, management_token))
     if environment.strip().lower() != "production" and tool_registry is not None:
-        app.include_router(tool_management_router(tool_registry, management_token))
+        app.include_router(
+            tool_management_router(tool_registry, management_token, skill_registry)
+        )
 
     @app.get("/ready")
     async def ready() -> dict[str, str]:
@@ -297,6 +299,7 @@ app = create_app(
     skill_registry=_skill_registry_from_environment(),
     close_skill_registry=True,
     tool_registry=_tool_registry,
+    tool_provider=StaticToolProvider(),
     close_tool_registry=True,
     management_token=os.getenv("MEDIPET_MANAGEMENT_TOKEN"),
     environment=os.getenv("MEDIPET_ENVIRONMENT", "development"),

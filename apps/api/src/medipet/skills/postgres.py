@@ -288,6 +288,8 @@ class PostgresSkillRegistry:
                 return_error = None
             if return_error is None:
                 status, active = transition_target(record.status, action)
+                if action == "publish" and self._tool_registry is not None:
+                    await self._tool_registry.freeze_bindings(skill_id, version)
                 if active:
                     for previous in records:
                         if previous.version != version and previous.active:
@@ -452,7 +454,21 @@ class PostgresSkillRegistry:
                         turn_id=context.idempotency_key or None,
                     )
                 )
-        return tuple(definitions)
+            return tuple(definitions)
+
+    async def assert_tool_bindings_mutable(self, skill_id: str, version: int) -> None:
+        async with self._sessions() as session:
+            await self._require_skill(session, skill_id)
+            record = await session.scalar(
+                select(SkillVersionRecord).where(
+                    SkillVersionRecord.skill_id == skill_id,
+                    SkillVersionRecord.version == version,
+                )
+            )
+        if record is None:
+            raise SkillNotFoundError("Skill version does not exist")
+        if record.status in {"published", "retired"}:
+            raise SkillTransitionError("Published Skill Tool bindings are immutable")
 
     async def _load_instructions(self, skill_id: str, version: int) -> str:
         async with self._sessions() as session:

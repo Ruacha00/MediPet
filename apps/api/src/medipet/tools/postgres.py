@@ -7,8 +7,14 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 
-from medipet.agent.capabilities import SkillDefinition, ToolContext, ToolDefinition
+from medipet.agent.capabilities import (
+    SkillDefinition,
+    ToolContext,
+    ToolDefinition,
+    VisitStage,
+)
 from medipet.persistence.models import (
+    SkillVersionRecord,
     ToolAuditRecord,
     ToolBindingRecord,
     ToolRecord,
@@ -26,6 +32,13 @@ from medipet.tools.registry import (
 )
 
 
+class _SyncRejected(Exception):
+    def __init__(self, message: str, tool_id: str, version: str) -> None:
+        super().__init__(message)
+        self.tool_id = tool_id
+        self.version = version
+
+
 class PostgresToolRegistry:
     def __init__(self, engine: AsyncEngine) -> None:
         self._engine = engine
@@ -41,54 +54,65 @@ class PostgresToolRegistry:
 
     async def synchronize(self, tools: tuple[TrustedTool, ...], *, actor: str) -> None:
         supplied: set[tuple[str, str]] = set()
-        async with self._sessions.begin() as session:
-            existing = (await session.scalars(select(ToolVersionRecord))).all()
-            by_key = {(item.tool_id, item.version): item for item in existing}
-            for tool in tools:
-                _validate_trusted_tool(tool)
-                key = (tool.tool_id, tool.version)
-                if key in supplied:
-                    self._add_audit(session, "reject_sync", actor, *key)
-                    raise ToolRegistryError("ToolProvider returned duplicate Tool contracts")
-                supplied.add(key)
-                record = by_key.get(key)
-                if record is not None:
-                    if self._contract(record) != tool.contract():
-                        self._add_audit(session, "reject_sync", actor, *key)
-                        raise ToolRegistryError(
-                            "Tool contract changed under an existing version; deploy a new version"
+        try:
+            async with self._sessions.begin() as session:
+                existing = (await session.scalars(select(ToolVersionRecord))).all()
+                by_key = {(item.tool_id, item.version): item for item in existing}
+                for tool in tools:
+                    _validate_trusted_tool(tool)
+                    key = (tool.tool_id, tool.version)
+                    if key in supplied:
+                        raise _SyncRejected(
+                            "ToolProvider returned duplicate Tool contracts", *key
                         )
-                    record.available = True
-                    self._implementations[key] = tool
-                    continue
-                if not await session.get(ToolRecord, tool.tool_id):
-                    session.add(ToolRecord(id=tool.tool_id))
-                    await session.flush()
-                has_versions = any(item.tool_id == tool.tool_id for item in existing)
-                session.add(
-                    ToolVersionRecord(
-                        id=f"tool-version-{uuid4().hex}",
-                        tool_id=tool.tool_id,
-                        version=tool.version,
-                        name=tool.name,
-                        description=tool.description,
-                        input_schema=tool.input_schema,
-                        output_schema=tool.output_schema,
-                        effect=tool.effect,
-                        allowed_stages=list(tool.allowed_stages),
-                        enabled=False,
-                        available=True,
-                        approval_required=tool.approval_required,
+                    supplied.add(key)
+                    record = by_key.get(key)
+                    if record is not None:
+                        if self._contract(record) != tool.contract():
+                            raise _SyncRejected(
+                                "Tool contract changed under an existing version; "
+                                "deploy a new version",
+                                *key,
+                            )
+                        record.available = True
+                        self._implementations[key] = tool
+                        continue
+                    if not await session.get(ToolRecord, tool.tool_id):
+                        session.add(ToolRecord(id=tool.tool_id))
+                        await session.flush()
+                    has_versions = any(item.tool_id == tool.tool_id for item in existing)
+                    session.add(
+                        ToolVersionRecord(
+                            id=f"tool-version-{uuid4().hex}",
+                            tool_id=tool.tool_id,
+                            version=tool.version,
+                            name=tool.name,
+                            description=tool.description,
+                            input_schema=tool.input_schema,
+                            output_schema=tool.output_schema,
+                            effect=tool.effect,
+                            allowed_stages=list(tool.allowed_stages),
+                            enabled=False,
+                            available=True,
+                            approval_required=tool.approval_required,
+                            provider_approval_required=tool.approval_required,
+                        )
                     )
-                )
-                self._implementations[key] = tool
-                self._add_audit(session, "version" if has_versions else "sync", actor, *key)
-            for record in existing:
-                key = (record.tool_id, record.version)
-                if record.available and key not in supplied:
-                    record.available = False
-                    self._implementations.pop(key, None)
-                    self._add_audit(session, "missing", actor, *key)
+                    self._implementations[key] = tool
+                    self._add_audit(
+                        session, "version" if has_versions else "sync", actor, *key
+                    )
+                for record in existing:
+                    key = (record.tool_id, record.version)
+                    if record.available and key not in supplied:
+                        record.available = False
+                        self._implementations.pop(key, None)
+                        self._add_audit(session, "missing", actor, *key)
+        except _SyncRejected as error:
+            await self._record_audit(
+                "reject_sync", actor, error.tool_id, error.version
+            )
+            raise ToolRegistryError(str(error)) from error
 
     async def list_tools(self) -> list[dict[str, object]]:
         async with self._sessions() as session:
@@ -107,52 +131,75 @@ class PostgresToolRegistry:
     async def configure(
         self, tool_id: str, version: str, *, enabled: bool, approval_required: bool, actor: str
     ) -> ToolVersion:
+        rejection: tuple[str, str] | None = None
         async with self._sessions.begin() as session:
             record = await self._require(session, tool_id, version)
             if record.effect == "write" and not approval_required:
-                self._add_audit(session, "reject_configure", actor, tool_id, version)
-                raise ToolRegistryError("Write Tool approval cannot be disabled")
-            if enabled and not record.available:
-                self._add_audit(session, "reject_enable", actor, tool_id, version)
-                raise ToolRegistryError("Missing Tool implementation cannot be enabled")
-            approval_changed = record.approval_required != approval_required
-            record.enabled = enabled
-            record.approval_required = approval_required
-            self._add_audit(session, "enable" if enabled else "disable", actor, tool_id, version)
-            if approval_changed:
-                self._add_audit(session, "configure_approval", actor, tool_id, version)
+                rejection = ("reject_configure", "Write Tool approval cannot be disabled")
+            elif enabled and not record.available:
+                rejection = ("reject_enable", "Missing Tool implementation cannot be enabled")
+            else:
+                approval_changed = record.approval_required != approval_required
+                record.enabled = enabled
+                record.approval_required = approval_required
+                self._add_audit(
+                    session, "enable" if enabled else "disable", actor, tool_id, version
+                )
+                if approval_changed:
+                    self._add_audit(session, "configure_approval", actor, tool_id, version)
+        if rejection is not None:
+            await self._record_audit(rejection[0], actor, tool_id, version)
+            raise ToolRegistryError(rejection[1])
         return self._to_version(record)
 
     async def bind(
         self, skill_id: str, skill_version: int, tool_id: str, tool_version: str, *, actor: str
     ) -> dict[str, object]:
+        rejection: str | None = None
         async with self._sessions.begin() as session:
-            await self._require(session, tool_id, tool_version)
-            existing = await session.scalar(
-                select(ToolBindingRecord).where(
-                    ToolBindingRecord.skill_id == skill_id,
-                    ToolBindingRecord.skill_version == skill_version,
-                    ToolBindingRecord.tool_id == tool_id,
-                    ToolBindingRecord.tool_version == tool_version,
+            skill = await session.scalar(
+                select(SkillVersionRecord).where(
+                    SkillVersionRecord.skill_id == skill_id,
+                    SkillVersionRecord.version == skill_version,
                 )
             )
-            if existing is None:
-                session.add(
-                    ToolBindingRecord(
-                        id=f"tool-binding-{uuid4().hex}",
-                        skill_id=skill_id,
-                        skill_version=skill_version,
-                        tool_id=tool_id,
-                        tool_version=tool_version,
+            if skill is None:
+                rejection = "Skill version does not exist"
+            elif skill.status in {"published", "retired"}:
+                rejection = "Published Skill Tool bindings are immutable"
+            if rejection is None:
+                await self._require(session, tool_id, tool_version)
+                existing = await session.scalar(
+                    select(ToolBindingRecord).where(
+                        ToolBindingRecord.skill_id == skill_id,
+                        ToolBindingRecord.skill_version == skill_version,
+                        ToolBindingRecord.tool_id == tool_id,
+                        ToolBindingRecord.tool_version == tool_version,
                     )
                 )
-                self._add_audit(session, "bind", actor, tool_id, tool_version)
+                if existing is None:
+                    session.add(
+                        ToolBindingRecord(
+                            id=f"tool-binding-{uuid4().hex}",
+                            skill_id=skill_id,
+                            skill_version=skill_version,
+                            tool_id=tool_id,
+                            tool_version=tool_version,
+                        )
+                    )
+                    self._add_audit(session, "bind", actor, tool_id, tool_version)
+        if rejection is not None:
+            await self._record_audit("reject_bind", actor, tool_id, tool_version)
+            raise ToolRegistryError(rejection)
         return {
             "skill_id": skill_id,
             "skill_version": skill_version,
             "tool_id": tool_id,
             "tool_version": tool_version,
         }
+
+    async def freeze_bindings(self, skill_id: str, skill_version: int) -> None:
+        del skill_id, skill_version
 
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None:
         async with self._sessions() as session:
@@ -232,7 +279,7 @@ class PostgresToolRegistry:
                         return (
                             current.enabled
                             and current.available
-                            and validation_context.diagnosis_stage in pinned.allowed_stages
+                            and validation_context.visit_stage in pinned.allowed_stages
                             and pinned.authorize(validation_context)
                         )
 
@@ -249,7 +296,7 @@ class PostgresToolRegistry:
                             approval_required=record.approval_required,
                             enabled=record.enabled
                             and record.available
-                            and context.diagnosis_stage in record.allowed_stages
+                            and context.visit_stage in record.allowed_stages
                             and implementation.authorize(context),
                             authorize=implementation.authorize,
                             record_rejection=reject,
@@ -271,6 +318,26 @@ class PostgresToolRegistry:
                 visit_matter_id=context.visit_matter_id,
                 turn_id=context.idempotency_key,
             )
+
+    async def record_unknown_rejection(
+        self, tool_name: str, context: ToolContext
+    ) -> None:
+        async with self._sessions.begin() as session:
+            self._add_audit(
+                session,
+                "reject_invoke",
+                "runtime",
+                tool_name,
+                None,
+                visit_matter_id=context.visit_matter_id,
+                turn_id=context.idempotency_key,
+            )
+
+    async def _record_audit(
+        self, action: str, actor: str, tool_id: str, version: str
+    ) -> None:
+        async with self._sessions.begin() as session:
+            self._add_audit(session, action, actor, tool_id, version)
 
     async def list_audits(self) -> list[ToolAudit]:
         async with self._sessions() as session:
@@ -306,7 +373,7 @@ class PostgresToolRegistry:
         action: str,
         actor: str,
         tool_id: str,
-        version: str,
+        version: str | None,
         *,
         visit_matter_id: str | None = None,
         turn_id: str | None = None,
@@ -341,7 +408,7 @@ class PostgresToolRegistry:
                 effect=cast(ToolEffect, record.effect),
                 approval_required=record.approval_required,
                 execute=unavailable,
-                allowed_stages=tuple(record.allowed_stages),
+                allowed_stages=tuple(cast(list[VisitStage], record.allowed_stages)),
             )
         return ToolVersion(
             tool=implementation,
@@ -361,6 +428,7 @@ class PostgresToolRegistry:
             "output_schema": record.output_schema,
             "effect": record.effect,
             "allowed_stages": record.allowed_stages,
+            "provider_approval_required": record.provider_approval_required,
         }
 
     @staticmethod

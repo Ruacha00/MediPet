@@ -135,6 +135,14 @@ async def test_sync_rejects_contract_drift_under_an_existing_version() -> None:
         "reject_sync",
     ]
 
+    registry = InMemoryToolRegistry()
+    await registry.synchronize((_trusted_tool(),), actor="deployment")
+    changed_approval = TrustedTool(
+        **{**_trusted_tool().__dict__, "approval_required": True}
+    )
+    with pytest.raises(ValueError, match="new version"):
+        await registry.synchronize((changed_approval,), actor="deployment")
+
 
 @pytest.mark.asyncio
 async def test_tool_assisted_skill_requires_an_enabled_compatible_binding_to_publish() -> None:
@@ -182,11 +190,17 @@ async def test_tool_assisted_skill_requires_an_enabled_compatible_binding_to_pub
         published = await client.post(
             f"/v1/admin/skills/{skill_id}/versions/1/publish", headers=headers
         )
+        immutable = await client.post(
+            f"/v1/admin/skills/{skill_id}/versions/1/tool-bindings",
+            headers=headers,
+            json={"tool_id": "test.lookup", "tool_version": "1"},
+        )
 
     assert blocked.status_code == 409
     assert "binding" in blocked.json()["detail"]
     assert bound.status_code == 201
     assert published.status_code == 200
+    assert immutable.status_code == 409
 
 
 @pytest.mark.asyncio
@@ -205,6 +219,7 @@ async def test_registry_capability_snapshot_intersects_binding_enablement_and_au
             **trusted.__dict__,
             "execute": execute,
             "authorize": lambda context: context.participant_id == "participant-1",
+            "allowed_stages": ("in_visit",),
         }
     )
     tools = InMemoryToolRegistry()
@@ -225,13 +240,21 @@ async def test_registry_capability_snapshot_intersects_binding_enablement_and_au
     await skills.transition(skill.skill_id, 1, "publish", actor="admin")
     provider = RegistryCapabilityProvider(skills, tools)
 
-    allowed = await provider.snapshot(ToolContext(participant_id="participant-1"))
-    denied = await provider.snapshot(ToolContext(participant_id="participant-2"))
-    denied_stage = await provider.snapshot(
-        ToolContext(participant_id="participant-1", diagnosis_stage="post_visit")
+    allowed = await provider.snapshot(
+        ToolContext(participant_id="participant-1", visit_stage="in_visit")
     )
+    denied = await provider.snapshot(ToolContext(participant_id="participant-2"))
+    denied_stage = await provider.snapshot(ToolContext(participant_id="participant-1"))
 
     assert [tool.name for tool in allowed.tools if tool.enabled] == ["test_lookup"]
     assert [tool.name for tool in denied.tools if tool.enabled] == []
     assert [tool.name for tool in denied_stage.tools if tool.enabled] == []
     assert executions == []
+    assert allowed.record_unknown_tool_rejection is not None
+    await allowed.record_unknown_tool_rejection(
+        "rogue_tool", ToolContext(visit_matter_id="visit-1", idempotency_key="turn-1")
+    )
+    rejected = next(
+        audit for audit in await tools.list_audits() if audit.action == "reject_invoke"
+    )
+    assert rejected.tool_id == "rogue_tool"

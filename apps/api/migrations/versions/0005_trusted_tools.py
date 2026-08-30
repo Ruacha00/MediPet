@@ -31,6 +31,12 @@ def upgrade() -> None:
         sa.Column("enabled", sa.Boolean(), nullable=False, server_default=sa.false()),
         sa.Column("available", sa.Boolean(), nullable=False, server_default=sa.true()),
         sa.Column("approval_required", sa.Boolean(), nullable=False, server_default=sa.false()),
+        sa.Column(
+            "provider_approval_required",
+            sa.Boolean(),
+            nullable=False,
+            server_default=sa.false(),
+        ),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
         sa.ForeignKeyConstraint(["tool_id"], ["tools.id"], ondelete="CASCADE"),
         sa.UniqueConstraint("tool_id", "version", name="tool_version"),

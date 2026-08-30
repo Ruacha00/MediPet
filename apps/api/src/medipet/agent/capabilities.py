@@ -4,6 +4,8 @@ from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+VisitStage = Literal["pre_visit", "in_visit"]
+
 
 @dataclass(frozen=True)
 class ToolContext:
@@ -11,13 +13,14 @@ class ToolContext:
     participant_id: str = ""
     idempotency_key: str = ""
     profile_version: str = "static"
-    diagnosis_stage: str = "pre_visit"
+    visit_stage: VisitStage = "pre_visit"
 
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]
 ToolAuthorizer = Callable[[ToolContext], bool]
 ToolRejectionRecorder = Callable[[ToolContext], Awaitable[None]]
 ToolAvailabilityValidator = Callable[[ToolContext], Awaitable[bool]]
+UnknownToolRejectionRecorder = Callable[[str, ToolContext], Awaitable[None]]
 SkillInstructionLoader = Callable[[], Awaitable[str]]
 
 
@@ -58,6 +61,7 @@ class CapabilitySnapshot:
     skill_versions: tuple[str, ...] = ()
     skills: tuple[SkillDefinition, ...] = ()
     tools: tuple[ToolDefinition, ...] = ()
+    record_unknown_tool_rejection: UnknownToolRejectionRecorder | None = None
 
     @classmethod
     def empty(cls) -> CapabilitySnapshot:
