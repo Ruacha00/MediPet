@@ -22,7 +22,8 @@ Blocked by: —
 
 - 2026-08-31: claimed，开始实现。
 - 2026-08-31: 58 个相关后端测试、Ruff 与 Pyright 通过，issue resolved。
+- 2026-08-31: 双轴 code review 发现并修复名称/描述未版本化及 `in_review` 绑定可原地变化的问题；API 全量测试再次通过。
 
 ## Answer
 
-开发 bootstrap 现在只在 Skill 与 Tool Registry 同时为空时执行首次默认装配；已有治理状态后，启动只同步受信 Tool 定义并为新增或变化的 Skill 建立草稿。管理员保存的 Tool 停用、Skill 退休和活动旧版本选择均会跨重启保留，新 Tool 版本默认停用。README、架构说明和 ADR-0010 已记录首次装配与后续 reconciliation 的边界。
+开发 bootstrap 现在只在 Skill 与 Tool Registry 同时为空时执行首次默认装配；已有治理状态后，启动只同步受信 Tool 定义并为新增或变化的 Skill 建立草稿。Skill 名称、描述、指令和 Tool 绑定均作为版本化定义处理，进入审核后的版本不会被同步流程原地修改。管理员保存的 Tool 停用、Skill 退休和活动旧版本选择均会跨重启保留，新 Tool 版本默认停用。README、架构说明和 ADR-0010 已记录首次装配与后续 reconciliation 的边界。

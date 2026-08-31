@@ -148,18 +148,19 @@ async def _bootstrap_hospital_skill_source(
             raise ValueError("开发医院 Skill 处于隔离状态，不能自动激活")
         current_bindings = set(await tool_registry.binding_versions(skill_id, version))
         if (
-            latest["instructions"] == source.instructions
+            latest["name"] == source.name
+            and latest["description"] == source.description
+            and latest["instructions"] == source.instructions
             and current_bindings == desired_bindings
         ):
             return latest
-        immutable_binding_mismatch = (
-            status in {"published", "retired"}
-            and current_bindings != desired_bindings
-        )
+        reviewed_binding_mismatch = status != "draft" and current_bindings != desired_bindings
         has_unexpected_binding = not current_bindings.issubset(desired_bindings)
         if (
-            latest["instructions"] != source.instructions
-            or immutable_binding_mismatch
+            latest["name"] != source.name
+            or latest["description"] != source.description
+            or latest["instructions"] != source.instructions
+            or reviewed_binding_mismatch
             or has_unexpected_binding
         ):
             selected = await skill_registry.edit_skill(
@@ -167,6 +168,8 @@ async def _bootstrap_hospital_skill_source(
                 instructions=source.instructions,
                 change_note=source.change_note,
                 actor="development-bootstrap",
+                name=source.name,
+                description=source.description,
             )
             current_bindings = set()
         else:

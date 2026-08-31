@@ -166,6 +166,8 @@ class PostgresSkillRegistry:
         instructions: str,
         change_note: str,
         actor: str,
+        name: str | None = None,
+        description: str | None = None,
     ) -> SkillVersion:
         async with self._sessions.begin() as session:
             skill = await self._require_skill(session, skill_id)
@@ -197,13 +199,22 @@ class PostgresSkillRegistry:
             )
             normalized_instructions = required_text(instructions, "Skill 指令不能为空")
             normalized_change_note = required_text(change_note, "变更说明不能为空")
+            normalized_name = (
+                source.name if name is None else required_text(name, "Skill 名称不能为空")
+            )
+            normalized_description = (
+                source.description
+                if description is None
+                else required_text(description, "Skill 描述不能为空")
+            )
             governance = {
                 **source.governance,
+                "display_name": normalized_name,
                 "change_note": normalized_change_note,
             }
             validate_skill_content(
                 slug=skill.slug,
-                description=source.description,
+                description=normalized_description,
                 instructions=normalized_instructions,
                 governance=governance,
                 resources=copied_skill_resources,
@@ -212,8 +223,8 @@ class PostgresSkillRegistry:
                 id=f"skill-version-{uuid4().hex}",
                 skill_id=skill_id,
                 version=source.version + 1,
-                name=source.name,
-                description=source.description,
+                name=normalized_name,
+                description=normalized_description,
                 instructions=normalized_instructions,
                 change_note=normalized_change_note,
                 status="draft",
