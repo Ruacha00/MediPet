@@ -10,6 +10,7 @@ from uuid import uuid4
 from medipet.agent.capabilities import ToolContext
 from medipet.agent.runtime import AgentRequest, AgentRuntime
 from medipet.contracts import TurnCommand, TurnEvent
+from medipet.emergency import emergency_interruption_for
 from medipet.model.port import ModelMessage
 from medipet.persistence.conversation import (
     TerminalMessageState,
@@ -227,6 +228,22 @@ class MediPetAssistant:
             await self._audit_store.record(state, audit_context)
 
         try:
+            emergency_interruption = emergency_interruption_for(command.message)
+            if emergency_interruption is not None:
+                typed_handoff_part = emergency_interruption.message_part()
+                handoff_part: dict[str, object] = dict(typed_handoff_part)
+                await self._conversation_store.append_assistant_part(
+                    assistant_message.id,
+                    handoff_part,
+                )
+                await self._conversation_store.mark_assistant_streaming(
+                    assistant_message.id
+                )
+                await finalize("completed")
+                yield TurnEvent(kind="data", data=handoff_part)
+                yield TurnEvent(kind="completed", data={"traceId": trace_id})
+                return
+
             completed_history = await self._conversation_store.list_completed_messages(
                 command.visit_matter_id,
                 limit=self._context_message_limit,

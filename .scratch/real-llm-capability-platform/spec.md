@@ -72,7 +72,7 @@ Skill 平台采用 Agent Skills 兼容的声明式包；Tool 由受信任代码�
 49. As a Web client, I want the existing AI SDK UI stream protocol preserved, so that the frontend does not depend on LangGraph or provider-specific event types.
 50. As a future hospital integration developer, I want HospitalOperations to remain an external boundary, so that fake and real hospital data can be connected without changing the Agent or Skill management interfaces.
 51. As a future hospital administrator, I want the same Skill and Tool management contracts to support a later visual interface, so that backend behavior does not need to be redesigned when the UI is added.
-52. As a future hospital reviewer, I want risk screening and人工风险审核 to remain a protected platform extension rather than an ordinary removable Skill, so that the later safety workflow cannot be disabled by capability configuration.
+52. As a visit participant, I want obvious emergency signals to interrupt ordinary assistance and return direct offline intervention guidance, so that I am not delayed by model generation or an internal review workflow.
 
 ## Implementation Decisions
 
@@ -114,7 +114,7 @@ Skill 平台采用 Agent Skills 兼容的声明式包；Tool 由受信任代码�
 - Tests receive configuration and dependencies directly and do not watch .env. Production reads process configuration and does not watch repository files.
 - Liveness indicates process health. Readiness additionally verifies required model and database configuration without exposing secrets.
 - Metrics contain no raw participant message, full prompt, API token, database URL, or upstream error body. Configuration is represented by a non-secret version or fingerprint.
-- The future风险初筛 and人工风险审核 design remains governed by the accepted SafetyPolicy ADR, but its runtime, queue, and UI are not implemented by this spec.
+- Emergency handling is governed by ADR-0007: a finite deterministic check runs before the model and returns direct offline guidance; model risk scoring, SafetyPolicy review, review queues, notifications, and resume flows are not planned.
 
 ## Testing Decisions
 
@@ -163,6 +163,6 @@ Skill 平台采用 Agent Skills 兼容的声明式包；Tool 由受信任代码�
 
 - The repository glossary defines the canonical outpatient terms used by this spec. Generic terms such as User, Session, Task, and MedicalCase must not replace患者,就诊参与者,就诊事项, or门诊就诊.
 - The ADR “使用版本化 Agent Skills 与受信任 Tool Registry” governs capability packaging, versioning, and execution trust.
-- The ADR “使用模型风险初筛并由医院人员最终审核” governs the later safety phase and intentionally does not authorize risk adjudication in this stage.
+- ADR-0007 “发现明显急症后中断并直接引导线下干预” supersedes the earlier model-screening and human-review decision.
 - The research note “Agent 应用中的 Skill 与 Tool 管理模式研究” records the primary-source comparison behind the chosen Skill/Tool separation.
-- The next product sequence is: create an independent fake hospital data source, implement FakeHospitalOperations, register hospital query/action Tools, create corresponding Skills, activate business ReAct behavior, add风险初筛 and人工风险审核, then build administration and message-push interfaces.
+- The product sequence after business ReAct activation adds only deterministic emergency interruption; it does not add a risk-review backend or message-push workflow.

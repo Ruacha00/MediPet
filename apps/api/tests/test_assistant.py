@@ -5,7 +5,7 @@ import pytest
 
 from medipet.agent.runtime import AgentRequest, LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
-from medipet.contracts import TurnCommand
+from medipet.contracts import TurnCommand, TurnEvent
 from medipet.model.port import (
     ModelChunk,
     ModelMessage,
@@ -29,6 +29,27 @@ class DeterministicModel(ModelPort):
         self.requests.append(request)
         for text in self._chunks:
             yield ModelChunk(text=text)
+
+
+async def run_emergency_scenario(
+    message: str,
+    *,
+    model_text: str,
+) -> tuple[list[TurnEvent], DeterministicModel]:
+    model = DeterministicModel([model_text])
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model), await seeded_store())
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="emergency-scenario",
+                message=message,
+            )
+        )
+    ]
+    return events, model
 
 
 async def seeded_store(
@@ -276,6 +297,178 @@ async def test_streams_model_text_with_outpatient_boundaries() -> None:
         ("participant", "completed", "我这两天头痛"),
         ("assistant", "completed", "可以先描述主要不适。"),
     ]
+
+
+@pytest.mark.asyncio
+async def test_obvious_emergency_interrupts_the_agent_with_offline_guidance() -> None:
+    model = DeterministicModel(["不应调用模型"])
+    store = await seeded_store()
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model), store)
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="emergency-turn",
+                message="我现在胸口剧痛，喘不上气，快晕倒了",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["data", "completed"]
+    assert events[0].data == {
+        "type": "data-handoff",
+        "data": {
+            "priority": "emergency",
+            "title": "请立即寻求线下急救",
+            "description": (
+                "请立即拨打 120 或前往最近的医院急诊；如身边有人，请让其陪同或"
+                "协助呼救。不要等待 MediPet 的后续回复。"
+            ),
+        },
+    }
+    assert model.requests == []
+    persisted = await store.list_messages("visit-1")
+    assert [(message.role, message.state, message.content) for message in persisted] == [
+        ("participant", "completed", "我现在胸口剧痛，喘不上气，快晕倒了"),
+        ("assistant", "completed", ""),
+    ]
+    assert persisted[-1].parts == (events[0].data,)
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "家里老人突然昏迷，怎么叫都叫不醒",
+        "我突然胸痛，而且越来越重",
+        "孩子现在呼吸困难",
+        "他正在持续抽搐",
+        "伤口大量出血，压住也止不住",
+        "刚才误服农药，可能中毒了",
+        "她突然口角歪斜，一侧手脚无力",
+    ],
+)
+@pytest.mark.asyncio
+async def test_official_120_emergency_signals_interrupt_the_agent(message: str) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="不应调用模型",
+    )
+
+    assert [event.kind for event in events] == ["data", "completed"]
+    assert events[0].data["type"] == "data-handoff"
+    assert events[0].data["data"]["priority"] == "emergency"
+    assert model.requests == []
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "我没有胸口剧痛，也没有喘不上气，只是想查号源",
+        "这不是胸痛，是衣服太紧",
+        "没有出现胸痛，只想预约复查",
+        "医生记录里写着否认有胸痛",
+        "目前并没有出现任何胸痛",
+        "这几个月没有再出现昏迷，想预约复查",
+        "检查未见昏迷，想继续预约",
+    ],
+)
+@pytest.mark.asyncio
+async def test_explicitly_negated_emergency_signals_continue_to_the_agent(
+    message: str,
+) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="可以继续查询号源。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "我上周胸痛，已经去过急诊，想预约复查",
+        "同事以前抽搐过，现在已经恢复了",
+        "孩子昨天呼吸困难，今天已经好了，想预约检查",
+        "去年体检时医生记录我有反复发作的胸痛，现在只是想查报告",
+        "我有昏迷病史，想预约复查",
+        "医生说他有过大量出血，现在想复查",
+        "我现在想咨询昏迷病史",
+        "同事昨天昏迷了，今天好了，想预约检查",
+        "我上周胸痛了，已经去过急诊，想预约复查",
+    ],
+)
+@pytest.mark.asyncio
+async def test_historical_emergency_signals_continue_to_the_agent(message: str) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="可以继续准备复查。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "我想了解胸痛和呼吸困难的急救知识",
+        "为什么胸痛需要拨打120？",
+        "如果有人抽搐，应该怎么处理？",
+        "请介绍呼吸困难的急救常识",
+        "请问如果有人抽搐怎么办？",
+        "假如有人胸痛怎么办？",
+        "胸痛是什么意思？",
+        "如何识别呼吸困难？",
+        "我想了解胸痛急救，现在有空学习",
+        "在急救培训中，学员面对抽搐患者时该怎么办？",
+        "若有人昏迷应该怎么办？",
+    ],
+)
+@pytest.mark.asyncio
+async def test_emergency_education_question_continues_to_the_agent(message: str) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="可以介绍一般急救常识。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "如果有人正在抽搐怎么办？他现在就这样",
+        "我现在胸痛，已经去过急诊但还没好",
+        "我想了解一下，我爸昏迷了，怎么办",
+        "如果有人昏迷怎么办，我爸就是这样",
+    ],
+)
+@pytest.mark.asyncio
+async def test_current_emergency_overrides_other_context(message: str) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="不应调用模型",
+    )
+
+    assert [event.kind for event in events] == ["data", "completed"]
+    assert model.requests == []
+
+
+@pytest.mark.asyncio
+async def test_ambiguous_non_current_chest_pain_continues_to_the_agent() -> None:
+    events, model = await run_emergency_scenario(
+        "最近偶尔胸痛，想挂号",
+        model_text="可以继续门诊协助。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
 
 
 @pytest.mark.asyncio

@@ -13,7 +13,7 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 - one visit matter belongs to exactly one patient;
 - the product serves exactly one hospital;
 - department guidance is not diagnosis;
-- emergency handoff takes priority over ordinary assistance;
+- deterministic emergency interruption takes priority over the model and ordinary assistance;
 - appointment creation and cancellation require authorization and explicit confirmation;
 - payment and clinical-record access are outside V1.
 
@@ -213,7 +213,7 @@ The runtime hides:
 
 The implementation uses LangGraph for the ReAct state graph, checkpointing, streaming, interrupts, and resume. LangGraph types do not cross this Interface, so callers and tests do not depend on graph nodes, checkpoint schemas, or framework message types.
 
-The initial graph contains reasoning, read-Skill execution, action-proposal pause, confirmed write-Skill execution, human handoff, emergency handoff, and finish paths. Only explicitly mapped `AgentEvent` values may leave the runtime.
+The Assistant applies deterministic emergency interruption before entering the graph. The initial graph contains reasoning, read-Skill execution, action-proposal pause, confirmed write-Skill execution, human handoff, and finish paths. Only explicitly mapped `AgentEvent` values may leave the runtime.
 
 The model crosses a true external Seam:
 
@@ -277,7 +277,6 @@ Initial Skills:
 | `commit_cancellation` | Write | Cancel an authorized, confirmed appointment idempotently |
 | `get_hospital_route` | Read | Return an in-hospital route and relevant preparation |
 | `handoff_to_human` | Write | Create a handoff record for hospital staff |
-| `emergency_handoff` | Write | Return urgent handoff instructions and stop ordinary assistance |
 
 The model cannot invent a Skill name or bypass the prepare/confirm/commit sequence.
 
@@ -331,17 +330,11 @@ A confirmation is bound to the exact patient, hospital operation, parameters, ex
 
 ## Safety precedence
 
-The runtime applies outcomes in this order:
+Before model or Skill execution, the Assistant checks only the current participant message for a finite set of explicit emergency signals drawn from official 120 public guidance. A match persists and returns an `EmergencyHandoff`, stops the turn, and directs the participant to call 120, seek the nearest emergency department, or ask someone nearby for help. The check does not produce a diagnosis or risk score and does not create a review queue, notification, or resumable workflow.
 
-1. emergency handoff;
-2. authorization or identity failure;
-3. human department-guidance handoff;
-4. pending action confirmation;
-5. ordinary informational assistance;
-6. recoverable failure;
-7. terminal failure.
+Explicit negation and clearly educational or hypothetical questions do not trigger the interruption. Messages without a matching signal continue through the ordinary Agent flow; Skills and the model cannot suppress a handoff once the Assistant has produced it.
 
-The model may identify a possible risk signal, but a hospital-approved rule determines whether ordinary assistance is stopped. Skills cannot downgrade an emergency handoff.
+This emergency boundary does not remove ordinary human department guidance or its generic handoff path; it removes only the former emergency risk-review queue, notification, and resume workflow.
 
 ## Deployment shape
 
@@ -442,7 +435,7 @@ The repository remains one domain context even though it contains web and backen
 Tests cross the same Interfaces as callers:
 
 - Assistant scenario tests use a fake Model Adapter, in-memory Hospital Operations Adapter, and in-memory Visit Store Adapter.
-- Skill Runtime tests assert authorization, confirmation, emergency precedence, schema validation, and idempotency.
+- Assistant scenario tests assert emergency interruption precedence; Skill Runtime tests assert authorization, confirmation, schema validation, and idempotency.
 - Hospital and Visit Store contract tests run against every Adapter.
 - ReAct tests assert observable outcomes, not private Thought text or exact prompt formatting.
 - FastAPI stream tests validate event ordering, terminal events, disconnect handling, and AI SDK UI protocol compatibility.
