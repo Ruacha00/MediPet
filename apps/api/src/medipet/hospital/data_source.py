@@ -123,6 +123,12 @@ class FakeHospitalDataSource:
             raise HospitalDataError("医生引用了不存在的科室")
         if any(schedule.doctor_id not in doctor_ids for schedule in self.schedules):
             raise HospitalDataError("排班引用了不存在的医生")
+        covered_department_ids = {doctor.department_id for doctor in self.doctors}
+        if covered_department_ids != department_ids:
+            raise HospitalDataError("每个科室必须至少配置一名医生")
+        scheduled_doctor_ids = {schedule.doctor_id for schedule in self.schedules}
+        if scheduled_doctor_ids != doctor_ids:
+            raise HospitalDataError("每名医生必须至少配置一个排班")
         for schedule in self.schedules:
             if len(schedule.day_offsets) != len(set(schedule.day_offsets)):
                 raise HospitalDataError("排班日期偏移不能重复")

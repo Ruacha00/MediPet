@@ -334,29 +334,17 @@ async def test_list_departments_tool_returns_a_stable_list_envelope(
         "additionalProperties": False,
     }
     assert tool.output_schema["required"] == ["departments"]
-    assert result == {
-        "departments": [
-            {
-                "department_id": "department-general",
-                "name": "全科医学科",
-                "description": "提供常见健康问题的门诊评估与连续照护。",
-            },
-            {
-                "department_id": "department-pediatrics",
-                "name": "儿科",
-                "description": "提供儿童与青少年的门诊医疗服务。",
-            },
-            {
-                "department_id": "department-orthopedics",
-                "name": "骨科",
-                "description": "提供骨骼、关节与运动系统相关的门诊服务。",
-            },
-            {
-                "department_id": "department-dermatology",
-                "name": "皮肤科",
-                "description": "提供皮肤、毛发与指甲相关的门诊服务。",
-            },
-        ]
+    departments = cast(list[dict[str, object]], result["departments"])
+    assert len(departments) == 24
+    assert departments[0] == {
+        "department_id": "department-general",
+        "name": "全科医学科",
+        "description": "提供常见健康问题的门诊评估与连续照护。",
+    }
+    assert departments[-1] == {
+        "department_id": "department-infectious-diseases",
+        "name": "感染性疾病科",
+        "description": "提供常见感染性疾病的专科门诊评估与随访。",
     }
 
 

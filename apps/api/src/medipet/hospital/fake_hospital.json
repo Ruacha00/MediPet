@@ -24,6 +24,106 @@
       "id": "department-dermatology",
       "name": "皮肤科",
       "description": "提供皮肤、毛发与指甲相关的门诊服务。"
+    },
+    {
+      "id": "department-internal-medicine",
+      "name": "普通内科",
+      "description": "提供成人常见内科问题的初步评估、治疗与转诊。"
+    },
+    {
+      "id": "department-cardiology",
+      "name": "心血管内科",
+      "description": "提供心脏与血管相关疾病的门诊评估和长期管理。"
+    },
+    {
+      "id": "department-respiratory-medicine",
+      "name": "呼吸内科",
+      "description": "提供呼吸道与肺部相关疾病的门诊服务。"
+    },
+    {
+      "id": "department-gastroenterology",
+      "name": "消化内科",
+      "description": "提供食管、胃肠、肝胆胰相关疾病的门诊服务。"
+    },
+    {
+      "id": "department-endocrinology",
+      "name": "内分泌科",
+      "description": "提供糖尿病、甲状腺及代谢相关疾病的门诊管理。"
+    },
+    {
+      "id": "department-neurology",
+      "name": "神经内科",
+      "description": "提供脑、脊髓、周围神经及相关症状的门诊评估。"
+    },
+    {
+      "id": "department-nephrology",
+      "name": "肾内科",
+      "description": "提供肾脏疾病、电解质异常及相关问题的门诊服务。"
+    },
+    {
+      "id": "department-rheumatology-immunology",
+      "name": "风湿免疫科",
+      "description": "提供关节炎、自身免疫及结缔组织疾病的门诊服务。"
+    },
+    {
+      "id": "department-hematology",
+      "name": "血液内科",
+      "description": "提供贫血、凝血异常及其他血液系统问题的门诊评估。"
+    },
+    {
+      "id": "department-general-surgery",
+      "name": "普通外科",
+      "description": "提供腹部、甲状腺、乳腺及体表外科问题的门诊服务。"
+    },
+    {
+      "id": "department-urology",
+      "name": "泌尿外科",
+      "description": "提供泌尿系统及男性生殖系统相关的门诊服务。"
+    },
+    {
+      "id": "department-gynecology",
+      "name": "妇科",
+      "description": "提供女性生殖系统及常见妇科问题的门诊服务。"
+    },
+    {
+      "id": "department-obstetrics",
+      "name": "产科",
+      "description": "提供孕期检查、妊娠咨询及产后随访门诊服务。"
+    },
+    {
+      "id": "department-ophthalmology",
+      "name": "眼科",
+      "description": "提供眼部、视力及相关疾病的门诊检查与治疗。"
+    },
+    {
+      "id": "department-otorhinolaryngology",
+      "name": "耳鼻咽喉科",
+      "description": "提供耳、鼻、咽喉及相关头颈问题的门诊服务。"
+    },
+    {
+      "id": "department-stomatology",
+      "name": "口腔科",
+      "description": "提供牙齿、牙周、口腔黏膜及颌面常见问题的门诊服务。"
+    },
+    {
+      "id": "department-mental-health",
+      "name": "精神心理科",
+      "description": "提供情绪、睡眠及常见精神心理问题的门诊评估。"
+    },
+    {
+      "id": "department-rehabilitation-medicine",
+      "name": "康复医学科",
+      "description": "提供功能障碍评估、康复计划制定与复诊服务。"
+    },
+    {
+      "id": "department-traditional-chinese-medicine",
+      "name": "中医科",
+      "description": "提供中医辨证评估及常见健康问题的中医门诊服务。"
+    },
+    {
+      "id": "department-infectious-diseases",
+      "name": "感染性疾病科",
+      "description": "提供常见感染性疾病的专科门诊评估与随访。"
     }
   ],
   "doctors": [
@@ -50,6 +150,126 @@
       "department_id": "department-dermatology",
       "name": "苏禾",
       "title": "主治医师"
+    },
+    {
+      "id": "doctor-zhao-wenjing",
+      "department_id": "department-internal-medicine",
+      "name": "赵文静",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-wang-xinyue",
+      "department_id": "department-cardiology",
+      "name": "王心悦",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-xu-jing",
+      "department_id": "department-respiratory-medicine",
+      "name": "徐静",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-wu-jiahe",
+      "department_id": "department-gastroenterology",
+      "name": "吴嘉禾",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-tang-yi",
+      "department_id": "department-endocrinology",
+      "name": "唐一",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-luo-zhiyuan",
+      "department_id": "department-neurology",
+      "name": "罗致远",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-he-qing",
+      "department_id": "department-nephrology",
+      "name": "何清",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-fang-yuwei",
+      "department_id": "department-rheumatology-immunology",
+      "name": "方雨薇",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-guo-xiaolan",
+      "department_id": "department-hematology",
+      "name": "郭晓岚",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-zheng-kai",
+      "department_id": "department-general-surgery",
+      "name": "郑凯",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-shen-bo",
+      "department_id": "department-urology",
+      "name": "沈博",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-cui-ning",
+      "department_id": "department-gynecology",
+      "name": "崔宁",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-wang-shuyun",
+      "department_id": "department-obstetrics",
+      "name": "汪舒云",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-luo-xing",
+      "department_id": "department-ophthalmology",
+      "name": "骆星",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-jiang-sheng",
+      "department_id": "department-otorhinolaryngology",
+      "name": "江声",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-yu-tong",
+      "department_id": "department-stomatology",
+      "name": "俞桐",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-liu-zhining",
+      "department_id": "department-mental-health",
+      "name": "刘知宁",
+      "title": "副主任医师"
+    },
+    {
+      "id": "doctor-peng-yue",
+      "department_id": "department-rehabilitation-medicine",
+      "name": "彭越",
+      "title": "主治医师"
+    },
+    {
+      "id": "doctor-qin-shulan",
+      "department_id": "department-traditional-chinese-medicine",
+      "name": "秦淑兰",
+      "title": "主任医师"
+    },
+    {
+      "id": "doctor-dai-jun",
+      "department_id": "department-infectious-diseases",
+      "name": "戴君",
+      "title": "副主任医师"
     }
   ],
   "schedules": [
@@ -84,6 +304,166 @@
       "times": ["15:00", "15:30"],
       "duration_minutes": 30,
       "fee_cents": 3000
+    },
+    {
+      "id": "internal-medicine-morning",
+      "doctor_id": "doctor-zhao-wenjing",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["08:30", "09:00"],
+      "duration_minutes": 30,
+      "fee_cents": 3000
+    },
+    {
+      "id": "cardiology-afternoon",
+      "doctor_id": "doctor-wang-xinyue",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["13:30", "14:00"],
+      "duration_minutes": 30,
+      "fee_cents": 5000
+    },
+    {
+      "id": "respiratory-morning",
+      "doctor_id": "doctor-xu-jing",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["09:00", "09:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "gastroenterology-afternoon",
+      "doctor_id": "doctor-wu-jiahe",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["14:00", "14:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "endocrinology-morning",
+      "doctor_id": "doctor-tang-yi",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["08:30", "09:00"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "neurology-afternoon",
+      "doctor_id": "doctor-luo-zhiyuan",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["13:30", "14:00"],
+      "duration_minutes": 30,
+      "fee_cents": 5000
+    },
+    {
+      "id": "nephrology-morning",
+      "doctor_id": "doctor-he-qing",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["10:00", "10:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "rheumatology-immunology-afternoon",
+      "doctor_id": "doctor-fang-yuwei",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["14:30", "15:00"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "hematology-morning",
+      "doctor_id": "doctor-guo-xiaolan",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["08:30", "09:00"],
+      "duration_minutes": 30,
+      "fee_cents": 5000
+    },
+    {
+      "id": "general-surgery-morning",
+      "doctor_id": "doctor-zheng-kai",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["09:00", "09:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "urology-afternoon",
+      "doctor_id": "doctor-shen-bo",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["14:00", "14:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "gynecology-morning",
+      "doctor_id": "doctor-cui-ning",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["08:30", "09:00"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "obstetrics-afternoon",
+      "doctor_id": "doctor-wang-shuyun",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["13:30", "14:00"],
+      "duration_minutes": 30,
+      "fee_cents": 5000
+    },
+    {
+      "id": "ophthalmology-morning",
+      "doctor_id": "doctor-luo-xing",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["09:00", "09:30"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "otorhinolaryngology-afternoon",
+      "doctor_id": "doctor-jiang-sheng",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["14:00", "14:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
+    },
+    {
+      "id": "stomatology-morning",
+      "doctor_id": "doctor-yu-tong",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["10:00", "10:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3000
+    },
+    {
+      "id": "mental-health-afternoon",
+      "doctor_id": "doctor-liu-zhining",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["14:00", "15:00"],
+      "duration_minutes": 45,
+      "fee_cents": 4000
+    },
+    {
+      "id": "rehabilitation-medicine-morning",
+      "doctor_id": "doctor-peng-yue",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["08:30", "09:00"],
+      "duration_minutes": 30,
+      "fee_cents": 2500
+    },
+    {
+      "id": "traditional-chinese-medicine-afternoon",
+      "doctor_id": "doctor-qin-shulan",
+      "day_offsets": [1, 3, 5, 7, 9, 11, 13],
+      "times": ["13:30", "14:00"],
+      "duration_minutes": 30,
+      "fee_cents": 4500
+    },
+    {
+      "id": "infectious-diseases-morning",
+      "doctor_id": "doctor-dai-jun",
+      "day_offsets": [2, 4, 6, 8, 10, 12, 14],
+      "times": ["10:00", "10:30"],
+      "duration_minutes": 30,
+      "fee_cents": 3500
     }
   ],
   "initial_bookings": [

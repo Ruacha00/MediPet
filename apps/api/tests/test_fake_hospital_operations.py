@@ -32,6 +32,32 @@ from medipet.hospital import (
 
 SHANGHAI = timezone(timedelta(hours=8), name="Asia/Shanghai")
 FIXED_NOW = datetime(2026, 8, 30, 10, 0, tzinfo=SHANGHAI)
+BASIC_DEPARTMENT_NAMES = [
+    "全科医学科",
+    "儿科",
+    "骨科",
+    "皮肤科",
+    "普通内科",
+    "心血管内科",
+    "呼吸内科",
+    "消化内科",
+    "内分泌科",
+    "神经内科",
+    "肾内科",
+    "风湿免疫科",
+    "血液内科",
+    "普通外科",
+    "泌尿外科",
+    "妇科",
+    "产科",
+    "眼科",
+    "耳鼻咽喉科",
+    "口腔科",
+    "精神心理科",
+    "康复医学科",
+    "中医科",
+    "感染性疾病科",
+]
 
 
 def fixed_clock() -> datetime:
@@ -61,18 +87,40 @@ async def test_default_fake_hospital_catalog_is_queryable() -> None:
         name="明和虚构医院",
         timezone="Asia/Shanghai",
     )
-    assert [department.name for department in departments] == [
-        "全科医学科",
-        "儿科",
-        "骨科",
-        "皮肤科",
-    ]
+    assert [department.name for department in departments] == BASIC_DEPARTMENT_NAMES
     assert [doctor.name for doctor in doctors] == ["陈明远"]
     assert slots
     assert all(slot.department_id == "department-general" for slot in slots)
     assert all(slot.starts_at.tzname() == "Asia/Shanghai" for slot in slots)
     assert all(slot.starts_at.utcoffset() == timedelta(hours=8) for slot in slots)
     assert all(slot.fee_cents > 0 and slot.currency == "CNY" for slot in slots)
+
+
+@pytest.mark.asyncio
+async def test_every_basic_department_has_a_doctor_and_available_slots() -> None:
+    source = FakeHospitalDataSource.load_default()
+    operations = FakeHospitalOperations(source, clock=fixed_clock)
+
+    assert len(source.departments) == len(BASIC_DEPARTMENT_NAMES)
+    assert len(source.doctors) == len(BASIC_DEPARTMENT_NAMES)
+    assert len(source.schedules) == len(BASIC_DEPARTMENT_NAMES)
+    for department in source.departments:
+        doctors = await operations.query(
+            ListDoctorsQuery(department_id=department.department_id)
+        )
+        slots = await operations.query(
+            SearchSlotsQuery(
+                department_id=department.department_id,
+                start_date=FIXED_NOW.date(),
+                end_date=FIXED_NOW.date() + timedelta(days=14),
+            )
+        )
+
+        assert doctors, department.name
+        assert slots, department.name
+        assert {slot.doctor_id for slot in slots} <= {
+            doctor.doctor_id for doctor in doctors
+        }
 
 
 @pytest.mark.asyncio
@@ -175,6 +223,39 @@ def test_fake_hospital_data_rejects_duplicate_schedule_times(tmp_path: Path) -> 
 
     with pytest.raises(HospitalDataError, match="排班时间.*重复"):
         FakeHospitalDataSource.load(path)
+
+
+def test_fake_hospital_data_rejects_a_department_without_doctors(
+    tmp_path: Path,
+) -> None:
+    data = _minimal_hospital_data()
+    data["departments"].append(
+        {
+            "id": "department-unstaffed",
+            "name": "无医生科室",
+            "description": "仅用于验证目录完整性。",
+        }
+    )
+
+    with pytest.raises(HospitalDataError, match="每个科室.*医生"):
+        _load_hospital_data(tmp_path, data)
+
+
+def test_fake_hospital_data_rejects_a_doctor_without_schedules(
+    tmp_path: Path,
+) -> None:
+    data = _minimal_hospital_data()
+    data["doctors"].append(
+        {
+            "id": "doctor-unscheduled",
+            "department_id": "department-test",
+            "name": "无排班医生",
+            "title": "主治医师",
+        }
+    )
+
+    with pytest.raises(HospitalDataError, match="每名医生.*排班"):
+        _load_hospital_data(tmp_path, data)
 
 
 def _minimal_hospital_data() -> dict[str, Any]:
