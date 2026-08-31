@@ -237,7 +237,7 @@ class InMemoryVisitConversationStore:
         title: str,
     ) -> VisitMatterSummary:
         async with self._lock:
-            source = next(
+            existing_visit_matter = next(
                 (
                     visit_matter
                     for visit_matter in self._visit_matters.values()
@@ -245,13 +245,13 @@ class InMemoryVisitConversationStore:
                 ),
                 None,
             )
-            if source is None:
+            if existing_visit_matter is None:
                 raise VisitMatterNotFoundError("就诊参与者不存在")
             visit_matter = DevelopmentVisitMatter(
-                patient_id=source.patient_id,
-                patient_display_name=source.patient_display_name,
-                participant_id=source.participant_id,
-                participant_display_name=source.participant_display_name,
+                patient_id=existing_visit_matter.patient_id,
+                patient_display_name=existing_visit_matter.patient_display_name,
+                participant_id=existing_visit_matter.participant_id,
+                participant_display_name=existing_visit_matter.participant_display_name,
                 visit_matter_id=f"visit-matter-{uuid4().hex}",
                 visit_matter_title=title,
             )
