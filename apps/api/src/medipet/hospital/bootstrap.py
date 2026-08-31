@@ -67,19 +67,25 @@ async def bootstrap_development_hospital_skill(
     skill_registry: SkillRegistry,
     tool_registry: ToolRegistry,
     tool_provider: ToolProvider,
+    *,
+    skill_sources: tuple[HospitalSkillSource, ...] | None = None,
 ) -> tuple[SkillVersion | dict[str, object], ...]:
-    sources = load_hospital_skill_sources()
+    sources = load_hospital_skill_sources() if skill_sources is None else skill_sources
     tools = await tool_provider.tools()
     tools_by_id = {tool.tool_id: tool for tool in tools}
+    provision_defaults = (
+        not await skill_registry.list_skills() and not await tool_registry.list_tools()
+    )
     await tool_registry.synchronize(tools, actor="development-bootstrap")
-    for tool in tools:
-        await tool_registry.configure(
-            tool.tool_id,
-            tool.version,
-            enabled=True,
-            approval_required=tool.approval_required,
-            actor="development-bootstrap",
-        )
+    if provision_defaults:
+        for tool in tools:
+            await tool_registry.configure(
+                tool.tool_id,
+                tool.version,
+                enabled=True,
+                approval_required=tool.approval_required,
+                actor="development-bootstrap",
+            )
 
     unknown_bindings = {
         tool_id
@@ -104,6 +110,7 @@ async def bootstrap_development_hospital_skill(
                 skill_registry,
                 tool_registry,
                 tools_by_id,
+                provision_defaults=provision_defaults,
             )
         )
     return tuple(results)
@@ -115,6 +122,8 @@ async def _bootstrap_hospital_skill_source(
     skill_registry: SkillRegistry,
     tool_registry: ToolRegistry,
     tools_by_id: dict[str, TrustedTool],
+    *,
+    provision_defaults: bool,
 ) -> SkillVersion | dict[str, object]:
     listed = await skill_registry.list_skills()
     existing = next((item for item in listed if item["slug"] == source.slug), None)
@@ -140,8 +149,6 @@ async def _bootstrap_hospital_skill_source(
         current_bindings = set(await tool_registry.binding_versions(skill_id, version))
         if (
             latest["instructions"] == source.instructions
-            and latest["status"] == "published"
-            and latest["active"] is True
             and current_bindings == desired_bindings
         ):
             return latest
@@ -168,14 +175,6 @@ async def _bootstrap_hospital_skill_source(
     skill_id = _field(selected, "skill_id", str)
     version = _field(selected, "version", int)
     status = cast(SkillStatus, _field(selected, "status", str))
-    if status == "retired":
-        return await skill_registry.transition(
-            skill_id, version, "activate", actor="development-bootstrap"
-        )
-    if status == "published":
-        return await skill_registry.transition(
-            skill_id, version, "activate", actor="development-bootstrap"
-        )
 
     for tool_id in source.tool_bindings:
         tool = tools_by_id[tool_id]
@@ -188,6 +187,8 @@ async def _bootstrap_hospital_skill_source(
             tool.version,
             actor="development-bootstrap",
         )
+    if not provision_defaults or status in {"published", "retired"}:
+        return selected
     if status == "draft":
         selected = await skill_registry.transition(
             skill_id,

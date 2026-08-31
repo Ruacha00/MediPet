@@ -351,6 +351,11 @@ not Python package contents. They live under the repository-level `capabilities/
 mounted read-only into the API container through `MEDIPET_CAPABILITIES_PATH`. Trusted Tool executors
 remain in application code and accept only manifest entries whose IDs match deployed executors.
 
+An empty development Registry provisions these repository capabilities as enabled and published
+defaults. Later starts only reconcile definitions: they preserve Tool enablement and Skill lifecycle or
+active-version decisions, leaving new Tool versions disabled and changed Skill versions as drafts until
+an administrator explicitly governs them.
+
 ## Repository layout
 
 ```text

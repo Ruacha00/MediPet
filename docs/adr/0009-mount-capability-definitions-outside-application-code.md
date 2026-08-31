@@ -34,3 +34,4 @@ apply.
 Capability files can be edited or supplied as an independent read-only mount without rebuilding the
 API image. Development bootstrap loads the mounted files when the API stack starts. A changed Tool
 contract must use a new Tool version; changing a contract under an existing version remains rejected.
+ADR-0010 governs how that reconciliation preserves Registry governance state after initial provisioning.

@@ -59,7 +59,7 @@ class FailingProposalUpdateStore(InMemoryVisitConversationStore):
 
 
 @pytest.mark.asyncio
-async def test_hospital_bootstrap_replaces_an_incomplete_published_binding_set() -> None:
+async def test_hospital_bootstrap_stages_an_incomplete_binding_replacement_as_a_draft() -> None:
     operations = FakeHospitalOperations(
         FakeHospitalDataSource.load_default(),
         clock=lambda: datetime(2026, 8, 30, 8, tzinfo=UTC),
@@ -102,9 +102,9 @@ async def test_hospital_bootstrap_replaces_an_incomplete_published_binding_set()
     listed = await skills.list_skills()
     versions = cast(list[dict[str, object]], listed[0]["versions"])
     assert len(versions) == 2
-    assert versions[-1]["status"] == "published"
+    assert versions[-1]["status"] == "draft"
     snapshot = await RegistryCapabilityProvider(skills, tools).snapshot(_context())
-    assert {tool.tool_id for tool in snapshot.tools} == {tool.tool_id for tool in trusted_tools}
+    assert {tool.tool_id for tool in snapshot.tools} == {trusted_tools[0].tool_id}
 
 
 @pytest.mark.asyncio

@@ -63,11 +63,16 @@ MEDIPET_CONTEXT_MESSAGE_LIMIT=20
 - `capabilities/tools/fake-hospital.json` 保存仅用于开发环境的虚构医院数据。
 
 Compose 会把该目录以只读方式挂载到 API 容器的 `/app/capabilities`，并通过
-`MEDIPET_CAPABILITIES_PATH` 指定位置。修改定义后重启 API 服务即可重新执行开发引导：
+`MEDIPET_CAPABILITIES_PATH` 指定位置。空 Skill/Tool Registry 首次启动时会自动启用并发布
+仓库自带的开发能力；修改定义后重启 API 服务会重新执行定义同步：
 
 ```powershell
 docker compose restart api
 ```
+
+后续同步不会覆盖管理端保存的启停、发布、退休或活动版本状态。新的 Tool 契约版本默认停用，
+新增或发生内容、绑定变化的 Skill 版本保持 `draft`，需要通过开发管理 API 显式启用、审核和
+发布。这样普通重启不会撤销管理员的停用或回滚决定。
 
 Tool 的 Python 执行器仍属于受信任代码。外部清单只能配置已部署的执行器，不能通过 JSON
 挂载任意代码；修改已有 Tool 契约时需要同步提升版本号。
