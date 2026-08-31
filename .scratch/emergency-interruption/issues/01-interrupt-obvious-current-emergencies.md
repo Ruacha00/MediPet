@@ -16,3 +16,7 @@ Status: resolved
 ## Answer
 
 实现和验收已完成，详见同目录 spec。紧急中断策略集中于 `medipet.emergency`，Assistant 仅在持久化与事件边界做适配；回归测试覆盖当前、历史、否定、教学/假设和模糊非当前语境。
+
+## Comments
+
+- 2026-08-31：修复带修饰词的明确否定误报、历史或模糊描述之后再次发生当前急症的漏报、带日期的科普语境误报，以及模糊非当前严重症状误报；统一 `EmergencyHandoff` 领域命名并补充 effort map。后端 207 项测试通过、8 项跳过，Ruff、Pyright 与当前前端 18 项测试通过。

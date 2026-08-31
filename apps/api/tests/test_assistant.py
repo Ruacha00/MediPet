@@ -52,6 +52,27 @@ async def run_emergency_scenario(
     return events, model
 
 
+async def assert_emergency_interrupted(message: str) -> list[TurnEvent]:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="不应调用模型",
+    )
+
+    assert [event.kind for event in events] == ["data", "completed"]
+    assert model.requests == []
+    return events
+
+
+async def assert_agent_continued(message: str) -> None:
+    events, model = await run_emergency_scenario(
+        message,
+        model_text="可以继续普通协助。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
+
+
 async def seeded_store(
     *,
     patient_id: str = "patient-1",
@@ -352,15 +373,10 @@ async def test_obvious_emergency_interrupts_the_agent_with_offline_guidance() ->
 )
 @pytest.mark.asyncio
 async def test_official_120_emergency_signals_interrupt_the_agent(message: str) -> None:
-    events, model = await run_emergency_scenario(
-        message,
-        model_text="不应调用模型",
-    )
+    events = await assert_emergency_interrupted(message)
 
-    assert [event.kind for event in events] == ["data", "completed"]
     assert events[0].data["type"] == "data-handoff"
     assert events[0].data["data"]["priority"] == "emergency"
-    assert model.requests == []
 
 
 @pytest.mark.parametrize(
@@ -371,6 +387,12 @@ async def test_official_120_emergency_signals_interrupt_the_agent(message: str) 
         "没有出现胸痛，只想预约复查",
         "医生记录里写着否认有胸痛",
         "目前并没有出现任何胸痛",
+        "目前没有明显的胸痛，只想预约",
+        "目前没有很明显的胸痛，只想预约",
+        "目前没有持续的胸痛，只想预约",
+        "目前不觉得胸痛，只想预约",
+        "现在不感到胸痛，只想预约",
+        "目前不再胸痛，只想预约",
         "这几个月没有再出现昏迷，想预约复查",
         "检查未见昏迷，想继续预约",
     ],
@@ -379,13 +401,7 @@ async def test_official_120_emergency_signals_interrupt_the_agent(message: str) 
 async def test_explicitly_negated_emergency_signals_continue_to_the_agent(
     message: str,
 ) -> None:
-    events, model = await run_emergency_scenario(
-        message,
-        model_text="可以继续查询号源。",
-    )
-
-    assert [event.kind for event in events] == ["status", "text", "completed"]
-    assert len(model.requests) == 1
+    await assert_agent_continued(message)
 
 
 @pytest.mark.parametrize(
@@ -404,13 +420,7 @@ async def test_explicitly_negated_emergency_signals_continue_to_the_agent(
 )
 @pytest.mark.asyncio
 async def test_historical_emergency_signals_continue_to_the_agent(message: str) -> None:
-    events, model = await run_emergency_scenario(
-        message,
-        model_text="可以继续准备复查。",
-    )
-
-    assert [event.kind for event in events] == ["status", "text", "completed"]
-    assert len(model.requests) == 1
+    await assert_agent_continued(message)
 
 
 @pytest.mark.parametrize(
@@ -427,17 +437,13 @@ async def test_historical_emergency_signals_continue_to_the_agent(message: str) 
         "我想了解胸痛急救，现在有空学习",
         "在急救培训中，学员面对抽搐患者时该怎么办？",
         "若有人昏迷应该怎么办？",
+        "今天科普胸痛的急救知识",
+        "今天想学习什么是胸痛",
     ],
 )
 @pytest.mark.asyncio
 async def test_emergency_education_question_continues_to_the_agent(message: str) -> None:
-    events, model = await run_emergency_scenario(
-        message,
-        model_text="可以介绍一般急救常识。",
-    )
-
-    assert [event.kind for event in events] == ["status", "text", "completed"]
-    assert len(model.requests) == 1
+    await assert_agent_continued(message)
 
 
 @pytest.mark.parametrize(
@@ -447,28 +453,31 @@ async def test_emergency_education_question_continues_to_the_agent(message: str)
         "我现在胸痛，已经去过急诊但还没好",
         "我想了解一下，我爸昏迷了，怎么办",
         "如果有人昏迷怎么办，我爸就是这样",
+        "昨天昏迷过，今天又昏迷了",
+        "最近偶尔昏迷，现在就是这样",
+        "我没有头晕，但是现在胸痛",
+        "我没有头晕我爸现在胸痛",
+        "我想了解一下，我爸今天胸痛，怎么办",
     ],
 )
 @pytest.mark.asyncio
 async def test_current_emergency_overrides_other_context(message: str) -> None:
-    events, model = await run_emergency_scenario(
-        message,
-        model_text="不应调用模型",
-    )
-
-    assert [event.kind for event in events] == ["data", "completed"]
-    assert model.requests == []
+    await assert_emergency_interrupted(message)
 
 
-@pytest.mark.asyncio
-async def test_ambiguous_non_current_chest_pain_continues_to_the_agent() -> None:
-    events, model = await run_emergency_scenario(
+@pytest.mark.parametrize(
+    "message",
+    [
         "最近偶尔胸痛，想挂号",
-        model_text="可以继续门诊协助。",
-    )
-
-    assert [event.kind for event in events] == ["status", "text", "completed"]
-    assert len(model.requests) == 1
+        "最近偶尔昏迷，想挂号",
+        "最近偶尔意识不清，想挂号",
+    ],
+)
+@pytest.mark.asyncio
+async def test_ambiguous_non_current_symptom_continues_to_the_agent(
+    message: str,
+) -> None:
+    await assert_agent_continued(message)
 
 
 @pytest.mark.asyncio

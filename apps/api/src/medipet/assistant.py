@@ -228,9 +228,9 @@ class MediPetAssistant:
             await self._audit_store.record(state, audit_context)
 
         try:
-            emergency_interruption = emergency_interruption_for(command.message)
-            if emergency_interruption is not None:
-                typed_handoff_part = emergency_interruption.message_part()
+            emergency_handoff = emergency_interruption_for(command.message)
+            if emergency_handoff is not None:
+                typed_handoff_part = emergency_handoff.message_part()
                 handoff_part: dict[str, object] = dict(typed_handoff_part)
                 await self._conversation_store.append_assistant_part(
                     assistant_message.id,

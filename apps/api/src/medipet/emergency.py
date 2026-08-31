@@ -17,7 +17,7 @@ class EmergencyHandoffPart(TypedDict):
 
 
 @dataclass(frozen=True)
-class EmergencyInterruption:
+class EmergencyHandoff:
     title: str
     description: str
 
@@ -40,7 +40,7 @@ class EmergencySignal:
     requires_current_context: bool = False
 
 
-_EMERGENCY_INTERRUPTION = EmergencyInterruption(
+_EMERGENCY_HANDOFF = EmergencyHandoff(
     title="请立即寻求线下急救",
     description=(
         "请立即拨打 120 或前往最近的医院急诊；如身边有人，请让其陪同或"
@@ -75,7 +75,8 @@ _SIGNALS = (
 
 _NEGATION_PATTERN = re.compile(
     r"(?:不存在|不是|并非|并不|并没有|没有|没|未|无|否认|不)"
-    r"(?:存在|再|出现|发生|感到|感觉到|表现为|任何|明显|有|过|见)*$"
+    r"(?:存在|再|曾|出现|发生|感到|感觉到|觉得|感觉|表现为|任何|很|太|十分|"
+    r"特别|比较|完全|明显|持续|有|过|见|的)*$"
 )
 
 _EDUCATION_MARKERS = (
@@ -101,7 +102,20 @@ _EDUCATION_MARKERS = (
     "科普",
 )
 
-_CURRENT_MARKERS = (
+_PARTICIPANT_SUBJECT_MARKERS = (
+    "我爸",
+    "我妈",
+    "孩子",
+    "家人",
+    "老人",
+    "本人",
+    "患者",
+    "他",
+    "她",
+    "我",
+)
+
+_CURRENT_STATE_MARKERS = (
     "现在",
     "正在",
     "刚刚",
@@ -112,6 +126,8 @@ _CURRENT_MARKERS = (
     "持续",
     "越来越",
 )
+
+_CURRENT_MARKERS = (*_CURRENT_STATE_MARKERS, "今天")
 
 _CURRENT_AFTER_SIGNAL_MARKERS = (
     "现在就这样",
@@ -136,7 +152,9 @@ _CURRENT_AFTER_SIGNAL_MARKERS = (
     "持续",
 )
 
-_HISTORICAL_MARKERS = (
+_NON_CURRENT_MARKERS = (
+    "最近",
+    "偶尔",
     "上周",
     "上个月",
     "昨天",
@@ -170,7 +188,7 @@ _RESOLUTION_MARKERS = (
 )
 
 
-def emergency_interruption_for(message: str) -> EmergencyInterruption | None:
+def emergency_interruption_for(message: str) -> EmergencyHandoff | None:
     compact = "".join(message.split())
     for signal in _SIGNALS:
         phrase = signal.phrase
@@ -180,24 +198,37 @@ def emergency_interruption_for(message: str) -> EmergencyInterruption | None:
             has_current_context = _has_current_context(compact, index, phrase)
             if (
                 not _is_negated(prefix)
-                and not _is_historical(compact, index, phrase)
-                and not _is_educational(
-                    compact,
-                    has_current_context=has_current_context,
-                )
+                and not _is_non_current(compact, index, phrase)
+                and not _is_educational(compact, index, phrase)
                 and (
                     not signal.requires_current_context or has_current_context
                 )
             ):
-                return _EMERGENCY_INTERRUPTION
+                return _EMERGENCY_HANDOFF
             start = index + len(phrase)
     return None
 
 
-def _is_educational(message: str, *, has_current_context: bool) -> bool:
-    if not any(marker in message for marker in _EDUCATION_MARKERS):
+def _is_educational(message: str, index: int, phrase: str) -> bool:
+    latest_education_end = max(
+        (
+            position + len(marker)
+            for marker in _EDUCATION_MARKERS
+            if (position := message.rfind(marker, 0, index)) >= 0
+        ),
+        default=-1,
+    )
+    if latest_education_end < 0:
         return False
-    return not has_current_context
+    prefix = message[max(0, index - 8) : index]
+    has_current_subject = any(
+        marker in message[latest_education_end:index]
+        for marker in _PARTICIPANT_SUBJECT_MARKERS
+    )
+    return not (
+        _has_current_state_context(message, index, phrase)
+        or ("今天" in prefix and has_current_subject)
+    )
 
 
 def _is_negated(prefix: str) -> bool:
@@ -206,15 +237,23 @@ def _is_negated(prefix: str) -> bool:
 
 def _has_current_context(message: str, index: int, phrase: str) -> bool:
     prefix = message[max(0, index - 8) : index]
+    return (
+        _has_current_state_context(message, index, phrase)
+        or "今天" in prefix
+    )
+
+
+def _has_current_state_context(message: str, index: int, phrase: str) -> bool:
+    prefix = message[max(0, index - 8) : index]
     suffix = message[index + len(phrase) : index + len(phrase) + 20]
     return (
         suffix.startswith(("了", "着"))
-        or any(marker in prefix for marker in _CURRENT_MARKERS)
+        or any(marker in prefix for marker in _CURRENT_STATE_MARKERS)
         or any(marker in suffix for marker in _CURRENT_AFTER_SIGNAL_MARKERS)
     )
 
 
-def _is_historical(
+def _is_non_current(
     message: str,
     index: int,
     phrase: str,
@@ -225,12 +264,14 @@ def _is_historical(
         marker in suffix for marker in _RESOLUTION_MARKERS
     ):
         return True
-    latest_historical = max(
-        (prefix.rfind(marker) for marker in _HISTORICAL_MARKERS),
+    if any(marker in suffix for marker in _CURRENT_AFTER_SIGNAL_MARKERS):
+        return False
+    latest_non_current = max(
+        (prefix.rfind(marker) for marker in _NON_CURRENT_MARKERS),
         default=-1,
     )
     latest_current = max(
         (prefix.rfind(marker) for marker in _CURRENT_MARKERS),
         default=-1,
     )
-    return latest_historical > latest_current
+    return latest_non_current > latest_current
