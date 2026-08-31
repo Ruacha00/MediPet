@@ -116,6 +116,9 @@ class ToolRegistry(Protocol):
     async def binding_versions(
         self, skill_id: str, skill_version: int
     ) -> tuple[tuple[str, str], ...]: ...
+    async def unbind(
+        self, skill_id: str, skill_version: int, tool_id: str, tool_version: str, *, actor: str
+    ) -> dict[str, object]: ...
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None: ...
 
     async def freeze_bindings(self, skill_id: str, skill_version: int) -> None: ...
@@ -123,6 +126,10 @@ class ToolRegistry(Protocol):
         self, skills: tuple[SkillDefinition, ...], context: ToolContext
     ) -> tuple[ToolDefinition, ...]: ...
     async def list_audits(self) -> list[ToolAudit]: ...
+
+    async def record_management_rejection(
+        self, action: str, tool_id: str, version: str, *, actor: str
+    ) -> None: ...
 
     async def record_unknown_rejection(
         self, tool_name: str, context: ToolContext
@@ -273,6 +280,33 @@ class InMemoryToolRegistry:
     ) -> tuple[tuple[str, str], ...]:
         return tuple(self._bindings.get((skill_id, skill_version), ()))
 
+    async def unbind(
+        self,
+        skill_id: str,
+        skill_version: int,
+        tool_id: str,
+        tool_version: str,
+        *,
+        actor: str,
+    ) -> dict[str, object]:
+        key = (skill_id, skill_version)
+        if key in self._frozen_bindings:
+            self._audit("reject_unbind", actor, tool_id, tool_version)
+            raise ToolRegistryError("Only draft Skill Tool bindings can be changed")
+        binding = (tool_id, tool_version)
+        bindings = self._bindings.get(key, [])
+        if binding not in bindings:
+            self._audit("reject_unbind", actor, tool_id, tool_version)
+            raise ToolNotFoundError("Tool binding does not exist")
+        bindings.remove(binding)
+        self._audit("unbind", actor, tool_id, tool_version)
+        return {
+            "skill_id": skill_id,
+            "skill_version": skill_version,
+            "tool_id": tool_id,
+            "tool_version": tool_version,
+        }
+
     async def freeze_bindings(self, skill_id: str, skill_version: int) -> None:
         self._frozen_bindings.add((skill_id, skill_version))
 
@@ -393,6 +427,11 @@ class InMemoryToolRegistry:
 
     async def list_audits(self) -> list[ToolAudit]:
         return list(self._audits)
+
+    async def record_management_rejection(
+        self, action: str, tool_id: str, version: str, *, actor: str
+    ) -> None:
+        self._audit(action, actor, tool_id, version)
 
     def _require(self, tool_id: str) -> list[ToolVersion]:
         try:

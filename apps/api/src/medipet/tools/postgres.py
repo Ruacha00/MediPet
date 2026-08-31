@@ -174,12 +174,12 @@ class PostgresToolRegistry:
                 select(SkillVersionRecord).where(
                     SkillVersionRecord.skill_id == skill_id,
                     SkillVersionRecord.version == skill_version,
-                )
+                ).with_for_update()
             )
             if skill is None:
                 rejection = "Skill version does not exist"
-            elif skill.status in {"published", "retired"}:
-                rejection = "Published Skill Tool bindings are immutable"
+            elif skill.status != "draft":
+                rejection = "Only draft Skill Tool bindings can be changed"
             if rejection is None:
                 await self._require(session, tool_id, tool_version)
                 existing = await session.scalar(
@@ -227,6 +227,56 @@ class PostgresToolRegistry:
                 )
             ).all()
         return tuple((binding.tool_id, binding.tool_version) for binding in bindings)
+
+    async def unbind(
+        self,
+        skill_id: str,
+        skill_version: int,
+        tool_id: str,
+        tool_version: str,
+        *,
+        actor: str,
+    ) -> dict[str, object]:
+        rejection: tuple[str, str] | None = None
+        async with self._sessions.begin() as session:
+            skill = await session.scalar(
+                select(SkillVersionRecord).where(
+                    SkillVersionRecord.skill_id == skill_id,
+                    SkillVersionRecord.version == skill_version,
+                ).with_for_update()
+            )
+            if skill is None:
+                rejection = ("reject_unbind", "Skill version does not exist")
+            elif skill.status != "draft":
+                rejection = (
+                    "reject_unbind",
+                    "Only draft Skill Tool bindings can be changed",
+                )
+            else:
+                binding = await session.scalar(
+                    select(ToolBindingRecord).where(
+                        ToolBindingRecord.skill_id == skill_id,
+                        ToolBindingRecord.skill_version == skill_version,
+                        ToolBindingRecord.tool_id == tool_id,
+                        ToolBindingRecord.tool_version == tool_version,
+                    )
+                )
+                if binding is None:
+                    rejection = ("reject_unbind", "Tool binding does not exist")
+                else:
+                    await session.delete(binding)
+                    self._add_audit(session, "unbind", actor, tool_id, tool_version)
+        if rejection is not None:
+            await self._record_audit(rejection[0], actor, tool_id, tool_version)
+            if rejection[1] in {"Skill version does not exist", "Tool binding does not exist"}:
+                raise ToolNotFoundError(rejection[1])
+            raise ToolRegistryError(rejection[1])
+        return {
+            "skill_id": skill_id,
+            "skill_version": skill_version,
+            "tool_id": tool_id,
+            "tool_version": tool_version,
+        }
 
     async def validate_bindings(self, skill_id: str, skill_version: int) -> None:
         async with self._sessions() as session:
@@ -400,6 +450,11 @@ class PostgresToolRegistry:
             )
             for item in records
         ]
+
+    async def record_management_rejection(
+        self, action: str, tool_id: str, version: str, *, actor: str
+    ) -> None:
+        await self._record_audit(action, actor, tool_id, version)
 
     async def _require(self, session, tool_id: str, version: str) -> ToolVersionRecord:
         record = await session.scalar(

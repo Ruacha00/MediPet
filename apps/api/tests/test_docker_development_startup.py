@@ -31,8 +31,15 @@ def test_compose_configuration_defines_the_complete_safe_development_stack() -> 
     configuration = json.loads(result.stdout)
     assert set(configuration["services"]) == {"api", "postgres", "web"}
     api_environment = configuration["services"]["api"].get("environment", {})
+    web_environment = configuration["services"]["web"].get("environment", {})
     assert "MEDIPET_LLM_API_KEY" not in api_environment
     assert api_environment["MEDIPET_CAPABILITIES_PATH"] == "/app/capabilities"
+    assert api_environment["MEDIPET_MANAGEMENT_TOKEN"]
+    assert web_environment["MEDIPET_MANAGEMENT_TOKEN"] == api_environment[
+        "MEDIPET_MANAGEMENT_TOKEN"
+    ]
+    assert web_environment["MEDIPET_ENVIRONMENT"] == "development"
+    assert "NEXT_PUBLIC_MEDIPET_MANAGEMENT_TOKEN" not in web_environment
     capability_mount = next(
         mount
         for mount in configuration["services"]["api"]["volumes"]

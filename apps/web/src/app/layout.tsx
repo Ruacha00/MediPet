@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import "../features/capability-admin/capability-admin.css";
 
 export const metadata: Metadata = {
   title: "MediPet · 门诊就诊助手",

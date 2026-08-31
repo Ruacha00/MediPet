@@ -30,7 +30,11 @@ docker compose up --build
 
 Compose 会构建并启动独立的 PostgreSQL、API 和 Web 容器，在数据库健康后自动应用 Alembic migration 和幂等虚构开发 seed。API 与 Web 源码通过 bind mount 保留热更新，依赖安装在镜像层中，因此宿主机不需要 Node.js、Python、pnpm 或 uv。
 
-首次启动需要下载基础镜像并安装锁定依赖，之后会复用本地镜像层。Web 镜像默认从 `https://registry.npmmirror.com` 下载经过 lockfile 完整性校验的 npm 包；如需改用官方源，可在启动前设置 `PNPM_REGISTRY=https://registry.npmjs.org`。服务就绪后打开 `http://localhost:3000`；API 存活检查位于 `http://localhost:8000/health`，模型和数据库就绪检查位于 `http://localhost:8000/ready`。
+首次启动需要下载基础镜像并安装锁定依赖，之后会复用本地镜像层。Web 镜像默认从 `https://registry.npmmirror.com` 下载经过 lockfile 完整性校验的 npm 包；如需改用官方源，可在启动前设置 `PNPM_REGISTRY=https://registry.npmjs.org`。服务就绪后打开 `http://localhost:3000`；开发环境的 Skill / Tool 能力治理台位于 `http://localhost:3000/admin/capabilities`；API 存活检查位于 `http://localhost:8000/health`，模型和数据库就绪检查位于 `http://localhost:8000/ready`。
+
+治理台及其 Web 管理 handlers 仅在非生产环境注册。浏览器不会接触管理 Token；Next.js 服务端使用与 API 一致的 `MEDIPET_MANAGEMENT_TOKEN` 代为调用现有管理 API。Compose 提供仅供本地开发的默认值，也可以在启动前设置同名环境变量覆盖。当前单人开发版本通过集中授权接缝放行固定的 `development-admin`，未提供登录或角色门禁；未来身份系统应接入该接缝。
+
+Compose 启动并健康后，可用 `python apps/web/tests/browser/capability_admin_smoke.py` 验证新建、绑定、审核、发布、Tool 启停、审计与刷新恢复的完整浏览器闭环；该烟测只使用本地 Registry 与假医院 Tool，不调用模型。
 
 按 `Ctrl+C` 会停止整个前台 Compose 会话。PostgreSQL 数据保存在命名卷中，普通停止和 `docker compose down` 都不会删除；只有明确执行以下命令才会连同开发数据一起删除：
 

@@ -98,6 +98,24 @@ def management_router(registry: SkillRegistry, token: str | None) -> APIRouter:
             headers={"Content-Disposition": f'attachment; filename="{filename}"'},
         )
 
+    @router.get(
+        "/skills/{skill_id}/versions/{version}/resources/{resource_path:path}",
+        dependencies=protected,
+    )
+    async def preview_resource(
+        skill_id: str, version: int, resource_path: str
+    ) -> dict[str, object]:
+        try:
+            resource = await registry.get_resource(skill_id, version, resource_path)
+        except SkillNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except SkillRegistryError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        return {
+            **resource.to_dict(),
+            "content": resource.content.decode("utf-8"),
+        }
+
     @router.patch("/skills/{skill_id}", status_code=201, dependencies=protected)
     async def edit_skill(skill_id: str, request: EditSkillRequest) -> dict[str, object]:
         try:

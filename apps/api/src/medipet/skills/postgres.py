@@ -294,7 +294,7 @@ class PostgresSkillRegistry:
                 return_error = None
             if return_error is None:
                 status, active = transition_target(record.status, action)
-                if action == "publish" and self._tool_registry is not None:
+                if action in {"submit_review", "publish"} and self._tool_registry is not None:
                     await self._tool_registry.freeze_bindings(skill_id, version)
                 if active:
                     for previous in records:
@@ -475,8 +475,39 @@ class PostgresSkillRegistry:
             )
         if record is None:
             raise SkillNotFoundError("Skill version does not exist")
-        if record.status in {"published", "retired"}:
-            raise SkillTransitionError("Published Skill Tool bindings are immutable")
+        if record.status != "draft":
+            raise SkillTransitionError("Only draft Skill Tool bindings can be changed")
+
+    async def get_resource(self, skill_id: str, version: int, path: str) -> SkillResource:
+        async with self._sessions() as session:
+            await self._require_skill(session, skill_id)
+            record = await session.scalar(
+                select(SkillVersionRecord).where(
+                    SkillVersionRecord.skill_id == skill_id,
+                    SkillVersionRecord.version == version,
+                )
+            )
+            if record is None:
+                raise SkillNotFoundError("Skill 版本不存在")
+            if record.status == "quarantined":
+                raise SkillRegistryError("隔离的 Skill 资源不能在线预览")
+            resource = await session.scalar(
+                select(SkillResourceRecord).where(
+                    SkillResourceRecord.skill_version_id == record.id,
+                    SkillResourceRecord.path == path,
+                )
+            )
+        if resource is None:
+            raise SkillNotFoundError("Skill 资源不存在")
+        if not (
+            resource.media_type.startswith("text/") or resource.media_type.endswith("json")
+        ):
+            raise SkillRegistryError("Skill 资源不能在线预览")
+        return SkillResource(
+            path=resource.path,
+            media_type=resource.media_type,
+            content=resource.content,
+        )
 
     async def _load_instructions(self, skill_id: str, version: int) -> str:
         async with self._sessions() as session:

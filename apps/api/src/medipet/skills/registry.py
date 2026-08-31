@@ -143,6 +143,8 @@ class SkillRegistry(Protocol):
 
     async def assert_tool_bindings_mutable(self, skill_id: str, version: int) -> None: ...
 
+    async def get_resource(self, skill_id: str, version: int, path: str) -> SkillResource: ...
+
 
 class InMemorySkillRegistry:
     def __init__(self, *, tool_registry: ToolRegistry | None = None) -> None:
@@ -291,7 +293,7 @@ class InMemorySkillRegistry:
                 self._audit("reject_publish", current, actor)
                 raise SkillTransitionError(str(error)) from error
         target_status, active = transition_target(current.status, action)
-        if action == "publish" and self._tool_registry is not None:
+        if action in {"submit_review", "publish"} and self._tool_registry is not None:
             await self._tool_registry.freeze_bindings(skill_id, version)
         if action in {"publish", "activate"}:
             self._deactivate_other_versions(versions, version, actor)
@@ -397,8 +399,24 @@ class InMemorySkillRegistry:
         selected = next((item for item in versions if item.version == version), None)
         if selected is None:
             raise SkillNotFoundError("Skill version does not exist")
-        if selected.status in {"published", "retired"}:
-            raise SkillTransitionError("Published Skill Tool bindings are immutable")
+        if selected.status != "draft":
+            raise SkillTransitionError("Only draft Skill Tool bindings can be changed")
+
+    async def get_resource(self, skill_id: str, version: int, path: str) -> SkillResource:
+        versions = self._require_skill(skill_id)
+        selected = next((item for item in versions if item.version == version), None)
+        if selected is None:
+            raise SkillNotFoundError("Skill 版本不存在")
+        if selected.status == "quarantined":
+            raise SkillRegistryError("隔离的 Skill 资源不能在线预览")
+        resource = next((item for item in selected.resources if item.path == path), None)
+        if resource is None:
+            raise SkillNotFoundError("Skill 资源不存在")
+        if not (
+            resource.media_type.startswith("text/") or resource.media_type.endswith("json")
+        ):
+            raise SkillRegistryError("Skill 资源不能在线预览")
+        return resource
 
     def _require_skill(self, skill_id: str) -> list[SkillVersion]:
         try:

@@ -372,6 +372,65 @@ async def test_binary_skill_archive_is_quarantined_for_inspection() -> None:
 
 
 @pytest.mark.asyncio
+async def test_admin_can_preview_safe_text_resources_but_not_quarantined_content() -> None:
+    registry = InMemorySkillRegistry()
+    app = create_app(
+        skill_registry=registry,
+        management_token="management-secret",
+        environment="development",
+    )
+    headers = {
+        "Authorization": "Bearer management-secret",
+        "Content-Type": "application/zip",
+    }
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        imported = await client.post(
+            "/v1/admin/skills/import",
+            headers=headers,
+            content=_skill_archive(
+                files={
+                    "references/process.md": "先核对服务医院，再查询号源。",
+                    "schemas/input.json": '{"type":"object"}',
+                }
+            ),
+        )
+        skill_id = imported.json()["skill_id"]
+        markdown = await client.get(
+            f"/v1/admin/skills/{skill_id}/versions/1/resources/references/process.md",
+            headers=headers,
+        )
+        missing = await client.get(
+            f"/v1/admin/skills/{skill_id}/versions/1/resources/references/missing.md",
+            headers=headers,
+        )
+        quarantined = await client.post(
+            "/v1/admin/skills/import",
+            headers=headers,
+            content=_skill_archive(
+                slug="quarantined-preview",
+                files={"references/unsafe.py": "print('never execute')"},
+            ),
+        )
+        quarantined_id = quarantined.json()["skill_id"]
+        blocked = await client.get(
+            f"/v1/admin/skills/{quarantined_id}/versions/1/resources/references/unsafe.py",
+            headers=headers,
+        )
+
+    assert markdown.status_code == 200
+    assert markdown.json() == {
+        "path": "references/process.md",
+        "media_type": "text/markdown",
+        "size": len("先核对服务医院，再查询号源。".encode()),
+        "content": "先核对服务医院，再查询号源。",
+    }
+    assert missing.status_code == 404
+    assert blocked.status_code == 409
+    assert blocked.json() == {"detail": "隔离的 Skill 资源不能在线预览"}
+
+
+@pytest.mark.asyncio
 async def test_invalid_archive_is_rejected_with_safe_audit() -> None:
     registry = InMemorySkillRegistry()
     app = create_app(

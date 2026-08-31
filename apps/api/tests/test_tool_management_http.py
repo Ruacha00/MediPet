@@ -186,25 +186,112 @@ async def test_tool_assisted_skill_requires_an_enabled_compatible_binding_to_pub
         blocked = await client.post(
             f"/v1/admin/skills/{skill_id}/versions/1/publish", headers=headers
         )
+        draft = await client.patch(
+            f"/v1/admin/skills/{skill_id}",
+            headers=headers,
+            json={
+                "instructions": "Use the enabled bound lookup Tool.",
+                "change_note": "Add the reviewed Tool binding",
+            },
+        )
         bound = await client.post(
-            f"/v1/admin/skills/{skill_id}/versions/1/tool-bindings",
+            f"/v1/admin/skills/{skill_id}/versions/2/tool-bindings",
             headers=headers,
             json={"tool_id": "test.lookup", "tool_version": "1"},
         )
+        reviewed = await client.post(
+            f"/v1/admin/skills/{skill_id}/versions/2/submit-review", headers=headers
+        )
         published = await client.post(
-            f"/v1/admin/skills/{skill_id}/versions/1/publish", headers=headers
+            f"/v1/admin/skills/{skill_id}/versions/2/publish", headers=headers
         )
         immutable = await client.post(
-            f"/v1/admin/skills/{skill_id}/versions/1/tool-bindings",
+            f"/v1/admin/skills/{skill_id}/versions/2/tool-bindings",
             headers=headers,
             json={"tool_id": "test.lookup", "tool_version": "1"},
         )
 
     assert blocked.status_code == 409
     assert "binding" in blocked.json()["detail"]
+    assert draft.status_code == 201
     assert bound.status_code == 201
+    assert reviewed.status_code == 200
     assert published.status_code == 200
     assert immutable.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_admin_can_read_and_remove_draft_bindings_but_review_freezes_them() -> None:
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await tools.synchronize((_trusted_tool(),), actor="deployment")
+    app = create_app(
+        skill_registry=skills,
+        tool_registry=tools,
+        management_token="management-secret",
+        environment="development",
+    )
+    headers = {"Authorization": "Bearer management-secret"}
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        created = await client.post(
+            "/v1/admin/skills",
+            headers=headers,
+            json={
+                "slug": "binding-review",
+                "name": "Binding review",
+                "description": "Freezes reviewed Tool bindings",
+                "instructions": "Use the selected Tool.",
+                "change_note": "Initial version",
+                "skill_type": "tool-assisted",
+            },
+        )
+        skill_id = created.json()["skill_id"]
+        binding_path = f"/v1/admin/skills/{skill_id}/versions/1/tool-bindings"
+        binding = {"tool_id": "test.lookup", "tool_version": "1"}
+
+        assert (await client.post(binding_path, headers=headers, json=binding)).status_code == 201
+        listed = await client.get(binding_path, headers=headers)
+        removed = await client.delete(
+            f"{binding_path}/test.lookup/versions/1",
+            headers=headers,
+        )
+        empty = await client.get(binding_path, headers=headers)
+        assert (await client.post(binding_path, headers=headers, json=binding)).status_code == 201
+        assert (
+            await client.post(
+                f"/v1/admin/skills/{skill_id}/versions/1/submit-review",
+                headers=headers,
+            )
+        ).status_code == 200
+        rejected_bind = await client.post(binding_path, headers=headers, json=binding)
+        rejected_unbind = await client.delete(
+            f"{binding_path}/test.lookup/versions/1",
+            headers=headers,
+        )
+        audits = await client.get("/v1/admin/tool-audits", headers=headers)
+
+    expected = {
+        "skill_id": skill_id,
+        "skill_version": 1,
+        "tool_id": "test.lookup",
+        "tool_version": "1",
+    }
+    assert listed.status_code == 200
+    assert listed.json() == {"bindings": [expected]}
+    assert removed.status_code == 200
+    assert removed.json() == expected
+    assert empty.json() == {"bindings": []}
+    assert rejected_bind.status_code == 409
+    assert rejected_unbind.status_code == 409
+    assert [audit["action"] for audit in audits.json()["audits"]] == [
+        "sync",
+        "bind",
+        "unbind",
+        "bind",
+        "reject_bind",
+        "reject_unbind",
+    ]
 
 
 @pytest.mark.asyncio

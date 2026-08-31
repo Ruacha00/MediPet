@@ -27,6 +27,7 @@ services:
       MEDIPET_WEB_ORIGIN: http://localhost:3000
       MEDIPET_RUNTIME_ENV_FILE: /run/secrets/medipet_api_env
       MEDIPET_CAPABILITIES_PATH: /app/capabilities
+      MEDIPET_MANAGEMENT_TOKEN: ${MEDIPET_MANAGEMENT_TOKEN:-medipet-development-management}
       PYTHONPATH: /app/src
       WATCHFILES_FORCE_POLLING: "true"
     secrets:
@@ -64,7 +65,9 @@ services:
       args:
         PNPM_REGISTRY: ${PNPM_REGISTRY:-https://registry.npmmirror.com}
     environment:
+      MEDIPET_ENVIRONMENT: development
       MEDIPET_INTERNAL_API_URL: http://api:8000
+      MEDIPET_MANAGEMENT_TOKEN: ${MEDIPET_MANAGEMENT_TOKEN:-medipet-development-management}
       NEXT_PUBLIC_MEDIPET_API_URL: http://localhost:8000
       WATCHPACK_POLLING: "true"
     depends_on:

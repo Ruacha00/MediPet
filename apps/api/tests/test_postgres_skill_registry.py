@@ -13,6 +13,8 @@ from alembic.config import Config
 
 from medipet.agent.capabilities import ToolContext
 from medipet.skills.postgres import PostgresSkillRegistry
+from medipet.tools.postgres import PostgresToolRegistry
+from medipet.tools.registry import ToolRegistryError, TrustedTool
 
 DATABASE_URL = os.getenv("MEDIPET_TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(
@@ -25,6 +27,13 @@ async def _upgrade_database() -> None:
     config = Config("alembic.ini")
     config.set_main_option("sqlalchemy.url", DATABASE_URL or "")
     await asyncio.to_thread(command.upgrade, config, "head")
+
+
+async def _execute(
+    arguments: dict[str, object], context: ToolContext
+) -> dict[str, object]:
+    del context
+    return arguments
 
 
 @pytest.mark.asyncio
@@ -106,6 +115,9 @@ async def test_postgres_skill_registry_persists_and_exports_package_resources() 
     try:
         listed = await restarted.list_skills()
         persisted = next(skill for skill in listed if skill["slug"] == slug)
+        resource = await restarted.get_resource(
+            imported.skill_id, 1, "references/checklist.md"
+        )
         _, exported = await restarted.export_package(imported.skill_id, 1, actor="admin")
     finally:
         await restarted.close()
@@ -117,5 +129,52 @@ async def test_postgres_skill_registry_persists_and_exports_package_resources() 
     assert version["resources"] == [
         {"path": "references/checklist.md", "media_type": "text/markdown", "size": 15}
     ]
+    assert resource.content.decode() == "# 检查清单\n"
     with zipfile.ZipFile(io.BytesIO(exported)) as archive:
         assert archive.read("references/checklist.md").decode() == "# 检查清单\n"
+
+
+@pytest.mark.asyncio
+async def test_postgres_tool_bindings_freeze_when_skill_enters_review() -> None:
+    await _upgrade_database()
+    tools = PostgresToolRegistry.from_url(DATABASE_URL or "")
+    skills = PostgresSkillRegistry.from_url(DATABASE_URL or "", tool_registry=tools)
+    tool_id = f"hospital.contract-{uuid4().hex}"
+    trusted = TrustedTool(
+        tool_id=tool_id,
+        version="1",
+        name="contract_test",
+        description="PostgreSQL binding contract",
+        input_schema={"type": "object"},
+        output_schema={"type": "object"},
+        effect="read",
+        approval_required=False,
+        execute=_execute,
+    )
+    try:
+        await tools.synchronize((trusted,), actor="provider")
+        await tools.configure(
+            tool_id, "1", enabled=True, approval_required=False, actor="admin"
+        )
+        draft = await skills.create_skill(
+            slug=f"binding-freeze-{uuid4().hex}",
+            name="绑定冻结",
+            description="验证审核后绑定不可变",
+            instructions="仅使用已绑定的 Tool。",
+            change_note="初始版本",
+            skill_type="tool-assisted",
+            actor="admin",
+        )
+        await tools.bind(draft.skill_id, 1, tool_id, "1", actor="admin")
+        assert await tools.binding_versions(draft.skill_id, 1) == ((tool_id, "1"),)
+
+        await skills.transition(draft.skill_id, 1, "submit_review", actor="reviewer")
+
+        with pytest.raises(ToolRegistryError, match="Only draft"):
+            await tools.unbind(draft.skill_id, 1, tool_id, "1", actor="admin")
+        with pytest.raises(ToolRegistryError, match="Only draft"):
+            await tools.bind(draft.skill_id, 1, tool_id, "1", actor="admin")
+        await skills.transition(draft.skill_id, 1, "publish", actor="admin")
+    finally:
+        await skills.close()
+        await tools.close()

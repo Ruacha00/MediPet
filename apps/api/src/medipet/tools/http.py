@@ -9,6 +9,7 @@ from medipet.skills.registry import (
     SkillNotFoundError,
     SkillRegistry,
     SkillRegistryError,
+    SkillTransitionError,
 )
 from medipet.tools.registry import (
     ToolNotFoundError,
@@ -95,7 +96,79 @@ def tool_management_router(
             )
         except (ToolNotFoundError, SkillNotFoundError) as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
-        except (ToolRegistryError, SkillRegistryError) as error:
+        except SkillRegistryError as error:
+            await registry.record_management_rejection(
+                "reject_bind",
+                request.tool_id,
+                request.tool_version,
+                actor="development-admin",
+            )
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ToolRegistryError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+
+    @router.get(
+        "/skills/{skill_id}/versions/{skill_version}/tool-bindings",
+        dependencies=protected,
+    )
+    async def list_bindings(skill_id: str, skill_version: int) -> dict[str, object]:
+        try:
+            if skill_registry is None:
+                raise ToolRegistryError("Skill Registry is unavailable")
+            await skill_registry.assert_tool_bindings_mutable(skill_id, skill_version)
+        except SkillNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except SkillTransitionError:
+            pass
+        except ToolRegistryError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        return {
+            "bindings": [
+                {
+                    "skill_id": skill_id,
+                    "skill_version": skill_version,
+                    "tool_id": tool_id,
+                    "tool_version": tool_version,
+                }
+                for tool_id, tool_version in await registry.binding_versions(
+                    skill_id, skill_version
+                )
+            ]
+        }
+
+    @router.delete(
+        "/skills/{skill_id}/versions/{skill_version}/tool-bindings/"
+        "{tool_id}/versions/{tool_version}",
+        dependencies=protected,
+    )
+    async def unbind_tool(
+        skill_id: str,
+        skill_version: int,
+        tool_id: str,
+        tool_version: str,
+    ) -> dict[str, object]:
+        try:
+            if skill_registry is None:
+                raise ToolRegistryError("Skill Registry is unavailable")
+            await skill_registry.assert_tool_bindings_mutable(skill_id, skill_version)
+            return await registry.unbind(
+                skill_id,
+                skill_version,
+                tool_id,
+                tool_version,
+                actor="development-admin",
+            )
+        except (ToolNotFoundError, SkillNotFoundError) as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except SkillRegistryError as error:
+            await registry.record_management_rejection(
+                "reject_unbind",
+                tool_id,
+                tool_version,
+                actor="development-admin",
+            )
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except ToolRegistryError as error:
             raise HTTPException(status_code=409, detail=str(error)) from error
 
     return router
