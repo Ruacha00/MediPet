@@ -148,7 +148,10 @@ def main() -> None:
         page.get_by_role('button', name='关闭 Markdown 预览').click()
 
         page.get_by_role('button', name='新建就诊事项').click()
-        page.get_by_role('button', name='演示患者 · 新的就诊事项 诊前准备').wait_for()
+        created_visit_matter = page.locator('.visit-item.active').filter(
+            has_text='新的就诊事项',
+        )
+        created_visit_matter.wait_for()
         composer.fill('新的事项')
         page.get_by_role('button', name='发送消息').click()
         page.get_by_text('这是新的独立就诊事项。', exact=True).wait_for()

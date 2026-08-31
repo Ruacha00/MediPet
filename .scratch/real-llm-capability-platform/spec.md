@@ -1,7 +1,7 @@
 # 真实 LLM Runtime 与空能力管理平台
 
 Type: spec
-Status: ready-for-agent
+Status: resolved
 
 ## Problem Statement
 
