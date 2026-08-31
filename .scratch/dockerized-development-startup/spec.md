@@ -43,6 +43,7 @@ docker compose up --build
 - 从无镜像、无应用容器的状态执行 `docker compose up --build` 后，PostgreSQL 健康、migration/seed 成功、`/health` 返回成功且 Web 可访问。
 - `GET /ready` 能识别通过运行时环境传入的 DeepSeek 配置；自动化验收不得发送真实或可能计费的模型请求。
 - 页面服务端可以恢复就诊事项和历史，浏览器端可以创建、切换就诊事项并发送请求，不出现 `localhost`/`api` 地址空间混用。
+- 容器端 SSR 与浏览器端按同一医院时区格式化号源时间，不因容器使用 UTC 而出现 hydration mismatch。
 - 修改 API 或 Web 源文件会触发对应开发服务重载，无需重建镜像。
 - Ctrl+C 后应用容器停止且无宿主机 API/Web 残留进程；数据库数据在再次启动后仍存在。
 - `start.bat` 可从资源管理器双击，也可从任意工作目录通过 CMD 调用，并始终启动仓库自身的默认 Compose 拓扑。

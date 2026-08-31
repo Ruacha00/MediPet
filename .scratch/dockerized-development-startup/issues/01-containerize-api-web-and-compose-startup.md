@@ -10,6 +10,7 @@ Status: resolved
 - [x] API 容器在 PostgreSQL 健康后执行 migration 与幂等 seed，成功后才启动服务。
 - [x] 通过运行时 Docker secret 安全读取 `apps/api/.env` 中已有 DeepSeek OpenAI-compatible 配置；构建上下文、Compose 解析结果和日志不包含真实密钥。
 - [x] 区分 Web 服务端的内部 API 地址与浏览器端公开 API 地址，覆盖历史恢复、能力状态、创建/切换事项和聊天传输。
+- [x] 固定号源的医院时区展示，避免容器端 UTC 与浏览器端时区不同造成 hydration mismatch。
 - [x] 使用源码 bind mount 与容器依赖卷支持 API/Web 热更新，不读取宿主机 `.venv` 或 `node_modules`。
 - [x] 删除 `start-dev.ps1` 与 `start-dev.bat`，并清理所有文档、ADR 和脚本引用。
 - [x] 新建根目录 `start.bat`：从任意当前目录均先定位仓库根目录，检查 Docker CLI、Compose 插件和 Engine，然后直接以前台模式执行 `docker compose up --build`。
