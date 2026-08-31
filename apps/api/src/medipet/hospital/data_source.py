@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from medipet.capability_files import fake_hospital_data_path
 from medipet.hospital.operations import Department, Doctor, Hospital, HospitalDataError
 
 
@@ -39,8 +40,8 @@ class FakeHospitalDataSource:
     initial_bookings: tuple[InitialBooking, ...]
 
     @classmethod
-    def load_default(cls) -> FakeHospitalDataSource:
-        return cls.load(Path(__file__).with_name("fake_hospital.json"))
+    def load_default(cls, path: Path | None = None) -> FakeHospitalDataSource:
+        return cls.load(path or fake_hospital_data_path())
 
     @classmethod
     def load(cls, path: Path) -> FakeHospitalDataSource:

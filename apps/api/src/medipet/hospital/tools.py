@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 
-from medipet.agent.capabilities import ToolConfirmationContract, ToolContext
+from medipet.agent.capabilities import (
+    ToolConfirmationContract,
+    ToolContext,
+    ToolExecutor,
+    ToolPresenter,
+)
 from medipet.hospital.operations import (
     Appointment,
+    AppointmentNotCancellableError,
     AppointmentSlot,
+    CancelAppointmentAction,
     CreateAppointmentAction,
     Department,
     Doctor,
@@ -21,132 +29,19 @@ from medipet.hospital.operations import (
     ListDoctorsQuery,
     SearchSlotsQuery,
 )
-from medipet.tools.registry import TrustedTool
-
-_EMPTY_INPUT_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {},
-    "required": [],
-    "additionalProperties": False,
-}
-_HOSPITAL_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "hospital_id": {"type": "string"},
-        "name": {"type": "string"},
-        "timezone": {"type": "string"},
-    },
-    "required": ["hospital_id", "name", "timezone"],
-    "additionalProperties": False,
-}
-_DEPARTMENT_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "department_id": {"type": "string"},
-        "name": {"type": "string"},
-        "description": {"type": "string"},
-    },
-    "required": ["department_id", "name", "description"],
-    "additionalProperties": False,
-}
-_DOCTOR_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "doctor_id": {"type": "string"},
-        "department_id": {"type": "string"},
-        "name": {"type": "string"},
-        "title": {"type": "string"},
-    },
-    "required": ["doctor_id", "department_id", "name", "title"],
-    "additionalProperties": False,
-}
-_SLOT_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "slot_id": {"type": "string"},
-        "department_id": {"type": "string"},
-        "doctor_id": {"type": "string"},
-        "starts_at": {"type": "string", "format": "date-time"},
-        "ends_at": {"type": "string", "format": "date-time"},
-        "fee_cents": {"type": "integer", "minimum": 0},
-        "currency": {"type": "string", "enum": ["CNY"]},
-    },
-    "required": [
-        "slot_id",
-        "department_id",
-        "doctor_id",
-        "starts_at",
-        "ends_at",
-        "fee_cents",
-        "currency",
-    ],
-    "additionalProperties": False,
-}
-_APPOINTMENT_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "appointment_id": {"type": "string"},
-        "patient_id": {"type": "string"},
-        "slot_id": {"type": "string"},
-        "department_id": {"type": "string"},
-        "doctor_id": {"type": "string"},
-        "starts_at": {"type": "string", "format": "date-time"},
-        "ends_at": {"type": "string", "format": "date-time"},
-        "fee_cents": {"type": "integer", "minimum": 0},
-        "currency": {"type": "string", "enum": ["CNY"]},
-        "status": {"type": "string", "enum": ["booked"]},
-    },
-    "required": [
-        "appointment_id",
-        "patient_id",
-        "slot_id",
-        "department_id",
-        "doctor_id",
-        "starts_at",
-        "ends_at",
-        "fee_cents",
-        "currency",
-        "status",
-    ],
-    "additionalProperties": False,
-}
-_PATIENT_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {"patient_id": {"type": "string"}},
-    "required": ["patient_id"],
-    "additionalProperties": False,
-}
-_APPOINTMENT_CONFIRMATION_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "patient": _PATIENT_SCHEMA,
-        "hospital": _HOSPITAL_SCHEMA,
-        "department": _DEPARTMENT_SCHEMA,
-        "doctor": _DOCTOR_SCHEMA,
-        "slot_id": {"type": "string"},
-        "starts_at": {"type": "string", "format": "date-time"},
-        "ends_at": {"type": "string", "format": "date-time"},
-        "fee_cents": {"type": "integer", "minimum": 0},
-        "currency": {"type": "string", "enum": ["CNY"]},
-    },
-    "required": [
-        "patient",
-        "hospital",
-        "department",
-        "doctor",
-        "slot_id",
-        "starts_at",
-        "ends_at",
-        "fee_cents",
-        "currency",
-    ],
-    "additionalProperties": False,
-}
+from medipet.hospital.tool_manifest import load_hospital_tool_specs
+from medipet.tools.registry import ToolRegistryError, TrustedTool
 
 
 class HospitalToolProvider:
-    def __init__(self, operations: HospitalOperations) -> None:
+    def __init__(
+        self,
+        operations: HospitalOperations,
+        *,
+        manifest_path: Path | None = None,
+    ) -> None:
         self._operations = operations
+        self._manifest_path = manifest_path
 
     async def tools(self) -> tuple[TrustedTool, ...]:
         async def get_hospital(
@@ -295,172 +190,119 @@ class HospitalToolProvider:
                 "appointment": _appointment_data(receipt.appointment),
             }
 
-        return (
-            TrustedTool(
-                tool_id="hospital.get_hospital",
-                version="1",
-                name="hospital_get_hospital",
-                description="查询服务医院的基本资料。",
-                input_schema=_EMPTY_INPUT_SCHEMA,
-                output_schema={
-                    "type": "object",
-                    "properties": {"hospital": _HOSPITAL_SCHEMA},
-                    "required": ["hospital"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=get_hospital,
-            ),
-            TrustedTool(
-                tool_id="hospital.list_departments",
-                version="1",
-                name="hospital_list_departments",
-                description="列出服务医院的科室。",
-                input_schema=_EMPTY_INPUT_SCHEMA,
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "departments": {
-                            "type": "array",
-                            "items": _DEPARTMENT_SCHEMA,
-                        }
-                    },
-                    "required": ["departments"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=list_departments,
-            ),
-            TrustedTool(
-                tool_id="hospital.list_doctors",
-                version="1",
-                name="hospital_list_doctors",
-                description="列出服务医院的医生，可按科室筛选。",
-                input_schema={
-                    "type": "object",
-                    "properties": {"department_id": {"type": "string"}},
-                    "required": [],
-                    "additionalProperties": False,
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "doctors": {"type": "array", "items": _DOCTOR_SCHEMA}
-                    },
-                    "required": ["doctors"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=list_doctors,
-            ),
-            TrustedTool(
-                tool_id="hospital.search_slots",
-                version="1",
-                name="hospital_search_slots",
-                description="查询服务医院当前可预约的号源。",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "department_id": {"type": "string"},
-                        "doctor_id": {"type": "string"},
-                        "start_date": {"type": "string", "format": "date"},
-                        "end_date": {"type": "string", "format": "date"},
-                    },
-                    "required": [],
-                    "additionalProperties": False,
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "slots": {"type": "array", "items": _SLOT_SCHEMA}
-                    },
-                    "required": ["slots"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=search_slots,
-                present=present_slots,
-            ),
-            TrustedTool(
-                tool_id="hospital.get_appointment",
-                version="1",
-                name="hospital_get_appointment",
-                description="查询当前患者的一条预约挂号。",
-                input_schema={
-                    "type": "object",
-                    "properties": {"appointment_id": {"type": "string"}},
-                    "required": ["appointment_id"],
-                    "additionalProperties": False,
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "appointment": {
-                            "anyOf": [_APPOINTMENT_SCHEMA, {"type": "null"}]
-                        }
-                    },
-                    "required": ["appointment"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=get_appointment,
-            ),
-            TrustedTool(
-                tool_id="hospital.list_appointments",
-                version="1",
-                name="hospital_list_appointments",
-                description="列出当前患者的预约挂号。",
-                input_schema=_EMPTY_INPUT_SCHEMA,
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "appointments": {
-                            "type": "array",
-                            "items": _APPOINTMENT_SCHEMA,
-                        }
-                    },
-                    "required": ["appointments"],
-                    "additionalProperties": False,
-                },
-                effect="read",
-                approval_required=False,
-                execute=list_appointments,
-            ),
-            TrustedTool(
-                tool_id="hospital.create_appointment",
-                version="1",
-                name="hospital_create_appointment",
-                description="为当前患者创建预约挂号。",
-                input_schema={
-                    "type": "object",
-                    "properties": {"slot_id": {"type": "string"}},
-                    "required": ["slot_id"],
-                    "additionalProperties": False,
-                },
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "receipt_id": {"type": "string"},
-                        "appointment": _APPOINTMENT_SCHEMA,
-                    },
-                    "required": ["receipt_id", "appointment"],
-                    "additionalProperties": False,
-                },
-                effect="write",
-                approval_required=True,
-                allowed_stages=("pre_visit",),
-                confirmation_contract=ToolConfirmationContract(
-                    schema=_APPOINTMENT_CONFIRMATION_SCHEMA,
-                    prepare=prepare_create_appointment,
-                    revalidate=revalidate_create_appointment,
+        async def prepare_cancel_appointment(
+            arguments: dict[str, object], context: ToolContext
+        ) -> dict[str, object]:
+            return await _cancellation_confirmation(self._operations, arguments, context)
+
+        async def revalidate_cancel_appointment(
+            arguments: dict[str, object],
+            confirmation: dict[str, object],
+            context: ToolContext,
+        ) -> bool:
+            try:
+                current = await _cancellation_confirmation(
+                    self._operations, arguments, context
+                )
+            except HospitalOperationsError:
+                return False
+            return current == confirmation
+
+        async def cancel_appointment(
+            arguments: dict[str, object], context: ToolContext
+        ) -> dict[str, object]:
+            receipt = await self._operations.commit(
+                CancelAppointmentAction(
+                    patient_id=_patient_id(context),
+                    appointment_id=_required_text(arguments, "appointment_id"),
+                    idempotency_key=_required_context_key(context),
+                )
+            )
+            return {
+                "receipt_id": receipt.receipt_id,
+                "appointment": _appointment_data(receipt.appointment),
+            }
+
+        specs = load_hospital_tool_specs(self._manifest_path)
+        executors: dict[str, ToolExecutor] = {
+            "hospital.get_hospital": get_hospital,
+            "hospital.list_departments": list_departments,
+            "hospital.list_doctors": list_doctors,
+            "hospital.search_slots": search_slots,
+            "hospital.get_appointment": get_appointment,
+            "hospital.list_appointments": list_appointments,
+            "hospital.create_appointment": create_appointment,
+            "hospital.cancel_appointment": cancel_appointment,
+        }
+        presenters: dict[str, ToolPresenter] = {
+            "hospital.search_slots": present_slots,
+        }
+        manifest_ids = {spec.tool_id for spec in specs}
+        if manifest_ids != executors.keys() or len(manifest_ids) != len(specs):
+            raise ToolRegistryError(
+                "Hospital Tool manifest must match the deployed trusted executors"
+            )
+        trusted_policies = {
+            **{
+                tool_id: ("read", False, ("pre_visit", "in_visit"), False)
+                for tool_id in executors
+                if tool_id not in {
+                    "hospital.create_appointment",
+                    "hospital.cancel_appointment",
+                }
+            },
+            "hospital.create_appointment": ("write", True, ("pre_visit",), True),
+            "hospital.cancel_appointment": ("write", True, ("pre_visit",), True),
+        }
+        for spec in specs:
+            actual_policy = (
+                spec.effect,
+                spec.approval_required,
+                spec.allowed_stages,
+                spec.confirmation_schema is not None,
+            )
+            if actual_policy != trusted_policies[spec.tool_id]:
+                raise ToolRegistryError(
+                    f"Hospital Tool policy does not match its trusted executor: {spec.tool_id}"
+                )
+        confirmation_contracts = {
+            "hospital.create_appointment": ToolConfirmationContract(
+                schema=next(
+                    spec.confirmation_schema
+                    for spec in specs
+                    if spec.tool_id == "hospital.create_appointment"
+                    and spec.confirmation_schema is not None
                 ),
-                execute=create_appointment,
+                prepare=prepare_create_appointment,
+                revalidate=revalidate_create_appointment,
             ),
+            "hospital.cancel_appointment": ToolConfirmationContract(
+                schema=next(
+                    spec.confirmation_schema
+                    for spec in specs
+                    if spec.tool_id == "hospital.cancel_appointment"
+                    and spec.confirmation_schema is not None
+                ),
+                prepare=prepare_cancel_appointment,
+                revalidate=revalidate_cancel_appointment,
+            ),
+        }
+        return tuple(
+            TrustedTool(
+                tool_id=spec.tool_id,
+                version=spec.version,
+                name=spec.name,
+                description=spec.description,
+                input_schema=spec.input_schema,
+                output_schema=spec.output_schema,
+                effect=spec.effect,
+                approval_required=spec.approval_required,
+                allowed_stages=spec.allowed_stages,
+                confirmation_contract=confirmation_contracts.get(spec.tool_id),
+                execute=executors[spec.tool_id],
+                present=presenters.get(spec.tool_id),
+            )
+            for spec in specs
         )
 
 
@@ -502,6 +344,47 @@ def _hospital_data(hospital: Hospital) -> dict[str, object]:
         "hospital_id": hospital.hospital_id,
         "name": hospital.name,
         "timezone": hospital.timezone,
+    }
+
+
+async def _cancellation_confirmation(
+    operations: HospitalOperations,
+    arguments: dict[str, object],
+    context: ToolContext,
+) -> dict[str, object]:
+    appointment = await operations.query(
+        GetAppointmentQuery(
+            patient_id=_patient_id(context),
+            appointment_id=_required_text(arguments, "appointment_id"),
+        )
+    )
+    if appointment.status != "booked":
+        raise AppointmentNotCancellableError("预约当前不可取消")
+    hospital = await operations.query(GetHospitalQuery())
+    departments = await operations.query(ListDepartmentsQuery())
+    department = next(
+        (item for item in departments if item.department_id == appointment.department_id),
+        None,
+    )
+    doctors = await operations.query(
+        ListDoctorsQuery(department_id=appointment.department_id)
+    )
+    doctor = next(
+        (item for item in doctors if item.doctor_id == appointment.doctor_id),
+        None,
+    )
+    if department is None or doctor is None:
+        raise HospitalNotFoundError("预约对应的科室或医生不存在")
+    return {
+        "patient": {"patient_id": _patient_id(context)},
+        "hospital": _hospital_data(hospital),
+        "department": _department_data(department),
+        "doctor": _doctor_data(doctor),
+        "appointment_id": appointment.appointment_id,
+        "starts_at": appointment.starts_at.isoformat(),
+        "ends_at": appointment.ends_at.isoformat(),
+        "fee_cents": appointment.fee_cents,
+        "currency": appointment.currency,
     }
 
 

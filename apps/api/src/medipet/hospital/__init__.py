@@ -3,7 +3,9 @@ from medipet.hospital.fake import FakeHospitalFailurePlan, FakeHospitalOperation
 from medipet.hospital.operations import (
     ActionReceipt,
     Appointment,
+    AppointmentNotCancellableError,
     AppointmentSlot,
+    CancelAppointmentAction,
     CreateAppointmentAction,
     Department,
     Doctor,
@@ -27,7 +29,9 @@ from medipet.hospital.operations import (
 __all__ = [
     "ActionReceipt",
     "Appointment",
+    "AppointmentNotCancellableError",
     "AppointmentSlot",
+    "CancelAppointmentAction",
     "CreateAppointmentAction",
     "Department",
     "Doctor",

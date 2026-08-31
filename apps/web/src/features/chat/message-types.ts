@@ -4,16 +4,6 @@ export type AgentStatusData = {
   label: string;
 };
 
-export type DepartmentCandidate = {
-  name: string;
-  reason: string;
-};
-
-export type DepartmentCandidatesData = {
-  candidates: DepartmentCandidate[];
-  uncertainty: string;
-};
-
 export type SlotOption = {
   id: string;
   department: string;
@@ -78,7 +68,6 @@ export type HandoffData = {
 
 export type MediPetDataParts = {
   "agent-status": AgentStatusData;
-  "department-candidates": DepartmentCandidatesData;
   "slot-options": SlotOptionsData;
   "action-proposal": ActionProposalData;
   "hospital-route": HospitalRouteData;

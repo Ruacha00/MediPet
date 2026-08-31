@@ -8,7 +8,7 @@ MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一
 - API：FastAPI、Pydantic、LangGraph
 - 工具链：pnpm、uv、pytest、Ruff、Pyright、Vitest、Playwright
 
-开发环境包含独立且明确标识为虚构的医院目录，并通过首方“医院预约挂号协助”Skill 提供医院、科室、医生、号源和当前患者预约查询，以及明确确认后的创建预约能力。服务医院事实只来自已绑定 Tool；当前仍不提供院内路线或症状到科室的医院导诊规则。
+开发环境包含独立且明确标识为虚构的医院目录，并提供“医院服务目录查询”“医院预约挂号协助”和“医院预约取消协助”三个首方 Skills。它们支持医院、科室、医生、号源和当前患者预约查询，以及明确确认后的创建或取消预约。服务医院事实只来自各 Skill 显式绑定的 Tool；产品不提供症状到科室的自动导诊规则，当前也不提供院内路线。
 
 当前消息包含有限、明显的急症信号时，MediPet 会在调用模型前中断普通协助，直接显示拨打 120、前往急诊或请身边人协助的线下干预引导。该功能不是急症诊断，也不创建人工审核队列、消息推送或后台处置流程。
 
@@ -53,6 +53,24 @@ MEDIPET_CONTEXT_MESSAGE_LIMIT=20
 ```
 
 `MEDIPET_LLM_BASE_URL` 是完整 API 根地址；Adapter 会在其后请求 `chat/completions`。可复制 `apps/api/.env.example` 作为起点，但不要提交真实 Token、数据库 URL 或任何真实患者/医院数据。Web 可以为同一就诊参与者创建和切换彼此隔离的就诊事项，并恢复各事项历史；文本消息支持 GitHub Flavored Markdown，输入区提供常用格式按钮与发送前预览。
+
+## 外置 Skills 与 Tools
+
+可变能力定义统一放在仓库根目录的 `capabilities/`，不再放进 Python `src/`：
+
+- `capabilities/skills/` 保存 `SKILL.md`、治理元数据和各 Skill 的显式 Tool 绑定；
+- `capabilities/tools/hospital.json` 保存 Tool 名称、描述、输入输出 Schema、版本与审批属性；
+- `capabilities/tools/fake-hospital.json` 保存仅用于开发环境的虚构医院数据。
+
+Compose 会把该目录以只读方式挂载到 API 容器的 `/app/capabilities`，并通过
+`MEDIPET_CAPABILITIES_PATH` 指定位置。修改定义后重启 API 服务即可重新执行开发引导：
+
+```powershell
+docker compose restart api
+```
+
+Tool 的 Python 执行器仍属于受信任代码。外部清单只能配置已部署的执行器，不能通过 JSON
+挂载任意代码；修改已有 Tool 契约时需要同步提升版本号。
 
 ## 验证
 

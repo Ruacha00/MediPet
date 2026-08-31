@@ -32,6 +32,14 @@ def test_compose_configuration_defines_the_complete_safe_development_stack() -> 
     assert set(configuration["services"]) == {"api", "postgres", "web"}
     api_environment = configuration["services"]["api"].get("environment", {})
     assert "MEDIPET_LLM_API_KEY" not in api_environment
+    assert api_environment["MEDIPET_CAPABILITIES_PATH"] == "/app/capabilities"
+    capability_mount = next(
+        mount
+        for mount in configuration["services"]["api"]["volumes"]
+        if mount["target"] == "/app/capabilities"
+    )
+    assert capability_mount["type"] == "bind"
+    assert capability_mount["read_only"] is True
 
 
 @pytest.mark.skipif(os.name != "nt", reason="The public launcher is a Windows batch file")

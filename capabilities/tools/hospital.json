@@ -1,0 +1,320 @@
+{
+  "format_version": 1,
+  "$defs": {
+    "empty_input": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "patient": {
+      "type": "object",
+      "properties": {"patient_id": {"type": "string"}},
+      "required": ["patient_id"],
+      "additionalProperties": false
+    },
+    "hospital": {
+      "type": "object",
+      "properties": {
+        "hospital_id": {"type": "string"},
+        "name": {"type": "string"},
+        "timezone": {"type": "string"}
+      },
+      "required": ["hospital_id", "name", "timezone"],
+      "additionalProperties": false
+    },
+    "department": {
+      "type": "object",
+      "properties": {
+        "department_id": {"type": "string"},
+        "name": {"type": "string"},
+        "description": {"type": "string"}
+      },
+      "required": ["department_id", "name", "description"],
+      "additionalProperties": false
+    },
+    "doctor": {
+      "type": "object",
+      "properties": {
+        "doctor_id": {"type": "string"},
+        "department_id": {"type": "string"},
+        "name": {"type": "string"},
+        "title": {"type": "string"}
+      },
+      "required": ["doctor_id", "department_id", "name", "title"],
+      "additionalProperties": false
+    },
+    "slot": {
+      "type": "object",
+      "properties": {
+        "slot_id": {"type": "string"},
+        "department_id": {"type": "string"},
+        "doctor_id": {"type": "string"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": "string", "format": "date-time"},
+        "fee_cents": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "enum": ["CNY"]}
+      },
+      "required": [
+        "slot_id",
+        "department_id",
+        "doctor_id",
+        "starts_at",
+        "ends_at",
+        "fee_cents",
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "appointment": {
+      "type": "object",
+      "properties": {
+        "appointment_id": {"type": "string"},
+        "patient_id": {"type": "string"},
+        "slot_id": {"type": "string"},
+        "department_id": {"type": "string"},
+        "doctor_id": {"type": "string"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": "string", "format": "date-time"},
+        "fee_cents": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "enum": ["CNY"]},
+        "status": {"type": "string", "enum": ["booked", "cancelled"]}
+      },
+      "required": [
+        "appointment_id",
+        "patient_id",
+        "slot_id",
+        "department_id",
+        "doctor_id",
+        "starts_at",
+        "ends_at",
+        "fee_cents",
+        "currency",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "appointment_confirmation": {
+      "type": "object",
+      "properties": {
+        "patient": {"$ref": "#/$defs/patient"},
+        "hospital": {"$ref": "#/$defs/hospital"},
+        "department": {"$ref": "#/$defs/department"},
+        "doctor": {"$ref": "#/$defs/doctor"},
+        "slot_id": {"type": "string"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": "string", "format": "date-time"},
+        "fee_cents": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "enum": ["CNY"]}
+      },
+      "required": [
+        "patient",
+        "hospital",
+        "department",
+        "doctor",
+        "slot_id",
+        "starts_at",
+        "ends_at",
+        "fee_cents",
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "appointment_cancellation_confirmation": {
+      "type": "object",
+      "properties": {
+        "patient": {"$ref": "#/$defs/patient"},
+        "hospital": {"$ref": "#/$defs/hospital"},
+        "department": {"$ref": "#/$defs/department"},
+        "doctor": {"$ref": "#/$defs/doctor"},
+        "appointment_id": {"type": "string"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": "string", "format": "date-time"},
+        "fee_cents": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "enum": ["CNY"]}
+      },
+      "required": [
+        "patient",
+        "hospital",
+        "department",
+        "doctor",
+        "appointment_id",
+        "starts_at",
+        "ends_at",
+        "fee_cents",
+        "currency"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "tools": [
+    {
+      "tool_id": "hospital.get_hospital",
+      "version": "1",
+      "name": "hospital_get_hospital",
+      "description": "查询服务医院的基本资料。",
+      "input_schema": {"$ref": "#/$defs/empty_input"},
+      "output_schema": {
+        "type": "object",
+        "properties": {"hospital": {"$ref": "#/$defs/hospital"}},
+        "required": ["hospital"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.list_departments",
+      "version": "1",
+      "name": "hospital_list_departments",
+      "description": "列出服务医院的科室。",
+      "input_schema": {"$ref": "#/$defs/empty_input"},
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "departments": {"type": "array", "items": {"$ref": "#/$defs/department"}}
+        },
+        "required": ["departments"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.list_doctors",
+      "version": "1",
+      "name": "hospital_list_doctors",
+      "description": "列出服务医院的医生，可按科室筛选。",
+      "input_schema": {
+        "type": "object",
+        "properties": {"department_id": {"type": "string"}},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "doctors": {"type": "array", "items": {"$ref": "#/$defs/doctor"}}
+        },
+        "required": ["doctors"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.search_slots",
+      "version": "1",
+      "name": "hospital_search_slots",
+      "description": "查询服务医院当前可预约的号源。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "department_id": {"type": "string"},
+          "doctor_id": {"type": "string"},
+          "start_date": {"type": "string", "format": "date"},
+          "end_date": {"type": "string", "format": "date"}
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {"slots": {"type": "array", "items": {"$ref": "#/$defs/slot"}}},
+        "required": ["slots"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.get_appointment",
+      "version": "2",
+      "name": "hospital_get_appointment",
+      "description": "查询当前患者的一条预约挂号。",
+      "input_schema": {
+        "type": "object",
+        "properties": {"appointment_id": {"type": "string"}},
+        "required": ["appointment_id"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "appointment": {"anyOf": [{"$ref": "#/$defs/appointment"}, {"type": "null"}]}
+        },
+        "required": ["appointment"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.list_appointments",
+      "version": "2",
+      "name": "hospital_list_appointments",
+      "description": "列出当前患者的预约挂号。",
+      "input_schema": {"$ref": "#/$defs/empty_input"},
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "appointments": {"type": "array", "items": {"$ref": "#/$defs/appointment"}}
+        },
+        "required": ["appointments"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.create_appointment",
+      "version": "2",
+      "name": "hospital_create_appointment",
+      "description": "为当前患者创建预约挂号。",
+      "input_schema": {
+        "type": "object",
+        "properties": {"slot_id": {"type": "string"}},
+        "required": ["slot_id"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_id": {"type": "string"},
+          "appointment": {"$ref": "#/$defs/appointment"}
+        },
+        "required": ["receipt_id", "appointment"],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "approval_required": true,
+      "allowed_stages": ["pre_visit"],
+      "confirmation_schema": {"$ref": "#/$defs/appointment_confirmation"}
+    },
+    {
+      "tool_id": "hospital.cancel_appointment",
+      "version": "1",
+      "name": "hospital_cancel_appointment",
+      "description": "取消当前患者的一条预约挂号。",
+      "input_schema": {
+        "type": "object",
+        "properties": {"appointment_id": {"type": "string"}},
+        "required": ["appointment_id"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "receipt_id": {"type": "string"},
+          "appointment": {"$ref": "#/$defs/appointment"}
+        },
+        "required": ["receipt_id", "appointment"],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "approval_required": true,
+      "allowed_stages": ["pre_visit"],
+      "confirmation_schema": {"$ref": "#/$defs/appointment_cancellation_confirmation"}
+    }
+  ]
+}

@@ -76,8 +76,6 @@ export function ChatShell({
   const restoredHistory = use(history);
   const capabilities = use(capabilityStatus ?? unavailableCapabilities);
   const restoredVisitMatters = use(visitMatters ?? fallbackVisitMatters);
-  const [input, setInput] = useState("");
-  const [showPreview, setShowPreview] = useState(false);
   const [agentStatus, setAgentStatus] = useState<string | null>(null);
   const [visitMatterError, setVisitMatterError] = useState<string | null>(null);
   const [visitMatterBusy, setVisitMatterBusy] = useState(false);
@@ -93,7 +91,6 @@ export function ChatShell({
   const [initialMessages, setInitialMessages] = useState(restoredHistory.messages);
   const [decisionStates, setDecisionStates] = useState<Record<string, ProposalDecisionState>>({});
   const threadEndRef = useRef<HTMLDivElement>(null);
-  const composerRef = useRef<HTMLTextAreaElement>(null);
   const chatTransport = useMemo(
     () => createChatTransport(activeVisitMatterId, demoParticipantId),
     [activeVisitMatterId],
@@ -121,13 +118,15 @@ export function ChatShell({
   const active = status === "submitted" || status === "streaming";
 
   useEffect(() => {
-    threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, agentStatus]);
+    const frame = requestAnimationFrame(() => {
+      threadEndRef.current?.scrollIntoView({ behavior: active ? "auto" : "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [messages, agentStatus, active]);
 
   async function submit(text: string) {
     const value = text.trim();
     if (!value || active) return;
-    setInput("");
     await sendMessage({ text: value });
   }
 
@@ -182,7 +181,6 @@ export function ChatShell({
       setActiveVisitMatterId(created.visit_matter_id);
       setHistoryFailed(false);
       setDecisionStates({});
-      setInput("");
     } catch (creationError) {
       setVisitMatterError(
         creationError instanceof Error
@@ -212,32 +210,11 @@ export function ChatShell({
       setActiveVisitMatterId(visitMatterId);
       setHistoryFailed(false);
       setDecisionStates({});
-      setInput("");
     } catch {
       setVisitMatterError("该就诊事项暂时无法打开，请稍后重试。");
     } finally {
       setVisitMatterBusy(false);
     }
-  }
-
-  function applyMarkdown(before: string, after: string, placeholder: string) {
-    const textarea = composerRef.current;
-    const selectionStart = textarea?.selectionStart ?? input.length;
-    const selectionEnd = textarea?.selectionEnd ?? input.length;
-    const selection = input.slice(selectionStart, selectionEnd) || placeholder;
-    const nextInput = [
-      input.slice(0, selectionStart),
-      before,
-      selection,
-      after,
-      input.slice(selectionEnd),
-    ].join("");
-    setInput(nextInput);
-    requestAnimationFrame(() => {
-      const nextSelectionStart = selectionStart + before.length;
-      textarea?.focus();
-      textarea?.setSelectionRange(nextSelectionStart, nextSelectionStart + selection.length);
-    });
   }
 
   return (
@@ -377,91 +354,12 @@ export function ChatShell({
           )}
         </div>
 
-        <footer className="composer-wrap">
-          <div className="composer-shell">
-            <div className="composer-toolbar" aria-label="Markdown 格式工具">
-              <span className="markdown-label">Markdown</span>
-              <div className="format-actions">
-                <button
-                  aria-label="加粗"
-                  disabled={active}
-                  onClick={() => applyMarkdown("**", "**", "重点内容")}
-                  title="加粗"
-                  type="button"
-                ><Bold size={15} /></button>
-                <button
-                  aria-label="行内代码"
-                  disabled={active}
-                  onClick={() => applyMarkdown("`", "`", "代码或配置")}
-                  title="行内代码"
-                  type="button"
-                ><Code2 size={15} /></button>
-                <button
-                  aria-label="无序列表"
-                  disabled={active}
-                  onClick={() => applyMarkdown("- ", "", "列表项")}
-                  title="无序列表"
-                  type="button"
-                ><List size={15} /></button>
-                <button
-                  aria-label="有序列表"
-                  disabled={active}
-                  onClick={() => applyMarkdown("1. ", "", "列表项")}
-                  title="有序列表"
-                  type="button"
-                ><ListOrdered size={15} /></button>
-              </div>
-              <button
-                aria-label={showPreview ? "关闭 Markdown 预览" : "打开 Markdown 预览"}
-                aria-pressed={showPreview}
-                className={`preview-toggle ${showPreview ? "active" : ""}`}
-                onClick={() => setShowPreview((current) => !current)}
-                type="button"
-              >
-                {showPreview ? <EyeOff size={15} /> : <Eye size={15} />}
-                {showPreview ? "继续编辑" : "预览"}
-              </button>
-            </div>
-            {showPreview && input.trim() && (
-              <div className="composer-preview-pane">
-                <small>发送效果预览</small>
-                <MarkdownText className="composer-preview" text={input} />
-              </div>
-            )}
-            <form
-              className="composer"
-              onSubmit={(event) => {
-                event.preventDefault();
-                submit(input);
-              }}
-            >
-              <textarea
-                aria-label="输入就诊需求"
-                placeholder="描述主要不适，或用 Markdown 整理时间线与问题清单…"
-                ref={composerRef}
-                rows={1}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    submit(input);
-                  }
-                }}
-              />
-              <button
-                className="send-button"
-                type={active ? "button" : "submit"}
-                aria-label={active ? "停止生成" : "发送消息"}
-                disabled={!active && !input.trim()}
-                onClick={active ? () => stop() : undefined}
-              >
-                {active ? <Square size={16} fill="currentColor" /> : <ArrowUp size={19} />}
-              </button>
-            </form>
-          </div>
-          <p className="composer-note">MediPet 提供非诊断性就诊协助，不能替代医生判断。</p>
-        </footer>
+        <ChatComposer
+          active={active}
+          key={activeVisitMatterId}
+          onStop={stop}
+          onSubmit={submit}
+        />
       </section>
 
       <aside className="right-rail panel" aria-label="就诊上下文">
@@ -499,6 +397,135 @@ export function ChatShell({
         </section>
       </aside>
     </main>
+  );
+}
+
+function ChatComposer({
+  active,
+  onStop,
+  onSubmit,
+}: {
+  active: boolean;
+  onStop: () => void;
+  onSubmit: (text: string) => Promise<void>;
+}) {
+  const [input, setInput] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
+
+  function submitInput() {
+    const value = input.trim();
+    if (!value || active) return;
+    setInput("");
+    void onSubmit(value);
+  }
+
+  function applyMarkdown(before: string, after: string, placeholder: string) {
+    const textarea = composerRef.current;
+    const selectionStart = textarea?.selectionStart ?? input.length;
+    const selectionEnd = textarea?.selectionEnd ?? input.length;
+    const selection = input.slice(selectionStart, selectionEnd) || placeholder;
+    const nextInput = [
+      input.slice(0, selectionStart),
+      before,
+      selection,
+      after,
+      input.slice(selectionEnd),
+    ].join("");
+    setInput(nextInput);
+    requestAnimationFrame(() => {
+      const nextSelectionStart = selectionStart + before.length;
+      textarea?.focus();
+      textarea?.setSelectionRange(nextSelectionStart, nextSelectionStart + selection.length);
+    });
+  }
+
+  return (
+    <footer className="composer-wrap">
+      <div className="composer-shell">
+        <div className="composer-toolbar" aria-label="Markdown 格式工具">
+          <span className="markdown-label">Markdown</span>
+          <div className="format-actions">
+            <button
+              aria-label="加粗"
+              disabled={active}
+              onClick={() => applyMarkdown("**", "**", "重点内容")}
+              title="加粗"
+              type="button"
+            ><Bold size={15} /></button>
+            <button
+              aria-label="行内代码"
+              disabled={active}
+              onClick={() => applyMarkdown("`", "`", "代码或配置")}
+              title="行内代码"
+              type="button"
+            ><Code2 size={15} /></button>
+            <button
+              aria-label="无序列表"
+              disabled={active}
+              onClick={() => applyMarkdown("- ", "", "列表项")}
+              title="无序列表"
+              type="button"
+            ><List size={15} /></button>
+            <button
+              aria-label="有序列表"
+              disabled={active}
+              onClick={() => applyMarkdown("1. ", "", "列表项")}
+              title="有序列表"
+              type="button"
+            ><ListOrdered size={15} /></button>
+          </div>
+          <button
+            aria-label={showPreview ? "关闭 Markdown 预览" : "打开 Markdown 预览"}
+            aria-pressed={showPreview}
+            className={`preview-toggle ${showPreview ? "active" : ""}`}
+            onClick={() => setShowPreview((current) => !current)}
+            type="button"
+          >
+            {showPreview ? <EyeOff size={15} /> : <Eye size={15} />}
+            {showPreview ? "继续编辑" : "预览"}
+          </button>
+        </div>
+        {showPreview && input.trim() && (
+          <div className="composer-preview-pane">
+            <small>发送效果预览</small>
+            <MarkdownText className="composer-preview" text={input} />
+          </div>
+        )}
+        <form
+          className="composer"
+          onSubmit={(event) => {
+            event.preventDefault();
+            submitInput();
+          }}
+        >
+          <textarea
+            aria-label="输入就诊需求"
+            placeholder="描述主要不适，或用 Markdown 整理时间线与问题清单…"
+            ref={composerRef}
+            rows={1}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                submitInput();
+              }
+            }}
+          />
+          <button
+            className="send-button"
+            type={active ? "button" : "submit"}
+            aria-label={active ? "停止生成" : "发送消息"}
+            disabled={!active && !input.trim()}
+            onClick={active ? onStop : undefined}
+          >
+            {active ? <Square size={16} fill="currentColor" /> : <ArrowUp size={19} />}
+          </button>
+        </form>
+      </div>
+      <p className="composer-note">MediPet 提供非诊断性就诊协助，不能替代医生判断。</p>
+    </footer>
   );
 }
 

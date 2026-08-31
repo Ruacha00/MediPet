@@ -26,6 +26,7 @@ services:
       MEDIPET_DATABASE_URL: postgresql://medipet:medipet-development-only@postgres:5432/medipet
       MEDIPET_WEB_ORIGIN: http://localhost:3000
       MEDIPET_RUNTIME_ENV_FILE: /run/secrets/medipet_api_env
+      MEDIPET_CAPABILITIES_PATH: /app/capabilities
       PYTHONPATH: /app/src
       WATCHFILES_FORCE_POLLING: "true"
     secrets:
@@ -55,6 +56,7 @@ services:
     volumes:
       - ./apps/api/src:/app/src
       - ./apps/api/migrations:/app/migrations
+      - ./capabilities:/app/capabilities:ro
 
   web:
     build:

@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from importlib.resources import files
+from pathlib import Path
 from typing import cast
 
+from medipet.capability_files import hospital_skill_directory, hospital_skills_directory
 from medipet.skills.archive import parse_skill_manifest
 from medipet.skills.registry import SkillRegistry, SkillStatus, SkillVersion
-from medipet.tools.registry import ToolProvider, ToolRegistry
+from medipet.tools.registry import ToolProvider, ToolRegistry, TrustedTool
 
 
 @dataclass(frozen=True)
@@ -17,31 +18,59 @@ class HospitalSkillSource:
     description: str
     instructions: str
     change_note: str
+    tool_bindings: tuple[str, ...]
 
 
-def load_hospital_skill_source() -> HospitalSkillSource:
-    package = files("medipet.hospital.appointment_skill")
+def load_hospital_skill_source(directory: Path | None = None) -> HospitalSkillSource:
+    package = directory or hospital_skill_directory()
     slug, description, instructions = parse_skill_manifest(
         package.joinpath("SKILL.md").read_text(encoding="utf-8")
     )
     metadata = json.loads(package.joinpath("medipet.json").read_text(encoding="utf-8"))
+    raw_bindings = metadata.get("tool_bindings")
+    if not isinstance(raw_bindings, list) or any(
+        not isinstance(item, str) or not item.strip() for item in raw_bindings
+    ):
+        raise ValueError(f"医院 Skill {slug} 缺少有效的 tool_bindings")
+    tool_bindings = tuple(item.strip() for item in raw_bindings)
+    if len(tool_bindings) != len(set(tool_bindings)):
+        raise ValueError(f"医院 Skill {slug} 的 tool_bindings 不能重复")
     return HospitalSkillSource(
         slug=slug,
         name=cast(str, metadata["display_name"]),
         description=description,
         instructions=instructions,
         change_note=cast(str, metadata["change_note"]),
+        tool_bindings=tool_bindings,
     )
+
+
+def load_hospital_skill_sources(directory: Path | None = None) -> tuple[HospitalSkillSource, ...]:
+    root = directory or hospital_skills_directory()
+    packages = sorted(
+        path
+        for path in root.iterdir()
+        if path.is_dir()
+        and path.joinpath("SKILL.md").is_file()
+        and path.joinpath("medipet.json").is_file()
+    )
+    if not packages:
+        raise ValueError("未找到外置医院 Skills")
+    sources = tuple(load_hospital_skill_source(package) for package in packages)
+    slugs = [source.slug for source in sources]
+    if len(slugs) != len(set(slugs)):
+        raise ValueError("外置医院 Skill slug 不能重复")
+    return sources
 
 
 async def bootstrap_development_hospital_skill(
     skill_registry: SkillRegistry,
     tool_registry: ToolRegistry,
     tool_provider: ToolProvider,
-) -> SkillVersion | dict[str, object]:
-    source = load_hospital_skill_source()
+) -> tuple[SkillVersion | dict[str, object], ...]:
+    sources = load_hospital_skill_sources()
     tools = await tool_provider.tools()
-    desired_bindings = {(tool.tool_id, tool.version) for tool in tools}
+    tools_by_id = {tool.tool_id: tool for tool in tools}
     await tool_registry.synchronize(tools, actor="development-bootstrap")
     for tool in tools:
         await tool_registry.configure(
@@ -52,6 +81,41 @@ async def bootstrap_development_hospital_skill(
             actor="development-bootstrap",
         )
 
+    unknown_bindings = {
+        tool_id
+        for source in sources
+        for tool_id in source.tool_bindings
+        if tool_id not in tools_by_id
+    }
+    if unknown_bindings:
+        names = ", ".join(sorted(unknown_bindings))
+        raise ValueError(f"医院 Skill 绑定了未部署的 Tool: {names}")
+
+    results = []
+    for source in sources:
+        desired_bindings = {
+            (tools_by_id[tool_id].tool_id, tools_by_id[tool_id].version)
+            for tool_id in source.tool_bindings
+        }
+        results.append(
+            await _bootstrap_hospital_skill_source(
+                source,
+                desired_bindings,
+                skill_registry,
+                tool_registry,
+                tools_by_id,
+            )
+        )
+    return tuple(results)
+
+
+async def _bootstrap_hospital_skill_source(
+    source: HospitalSkillSource,
+    desired_bindings: set[tuple[str, str]],
+    skill_registry: SkillRegistry,
+    tool_registry: ToolRegistry,
+    tools_by_id: dict[str, TrustedTool],
+) -> SkillVersion | dict[str, object]:
     listed = await skill_registry.list_skills()
     existing = next((item for item in listed if item["slug"] == source.slug), None)
     current_bindings: set[tuple[str, str]] = set()
@@ -113,7 +177,8 @@ async def bootstrap_development_hospital_skill(
             skill_id, version, "activate", actor="development-bootstrap"
         )
 
-    for tool in tools:
+    for tool_id in source.tool_bindings:
+        tool = tools_by_id[tool_id]
         if (tool.tool_id, tool.version) in current_bindings:
             continue
         await tool_registry.bind(

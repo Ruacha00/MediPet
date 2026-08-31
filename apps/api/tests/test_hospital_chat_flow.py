@@ -196,13 +196,24 @@ async def test_hospital_skill_runs_slot_selection_confirmation_and_history() -> 
     await bootstrap_development_hospital_skill(skills, tools, provider)
 
     listed = await skills.list_skills()
-    assert len(listed) == 1
+    assert len(listed) == 3
     assert listed[0]["slug"] == "hospital-appointment-assistance"
     versions = cast(list[dict[str, object]], listed[0]["versions"])
     assert versions[0]["status"] == "published"
     snapshot = await RegistryCapabilityProvider(skills, tools).snapshot(context=_context())
-    assert len(snapshot.tools) == 7
+    assert len(snapshot.tools) == 8
     assert all(tool.enabled and tool.required_skill_ids for tool in snapshot.tools)
+    skill_ids = {
+        cast(str, item["slug"]): cast(str, item["skill_id"]) for item in listed
+    }
+    tools_by_id = {tool.tool_id: tool for tool in snapshot.tools}
+    assert set(tools_by_id["hospital.get_hospital"].required_skill_ids) == {
+        skill_ids["hospital-appointment-assistance"],
+        skill_ids["hospital-service-catalog"],
+    }
+    assert tools_by_id["hospital.cancel_appointment"].required_skill_ids == (
+        skill_ids["hospital-appointment-cancellation"],
+    )
 
     model = ScriptedHospitalModel(
         [

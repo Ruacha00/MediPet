@@ -87,7 +87,7 @@ APPOINTMENT_SCHEMA = _object_schema(
         "ends_at": {"type": "string", "format": "date-time"},
         "fee_cents": {"type": "integer", "minimum": 0},
         "currency": {"type": "string", "enum": ["CNY"]},
-        "status": {"type": "string", "enum": ["booked"]},
+        "status": {"type": "string", "enum": ["booked", "cancelled"]},
     },
     [
         "appointment_id",
@@ -128,6 +128,32 @@ CONFIRMATION_SCHEMA = _object_schema(
         "currency",
     ],
 )
+CANCELLATION_CONFIRMATION_SCHEMA = _object_schema(
+    {
+        "patient": _object_schema(
+            {"patient_id": {"type": "string"}}, ["patient_id"]
+        ),
+        "hospital": HOSPITAL_SCHEMA,
+        "department": DEPARTMENT_SCHEMA,
+        "doctor": DOCTOR_SCHEMA,
+        "appointment_id": {"type": "string"},
+        "starts_at": {"type": "string", "format": "date-time"},
+        "ends_at": {"type": "string", "format": "date-time"},
+        "fee_cents": {"type": "integer", "minimum": 0},
+        "currency": {"type": "string", "enum": ["CNY"]},
+    },
+    [
+        "patient",
+        "hospital",
+        "department",
+        "doctor",
+        "appointment_id",
+        "starts_at",
+        "ends_at",
+        "fee_cents",
+        "currency",
+    ],
+)
 
 
 @pytest.fixture
@@ -139,7 +165,7 @@ def hospital_operations() -> FakeHospitalOperations:
 
 
 @pytest.mark.asyncio
-async def test_provider_exposes_seven_complete_public_contracts(
+async def test_provider_exposes_eight_complete_public_contracts(
     hospital_operations: FakeHospitalOperations,
 ) -> None:
     empty_input = _object_schema({}, [])
@@ -260,13 +286,41 @@ async def test_provider_exposes_seven_complete_public_contracts(
             ["pre_visit"],
             CONFIRMATION_SCHEMA,
         ),
+        (
+            "hospital.cancel_appointment",
+            "hospital_cancel_appointment",
+            "取消当前患者的一条预约挂号。",
+            _object_schema(
+                {"appointment_id": {"type": "string"}}, ["appointment_id"]
+            ),
+            _object_schema(
+                {
+                    "receipt_id": {"type": "string"},
+                    "appointment": APPOINTMENT_SCHEMA,
+                },
+                ["receipt_id", "appointment"],
+            ),
+            "write",
+            True,
+            ["pre_visit"],
+            CANCELLATION_CONFIRMATION_SCHEMA,
+        ),
     ]
     tools = await HospitalToolProvider(hospital_operations).tools()
 
     assert [tool.contract() for tool in tools] == [
         {
             "tool_id": tool_id,
-            "version": "1",
+                "version": (
+                    "2"
+                    if tool_id
+                    in {
+                        "hospital.get_appointment",
+                        "hospital.list_appointments",
+                        "hospital.create_appointment",
+                    }
+                    else "1"
+                ),
             "name": name,
             "description": description,
             "input_schema": input_schema,
@@ -573,6 +627,50 @@ async def test_create_appointment_uses_authoritative_confirmation_and_context_ke
     )
 
 
+@pytest.mark.asyncio
+async def test_cancel_appointment_uses_patient_scoped_confirmation(
+    hospital_operations: FakeHospitalOperations,
+) -> None:
+    tools = await HospitalToolProvider(hospital_operations).tools()
+    cancel = next(
+        item for item in tools if item.tool_id == "hospital.cancel_appointment"
+    )
+    context = ToolContext(
+        patient_id="patient-seed",
+        idempotency_key="cancel-action-key",
+        visit_stage="pre_visit",
+    )
+    arguments: dict[str, object] = {"appointment_id": "appointment-seed-001"}
+
+    assert cancel.effect == "write"
+    assert cancel.approval_required is True
+    assert cancel.allowed_stages == ("pre_visit",)
+    assert cancel.confirmation_contract is not None
+
+    confirmation = await cancel.confirmation_contract.prepare(arguments, context)
+    assert confirmation["patient"] == {"patient_id": "patient-seed"}
+    assert confirmation["appointment_id"] == "appointment-seed-001"
+    assert confirmation["doctor"] == {
+        "doctor_id": "doctor-chen-mingyuan",
+        "department_id": "department-general",
+        "name": "陈明远",
+        "title": "副主任医师",
+    }
+    assert await cancel.confirmation_contract.revalidate(
+        arguments, confirmation, context
+    )
+
+    result = await cancel.execute(arguments, context)
+    duplicate = await cancel.execute(arguments, context)
+    cancelled = cast(dict[str, object], result["appointment"])
+
+    assert duplicate == result
+    assert cancelled["status"] == "cancelled"
+    assert not await cancel.confirmation_contract.revalidate(
+        arguments, confirmation, context
+    )
+
+
 def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
     operations = FakeHospitalOperations(
         FakeHospitalDataSource.load_default(),
@@ -602,9 +700,19 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "hospital.get_appointment",
         "hospital.list_appointments",
         "hospital.create_appointment",
+        "hospital.cancel_appointment",
     ]
     versions = [item["versions"][0] for item in tools]
-    assert all(item["version"] == "1" for item in versions)
+    assert [item["version"] for item in versions] == [
+        "1",
+        "1",
+        "1",
+        "1",
+        "2",
+        "2",
+        "2",
+        "1",
+    ]
     assert all(item["available"] is True for item in versions)
     assert all(item["enabled"] is False for item in versions)
     assert [item["name"] for item in versions] == [
@@ -615,6 +723,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "hospital_get_appointment",
         "hospital_list_appointments",
         "hospital_create_appointment",
+        "hospital_cancel_appointment",
     ]
     assert [item["effect"] for item in versions] == [
         "read",
@@ -623,6 +732,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "read",
         "read",
         "read",
+        "write",
         "write",
     ]
     assert [item["output_schema"]["required"] for item in versions] == [
@@ -633,6 +743,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         ["appointment"],
         ["appointments"],
         ["receipt_id", "appointment"],
+        ["receipt_id", "appointment"],
     ]
     assert [item["provider_approval_required"] for item in versions] == [
         False,
@@ -641,6 +752,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         False,
         False,
         False,
+        True,
         True,
     ]
     assert [item["approval_required"] for item in versions] == [
@@ -651,6 +763,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         False,
         False,
         True,
+        True,
     ]
     assert [item["confirmation_schema"] is not None for item in versions] == [
         False,
@@ -660,6 +773,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         False,
         False,
         True,
+        True,
     ]
     assert [item["allowed_stages"] for item in versions] == [
         ["pre_visit", "in_visit"],
@@ -668,6 +782,7 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         ["pre_visit", "in_visit"],
         ["pre_visit", "in_visit"],
         ["pre_visit", "in_visit"],
+        ["pre_visit"],
         ["pre_visit"],
     ]
 

@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "display_name": "医院服务目录查询",
+  "change_note": "新增独立的医院、科室与医生目录查询能力",
+  "risk_level": "standard",
+  "required_approvals": 0,
+  "skill_type": "tool-assisted",
+  "tool_bindings": [
+    "hospital.get_hospital",
+    "hospital.list_departments",
+    "hospital.list_doctors"
+  ]
+}

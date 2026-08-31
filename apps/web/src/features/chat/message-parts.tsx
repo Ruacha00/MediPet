@@ -1,10 +1,9 @@
-import { CalendarClock, Check, MapPin, ShieldAlert, Stethoscope } from "lucide-react";
+import { CalendarClock, Check, MapPin, ShieldAlert } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import type {
   ActionProposalData,
-  DepartmentCandidatesData,
   HandoffData,
   HospitalRouteData,
   MediPetMessagePart,
@@ -30,8 +29,6 @@ export function MessagePartView({
   switch (part.type) {
     case "text":
       return <MarkdownText text={part.text} />;
-    case "data-department-candidates":
-      return <DepartmentCandidatesCard data={part.data} />;
     case "data-slot-options":
       return <SlotOptionsCard data={part.data} onSelect={onSelectSlot} />;
     case "data-action-proposal":
@@ -73,24 +70,6 @@ export function MarkdownText({
         {text}
       </ReactMarkdown>
     </div>
-  );
-}
-
-export function DepartmentCandidatesCard({ data }: { data: DepartmentCandidatesData }) {
-  return (
-    <section className="data-card" aria-label="候选科室">
-      <p className="card-kicker">Department guidance</p>
-      <h3><Stethoscope size={17} aria-hidden="true" /> 候选科室</h3>
-      <p>信息不确定性：{data.uncertainty}。以下为就诊引导，不代表疾病诊断。</p>
-      <ul className="candidate-list">
-        {data.candidates.map((candidate) => (
-          <li key={candidate.name}>
-            <strong>{candidate.name}</strong>
-            <span>{candidate.reason}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 

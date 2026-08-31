@@ -25,6 +25,10 @@ class SlotUnavailableError(HospitalOperationsError):
     """A known slot can no longer be booked."""
 
 
+class AppointmentNotCancellableError(HospitalOperationsError):
+    """An appointment cannot be cancelled in its current state."""
+
+
 class IdempotencyConflictError(HospitalOperationsError):
     """An idempotency key was reused for a different action."""
 
@@ -77,7 +81,7 @@ class Appointment:
     ends_at: datetime
     fee_cents: int
     currency: Literal["CNY"] = "CNY"
-    status: Literal["booked"] = "booked"
+    status: Literal["booked", "cancelled"] = "booked"
 
 
 @dataclass(frozen=True)
@@ -139,7 +143,14 @@ class CreateAppointmentAction:
     idempotency_key: str
 
 
-type ConfirmedHospitalAction = CreateAppointmentAction
+@dataclass(frozen=True)
+class CancelAppointmentAction:
+    patient_id: str
+    appointment_id: str
+    idempotency_key: str
+
+
+type ConfirmedHospitalAction = CreateAppointmentAction | CancelAppointmentAction
 
 
 @dataclass(frozen=True)

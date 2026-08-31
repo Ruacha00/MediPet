@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta
 from typing import Literal, overload
 
@@ -10,7 +10,9 @@ from medipet.hospital.data_source import FakeHospitalDataSource, hospital_timezo
 from medipet.hospital.operations import (
     ActionReceipt,
     Appointment,
+    AppointmentNotCancellableError,
     AppointmentSlot,
+    CancelAppointmentAction,
     ConfirmedHospitalAction,
     CreateAppointmentAction,
     Department,
@@ -80,7 +82,7 @@ class FakeHospitalOperations:
         self._next_appointment_number = 1
         self._next_receipt_number = 1
         self._committed_actions: dict[
-            str, tuple[CreateAppointmentAction, ActionReceipt]
+            str, tuple[ConfirmedHospitalAction, ActionReceipt]
         ] = {}
         self._remaining_failures = {
             "query": failure_plan.query_failures,
@@ -155,14 +157,18 @@ class FakeHospitalOperations:
             raise TypeError(f"不支持的医院查询: {type(query).__name__}")
 
     async def commit(self, action: ConfirmedHospitalAction) -> ActionReceipt:
-        if not isinstance(action, CreateAppointmentAction):
+        if isinstance(action, CreateAppointmentAction):
+            resource_id = action.slot_id
+        elif isinstance(action, CancelAppointmentAction):
+            resource_id = action.appointment_id
+        else:
             raise TypeError(f"不支持的医院操作: {type(action).__name__}")
         if (
             not action.patient_id.strip()
-            or not action.slot_id.strip()
+            or not resource_id.strip()
             or not action.idempotency_key.strip()
         ):
-            raise InvalidHospitalRequestError("患者、号源和幂等键不能为空")
+            raise InvalidHospitalRequestError("患者、业务资源和幂等键不能为空")
         async with self._lock:
             previous = self._committed_actions.get(action.idempotency_key)
             if previous is not None:
@@ -171,6 +177,23 @@ class FakeHospitalOperations:
                     raise IdempotencyConflictError("幂等键不能用于不同的医院操作")
                 return previous_receipt
             self._consume_failure("commit")
+            if isinstance(action, CancelAppointmentAction):
+                appointment = self._appointments.get(action.appointment_id)
+                if appointment is None or appointment.patient_id != action.patient_id:
+                    raise HospitalNotFoundError("预约不存在")
+                if appointment.status != "booked" or appointment.starts_at <= self._now:
+                    raise AppointmentNotCancellableError("预约当前不可取消")
+                cancelled = replace(appointment, status="cancelled")
+                receipt = ActionReceipt(
+                    receipt_id=f"receipt-fake-{self._next_receipt_number:04d}",
+                    idempotency_key=action.idempotency_key,
+                    appointment=cancelled,
+                )
+                self._appointments[appointment.appointment_id] = cancelled
+                self._appointment_by_slot.pop(appointment.slot_id, None)
+                self._committed_actions[action.idempotency_key] = (action, receipt)
+                self._next_receipt_number += 1
+                return receipt
             slot = self._slots.get(action.slot_id)
             if slot is None:
                 raise HospitalNotFoundError("号源不存在")

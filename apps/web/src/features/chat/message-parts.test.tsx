@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   ActionProposalCard,
-  DepartmentCandidatesCard,
   MessagePartView,
   SlotOptionsCard,
 } from "./message-parts";
@@ -36,22 +35,6 @@ describe("MessagePartView", () => {
       "href",
       "https://example.com/help",
     );
-  });
-});
-
-describe("DepartmentCandidatesCard", () => {
-  it("labels guidance as non-diagnostic", () => {
-    render(
-      <DepartmentCandidatesCard
-        data={{
-          uncertainty: "中",
-          candidates: [{ name: "全科医学科", reason: "信息不足时先行评估" }],
-        }}
-      />,
-    );
-
-    expect(screen.getByText("全科医学科")).toBeInTheDocument();
-    expect(screen.getByText(/不代表疾病诊断/)).toBeInTheDocument();
   });
 });
 

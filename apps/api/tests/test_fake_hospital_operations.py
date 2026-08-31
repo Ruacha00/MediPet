@@ -11,6 +11,8 @@ import pytest
 from medipet.hospital import (
     ActionReceipt,
     Appointment,
+    AppointmentNotCancellableError,
+    CancelAppointmentAction,
     CreateAppointmentAction,
     FakeHospitalDataSource,
     FakeHospitalFailurePlan,
@@ -168,6 +170,43 @@ async def test_created_appointment_is_patient_scoped_and_occupies_the_slot() -> 
             SearchSlotsQuery(department_id="department-pediatrics")
         )
     }
+
+
+@pytest.mark.asyncio
+async def test_cancelled_appointment_is_idempotent_and_releases_the_slot() -> None:
+    operations = FakeHospitalOperations(
+        FakeHospitalDataSource.load_default(),
+        clock=fixed_clock,
+    )
+    action = CancelAppointmentAction(
+        patient_id="patient-seed",
+        appointment_id="appointment-seed-001",
+        idempotency_key="cancel-action-001",
+    )
+
+    receipt = await operations.commit(action)
+    duplicate = await operations.commit(action)
+    appointment = await operations.query(
+        GetAppointmentQuery(
+            patient_id="patient-seed",
+            appointment_id="appointment-seed-001",
+        )
+    )
+
+    assert duplicate == receipt
+    assert appointment.status == "cancelled"
+    assert appointment == receipt.appointment
+    assert appointment.slot_id in {
+        slot.slot_id for slot in await operations.query(SearchSlotsQuery())
+    }
+    with pytest.raises(AppointmentNotCancellableError, match="不可取消"):
+        await operations.commit(
+            CancelAppointmentAction(
+                patient_id="patient-seed",
+                appointment_id="appointment-seed-001",
+                idempotency_key="cancel-action-002",
+            )
+        )
 
 
 @pytest.mark.asyncio

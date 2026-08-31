@@ -1,14 +1,16 @@
 import { Suspense } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ChatShell } from "./chat-shell";
+
+const chatMock = vi.hoisted(() => ({ status: "ready" }));
 
 vi.mock("@ai-sdk/react", () => ({
   useChat: (options: { messages?: unknown[] }) => ({
     messages: options.messages ?? [],
     sendMessage: vi.fn(),
-    status: "ready",
+    status: chatMock.status,
     stop: vi.fn(),
     setMessages: vi.fn(),
     error: undefined,
@@ -18,6 +20,11 @@ vi.mock("@ai-sdk/react", () => ({
 describe("ChatShell", () => {
   beforeAll(() => {
     Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  beforeEach(() => {
+    chatMock.status = "ready";
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -137,5 +144,30 @@ describe("ChatShell", () => {
     fireEvent.click(followUp);
 
     expect(await screen.findByText("这是复诊事项")).toBeVisible();
+  });
+
+  it("avoids smooth scrolling while a response is streaming", async () => {
+    chatMock.status = "streaming";
+
+    await act(async () => {
+      render(
+        <Suspense fallback={<p>正在加载</p>}>
+          <ChatShell
+            history={Promise.resolve({
+              failed: false,
+              messages: [{
+                id: "message-streaming",
+                role: "assistant",
+                parts: [{ type: "text", text: "正在生成" }],
+              }],
+            })}
+          />
+        </Suspense>,
+      );
+    });
+
+    await waitFor(() => {
+      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: "auto" });
+    });
   });
 });

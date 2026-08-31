@@ -12,7 +12,7 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 
 - one visit matter belongs to exactly one patient;
 - the product serves exactly one hospital;
-- department guidance is not diagnosis;
+- department information comes from the service hospital catalog, and the model does not match symptoms to departments;
 - deterministic emergency interruption takes priority over the model and ordinary assistance;
 - appointment creation and cancellation require authorization and explicit confirmation;
 - payment and clinical-record access are outside V1.
@@ -96,7 +96,6 @@ The thread renders these typed data parts:
 | Data part | Presentation |
 | --- | --- |
 | `data-agent-status` | Transient progress such as checking hospital slots |
-| `data-department-candidates` | Candidate department cards with reasons and uncertainty |
 | `data-slot-options` | Selectable doctor, date, time, and fee options |
 | `data-action-proposal` | Exact create/cancel proposal with confirm and reject controls |
 | `data-hospital-route` | Ordered route steps and preparation notes |
@@ -140,7 +139,6 @@ FastAPI emits the stream directly. A Next.js route handler may route bytes only 
 | 门诊就诊 | `OutpatientVisit` | The planned or actual hospital visit |
 | 服务医院 | `Hospital` | The one hospital served by this deployment |
 | 症状陈述 | `SymptomStatement` | Unverified participant-provided information |
-| 候选科室 | `DepartmentCandidate` | Guidance result, not a diagnosis |
 | 预约挂号 | `Appointment` | A patient holding a hospital slot |
 | 预约确认 | `AppointmentConfirmation` | Explicit consent bound to exact action details |
 | 紧急转介 | `EmergencyHandoff` | Overrides ordinary assistance |
@@ -269,7 +267,7 @@ Initial Skills:
 
 | Skill | Effect | Responsibility |
 | --- | --- | --- |
-| `guide_department` | Read | Return candidate departments, reasons, uncertainty, and handoff need |
+| `list_departments` | Read | Return department names and descriptions from the service hospital catalog |
 | `search_slots` | Read | Query available slots inside the hospital |
 | `prepare_appointment` | Read | Build an exact appointment proposal without reserving a slot |
 | `commit_appointment` | Write | Create an authorized, confirmed appointment idempotently |
@@ -334,7 +332,7 @@ Before model or Skill execution, the Assistant checks only the current participa
 
 Explicit negation and clearly educational or hypothetical questions do not trigger the interruption. Messages without a matching signal continue through the ordinary Agent flow; Skills and the model cannot suppress a handoff once the Assistant has produced it.
 
-This emergency boundary does not remove ordinary human department guidance or its generic handoff path; it removes only the former emergency risk-review queue, notification, and resume workflow.
+This emergency boundary is independent from advising a participant to contact hospital staff when they cannot choose a department. That advice is a fallback, not an automated department-guidance workflow. The boundary removes only the former emergency risk-review queue, notification, and resume workflow.
 
 ## Deployment shape
 
@@ -348,9 +346,23 @@ Production routing presents the web application and `/v1/` under one origin. The
 
 The web and backend may scale independently later, but V1 does not split the Python backend into networked modules.
 
+Skill packages, declarative Tool contracts, and development capability data are deployment inputs,
+not Python package contents. They live under the repository-level `capabilities/` directory and are
+mounted read-only into the API container through `MEDIPET_CAPABILITIES_PATH`. Trusted Tool executors
+remain in application code and accept only manifest entries whose IDs match deployed executors.
+
 ## Repository layout
 
 ```text
+capabilities/
+├── skills/
+│   ├── hospital-appointment-assistance/
+│   ├── hospital-appointment-cancellation/
+│   └── hospital-service-catalog/
+│       └── each package contains SKILL.md and medipet.json
+└── tools/
+    ├── hospital.json
+    └── fake-hospital.json
 apps/
 ├── web/
 │   ├── Dockerfile
@@ -366,7 +378,6 @@ apps/
 │   │   │       ├── transport.ts
 │   │   │       ├── message-types.ts
 │   │   │       └── message-parts/
-│   │   │           ├── department-candidates.tsx
 │   │   │           ├── slot-options.tsx
 │   │   │           ├── action-proposal.tsx
 │   │   │           ├── hospital-route.tsx
@@ -397,7 +408,6 @@ apps/
     │       ├── skills/
     │       │   ├── contracts.py
     │       │   ├── runtime.py
-    │       │   ├── department_guidance.py
     │       │   ├── appointment.py
     │       │   ├── navigation.py
     │       │   └── handoff.py
@@ -446,9 +456,9 @@ Tests cross the same Interfaces as callers:
 
 The first end-to-end scenario is:
 
-1. A participant describes an unverified symptom.
-2. MediPet returns a candidate department without diagnosing.
-3. The participant asks for an available slot.
+1. A participant asks which departments the service hospital provides.
+2. MediPet returns department names and descriptions from the hospital catalog without matching symptoms to a department.
+3. The participant selects a known department and asks for an available slot.
 4. MediPet prepares an appointment proposal.
 5. No appointment exists before explicit confirmation.
 6. Confirmation commits exactly one appointment.

@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "display_name": "医院预约取消协助",
+  "change_note": "新增需明确确认的预约取消能力",
+  "risk_level": "standard",
+  "required_approvals": 0,
+  "skill_type": "tool-assisted",
+  "tool_bindings": [
+    "hospital.get_appointment",
+    "hospital.list_appointments",
+    "hospital.cancel_appointment"
+  ]
+}
