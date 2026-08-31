@@ -23,6 +23,7 @@ Blocked by: —
 - 2026-08-31: claimed，开始实现。
 - 2026-08-31: 58 个相关后端测试、Ruff 与 Pyright 通过，issue resolved。
 - 2026-08-31: 双轴 code review 发现并修复名称/描述未版本化及 `in_review` 绑定可原地变化的问题；API 全量测试再次通过。
+- 2026-08-31: 复审后进一步禁止同步流程原地修改现有 draft 绑定，并统一内存/PostgreSQL Skill 编辑规范化规则；最终 API 全量测试通过。
 
 ## Answer
 

@@ -154,14 +154,11 @@ async def _bootstrap_hospital_skill_source(
             and current_bindings == desired_bindings
         ):
             return latest
-        reviewed_binding_mismatch = status != "draft" and current_bindings != desired_bindings
-        has_unexpected_binding = not current_bindings.issubset(desired_bindings)
         if (
             latest["name"] != source.name
             or latest["description"] != source.description
             or latest["instructions"] != source.instructions
-            or reviewed_binding_mismatch
-            or has_unexpected_binding
+            or current_bindings != desired_bindings
         ):
             selected = await skill_registry.edit_skill(
                 skill_id,

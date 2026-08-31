@@ -72,6 +72,15 @@ class SkillVersion:
 
 
 @dataclass(frozen=True)
+class NormalizedSkillEdit:
+    name: str
+    description: str
+    instructions: str
+    change_note: str
+    governance: dict[str, object]
+
+
+@dataclass(frozen=True)
 class SkillAudit:
     action: str
     skill_id: str | None
@@ -217,42 +226,36 @@ class InMemorySkillRegistry:
         source = versions[-1]
         if source.status == "quarantined":
             raise SkillTransitionError("隔离的 Skill 版本不能编辑")
-        normalized_instructions = required_text(instructions, "Skill 指令不能为空")
-        normalized_change_note = required_text(change_note, "变更说明不能为空")
-        normalized_name = (
-            source.name if name is None else required_text(name, "Skill 名称不能为空")
+        edit = normalize_skill_edit(
+            current_name=source.name,
+            current_description=source.description,
+            current_governance=source.governance,
+            instructions=instructions,
+            change_note=change_note,
+            name=name,
+            description=description,
         )
-        normalized_description = (
-            source.description
-            if description is None
-            else required_text(description, "Skill 描述不能为空")
-        )
-        governance = {
-            **source.governance,
-            "display_name": normalized_name,
-            "change_note": normalized_change_note,
-        }
         validate_skill_content(
             slug=source.slug,
-            description=normalized_description,
-            instructions=normalized_instructions,
-            governance=governance,
+            description=edit.description,
+            instructions=edit.instructions,
+            governance=edit.governance,
             resources=source.resources,
         )
         version = SkillVersion(
             skill_id=skill_id,
             version=source.version + 1,
             slug=source.slug,
-            name=normalized_name,
-            description=normalized_description,
-            instructions=normalized_instructions,
-            change_note=normalized_change_note,
+            name=edit.name,
+            description=edit.description,
+            instructions=edit.instructions,
+            change_note=edit.change_note,
             status="draft",
             active=False,
             created_at=datetime.now(UTC),
             resources=source.resources,
-            governance=governance,
-            publish_blockers=publish_blockers_for(normalized_instructions, source.resources),
+            governance=edit.governance,
+            publish_blockers=publish_blockers_for(edit.instructions, source.resources),
         )
         versions.append(version)
         self._audit("edit", version, actor)
@@ -447,6 +450,38 @@ def required_text(value: str, message: str) -> str:
     if not normalized:
         raise SkillRegistryError(message)
     return normalized
+
+
+def normalize_skill_edit(
+    *,
+    current_name: str,
+    current_description: str,
+    current_governance: dict[str, object],
+    instructions: str,
+    change_note: str,
+    name: str | None,
+    description: str | None,
+) -> NormalizedSkillEdit:
+    normalized_name = (
+        current_name if name is None else required_text(name, "Skill 名称不能为空")
+    )
+    normalized_description = (
+        current_description
+        if description is None
+        else required_text(description, "Skill 描述不能为空")
+    )
+    normalized_change_note = required_text(change_note, "变更说明不能为空")
+    return NormalizedSkillEdit(
+        name=normalized_name,
+        description=normalized_description,
+        instructions=required_text(instructions, "Skill 指令不能为空"),
+        change_note=normalized_change_note,
+        governance={
+            **current_governance,
+            "display_name": normalized_name,
+            "change_note": normalized_change_note,
+        },
+    )
 
 
 def publish_blockers_for(

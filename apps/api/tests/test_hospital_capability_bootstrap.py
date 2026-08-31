@@ -197,8 +197,15 @@ async def test_reconciliation_versions_skill_name_and_description_changes() -> N
     assert versions[-1]["status"] == "draft"
 
 
+@pytest.mark.parametrize(
+    ("submit_for_review", "previous_status"),
+    ((False, "draft"), (True, "in_review")),
+)
 @pytest.mark.asyncio
-async def test_reconciliation_does_not_mutate_in_review_bindings() -> None:
+async def test_reconciliation_versions_existing_unpublished_binding_changes(
+    submit_for_review: bool,
+    previous_status: str,
+) -> None:
     provider = _provider()
     tools = InMemoryToolRegistry()
     skills = InMemorySkillRegistry(tool_registry=tools)
@@ -214,7 +221,13 @@ async def test_reconciliation_does_not_mutate_in_review_bindings() -> None:
         change_note="prepare review fixture",
         actor="development-admin",
     )
-    await skills.transition(skill_id, draft.version, "submit_review", actor="development-admin")
+    if submit_for_review:
+        await skills.transition(
+            skill_id,
+            draft.version,
+            "submit_review",
+            actor="development-admin",
+        )
 
     await bootstrap_development_hospital_skill(skills, tools, provider)
 
@@ -225,7 +238,7 @@ async def test_reconciliation_does_not_mutate_in_review_bindings() -> None:
     )
     assert [version["status"] for version in refreshed_versions] == [
         "published",
-        "in_review",
+        previous_status,
         "draft",
     ]
     assert await tools.binding_versions(skill_id, 2) == ()

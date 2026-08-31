@@ -37,6 +37,7 @@ from medipet.skills.registry import (
     SkillStatus,
     SkillTransitionError,
     SkillVersion,
+    normalize_skill_edit,
     publish_blockers_for,
     required_text,
     transition_target,
@@ -197,42 +198,36 @@ class PostgresSkillRegistry:
                 )
                 for resource in source_resources
             )
-            normalized_instructions = required_text(instructions, "Skill 指令不能为空")
-            normalized_change_note = required_text(change_note, "变更说明不能为空")
-            normalized_name = (
-                source.name if name is None else required_text(name, "Skill 名称不能为空")
+            edit = normalize_skill_edit(
+                current_name=source.name,
+                current_description=source.description,
+                current_governance=source.governance,
+                instructions=instructions,
+                change_note=change_note,
+                name=name,
+                description=description,
             )
-            normalized_description = (
-                source.description
-                if description is None
-                else required_text(description, "Skill 描述不能为空")
-            )
-            governance = {
-                **source.governance,
-                "display_name": normalized_name,
-                "change_note": normalized_change_note,
-            }
             validate_skill_content(
                 slug=skill.slug,
-                description=normalized_description,
-                instructions=normalized_instructions,
-                governance=governance,
+                description=edit.description,
+                instructions=edit.instructions,
+                governance=edit.governance,
                 resources=copied_skill_resources,
             )
             record = SkillVersionRecord(
                 id=f"skill-version-{uuid4().hex}",
                 skill_id=skill_id,
                 version=source.version + 1,
-                name=normalized_name,
-                description=normalized_description,
-                instructions=normalized_instructions,
-                change_note=normalized_change_note,
+                name=edit.name,
+                description=edit.description,
+                instructions=edit.instructions,
+                change_note=edit.change_note,
                 status="draft",
                 active=False,
-                governance=governance,
+                governance=edit.governance,
                 quarantine_reasons=[],
                 publish_blockers=list(
-                    publish_blockers_for(normalized_instructions, copied_skill_resources)
+                    publish_blockers_for(edit.instructions, copied_skill_resources)
                 ),
             )
             session.add(record)
