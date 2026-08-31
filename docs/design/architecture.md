@@ -39,7 +39,7 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 | Persistence | PostgreSQL, SQLAlchemy asyncio, Alembic | Visit matters, messages, proposals, receipts, authorization, and audit |
 | Python tooling | uv, pytest, Ruff, Pyright | Dependencies, verification, formatting, linting, and type checking |
 | Web tooling | pnpm, Vitest, Testing Library, Playwright | Dependencies, module tests, and browser scenarios |
-| Windows local environment | PowerShell and Docker Compose | Host Web/backend orchestration and PostgreSQL startup |
+| Windows local environment | Docker Desktop and Docker Compose | Containerized Web, backend, PostgreSQL, health checks, and startup order |
 
 AI SDK UI does not run the Agent and is not a second orchestration framework. Next.js does not contain duplicate domain or Skill logic. LangGraph is an implementation choice hidden behind `AgentRuntime`, so the application-facing Interface remains stable.
 
@@ -351,7 +351,7 @@ MediPet has two deployable applications and one required datastore:
 - a FastAPI Python backend implemented as a modular monolith;
 - PostgreSQL.
 
-Production routing presents the web application and `/v1/` under one origin. The backend alone owns Agent execution and hospital credentials. The canonical Windows development flow is defined by ADR 0005: the root PowerShell launcher runs Web and backend on the host for native file watching, while Docker Compose supplies PostgreSQL only when an external database URL is not provided. This development choice does not define the production deployment topology.
+Production routing presents the web application and `/v1/` under one origin. The backend alone owns Agent execution and hospital credentials. The canonical Windows development flow is defined by ADR 0006: root Docker Compose runs Web, backend, and PostgreSQL as separate services, while source bind mounts preserve development file watching. Browser requests use the published API address and Next.js server rendering uses the internal Compose service address. This development choice does not define the production deployment topology.
 
 The web and backend may scale independently later, but V1 does not split the Python backend into networked modules.
 
@@ -360,6 +360,7 @@ The web and backend may scale independently later, but V1 does not split the Pyt
 ```text
 apps/
 ├── web/
+│   ├── Dockerfile
 │   ├── package.json
 │   ├── src/
 │   │   ├── app/
@@ -385,6 +386,7 @@ apps/
 │       ├── module/
 │       └── browser/
 └── api/
+    ├── Dockerfile
     ├── pyproject.toml
     ├── migrations/
     ├── src/
@@ -429,8 +431,8 @@ apps/
         ├── scenarios/
         ├── modules/
         └── adapters/
-infra/
-└── compose.yaml
+compose.yaml
+start.bat
 ```
 
 The repository remains one domain context even though it contains web and backend applications. The layout follows ownership of behaviour and does not create separate wrapper modules for every class.

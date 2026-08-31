@@ -74,6 +74,25 @@ class ActionDecisionResponse(BaseModel):
     events: list[TurnEvent]
 
 
+class CreateVisitMatterRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    participant_id: str = Field(min_length=1, max_length=128)
+    title: str = Field(default="新的就诊事项", min_length=1, max_length=200)
+
+
+class VisitMatterResponse(BaseModel):
+    visit_matter_id: str
+    title: str
+    visit_stage: Literal["pre_visit", "in_visit"]
+    patient_display_name: str
+    participant_display_name: str
+
+
+class VisitMatterListResponse(BaseModel):
+    visit_matters: list[VisitMatterResponse]
+
+
 class ConversationHistoryMessage(BaseModel):
     id: str
     role: Literal["user", "assistant"]

@@ -1,0 +1,91 @@
+name: medipet-dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: medipet
+      POSTGRES_PASSWORD: medipet-development-only
+      POSTGRES_DB: medipet
+    ports:
+      - "${MEDIPET_POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medipet -d medipet"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    volumes:
+      - medipet-postgres-data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./apps/api
+    environment:
+      MEDIPET_ENVIRONMENT: development
+      MEDIPET_DATABASE_URL: postgresql://medipet:medipet-development-only@postgres:5432/medipet
+      MEDIPET_WEB_ORIGIN: http://localhost:3000
+      MEDIPET_RUNTIME_ENV_FILE: /run/secrets/medipet_api_env
+      PYTHONPATH: /app/src
+      WATCHFILES_FORCE_POLLING: "true"
+    secrets:
+      - medipet_api_env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - sh
+      - -ec
+      - |
+        alembic upgrade head
+        python -m medipet.persistence.seed
+        exec uvicorn medipet.delivery.http:app --app-dir src --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    volumes:
+      - ./apps/api/src:/app/src
+      - ./apps/api/migrations:/app/migrations
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        PNPM_REGISTRY: ${PNPM_REGISTRY:-https://registry.npmmirror.com}
+    environment:
+      MEDIPET_INTERNAL_API_URL: http://api:8000
+      NEXT_PUBLIC_MEDIPET_API_URL: http://localhost:8000
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then(response=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    volumes:
+      - ./apps/web/src:/app/src
+
+secrets:
+  medipet_api_env:
+    file: ./apps/api/.env
+
+volumes:
+  medipet-postgres-data:

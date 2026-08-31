@@ -58,6 +58,15 @@ class DevelopmentVisitMatter:
 
 
 @dataclass(frozen=True)
+class VisitMatterSummary:
+    visit_matter_id: str
+    title: str
+    visit_stage: VisitStage
+    patient_display_name: str
+    participant_display_name: str
+
+
+@dataclass(frozen=True)
 class VisitContext:
     patient_id: str
     patient_display_name: str
@@ -108,6 +117,15 @@ class VisitConversationStore(Protocol):
         self,
         visit_matter: DevelopmentVisitMatter,
     ) -> None: ...
+
+    async def create_visit_matter(
+        self,
+        *,
+        participant_id: str,
+        title: str,
+    ) -> VisitMatterSummary: ...
+
+    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]: ...
 
     async def add_participant_message(
         self,
@@ -167,6 +185,8 @@ class InMemoryVisitConversationStore:
         self._messages: dict[str, StoredMessage] = {}
         self._turn_messages: dict[tuple[VisitTurn, MessageRole], str] = {}
         self._next_sequence = 1
+        self._visit_matter_activity: dict[str, int] = {}
+        self._next_activity = 1
 
     async def ping(self) -> None:
         return None
@@ -206,7 +226,51 @@ class InMemoryVisitConversationStore:
             existing = self._visit_matters.get(visit_matter.visit_matter_id)
             if existing is not None and existing != visit_matter:
                 raise IdempotencyConflictError("就诊事项 seed 与现有数据冲突")
+            if existing is None:
+                self._touch_visit_matter(visit_matter.visit_matter_id)
             self._visit_matters[visit_matter.visit_matter_id] = visit_matter
+
+    async def create_visit_matter(
+        self,
+        *,
+        participant_id: str,
+        title: str,
+    ) -> VisitMatterSummary:
+        async with self._lock:
+            source = next(
+                (
+                    visit_matter
+                    for visit_matter in self._visit_matters.values()
+                    if visit_matter.participant_id == participant_id
+                ),
+                None,
+            )
+            if source is None:
+                raise VisitMatterNotFoundError("就诊参与者不存在")
+            visit_matter = DevelopmentVisitMatter(
+                patient_id=source.patient_id,
+                patient_display_name=source.patient_display_name,
+                participant_id=source.participant_id,
+                participant_display_name=source.participant_display_name,
+                visit_matter_id=f"visit-matter-{uuid4().hex}",
+                visit_matter_title=title,
+            )
+            self._visit_matters[visit_matter.visit_matter_id] = visit_matter
+            self._touch_visit_matter(visit_matter.visit_matter_id)
+            return self._summary(visit_matter)
+
+    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]:
+        async with self._lock:
+            visit_matters = sorted(
+                (
+                    visit_matter
+                    for visit_matter in self._visit_matters.values()
+                    if visit_matter.participant_id == participant_id
+                ),
+                key=lambda item: self._visit_matter_activity[item.visit_matter_id],
+                reverse=True,
+            )
+            return [self._summary(visit_matter) for visit_matter in visit_matters]
 
     async def add_participant_message(
         self,
@@ -372,7 +436,22 @@ class InMemoryVisitConversationStore:
         self._next_sequence += 1
         self._messages[message.id] = message
         self._turn_messages[(turn, role)] = message.id
+        self._touch_visit_matter(turn.visit_matter_id)
         return message
+
+    def _touch_visit_matter(self, visit_matter_id: str) -> None:
+        self._visit_matter_activity[visit_matter_id] = self._next_activity
+        self._next_activity += 1
+
+    @staticmethod
+    def _summary(visit_matter: DevelopmentVisitMatter) -> VisitMatterSummary:
+        return VisitMatterSummary(
+            visit_matter_id=visit_matter.visit_matter_id,
+            title=visit_matter.visit_matter_title,
+            visit_stage=visit_matter.visit_stage,
+            patient_display_name=visit_matter.patient_display_name,
+            participant_display_name=visit_matter.participant_display_name,
+        )
 
     def _require_message(self, message_id: str) -> StoredMessage:
         try:

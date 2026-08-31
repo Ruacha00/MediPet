@@ -12,52 +12,37 @@ MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一
 
 ## 本地启动
 
-需要 Node.js 22、Corepack、Python 3.12 和 uv。默认数据库由 Docker Desktop 通过 Compose 提供；如果已经有可用的 PostgreSQL，也可以直接传入其 URL 而不使用 Docker。
+本地开发只需要安装并启动 Docker Desktop。先确认 `apps/api/.env` 中已经配置 DeepSeek 的 OpenAI-compatible Base URL、API Key 和模型名；该文件只会作为运行时 Docker secret 挂载，不会复制进镜像或提交到 Git。
 
-Windows 开发环境从仓库根目录用一个命令启动。脚本会准备持久化的开发 PostgreSQL、按 lockfile 增量同步依赖、应用迁移、执行幂等的虚构开发 seed，再等待 API 与 Web 实际可访问并持续显示带来源前缀的日志：
-
-```powershell
-.\start-dev.ps1
-```
-
-首次运行可能需要拉取 `postgres:17-alpine`。数据库容器和命名卷在 API/Web 退出后默认保留，因此后续启动不会丢失开发数据；需要退出时同时停止数据库可运行 `.\start-dev.ps1 -StopDatabaseOnExit`。应用已经退出后，也可运行 `docker compose --project-name medipet-dev --file infra/compose.yaml stop postgres` 单独停止数据库。这两种方式都不会删除数据卷。
-
-已有 PostgreSQL 时，显式提供 URL 即可跳过 Docker：
-
-```powershell
-.\start-dev.ps1 -DatabaseUrl 'postgresql://medipet:replace-with-development-password@localhost/medipet'
-```
-
-也可以从 CMD 运行批处理入口；所有参数会原样传给 PowerShell 脚本：
+Windows 可以直接双击仓库根目录的 `start.bat`，也可以从 CMD 运行：
 
 ```bat
-start-dev.bat
+start.bat
 ```
 
-模型配置来自 `apps/api/.env` 或进程环境。缺少或无效模型配置时，API 和 Web 仍会启动，但脚本会警告 `/ready` 与聊天暂不可用；修正模型配置后 development 环境会自动恢复。可使用 `-ApiPort`、`-WebPort` 和 `-DatabasePort` 调整端口，`-StartupTimeoutSeconds` 调整默认 60 秒的等待时间，`-OpenBrowser` 在服务存活后打开 Web，`-SkipMigrations` 或 `-SkipSeed` 跳过相应准备步骤。跳过 seed 只保留数据库现有的数据与能力状态，不会隐式停用既有 Skill 或 Tool。按 `Ctrl+C` 或任一应用异常退出时会同时停止 API 与 Web。
-
-也可以分别启动两个服务：
-
-启动 API：
+批处理入口会检查 Docker CLI、Compose 插件和 Docker Engine，然后直接执行标准 Compose 命令。也可在仓库根目录手动运行同一命令：
 
 ```powershell
-cd apps/api
-uv sync --frozen
-$env:MEDIPET_ENVIRONMENT = 'development'
-$env:MEDIPET_DATABASE_URL = 'postgresql://medipet:replace-with-development-password@localhost/medipet'
-uv run alembic upgrade head
-$env:PYTHONPATH = 'src'
-uv run python -m medipet.persistence.seed
-uv run uvicorn medipet.delivery.http:app --app-dir src --reload
+docker compose up --build
 ```
 
-在 `apps/api/.env` 中放置可热加载的模型运行配置：
+Compose 会构建并启动独立的 PostgreSQL、API 和 Web 容器，在数据库健康后自动应用 Alembic migration 和幂等虚构开发 seed。API 与 Web 源码通过 bind mount 保留热更新，依赖安装在镜像层中，因此宿主机不需要 Node.js、Python、pnpm 或 uv。
+
+首次启动需要下载基础镜像并安装锁定依赖，之后会复用本地镜像层。Web 镜像默认从 `https://registry.npmmirror.com` 下载经过 lockfile 完整性校验的 npm 包；如需改用官方源，可在启动前设置 `PNPM_REGISTRY=https://registry.npmjs.org`。服务就绪后打开 `http://localhost:3000`；API 存活检查位于 `http://localhost:8000/health`，模型和数据库就绪检查位于 `http://localhost:8000/ready`。
+
+按 `Ctrl+C` 会停止整个前台 Compose 会话。PostgreSQL 数据保存在命名卷中，普通停止和 `docker compose down` 都不会删除；只有明确执行以下命令才会连同开发数据一起删除：
+
+```powershell
+docker compose down --volumes
+```
+
+模型配置示例：
 
 ```dotenv
 MEDIPET_LLM_PROVIDER=openai-compatible
-MEDIPET_LLM_BASE_URL=https://api.example.com/v1
+MEDIPET_LLM_BASE_URL=https://api.deepseek.com
 MEDIPET_LLM_API_KEY=replace-with-development-token
-MEDIPET_LLM_MODEL=provider-model-name
+MEDIPET_LLM_MODEL=deepseek-chat
 MEDIPET_LLM_TEMPERATURE=0
 MEDIPET_LLM_TIMEOUT_SECONDS=30
 MEDIPET_TURN_TIMEOUT_SECONDS=60
@@ -65,23 +50,7 @@ MEDIPET_AGENT_MAX_STEPS=8
 MEDIPET_CONTEXT_MESSAGE_LIMIT=20
 ```
 
-`MEDIPET_LLM_BASE_URL` 是包含版本路径的完整 API 根地址；Adapter 会在其后请求 `chat/completions`。可复制 `apps/api/.env.example` 作为本地起点，但不要提交真实 Token、数据库 URL 或任何真实患者/医院数据。
-
-development 环境会在 `/ready` 检查和每个新 turn 边界重新读取 `.env`。每个 turn 固定自己的配置快照，文件修改只影响后续 turn；无效的新配置会让 readiness 和新 turn 返回 `503`，修正文件后自动恢复。进程环境变量优先于 `.env`，因此通过 PowerShell 或部署环境注入的同名字段不会被文件覆盖。配置变化日志只包含版本指纹、来源和字段名。
-
-test 应通过依赖注入提供模型与配置；production 和 test 运行环境只使用进程启动时的静态配置，不监听 `.env`。`MEDIPET_DATABASE_URL`、`MEDIPET_ENVIRONMENT` 和 `MEDIPET_MANAGEMENT_TOKEN` 属于启动配置，修改后需要重启 API。
-
-`MEDIPET_DATABASE_URL` 必须是 PostgreSQL URL，修改后需要重启 API。Alembic 负责建表，应用启动时不会自动创建结构。开发 seed 可重复运行：它创建虚构患者、参与者和就诊事项，同步并启用七个医院 Tool，并创建、绑定和发布仓库内的医院预约 Skill。生产部署不运行该 seed，也不会自动激活虚构医院能力。
-
-另开终端启动 Web：
-
-```powershell
-cd apps/web
-corepack pnpm install --frozen-lockfile
-corepack pnpm dev
-```
-
-打开 `http://localhost:3000`。API 存活检查位于 `http://localhost:8000/health`，模型和数据库就绪检查位于 `http://localhost:8000/ready`。缺少或无效模型/数据库配置时，存活检查仍成功，就绪检查和相应请求返回 `503`。Web 会从 `GET /v1/visit-matters/{visit_matter_id}/messages` 恢复刷新前的历史，并保留失败、取消和未完成状态。
+`MEDIPET_LLM_BASE_URL` 是完整 API 根地址；Adapter 会在其后请求 `chat/completions`。可复制 `apps/api/.env.example` 作为起点，但不要提交真实 Token、数据库 URL 或任何真实患者/医院数据。Web 可以为同一就诊参与者创建和切换彼此隔离的就诊事项，并恢复各事项历史；文本消息支持 GitHub Flavored Markdown，输入区提供常用格式按钮与发送前预览。
 
 ## 验证
 

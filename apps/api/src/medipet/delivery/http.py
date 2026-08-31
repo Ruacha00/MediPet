@@ -28,8 +28,11 @@ from medipet.contracts import (
     ConfirmationDecision,
     ConversationHistoryMessage,
     ConversationHistoryResponse,
+    CreateVisitMatterRequest,
     TurnCommand,
     UIMessagePart,
+    VisitMatterListResponse,
+    VisitMatterResponse,
 )
 from medipet.delivery.streaming import to_ui_message_stream
 from medipet.hospital.data_source import FakeHospitalDataSource
@@ -195,6 +198,35 @@ def create_app(
                 detail="运行时能力暂时不可用",
             ) from error
         return {"hospital_data_available": hospital_data_available(capabilities, context)}
+
+    @app.get("/v1/visit-matters", response_model=VisitMatterListResponse)
+    async def visit_matters(participant_id: str) -> VisitMatterListResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        summaries = await conversation_store.list_visit_matters(participant_id)
+        return VisitMatterListResponse(
+            visit_matters=[
+                VisitMatterResponse.model_validate(summary, from_attributes=True)
+                for summary in summaries
+            ]
+        )
+
+    @app.post(
+        "/v1/visit-matters",
+        response_model=VisitMatterResponse,
+        status_code=201,
+    )
+    async def create_visit_matter(request: CreateVisitMatterRequest) -> VisitMatterResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            summary = await conversation_store.create_visit_matter(
+                participant_id=request.participant_id,
+                title=request.title,
+            )
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return VisitMatterResponse.model_validate(summary, from_attributes=True)
 
     if environment.strip().lower() != "production" and skill_registry is not None:
         app.include_router(management_router(skill_registry, management_token))

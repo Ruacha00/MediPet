@@ -219,6 +219,9 @@ def runtime_config_from_startup_environment(
     development_env_file: Path = Path(".env"),
 ) -> RuntimeConfig:
     startup_environment = dict(process_environment)
+    configured_env_file = startup_environment.get("MEDIPET_RUNTIME_ENV_FILE", "").strip()
+    if configured_env_file:
+        development_env_file = Path(configured_env_file)
     if startup_environment.get("MEDIPET_ENVIRONMENT", "development").strip().lower() == (
         "development"
     ):

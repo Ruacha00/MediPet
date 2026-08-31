@@ -26,6 +26,7 @@ from medipet.persistence.conversation import (
     TerminalMessageState,
     VisitContext,
     VisitMatterNotFoundError,
+    VisitMatterSummary,
     VisitTurn,
     assistant_transition_source_states,
     replace_proposal_part,
@@ -133,6 +134,68 @@ class PostgresVisitConversationStore:
                     "visit_stage": visit_matter.visit_stage,
                 },
             )
+
+    async def create_visit_matter(
+        self,
+        *,
+        participant_id: str,
+        title: str,
+    ) -> VisitMatterSummary:
+        async with self._sessions.begin() as session:
+            participant = await session.get(VisitParticipantRecord, participant_id)
+            if participant is None:
+                raise VisitMatterNotFoundError("就诊参与者不存在")
+            patient = await session.get(PatientRecord, participant.patient_id)
+            if patient is None:
+                raise VisitMatterNotFoundError("就诊参与者对应的患者不存在")
+            record = VisitMatterRecord(
+                id=f"visit-matter-{uuid4().hex}",
+                patient_id=participant.patient_id,
+                participant_id=participant.id,
+                title=title,
+                visit_stage="pre_visit",
+            )
+            session.add(record)
+            await session.flush()
+            return VisitMatterSummary(
+                visit_matter_id=record.id,
+                title=record.title,
+                visit_stage="pre_visit",
+                patient_display_name=patient.display_name,
+                participant_display_name=participant.display_name,
+            )
+
+    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]:
+        async with self._sessions() as session:
+            rows = (
+                await session.execute(
+                    select(
+                        VisitMatterRecord,
+                        PatientRecord.display_name,
+                        VisitParticipantRecord.display_name,
+                    )
+                    .join(PatientRecord, PatientRecord.id == VisitMatterRecord.patient_id)
+                    .join(
+                        VisitParticipantRecord,
+                        VisitParticipantRecord.id == VisitMatterRecord.participant_id,
+                    )
+                    .where(VisitMatterRecord.participant_id == participant_id)
+                    .order_by(
+                        VisitMatterRecord.updated_at.desc(),
+                        VisitMatterRecord.created_at.desc(),
+                    )
+                )
+            ).all()
+            return [
+                VisitMatterSummary(
+                    visit_matter_id=record.id,
+                    title=record.title,
+                    visit_stage=cast(VisitStage, record.visit_stage),
+                    patient_display_name=patient_display_name,
+                    participant_display_name=participant_display_name,
+                )
+                for record, patient_display_name, participant_display_name in rows
+            ]
 
     async def add_participant_message(
         self,

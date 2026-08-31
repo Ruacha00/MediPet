@@ -1,4 +1,6 @@
 import { CalendarClock, Check, MapPin, ShieldAlert, Stethoscope } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import type {
   ActionProposalData,
@@ -27,7 +29,7 @@ export function MessagePartView({
 }: MessagePartViewProps) {
   switch (part.type) {
     case "text":
-      return <div className="bubble">{part.text}</div>;
+      return <MarkdownText text={part.text} />;
     case "data-department-candidates":
       return <DepartmentCandidatesCard data={part.data} />;
     case "data-slot-options":
@@ -47,6 +49,31 @@ export function MessagePartView({
     default:
       return null;
   }
+}
+
+export function MarkdownText({
+  text,
+  className = "bubble",
+}: {
+  text: string;
+  className?: string;
+}) {
+  return (
+    <div className={`${className} markdown-body`}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ children, ...props }) => (
+            <a {...props} target="_blank" rel="noreferrer noopener">
+              {children}
+            </a>
+          ),
+        }}
+      >
+        {text}
+      </ReactMarkdown>
+    </div>
+  );
 }
 
 export function DepartmentCandidatesCard({ data }: { data: DepartmentCandidatesData }) {
@@ -188,6 +215,7 @@ function proposalTitle(status: ActionProposalData["status"], appointment: boolea
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
     month: "long",
     day: "numeric",
     weekday: "short",

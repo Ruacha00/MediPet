@@ -3,25 +3,31 @@ import { Suspense } from "react";
 import { ChatShell } from "@/features/chat/chat-shell";
 import { loadCapabilityStatus } from "@/features/chat/capabilities";
 import {
-  backendBaseUrl,
   demoParticipantId,
   demoVisitMatterId,
 } from "@/features/chat/chat-config";
+import { serverBackendBaseUrl } from "@/features/chat/chat-config.server";
 import { restoreConversationHistory } from "@/features/chat/history";
+import { loadVisitMatters } from "@/features/chat/visit-matters";
 
 export const dynamic = "force-dynamic";
 
 export default function ChatPage() {
   const history = restoreConversationHistory(
-    backendBaseUrl,
+    serverBackendBaseUrl,
     demoVisitMatterId,
     demoParticipantId,
   );
-  const capabilityStatus = loadCapabilityStatus(backendBaseUrl);
+  const capabilityStatus = loadCapabilityStatus(serverBackendBaseUrl);
+  const visitMatters = loadVisitMatters(serverBackendBaseUrl, demoParticipantId).catch(() => []);
 
   return (
     <Suspense fallback={<HistoryLoading />}>
-      <ChatShell history={history} capabilityStatus={capabilityStatus} />
+      <ChatShell
+        history={history}
+        capabilityStatus={capabilityStatus}
+        visitMatters={visitMatters}
+      />
     </Suspense>
   );
 }

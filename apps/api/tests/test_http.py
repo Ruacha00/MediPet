@@ -129,6 +129,60 @@ def test_default_fake_hospital_adapter_is_development_only() -> None:
     assert default_hospital_tool_provider(" development ") is not None
 
 
+def test_visit_matters_can_be_created_listed_and_keep_history_isolated() -> None:
+    store = seeded_store()
+    client = TestClient(create_app(model=DeterministicModel(), conversation_store=store))
+
+    created = client.post(
+        "/v1/visit-matters",
+        json={"participant_id": "participant-demo", "title": "复诊准备"},
+    )
+
+    assert created.status_code == 201
+    created_visit = created.json()
+    assert created_visit["visit_matter_id"] != "visit-matter-demo"
+    assert created_visit["title"] == "复诊准备"
+
+    listed = client.get(
+        "/v1/visit-matters",
+        params={"participant_id": "participant-demo"},
+    )
+    assert listed.status_code == 200
+    assert [item["visit_matter_id"] for item in listed.json()["visit_matters"]] == [
+        created_visit["visit_matter_id"],
+        "visit-matter-demo",
+    ]
+
+    turn = client.post(
+        "/v1/chat/turns",
+        json={
+            "visit_matter_id": created_visit["visit_matter_id"],
+            "participant_id": "participant-demo",
+            "messages": [
+                {
+                    "id": "message-new-visit",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "只属于复诊事项"}],
+                }
+            ],
+        },
+    )
+    assert turn.status_code == 200
+
+    original_history = client.get(
+        "/v1/visit-matters/visit-matter-demo/messages",
+        params={"participant_id": "participant-demo"},
+    )
+    new_history = client.get(
+        f"/v1/visit-matters/{created_visit['visit_matter_id']}/messages",
+        params={"participant_id": "participant-demo"},
+    )
+    assert original_history.json()["messages"] == []
+    assert new_history.json()["messages"][0]["parts"] == [
+        {"type": "text", "text": "只属于复诊事项"}
+    ]
+
+
 def test_readiness_reports_missing_model_configuration_safely() -> None:
     client = TestClient(create_app())
 

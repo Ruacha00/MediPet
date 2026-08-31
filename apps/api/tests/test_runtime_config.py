@@ -172,3 +172,17 @@ def test_production_and_test_startup_config_never_watch_the_env_file(tmp_path) -
     assert isinstance(config, StaticRuntimeConfig)
     assert first == second
     assert second.settings.model.model == "production-model"
+
+
+def test_development_config_reads_the_runtime_env_file_selected_at_startup(tmp_path) -> None:
+    env_file = tmp_path / "deepseek.env"
+    env_file.write_text(_env_text(MEDIPET_LLM_MODEL="deepseek-chat"), encoding="utf-8")
+
+    config = runtime_config_from_startup_environment(
+        {
+            "MEDIPET_ENVIRONMENT": "development",
+            "MEDIPET_RUNTIME_ENV_FILE": str(env_file),
+        }
+    )
+
+    assert config.snapshot().settings.model.model == "deepseek-chat"

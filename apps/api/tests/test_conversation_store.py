@@ -29,6 +29,17 @@ async def exercise_store_contract(
         patient_display_name=visit.patient_display_name,
         visit_stage=visit.visit_stage,
     )
+    created_visit = await store.create_visit_matter(
+        participant_id=visit.participant_id,
+        title="复诊准备",
+    )
+    assert created_visit.visit_matter_id != visit.visit_matter_id
+    assert created_visit.patient_display_name == visit.patient_display_name
+    assert created_visit.participant_display_name == visit.participant_display_name
+    assert [
+        item.visit_matter_id for item in await store.list_visit_matters(visit.participant_id)
+    ] == [created_visit.visit_matter_id, visit.visit_matter_id]
+    assert await store.list_messages(created_visit.visit_matter_id) == []
     turn = VisitTurn(
         visit_matter_id=visit.visit_matter_id,
         participant_id=visit.participant_id,

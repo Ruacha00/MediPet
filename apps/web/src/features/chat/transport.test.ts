@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { chatTransport, decideProposal } from "./transport";
+import { createChatTransport, decideProposal } from "./transport";
 
 describe("chatTransport", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -8,6 +8,7 @@ describe("chatTransport", () => {
   it("uses the participant message id as the stable turn idempotency key", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response("data: [DONE]\n\n"));
     vi.stubGlobal("fetch", fetchMock);
+    const chatTransport = createChatTransport("visit-matter-2", "participant-demo");
     const messages = [
       {
         id: "participant-turn-1",
@@ -40,6 +41,7 @@ describe("chatTransport", () => {
     expect(bodies).toHaveLength(2);
     expect(bodies[0]).toMatchObject({
       idempotency_key: "participant-turn-1",
+      visit_matter_id: "visit-matter-2",
       selected_slot_id: "slot-1",
     });
     expect(bodies[1].idempotency_key).toBe(bodies[0].idempotency_key);
@@ -64,9 +66,9 @@ describe("decideProposal", () => {
       ),
     );
 
-    await expect(decideProposal("proposal-1", "confirm")).rejects.toThrow(
-      "待确认操作已过期",
-    );
+    await expect(
+      decideProposal("proposal-1", "confirm", "visit-matter-2", "participant-demo"),
+    ).rejects.toThrow("待确认操作已过期");
   });
 
   it("returns the server-updated proposal state", async () => {
@@ -96,10 +98,12 @@ describe("decideProposal", () => {
       ),
     );
 
-    await expect(decideProposal("proposal-1", "confirm")).resolves.toMatchObject({
-      proposalId: "proposal-1",
-      status: "confirmed",
-      receiptId: "receipt-1",
-    });
+    await expect(
+      decideProposal("proposal-1", "confirm", "visit-matter-2", "participant-demo"),
+    ).resolves.toMatchObject({
+        proposalId: "proposal-1",
+        status: "confirmed",
+        receiptId: "receipt-1",
+      });
   });
 });

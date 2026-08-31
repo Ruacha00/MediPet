@@ -1,40 +1,43 @@
 import { DefaultChatTransport } from "ai";
 
-import {
-  backendBaseUrl,
-  demoParticipantId,
-  demoVisitMatterId,
-} from "./chat-config";
+import { backendBaseUrl } from "./chat-config";
 import type {
   ActionProposalData,
   MediPetMessage,
   ProposalDecision,
 } from "./message-types";
 
-export const chatTransport = new DefaultChatTransport<MediPetMessage>({
-  api: `${backendBaseUrl}/v1/chat/turns`,
-  body: {
-    visit_matter_id: demoVisitMatterId,
-    participant_id: demoParticipantId,
-  },
-  prepareSendMessagesRequest({ id, messages, body, trigger, messageId }) {
-    const participantMessage = [...messages]
-      .reverse()
-      .find((message) => message.role === "user");
-    return {
-      body: {
-        ...body,
-        id,
-        messages,
-        trigger,
-        messageId,
-        idempotency_key: participantMessage?.id,
-      },
-    };
-  },
-});
+export function createChatTransport(visitMatterId: string, participantId: string) {
+  return new DefaultChatTransport<MediPetMessage>({
+    api: `${backendBaseUrl}/v1/chat/turns`,
+    body: {
+      visit_matter_id: visitMatterId,
+      participant_id: participantId,
+    },
+    prepareSendMessagesRequest({ id, messages, body, trigger, messageId }) {
+      const participantMessage = [...messages]
+        .reverse()
+        .find((message) => message.role === "user");
+      return {
+        body: {
+          ...body,
+          id,
+          messages,
+          trigger,
+          messageId,
+          idempotency_key: participantMessage?.id,
+        },
+      };
+    },
+  });
+}
 
-export async function decideProposal(proposalId: string, decision: ProposalDecision) {
+export async function decideProposal(
+  proposalId: string,
+  decision: ProposalDecision,
+  visitMatterId: string,
+  participantId: string,
+) {
   const response = await fetch(
     `${backendBaseUrl}/v1/action-proposals/${proposalId}/decision`,
     {
@@ -42,8 +45,8 @@ export async function decideProposal(proposalId: string, decision: ProposalDecis
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         decision,
-        participant_id: demoParticipantId,
-        visit_matter_id: demoVisitMatterId,
+        participant_id: participantId,
+        visit_matter_id: visitMatterId,
         idempotency_key: `decision-${proposalId}-${decision}`,
       }),
     },

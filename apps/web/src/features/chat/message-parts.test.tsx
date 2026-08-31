@@ -4,8 +4,40 @@ import { describe, expect, it, vi } from "vitest";
 import {
   ActionProposalCard,
   DepartmentCandidatesCard,
+  MessagePartView,
   SlotOptionsCard,
 } from "./message-parts";
+
+describe("MessagePartView", () => {
+  it("renders GitHub-flavored Markdown as structured message content", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "text",
+          text: [
+            "## 就诊准备",
+            "",
+            "- 携带病历",
+            "- 记录用药",
+            "",
+            "配置 `MEDIPET_API_URL`，再查看 [帮助](https://example.com/help)。",
+          ].join("\n"),
+        }}
+        decisionState={null}
+        onDecision={() => undefined}
+        onSelectSlot={() => undefined}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "就诊准备", level: 2 })).toBeVisible();
+    expect(screen.getByRole("list")).toBeVisible();
+    expect(screen.getByText("MEDIPET_API_URL", { selector: "code" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "帮助" })).toHaveAttribute(
+      "href",
+      "https://example.com/help",
+    );
+  });
+});
 
 describe("DepartmentCandidatesCard", () => {
   it("labels guidance as non-diagnostic", () => {
@@ -118,8 +150,11 @@ describe("SlotOptionsCard", () => {
       feeCents: 2000,
       currency: "CNY" as const,
     };
-    render(<SlotOptionsCard data={{ slots: [slot] }} onSelect={onSelect} />);
+    const slotCard = render(
+      <SlotOptionsCard data={{ slots: [slot] }} onSelect={onSelect} />,
+    );
 
+    expect(within(slotCard.container).getByText("1月2日周三 14:00")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "选择此号源" }));
     expect(onSelect).toHaveBeenCalledWith(slot);
     expect(screen.queryByText("slot-1")).not.toBeInTheDocument();
