@@ -97,6 +97,14 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
         "patient_id": turn_context.patient_id,
         "value": "A",
     }
+    assert await store.has_pending_proposal(
+        turn_context.visit_matter_id,
+        turn_context.participant_id,
+    )
+    assert not await store.has_pending_proposal(
+        turn_context.visit_matter_id,
+        "another-participant",
+    )
     decision_context = ToolContext(
         visit_matter_id=turn_context.visit_matter_id,
         participant_id=turn_context.participant_id,
@@ -112,6 +120,10 @@ async def exercise_action_store_contract(store, *, suffix: str = "memory") -> No
     )
 
     assert confirmed.status == duplicate.status == "confirmed"
+    assert not await store.has_pending_proposal(
+        turn_context.visit_matter_id,
+        turn_context.participant_id,
+    )
     assert receipt == duplicate_receipt
     assert receipt.result["actionKey"] == proposal.idempotency_key
     assert receipt.result["patientId"] == turn_context.patient_id

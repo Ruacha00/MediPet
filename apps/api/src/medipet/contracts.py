@@ -78,7 +78,20 @@ class CreateVisitMatterRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     participant_id: str = Field(min_length=1, max_length=128)
-    title: str = Field(default="新的就诊事项", min_length=1, max_length=200)
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+
+
+class RenameVisitMatterRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    participant_id: str = Field(min_length=1, max_length=128)
+    title: str = Field(min_length=1, max_length=200)
+
+
+class VisitMatterLifecycleRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    participant_id: str = Field(min_length=1, max_length=128)
 
 
 class VisitMatterResponse(BaseModel):
@@ -87,6 +100,7 @@ class VisitMatterResponse(BaseModel):
     visit_stage: Literal["pre_visit", "in_visit"]
     patient_display_name: str
     participant_display_name: str
+    archived_at: datetime | None = None
 
 
 class VisitMatterListResponse(BaseModel):

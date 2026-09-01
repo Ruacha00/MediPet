@@ -15,6 +15,7 @@ from medipet.model.port import ModelMessage
 from medipet.persistence.conversation import (
     TerminalMessageState,
     VisitConversationStore,
+    VisitMatterArchivedError,
     VisitMatterNotFoundError,
     VisitTurn,
 )
@@ -88,6 +89,13 @@ class MediPetAssistant:
             yield TurnEvent(
                 kind="failed",
                 data={"message": "本次协助已超时，请重试。", "traceId": trace_id},
+            )
+        except VisitMatterArchivedError as error:
+            outcome = "failed"
+            await self._audit_store.record("failed", audit_context)
+            yield TurnEvent(
+                kind="failed",
+                data={"message": str(error), "traceId": trace_id},
             )
         except (asyncio.CancelledError, GeneratorExit):
             outcome = "cancelled"

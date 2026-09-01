@@ -11,6 +11,8 @@ from medipet.persistence.conversation import (
     MessageTransitionError,
     VisitContext,
     VisitConversationStore,
+    VisitMatterArchivedError,
+    VisitMatterBusyError,
     VisitTurn,
 )
 
@@ -39,6 +41,41 @@ async def exercise_store_contract(
     assert [
         item.visit_matter_id for item in await store.list_visit_matters(visit.participant_id)
     ] == [created_visit.visit_matter_id, visit.visit_matter_id]
+    renamed_visit = await store.rename_visit_matter(
+        visit.visit_matter_id,
+        visit.participant_id,
+        title="复诊问题整理",
+    )
+    assert renamed_visit.title == "复诊问题整理"
+    assert [
+        item.visit_matter_id for item in await store.list_visit_matters(visit.participant_id)
+    ] == [created_visit.visit_matter_id, visit.visit_matter_id]
+    archived_visit = await store.archive_visit_matter(
+        created_visit.visit_matter_id,
+        visit.participant_id,
+    )
+    assert archived_visit.archived_at is not None
+    assert [
+        item.visit_matter_id for item in await store.list_visit_matters(visit.participant_id)
+    ] == [visit.visit_matter_id]
+    assert [
+        item.visit_matter_id
+        for item in await store.list_visit_matters(visit.participant_id, archived=True)
+    ] == [created_visit.visit_matter_id]
+    renamed_archived_visit = await store.rename_visit_matter(
+        created_visit.visit_matter_id,
+        visit.participant_id,
+        title="已归档复诊准备",
+    )
+    assert renamed_archived_visit.title == "已归档复诊准备"
+    restored_visit = await store.restore_visit_matter(
+        created_visit.visit_matter_id,
+        visit.participant_id,
+    )
+    assert restored_visit.archived_at is None
+    assert [
+        item.visit_matter_id for item in await store.list_visit_matters(visit.participant_id)
+    ] == [created_visit.visit_matter_id, visit.visit_matter_id]
     assert await store.list_messages(created_visit.visit_matter_id) == []
     turn = VisitTurn(
         visit_matter_id=visit.visit_matter_id,
@@ -61,6 +98,8 @@ async def exercise_store_contract(
             content="我这两天头痛",
             selected_slot_id="slot-2",
         )
+    with pytest.raises(VisitMatterBusyError):
+        await store.archive_visit_matter(visit.visit_matter_id, visit.participant_id)
     assistant, claimed = await store.claim_assistant_message(turn=turn)
     replayed_assistant, replayed_claim = await store.claim_assistant_message(turn=turn)
     assert participant.state == "completed"
@@ -70,6 +109,8 @@ async def exercise_store_contract(
     assert claimed is True
     assert replayed_claim is False
     assert replayed_assistant.id == assistant.id
+    with pytest.raises(VisitMatterBusyError):
+        await store.archive_visit_matter(visit.visit_matter_id, visit.participant_id)
 
     proposal_part = {
         "type": "data-action-proposal",
@@ -82,6 +123,8 @@ async def exercise_store_contract(
     await store.append_assistant_text(assistant.id, "可以先")
     await store.append_assistant_text(assistant.id, "记录持续时间。")
     await store.finish_assistant_message(assistant.id, "completed")
+    with pytest.raises(VisitMatterBusyError):
+        await store.archive_visit_matter(visit.visit_matter_id, visit.participant_id)
 
     messages = await store.list_messages(visit.visit_matter_id)
     assert [(message.role, message.state, message.content) for message in messages] == [
@@ -106,6 +149,32 @@ async def exercise_store_contract(
     assert updated[-1].parts == (confirmed_part,)
     with pytest.raises(MessageTransitionError):
         await store.append_assistant_text(assistant.id, "不应再写入")
+    archived = await store.archive_visit_matter(
+        visit.visit_matter_id,
+        visit.participant_id,
+    )
+    assert archived.archived_at is not None
+    assert await store.list_messages(visit.visit_matter_id) == updated
+    with pytest.raises(VisitMatterArchivedError):
+        await store.visit_context(visit.visit_matter_id, visit.participant_id)
+    with pytest.raises(VisitMatterArchivedError):
+        await store.add_participant_message(
+            turn=VisitTurn(
+                visit_matter_id=visit.visit_matter_id,
+                participant_id=visit.participant_id,
+                turn_id="turn-after-archive",
+            ),
+            content="继续咨询",
+        )
+    await store.restore_visit_matter(visit.visit_matter_id, visit.participant_id)
+    await store.rename_visit_matter(
+        visit.visit_matter_id,
+        visit.participant_id,
+        title=visit.visit_matter_title,
+    )
+    assert (
+        await store.visit_context(visit.visit_matter_id, visit.participant_id)
+    ).patient_id == visit.patient_id
 
 
 @pytest.mark.asyncio

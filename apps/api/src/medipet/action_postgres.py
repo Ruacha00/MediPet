@@ -39,6 +39,24 @@ class PostgresActionStore:
     async def close(self) -> None:
         await self._engine.dispose()
 
+    async def has_pending_proposal(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> bool:
+        async with self._sessions() as session:
+            proposal_id = await session.scalar(
+                select(ActionProposalRecord.id)
+                .where(
+                    ActionProposalRecord.visit_matter_id == visit_matter_id,
+                    ActionProposalRecord.participant_id == participant_id,
+                    ActionProposalRecord.status == "pending",
+                    ActionProposalRecord.expires_at > datetime.now(UTC),
+                )
+                .limit(1)
+            )
+            return proposal_id is not None
+
     async def find_request_proposal(
         self,
         tool: ToolDefinition,

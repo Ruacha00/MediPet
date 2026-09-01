@@ -180,6 +180,28 @@ async def test_missing_participant_message_has_a_queryable_failed_terminal_audit
 
 
 @pytest.mark.asyncio
+async def test_archived_visit_during_stream_start_returns_a_safe_failed_event() -> None:
+    store = await seeded_store()
+    await store.archive_visit_matter("visit-1", "participant-1")
+    assistant = MediPetAssistant(LangGraphAgentRuntime(DeterministicModel(["unused"])), store)
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="archived-after-preflight",
+                message="继续咨询",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["failed"]
+    assert events[0].data["message"] == "就诊事项已归档，请恢复后继续"
+
+
+@pytest.mark.asyncio
 async def test_runtime_maps_model_failure_to_a_safe_event() -> None:
     runtime = LangGraphAgentRuntime(UnavailableModel())
 

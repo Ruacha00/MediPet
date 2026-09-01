@@ -26,6 +26,7 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 - Make effectful actions prepare a proposal first and commit only after confirmation.
 - Inject external dependencies so production and test Adapters cross the same Seams.
 - Test observable behaviour through module Interfaces rather than internal ReAct steps.
+- Treat target boundaries as extraction triggers, not an implementation checklist: split a module only when delivered behaviour creates a distinct responsibility, replacement Seam, or independently testable contract.
 
 ## Technology decisions
 
@@ -35,7 +36,7 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 | Styling and UI primitives | Tailwind CSS, shadcn/ui, AI Elements | Accessible primitives and chat building blocks, customized for MediPet |
 | Chat state | AI SDK UI `useChat` | Browser message state and streaming transport only |
 | HTTP delivery | FastAPI and Pydantic | Typed JSON requests, ordinary JSON reads, and streaming responses |
-| Agent orchestration | LangGraph behind `AgentRuntime` | ReAct execution, checkpoints, interrupts, and resume |
+| Agent orchestration | LangGraph behind `AgentRuntime` | ReAct execution and streaming; persistent checkpoints and graph resume are deferred |
 | Persistence | PostgreSQL, SQLAlchemy asyncio, Alembic | Visit matters, messages, proposals, receipts, authorization, and audit |
 | Python tooling | uv, pytest, Ruff, Pyright | Dependencies, verification, formatting, linting, and type checking |
 | Web tooling | pnpm, Vitest, Testing Library, Playwright | Dependencies, module tests, and browser scenarios |
@@ -44,6 +45,26 @@ The architecture must preserve the language and rules in `CONTEXT.md`, especiall
 AI SDK UI does not run the Agent and is not a second orchestration framework. Next.js does not contain duplicate domain or Skill logic. LangGraph is an implementation choice hidden behind `AgentRuntime`, so the application-facing Interface remains stable.
 
 V1 does not introduce Redis, a vector database, WebSockets, microservices, or Kubernetes. Add one only when a measured requirement creates a real Seam.
+
+## Implementation status and evolution gates
+
+This document describes architectural direction, not a requirement to create every illustrated directory, class, checkpoint, or abstraction. The current modular monolith may keep responsibilities together while their contracts and change patterns remain cohesive.
+
+Current implementation:
+
+- PostgreSQL is the source of truth for visit matters, messages, action proposals, receipts, capability governance, and audits.
+- LangGraph runs the model/Tool ReAct loop, but the graph is compiled without a persistent checkpointer; action confirmation is resumed through persisted proposals outside the graph.
+- completed conversation history survives API restart, while an unfinished graph node does not resume from a LangGraph checkpoint.
+- the Fake HospitalOperations Adapter supplies catalog, slot, and appointment behaviour, but no authoritative in-hospital wayfinding data.
+- Web has a legacy `data-hospital-route` presentation shell, not an end-to-end route or wayfinding capability.
+
+Approved next-state boundaries:
+
+- visit-matter history management adds rename, reversible archive, restore, and a real empty state without permanent deletion;
+- authoritative in-hospital wayfinding remains gated on the real HospitalOperations Adapter and earlier roadmap work;
+- persistent LangGraph checkpoints remain deferred until a graph-internal human interrupt, cross-process long-running task, or concrete need to avoid repeating an expensive Tool establishes a recovery requirement.
+
+Module extraction follows those slices. For example, checkpoint work may eventually separate serializable graph state from runtime dependencies, while wayfinding may justify a cohesive Tool or message-part module. Neither future possibility authorizes a repository-wide layout migration.
 
 ## System flow
 
@@ -60,7 +81,7 @@ flowchart LR
     Store[Visit Store Adapter]
     Model[Model Adapter]
     DB[(PostgreSQL)]
-    Checkpoints[(LangGraph checkpoints)]
+    Checkpoints[(Deferred persistent checkpoints)]
 
     Browser --> Web
     Web -->|AI SDK UI stream over HTTP/SSE| HTTP
@@ -68,7 +89,7 @@ flowchart LR
     Assistant --> Agent
     Agent --> Model
     Agent --> Skills
-    Agent --> Checkpoints
+    Agent -.->|activation trigger required| Checkpoints
     Skills --> Policy
     Skills --> Hospital
     Assistant --> Store
@@ -98,7 +119,7 @@ The thread renders these typed data parts:
 | `data-agent-status` | Transient progress such as checking hospital slots |
 | `data-slot-options` | Selectable doctor, date, time, and fee options |
 | `data-action-proposal` | Exact create/cancel proposal with confirm and reject controls |
-| `data-hospital-route` | Ordered route steps and preparation notes |
+| `data-hospital-wayfinding` | Hospital-approved origin, destination, ordered text directions, mode, and optional notice; planned, not currently emitted |
 | `data-handoff` | Human or emergency handoff with priority-specific treatment |
 
 Internal Thought text is never streamed. The client may show understandable progress, Skill names, and completed outcomes, but never chain-of-thought.
@@ -122,6 +143,7 @@ The browser uses AI SDK UI's message-stream protocol over HTTP Server-Sent Event
 - `POST /v1/chat/turns` accepts a typed turn and streams text plus structured data parts;
 - `POST /v1/action-proposals/{proposal_id}/decision` accepts an explicit confirm or reject decision;
 - visit-matter and message-history reads use ordinary JSON responses;
+- visit-matter history management uses ordinary JSON rename, archive, archived-list, and restore operations; archived matters remain readable but must be restored before chat or confirmation;
 - production exposes the web application and `/v1/` under one origin through routing infrastructure;
 - development may use CORS, but it is not the production trust model.
 
@@ -142,6 +164,9 @@ FastAPI emits the stream directly. A Next.js route handler may route bytes only 
 | 预约挂号 | `Appointment` | A patient holding a hospital slot |
 | 预约确认 | `AppointmentConfirmation` | Explicit consent bound to exact action details |
 | 紧急转介 | `EmergencyHandoff` | Overrides ordinary assistance |
+| 归档就诊事项 | `ArchivedVisitMatter` lifecycle | Reversibly hidden from active history without deleting records |
+| 院内服务地点 | `HospitalServiceLocation` | A hospital-approved destination such as a department, pharmacy, cashier, laboratory, or imaging service |
+| 院内方位指引 | `HospitalWayfindingGuidance` | Hospital-approved ordered text from a named common origin; no map or path calculation |
 
 Do not use `User`, `Task`, `Session`, or `MedicalCase` as substitutes for these domain concepts.
 
@@ -209,9 +234,9 @@ The runtime hides:
 - trace collection;
 - conversion of internal failures into safe outcomes.
 
-The implementation uses LangGraph for the ReAct state graph, checkpointing, streaming, interrupts, and resume. LangGraph types do not cross this Interface, so callers and tests do not depend on graph nodes, checkpoint schemas, or framework message types.
+The current implementation uses LangGraph for the ReAct state graph and streaming. It does not yet compile a persistent checkpointer or use graph interrupts and resume. Those capabilities may be added behind this Interface only after an approved recovery trigger is present. LangGraph types do not cross this Interface, so callers and tests do not depend on graph nodes, future checkpoint schemas, or framework message types.
 
-The Assistant applies deterministic emergency interruption before entering the graph. The initial graph contains reasoning, read-Skill execution, action-proposal pause, confirmed write-Skill execution, human handoff, and finish paths. Only explicitly mapped `AgentEvent` values may leave the runtime.
+The Assistant applies deterministic emergency interruption before entering the graph. The current graph contains model calls, validated Tool execution, action-proposal production, and finish paths; persisted proposal decisions and confirmed writes execute outside the graph. Human handoff and graph-internal pause/resume are future slices, not latent requirements to pre-build nodes. Only explicitly mapped `AgentEvent` values may leave the runtime.
 
 The model crosses a true external Seam:
 
@@ -273,8 +298,8 @@ Initial Skills:
 | `commit_appointment` | Write | Create an authorized, confirmed appointment idempotently |
 | `prepare_cancellation` | Read | Build an exact cancellation proposal |
 | `commit_cancellation` | Write | Cancel an authorized, confirmed appointment idempotently |
-| `get_hospital_route` | Read | Return an in-hospital route and relevant preparation |
-| `handoff_to_human` | Write | Create a handoff record for hospital staff |
+| `hospital-wayfinding` | Read | Planned: return an exact hospital-approved text direction for a named origin, destination, and mode |
+| `handoff-to-human` | Write | Planned: create a handoff record for hospital staff |
 
 The model cannot invent a Skill name or bypass the prepare/confirm/commit sequence.
 
@@ -288,7 +313,7 @@ class HospitalOperations(Protocol):
     async def commit(self, action: ConfirmedHospitalAction) -> ActionReceipt: ...
 ```
 
-The production Adapter translates between MediPet's domain types and the hospital's systems. The in-memory Adapter supplies deterministic departments, doctors, slots, routes, appointments, and failures for tests and the POC.
+The production Adapter translates between MediPet's domain types and the hospital's systems. The current Fake Adapter supplies deterministic departments, doctors, slots, appointments, and failures for development and tests. It does not publish wayfinding data. Authoritative text directions extend this same HospitalOperations query boundary only after the production Adapter defines stable origins, service locations, modes, and data versions; they do not create a parallel Adapter hierarchy.
 
 There is no hospital selector, tenant identifier, cross-hospital query, or tenant-aware configuration in this Interface.
 
@@ -310,7 +335,7 @@ Conversation history is subordinate to a visit matter. It is not the source of p
 
 The production Adapter uses PostgreSQL through SQLAlchemy's asyncio Interface, with Alembic migrations. PostgreSQL is the source of truth for visit matters, messages, authorization, action proposals, receipts, and audit records.
 
-LangGraph checkpoints store resumable execution state. They do not replace the Visit Store or become the source of truth for patient identity, authorization, or committed hospital actions.
+If a future recovery trigger activates persistent LangGraph checkpoints, they store only resumable execution state. They do not replace the Visit Store or become the source of truth for participant-visible history, patient identity, authorization, or committed hospital actions. Checkpoint state must be serializable, encrypted and retained under an explicit lifecycle; none of these requirements are implemented by merely adding a checkpointer to `graph.compile()`.
 
 ## Effectful-action protocol
 
@@ -358,6 +383,8 @@ an administrator explicitly governs them.
 
 ## Repository layout
 
+The following tree is an illustrative ownership map for possible evolution, not a prescribed directory manifest. Existing cohesive modules may remain consolidated. A named file is created or extracted only when an implementation slice gives it a distinct responsibility and stable contract.
+
 ```text
 capabilities/
 ├── skills/
@@ -382,10 +409,10 @@ apps/
 │   │   │       ├── chat-shell.tsx
 │   │   │       ├── transport.ts
 │   │   │       ├── message-types.ts
-│   │   │       └── message-parts/
+│   │   │       └── message-parts/               # extract only when cards warrant it
 │   │   │           ├── slot-options.tsx
 │   │   │           ├── action-proposal.tsx
-│   │   │           ├── hospital-route.tsx
+│   │   │           ├── hospital-wayfinding.tsx
 │   │   │           └── handoff.tsx
 │   │   ├── components/
 │   │   │   └── ui/
@@ -407,14 +434,14 @@ apps/
     │       │   └── events.py
     │       ├── agent/
     │       │   ├── runtime.py
-    │       │   ├── graph.py
-    │       │   ├── state.py
+    │       │   ├── graph.py                 # future checkpoint-driven extraction
+    │       │   ├── state.py                 # serializable state only, when required
     │       │   └── prompts.py
     │       ├── skills/
     │       │   ├── contracts.py
     │       │   ├── runtime.py
     │       │   ├── appointment.py
-    │       │   ├── navigation.py
+    │       │   ├── wayfinding.py            # planned authoritative text directions
     │       │   └── handoff.py
     │       ├── hospital/
     │       │   ├── operations.py
@@ -480,6 +507,10 @@ The following choices do not affect the module Interfaces and remain intentional
 - hospital identity provider;
 - production hosting platform and reverse proxy;
 - data-retention periods and archival policy.
+
+Persistent LangGraph checkpoints are also deferred, but their activation test is explicit rather than open-ended: introduce them only for graph-internal human interruption, a cross-process long-running run, or a demonstrated need to resume after a durable node boundary without repeating an expensive Tool. Completed message-history recovery alone is not such a trigger because the Visit Store already provides it.
+
+Hospital wayfinding is governed by [ADR-0011](../adr/0011-use-authoritative-text-wayfinding.md). Its text contract may mention buildings and floors, but MediPet does not model or calculate them. A future structured map or dynamic route engine requires a new decision rather than filling in dormant classes from this document.
 
 These choices should be made only when the next implementation slice requires them.
 

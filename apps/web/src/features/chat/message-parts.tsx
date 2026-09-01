@@ -18,6 +18,7 @@ type MessagePartViewProps = {
   decisionState: ProposalDecisionState;
   onDecision: (proposalId: string, decision: ProposalDecision) => void;
   onSelectSlot: (slot: SlotOption) => void;
+  readOnly?: boolean;
 };
 
 export function MessagePartView({
@@ -25,18 +26,20 @@ export function MessagePartView({
   decisionState,
   onDecision,
   onSelectSlot,
+  readOnly = false,
 }: MessagePartViewProps) {
   switch (part.type) {
     case "text":
       return <MarkdownText text={part.text} />;
     case "data-slot-options":
-      return <SlotOptionsCard data={part.data} onSelect={onSelectSlot} />;
+      return <SlotOptionsCard data={part.data} onSelect={onSelectSlot} readOnly={readOnly} />;
     case "data-action-proposal":
       return (
         <ActionProposalCard
           data={part.data}
           decisionState={decisionState}
           onDecision={onDecision}
+          readOnly={readOnly}
         />
       );
     case "data-hospital-route":
@@ -76,9 +79,11 @@ export function MarkdownText({
 export function SlotOptionsCard({
   data,
   onSelect,
+  readOnly = false,
 }: {
   data: SlotOptionsData;
   onSelect: (slot: SlotOption) => void;
+  readOnly?: boolean;
 }) {
   if (data.slots.length === 0) return null;
 
@@ -93,7 +98,11 @@ export function SlotOptionsCard({
             <div><small>医生</small><strong>{slot.doctor} · {slot.doctorTitle}</strong></div>
             <div><small>时间</small><strong>{formatDateTime(slot.startsAt)}</strong></div>
             <div><small>挂号费</small><strong>{formatMoney(slot.feeCents)}</strong></div>
-            <button className="card-button primary" onClick={() => onSelect(slot)}>
+            <button
+              className="card-button primary"
+              disabled={readOnly}
+              onClick={() => onSelect(slot)}
+            >
               选择此号源
             </button>
           </article>
@@ -107,10 +116,12 @@ export function ActionProposalCard({
   data,
   decisionState,
   onDecision,
+  readOnly = false,
 }: {
   data: ActionProposalData;
   decisionState: ProposalDecisionState;
   onDecision: (proposalId: string, decision: ProposalDecision) => void;
+  readOnly?: boolean;
 }) {
   const resolved = data.status !== "pending";
   const working = decisionState === "working";
@@ -145,14 +156,14 @@ export function ActionProposalCard({
         <div className="card-actions">
           <button
             className="card-button primary"
-            disabled={working}
+            disabled={working || readOnly}
             onClick={() => onDecision(data.proposalId, "confirm")}
           >
             {working ? "处理中…" : confirmation ? "确认预约" : "确认操作"}
           </button>
           <button
             className="card-button"
-            disabled={working}
+            disabled={working || readOnly}
             onClick={() => onDecision(data.proposalId, "reject")}
           >
             {confirmation ? "拒绝预约" : "拒绝操作"}

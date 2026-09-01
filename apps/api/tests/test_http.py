@@ -1,11 +1,18 @@
 import asyncio
 import json
 from collections.abc import AsyncIterator
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from threading import Event
 
 from fastapi.testclient import TestClient
 
-from medipet.actions import InMemoryActionStore
+from medipet.actions import (
+    ActionProposal,
+    ActionReceipt,
+    InMemoryActionStore,
+    proposal_expiry,
+)
 from medipet.agent.capabilities import (
     CapabilitySnapshot,
     StaticCapabilityProvider,
@@ -181,6 +188,333 @@ def test_visit_matters_can_be_created_listed_and_keep_history_isolated() -> None
     assert new_history.json()["messages"][0]["parts"] == [
         {"type": "text", "text": "只属于复诊事项"}
     ]
+
+
+def test_visit_matter_history_management_http_contract() -> None:
+    store = seeded_store()
+    client = TestClient(create_app(model=DeterministicModel(), conversation_store=store))
+
+    created = client.post(
+        "/v1/visit-matters",
+        json={"participant_id": "participant-demo"},
+    )
+    assert created.status_code == 201
+    visit = created.json()
+    assert visit["title"].endswith("就诊事项")
+    assert visit["archived_at"] is None
+
+    renamed = client.patch(
+        f"/v1/visit-matters/{visit['visit_matter_id']}/title",
+        json={"participant_id": "participant-demo", "title": "皮肤复诊"},
+    )
+    assert renamed.status_code == 200
+    assert renamed.json()["title"] == "皮肤复诊"
+
+    archived = client.post(
+        f"/v1/visit-matters/{visit['visit_matter_id']}/archive",
+        json={"participant_id": "participant-demo"},
+    )
+    assert archived.status_code == 200
+    assert archived.json()["archived_at"] is not None
+    active_items = client.get(
+        "/v1/visit-matters",
+        params={"participant_id": "participant-demo"},
+    ).json()["visit_matters"]
+    archived_items = client.get(
+        "/v1/visit-matters",
+        params={"participant_id": "participant-demo", "archived": True},
+    ).json()["visit_matters"]
+    assert visit["visit_matter_id"] not in {
+        item["visit_matter_id"] for item in active_items
+    }
+    assert [item["visit_matter_id"] for item in archived_items] == [
+        visit["visit_matter_id"]
+    ]
+
+    history = client.get(
+        f"/v1/visit-matters/{visit['visit_matter_id']}/messages",
+        params={"participant_id": "participant-demo"},
+    )
+    assert history.status_code == 200
+    assert history.json()["messages"] == []
+
+    chat = client.post(
+        "/v1/chat/turns",
+        json={
+            "visit_matter_id": visit["visit_matter_id"],
+            "participant_id": "participant-demo",
+            "messages": [
+                {
+                    "id": "archived-message",
+                    "role": "user",
+                    "parts": [{"type": "text", "text": "继续咨询"}],
+                }
+            ],
+        },
+    )
+    assert chat.status_code == 409
+    assert chat.json()["detail"]["code"] == "visit_matter_archived"
+
+    decision = client.post(
+        "/v1/action-proposals/proposal-archived/decision",
+        json={
+            "decision": "confirm",
+            "participant_id": "participant-demo",
+            "visit_matter_id": visit["visit_matter_id"],
+        },
+    )
+    assert decision.status_code == 409
+    assert decision.json()["detail"]["code"] == "visit_matter_archived"
+
+    restored = client.post(
+        f"/v1/visit-matters/{visit['visit_matter_id']}/restore",
+        json={"participant_id": "participant-demo"},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["archived_at"] is None
+
+
+def test_archiving_busy_visit_matter_returns_typed_conflict() -> None:
+    store = seeded_store()
+    asyncio.run(
+        store.claim_assistant_message(
+            turn=VisitTurn(
+                visit_matter_id="visit-matter-demo",
+                participant_id="participant-demo",
+                turn_id="busy-turn",
+            )
+        )
+    )
+    client = TestClient(create_app(model=DeterministicModel(), conversation_store=store))
+
+    response = client.post(
+        "/v1/visit-matters/visit-matter-demo/archive",
+        json={"participant_id": "participant-demo"},
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"]["code"] == "visit_matter_busy"
+
+
+def test_archiving_uses_authoritative_pending_action_state() -> None:
+    store = seeded_store()
+    action_store = InMemoryActionStore()
+
+    async def execute(
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"saved": True}
+
+    tool = ToolDefinition(
+        tool_id="test.pending-action",
+        name="pending_action",
+        version="1",
+        description="测试待确认操作",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    context = ToolContext(
+        visit_matter_id="visit-matter-demo",
+        participant_id="participant-demo",
+        patient_id="patient-demo",
+        patient_display_name="演示患者",
+        idempotency_key="pending-action-request",
+    )
+    asyncio.run(
+        action_store.create_proposal(
+            tool,
+            {},
+            context,
+            expires_at=proposal_expiry(),
+        )
+    )
+    client = TestClient(
+        create_app(
+            model=DeterministicModel(),
+            conversation_store=store,
+            action_store=action_store,
+        )
+    )
+
+    response = client.post(
+        "/v1/visit-matters/visit-matter-demo/archive",
+        json={"participant_id": "participant-demo"},
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"]["code"] == "visit_matter_busy"
+
+
+def test_resolved_action_allows_archive_when_history_projection_is_stale() -> None:
+    store = seeded_store()
+    action_store = InMemoryActionStore()
+
+    async def arrange() -> None:
+        async def execute(
+            arguments: dict[str, object],
+            context: ToolContext,
+        ) -> dict[str, object]:
+            del arguments, context
+            return {"saved": True}
+
+        tool = ToolDefinition(
+            tool_id="test.resolved-action",
+            name="resolved_action",
+            version="1",
+            description="测试已处理操作",
+            input_schema={"type": "object", "additionalProperties": False},
+            effect="write",
+            approval_required=True,
+            execute=execute,
+        )
+        context = ToolContext(
+            visit_matter_id="visit-matter-demo",
+            participant_id="participant-demo",
+            patient_id="patient-demo",
+            patient_display_name="演示患者",
+            idempotency_key="resolved-action-request",
+        )
+        proposal = await action_store.create_proposal(
+            tool,
+            {},
+            context,
+            expires_at=proposal_expiry(),
+        )
+        assistant = await store.add_assistant_message(
+            turn=VisitTurn(
+                visit_matter_id="visit-matter-demo",
+                participant_id="participant-demo",
+                turn_id="resolved-action-turn",
+            )
+        )
+        await store.append_assistant_part(
+            assistant.id,
+            {
+                "type": "data-action-proposal",
+                "data": {"proposalId": proposal.proposal_id, "status": "pending"},
+            },
+        )
+        await store.mark_assistant_streaming(assistant.id)
+        await store.finish_assistant_message(assistant.id, "completed")
+        await action_store.reject(proposal.proposal_id, context)
+
+    asyncio.run(arrange())
+    client = TestClient(
+        create_app(
+            model=DeterministicModel(),
+            conversation_store=store,
+            action_store=action_store,
+        )
+    )
+
+    response = client.post(
+        "/v1/visit-matters/visit-matter-demo/archive",
+        json={"participant_id": "participant-demo"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["archived_at"] is not None
+
+
+def test_action_decision_in_progress_blocks_archive_until_request_finishes() -> None:
+    class BlockingAfterConfirmActionStore(InMemoryActionStore):
+        def __init__(self) -> None:
+            super().__init__()
+            self.confirmed = Event()
+            self.release = Event()
+
+        async def confirm(
+            self,
+            proposal_id: str,
+            context: ToolContext,
+            tool: ToolDefinition,
+        ) -> tuple[ActionProposal, ActionReceipt]:
+            result = await super().confirm(proposal_id, context, tool)
+            self.confirmed.set()
+            await asyncio.to_thread(self.release.wait, 5)
+            return result
+
+    class WriteCallingModel(ModelPort):
+        async def stream(self, request: ModelRequest) -> AsyncIterator[ModelChunk]:
+            del request
+            yield ModelChunk(
+                tool_calls=(ModelToolCall("call-running", "running_write", {}),)
+            )
+
+    async def execute(
+        arguments: dict[str, object],
+        context: ToolContext,
+    ) -> dict[str, object]:
+        del arguments, context
+        return {"saved": True}
+
+    tool = ToolDefinition(
+        tool_id="test.running-write",
+        name="running_write",
+        version="1",
+        description="测试确认中的写操作",
+        input_schema={"type": "object", "additionalProperties": False},
+        effect="write",
+        approval_required=True,
+        execute=execute,
+    )
+    action_store = BlockingAfterConfirmActionStore()
+    app = create_app(
+        model=WriteCallingModel(),
+        conversation_store=seeded_store(),
+        capability_provider=StaticCapabilityProvider(CapabilitySnapshot(tools=(tool,))),
+        action_store=action_store,
+    )
+    client = TestClient(app)
+    proposal_response = client.post(
+        "/v1/chat/turns",
+        json={
+            "idempotency_key": "running-proposal",
+            "messages": [{
+                "id": "running-message",
+                "role": "user",
+                "parts": [{"type": "text", "text": "执行确认中的操作"}],
+            }],
+        },
+    )
+    payloads = [
+        json.loads(line.removeprefix("data: "))
+        for line in proposal_response.text.splitlines()
+        if line.startswith("data: {")
+    ]
+    proposal_id = next(
+        payload["data"]["proposalId"]
+        for payload in payloads
+        if payload["type"] == "data-action-proposal"
+    )
+
+    try:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            decision = executor.submit(
+                client.post,
+                f"/v1/action-proposals/{proposal_id}/decision",
+                json={
+                    "decision": "confirm",
+                    "idempotency_key": "running-decision",
+                    "visit_matter_id": "visit-matter-demo",
+                    "participant_id": "participant-demo",
+                },
+            )
+            assert action_store.confirmed.wait(5)
+            archive = TestClient(app).post(
+                "/v1/visit-matters/visit-matter-demo/archive",
+                json={"participant_id": "participant-demo"},
+            )
+            assert archive.status_code == 409
+            assert archive.json()["detail"]["code"] == "visit_matter_busy"
+            action_store.release.set()
+            assert decision.result(timeout=5).status_code == 200
+    finally:
+        action_store.release.set()
 
 
 def test_readiness_reports_missing_model_configuration_safely() -> None:

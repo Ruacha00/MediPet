@@ -4,6 +4,7 @@ import os
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,8 +30,10 @@ from medipet.contracts import (
     ConversationHistoryMessage,
     ConversationHistoryResponse,
     CreateVisitMatterRequest,
+    RenameVisitMatterRequest,
     TurnCommand,
     UIMessagePart,
+    VisitMatterLifecycleRequest,
     VisitMatterListResponse,
     VisitMatterResponse,
 )
@@ -42,6 +45,8 @@ from medipet.model.openai import ChatOpenAIModelAdapter
 from medipet.model.port import ModelPort
 from medipet.persistence.conversation import (
     VisitConversationStore,
+    VisitMatterArchivedError,
+    VisitMatterBusyError,
     VisitMatterNotFoundError,
 )
 from medipet.persistence.postgres import (
@@ -63,6 +68,15 @@ from medipet.tools.registry import ToolProvider, ToolRegistry
 
 MODEL_UNAVAILABLE_MESSAGE = "模型服务配置不可用"
 DATABASE_UNAVAILABLE_MESSAGE = "数据库服务配置不可用"
+
+
+def _default_visit_matter_title() -> str:
+    timezone_name = os.getenv("MEDIPET_HOSPITAL_TIMEZONE", "Asia/Shanghai")
+    try:
+        local_now = datetime.now(ZoneInfo(timezone_name))
+    except (KeyError, ValueError):
+        local_now = datetime.now(UTC)
+    return f"{local_now.month} 月 {local_now.day} 日 {local_now:%H:%M} 就诊事项"
 
 
 def create_app(
@@ -127,6 +141,7 @@ def create_app(
         else None
     )
     effective_action_store = action_store or UnavailableActionStore()
+    running_action_decisions: dict[tuple[str, str], int] = {}
     static_assistant = (
         MediPetAssistant(
             LangGraphAgentRuntime(
@@ -200,10 +215,16 @@ def create_app(
         return {"hospital_data_available": hospital_data_available(capabilities, context)}
 
     @app.get("/v1/visit-matters", response_model=VisitMatterListResponse)
-    async def visit_matters(participant_id: str) -> VisitMatterListResponse:
+    async def visit_matters(
+        participant_id: str,
+        archived: bool = False,
+    ) -> VisitMatterListResponse:
         if conversation_store is None:
             raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
-        summaries = await conversation_store.list_visit_matters(participant_id)
+        summaries = await conversation_store.list_visit_matters(
+            participant_id,
+            archived=archived,
+        )
         return VisitMatterListResponse(
             visit_matters=[
                 VisitMatterResponse.model_validate(summary, from_attributes=True)
@@ -222,7 +243,78 @@ def create_app(
         try:
             summary = await conversation_store.create_visit_matter(
                 participant_id=request.participant_id,
+                title=request.title or _default_visit_matter_title(),
+            )
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return VisitMatterResponse.model_validate(summary, from_attributes=True)
+
+    @app.patch(
+        "/v1/visit-matters/{visit_matter_id}/title",
+        response_model=VisitMatterResponse,
+    )
+    async def rename_visit_matter(
+        visit_matter_id: str,
+        request: RenameVisitMatterRequest,
+    ) -> VisitMatterResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            summary = await conversation_store.rename_visit_matter(
+                visit_matter_id,
+                request.participant_id,
                 title=request.title,
+            )
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return VisitMatterResponse.model_validate(summary, from_attributes=True)
+
+    @app.post(
+        "/v1/visit-matters/{visit_matter_id}/archive",
+        response_model=VisitMatterResponse,
+    )
+    async def archive_visit_matter(
+        visit_matter_id: str,
+        request: VisitMatterLifecycleRequest,
+    ) -> VisitMatterResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            decision_scope = (visit_matter_id, request.participant_id)
+            pending_action = await effective_action_store.has_pending_proposal(
+                visit_matter_id,
+                request.participant_id,
+            )
+            if running_action_decisions.get(decision_scope, 0) > 0:
+                pending_action = True
+            summary = await conversation_store.archive_visit_matter(
+                visit_matter_id,
+                request.participant_id,
+                pending_action=pending_action,
+            )
+        except VisitMatterBusyError as error:
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "visit_matter_busy", "message": str(error)},
+            ) from error
+        except VisitMatterNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return VisitMatterResponse.model_validate(summary, from_attributes=True)
+
+    @app.post(
+        "/v1/visit-matters/{visit_matter_id}/restore",
+        response_model=VisitMatterResponse,
+    )
+    async def restore_visit_matter(
+        visit_matter_id: str,
+        request: VisitMatterLifecycleRequest,
+    ) -> VisitMatterResponse:
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        try:
+            summary = await conversation_store.restore_visit_matter(
+                visit_matter_id,
+                request.participant_id,
             )
         except VisitMatterNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
@@ -272,10 +364,15 @@ def create_app(
             selected_slot_id=request.selected_slot_id,
         )
         try:
-            await conversation_store.validate_visit_participant(
+            await conversation_store.visit_context(
                 request.visit_matter_id,
                 request.participant_id,
             )
+        except VisitMatterArchivedError as error:
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "visit_matter_archived", "message": str(error)},
+            ) from error
         except VisitMatterNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
         return StreamingResponse(
@@ -359,21 +456,46 @@ def create_app(
         assistant = assistant_for_new_turn(snapshot)
         if assistant is None:
             raise HTTPException(status_code=503, detail=MODEL_UNAVAILABLE_MESSAGE)
-        command = TurnCommand(
-            visit_matter_id=request.visit_matter_id,
-            participant_id=request.participant_id,
-            idempotency_key=request.idempotency_key,
-            confirmation=ConfirmationDecision(
+        if conversation_store is None:
+            raise HTTPException(status_code=503, detail=DATABASE_UNAVAILABLE_MESSAGE)
+        decision_scope = (request.visit_matter_id, request.participant_id)
+        running_action_decisions[decision_scope] = (
+            running_action_decisions.get(decision_scope, 0) + 1
+        )
+        try:
+            try:
+                await conversation_store.visit_context(
+                    request.visit_matter_id,
+                    request.participant_id,
+                )
+            except VisitMatterArchivedError as error:
+                raise HTTPException(
+                    status_code=409,
+                    detail={"code": "visit_matter_archived", "message": str(error)},
+                ) from error
+            except VisitMatterNotFoundError as error:
+                raise HTTPException(status_code=404, detail=str(error)) from error
+            command = TurnCommand(
+                visit_matter_id=request.visit_matter_id,
+                participant_id=request.participant_id,
+                idempotency_key=request.idempotency_key,
+                confirmation=ConfirmationDecision(
+                    proposal_id=proposal_id,
+                    decision=request.decision,
+                ),
+            )
+            events = [event async for event in assistant.handle_turn(command)]
+            return ActionDecisionResponse(
                 proposal_id=proposal_id,
                 decision=request.decision,
-            ),
-        )
-        events = [event async for event in assistant.handle_turn(command)]
-        return ActionDecisionResponse(
-            proposal_id=proposal_id,
-            decision=request.decision,
-            events=events,
-        )
+                events=events,
+            )
+        finally:
+            remaining = running_action_decisions[decision_scope] - 1
+            if remaining > 0:
+                running_action_decisions[decision_scope] = remaining
+            else:
+                running_action_decisions.pop(decision_scope, None)
 
     return app
 

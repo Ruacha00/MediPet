@@ -38,6 +38,14 @@ class VisitMatterNotFoundError(ConversationStoreError):
     pass
 
 
+class VisitMatterArchivedError(ConversationStoreError):
+    pass
+
+
+class VisitMatterBusyError(ConversationStoreError):
+    pass
+
+
 class MessageTransitionError(ConversationStoreError):
     pass
 
@@ -55,6 +63,7 @@ class DevelopmentVisitMatter:
     visit_matter_id: str
     visit_matter_title: str
     visit_stage: VisitStage = "pre_visit"
+    archived_at: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -64,6 +73,7 @@ class VisitMatterSummary:
     visit_stage: VisitStage
     patient_display_name: str
     participant_display_name: str
+    archived_at: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -125,7 +135,34 @@ class VisitConversationStore(Protocol):
         title: str,
     ) -> VisitMatterSummary: ...
 
-    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]: ...
+    async def list_visit_matters(
+        self,
+        participant_id: str,
+        *,
+        archived: bool = False,
+    ) -> list[VisitMatterSummary]: ...
+
+    async def rename_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        title: str,
+    ) -> VisitMatterSummary: ...
+
+    async def archive_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        pending_action: bool | None = None,
+    ) -> VisitMatterSummary: ...
+
+    async def restore_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitMatterSummary: ...
 
     async def add_participant_message(
         self,
@@ -210,7 +247,7 @@ class InMemoryVisitConversationStore:
         participant_id: str,
     ) -> VisitContext:
         async with self._lock:
-            self._require_participant(visit_matter_id, participant_id)
+            self._require_active_participant(visit_matter_id, participant_id)
             visit_matter = self._visit_matters[visit_matter_id]
             return VisitContext(
                 patient_id=visit_matter.patient_id,
@@ -259,18 +296,70 @@ class InMemoryVisitConversationStore:
             self._touch_visit_matter(visit_matter.visit_matter_id)
             return self._summary(visit_matter)
 
-    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]:
+    async def list_visit_matters(
+        self,
+        participant_id: str,
+        *,
+        archived: bool = False,
+    ) -> list[VisitMatterSummary]:
         async with self._lock:
             visit_matters = sorted(
                 (
                     visit_matter
                     for visit_matter in self._visit_matters.values()
                     if visit_matter.participant_id == participant_id
+                    and (visit_matter.archived_at is not None) is archived
                 ),
                 key=lambda item: self._visit_matter_activity[item.visit_matter_id],
                 reverse=True,
             )
             return [self._summary(visit_matter) for visit_matter in visit_matters]
+
+    async def rename_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        title: str,
+    ) -> VisitMatterSummary:
+        async with self._lock:
+            self._require_participant(visit_matter_id, participant_id)
+            visit_matter = replace(
+                self._visit_matters[visit_matter_id],
+                visit_matter_title=title,
+            )
+            self._visit_matters[visit_matter_id] = visit_matter
+            return self._summary(visit_matter)
+
+    async def archive_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        pending_action: bool | None = None,
+    ) -> VisitMatterSummary:
+        async with self._lock:
+            self._require_participant(visit_matter_id, participant_id)
+            visit_matter = self._visit_matters[visit_matter_id]
+            if visit_matter.archived_at is None:
+                if self._visit_matter_is_busy(visit_matter_id, pending_action=pending_action):
+                    raise VisitMatterBusyError("就诊事项仍有进行中的回复或待确认操作")
+                visit_matter = replace(visit_matter, archived_at=datetime.now(UTC))
+                self._visit_matters[visit_matter_id] = visit_matter
+            return self._summary(visit_matter)
+
+    async def restore_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitMatterSummary:
+        async with self._lock:
+            self._require_participant(visit_matter_id, participant_id)
+            visit_matter = self._visit_matters[visit_matter_id]
+            if visit_matter.archived_at is not None:
+                visit_matter = replace(visit_matter, archived_at=None)
+                self._visit_matters[visit_matter_id] = visit_matter
+            return self._summary(visit_matter)
 
     async def add_participant_message(
         self,
@@ -280,7 +369,7 @@ class InMemoryVisitConversationStore:
         selected_slot_id: str | None = None,
     ) -> StoredMessage:
         async with self._lock:
-            self._require_participant(turn.visit_matter_id, turn.participant_id)
+            self._require_active_participant(turn.visit_matter_id, turn.participant_id)
             key = (turn, "participant")
             existing = self._message_for_turn(key)
             if existing is not None:
@@ -309,7 +398,7 @@ class InMemoryVisitConversationStore:
         turn: VisitTurn,
     ) -> tuple[StoredMessage, bool]:
         async with self._lock:
-            self._require_participant(turn.visit_matter_id, turn.participant_id)
+            self._require_active_participant(turn.visit_matter_id, turn.participant_id)
             key = (turn, "assistant")
             existing = self._message_for_turn(key)
             if existing is not None:
@@ -403,6 +492,38 @@ class InMemoryVisitConversationStore:
         if visit_matter is None or visit_matter.participant_id != participant_id:
             raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
 
+    def _require_active_participant(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> None:
+        self._require_participant(visit_matter_id, participant_id)
+        if self._visit_matters[visit_matter_id].archived_at is not None:
+            raise VisitMatterArchivedError("就诊事项已归档，请恢复后继续")
+
+    def _visit_matter_is_busy(
+        self,
+        visit_matter_id: str,
+        *,
+        pending_action: bool | None = None,
+    ) -> bool:
+        visit_messages = [
+            message
+            for message in self._messages.values()
+            if message.visit_matter_id == visit_matter_id
+        ]
+        participant_turns = {
+            message.turn_id for message in visit_messages if message.role == "participant"
+        }
+        assistant_turns = {
+            message.turn_id for message in visit_messages if message.role == "assistant"
+        }
+        return bool(participant_turns - assistant_turns) or any(
+            (message.role == "assistant" and message.state in {"pending", "streaming"})
+            or (pending_action is None and has_pending_action_proposal(message.parts))
+            for message in visit_messages
+        ) or pending_action is True
+
     def _message_for_turn(
         self,
         key: tuple[VisitTurn, MessageRole],
@@ -451,6 +572,7 @@ class InMemoryVisitConversationStore:
             visit_stage=visit_matter.visit_stage,
             patient_display_name=visit_matter.patient_display_name,
             participant_display_name=visit_matter.participant_display_name,
+            archived_at=visit_matter.archived_at,
         )
 
     def _require_message(self, message_id: str) -> StoredMessage:
@@ -503,3 +625,15 @@ def replace_proposal_part(
             updated[index] = dict(replacement)
             return tuple(updated)
     return None
+
+
+def has_pending_action_proposal(parts: tuple[dict[str, object], ...]) -> bool:
+    for part in parts:
+        data = part.get("data")
+        if (
+            part.get("type") == "data-action-proposal"
+            and isinstance(data, dict)
+            and data.get("status") == "pending"
+        ):
+            return True
+    return False

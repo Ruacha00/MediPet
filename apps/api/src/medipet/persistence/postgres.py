@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from typing import cast
 from uuid import uuid4
 
@@ -25,10 +26,13 @@ from medipet.persistence.conversation import (
     StoredMessage,
     TerminalMessageState,
     VisitContext,
+    VisitMatterArchivedError,
+    VisitMatterBusyError,
     VisitMatterNotFoundError,
     VisitMatterSummary,
     VisitTurn,
     assistant_transition_source_states,
+    has_pending_action_proposal,
     replace_proposal_part,
 )
 from medipet.persistence.models import (
@@ -91,7 +95,7 @@ class PostgresVisitConversationStore:
         participant_id: str,
     ) -> VisitContext:
         async with self._sessions() as session:
-            visit_matter = await self._require_visit_matter(
+            visit_matter = await self._require_active_visit_matter(
                 session, visit_matter_id, participant_id
             )
             patient = await session.get(PatientRecord, visit_matter.patient_id)
@@ -163,9 +167,15 @@ class PostgresVisitConversationStore:
                 visit_stage="pre_visit",
                 patient_display_name=patient.display_name,
                 participant_display_name=participant.display_name,
+                archived_at=None,
             )
 
-    async def list_visit_matters(self, participant_id: str) -> list[VisitMatterSummary]:
+    async def list_visit_matters(
+        self,
+        participant_id: str,
+        *,
+        archived: bool = False,
+    ) -> list[VisitMatterSummary]:
         async with self._sessions() as session:
             rows = (
                 await session.execute(
@@ -180,6 +190,11 @@ class PostgresVisitConversationStore:
                         VisitParticipantRecord.id == VisitMatterRecord.participant_id,
                     )
                     .where(VisitMatterRecord.participant_id == participant_id)
+                    .where(
+                        VisitMatterRecord.archived_at.is_not(None)
+                        if archived
+                        else VisitMatterRecord.archived_at.is_(None)
+                    )
                     .order_by(
                         VisitMatterRecord.updated_at.desc(),
                         VisitMatterRecord.created_at.desc(),
@@ -193,9 +208,146 @@ class PostgresVisitConversationStore:
                     visit_stage=cast(VisitStage, record.visit_stage),
                     patient_display_name=patient_display_name,
                     participant_display_name=participant_display_name,
+                    archived_at=record.archived_at,
                 )
                 for record, patient_display_name, participant_display_name in rows
             ]
+
+    async def rename_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        title: str,
+    ) -> VisitMatterSummary:
+        async with self._sessions.begin() as session:
+            row = (
+                await session.execute(
+                    select(
+                        VisitMatterRecord,
+                        PatientRecord.display_name,
+                        VisitParticipantRecord.display_name,
+                    )
+                    .join(PatientRecord, PatientRecord.id == VisitMatterRecord.patient_id)
+                    .join(
+                        VisitParticipantRecord,
+                        VisitParticipantRecord.id == VisitMatterRecord.participant_id,
+                    )
+                    .where(
+                        VisitMatterRecord.id == visit_matter_id,
+                        VisitMatterRecord.participant_id == participant_id,
+                    )
+                    .with_for_update()
+                )
+            ).one_or_none()
+            if row is None:
+                raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
+            record, patient_display_name, participant_display_name = row
+            if record.title != title:
+                await session.execute(
+                    update(VisitMatterRecord)
+                    .where(VisitMatterRecord.id == visit_matter_id)
+                    .values(title=title, updated_at=VisitMatterRecord.updated_at)
+                    .execution_options(synchronize_session=False)
+                )
+            return VisitMatterSummary(
+                visit_matter_id=record.id,
+                title=title,
+                visit_stage=cast(VisitStage, record.visit_stage),
+                patient_display_name=patient_display_name,
+                participant_display_name=participant_display_name,
+                archived_at=record.archived_at,
+            )
+
+    async def archive_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        pending_action: bool | None = None,
+    ) -> VisitMatterSummary:
+        return await self._set_visit_matter_archived_at(
+            visit_matter_id,
+            participant_id,
+            archived_at=datetime.now(UTC),
+            pending_action=pending_action,
+        )
+
+    async def restore_visit_matter(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitMatterSummary:
+        return await self._set_visit_matter_archived_at(
+            visit_matter_id,
+            participant_id,
+            archived_at=None,
+        )
+
+    async def _set_visit_matter_archived_at(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+        *,
+        archived_at: datetime | None,
+        pending_action: bool | None = None,
+    ) -> VisitMatterSummary:
+        async with self._sessions.begin() as session:
+            row = (
+                await session.execute(
+                    select(
+                        VisitMatterRecord,
+                        PatientRecord.display_name,
+                        VisitParticipantRecord.display_name,
+                    )
+                    .join(PatientRecord, PatientRecord.id == VisitMatterRecord.patient_id)
+                    .join(
+                        VisitParticipantRecord,
+                        VisitParticipantRecord.id == VisitMatterRecord.participant_id,
+                    )
+                    .where(
+                        VisitMatterRecord.id == visit_matter_id,
+                        VisitMatterRecord.participant_id == participant_id,
+                    )
+                    .with_for_update()
+                )
+            ).one_or_none()
+            if row is None:
+                raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
+            record, patient_display_name, participant_display_name = row
+            if (
+                archived_at is not None
+                and record.archived_at is None
+                and await self._visit_matter_is_busy(
+                    session,
+                    visit_matter_id,
+                    pending_action=pending_action,
+                )
+            ):
+                raise VisitMatterBusyError("就诊事项仍有进行中的回复或待确认操作")
+            if record.archived_at != archived_at and not (
+                record.archived_at is not None and archived_at is not None
+            ):
+                await session.execute(
+                    update(VisitMatterRecord)
+                    .where(VisitMatterRecord.id == visit_matter_id)
+                    .values(
+                        archived_at=archived_at,
+                        updated_at=VisitMatterRecord.updated_at,
+                    )
+                    .execution_options(synchronize_session=False)
+                )
+            effective_archived_at = record.archived_at
+            if record.archived_at is None or archived_at is None:
+                effective_archived_at = archived_at
+            return VisitMatterSummary(
+                visit_matter_id=record.id,
+                title=record.title,
+                visit_stage=cast(VisitStage, record.visit_stage),
+                patient_display_name=patient_display_name,
+                participant_display_name=participant_display_name,
+                archived_at=effective_archived_at,
+            )
 
     async def add_participant_message(
         self,
@@ -387,7 +539,7 @@ class PostgresVisitConversationStore:
         selected_slot_id: str | None = None,
     ) -> tuple[StoredMessage, bool]:
         async with self._sessions.begin() as session:
-            await self._require_visit_matter(
+            await self._require_active_visit_matter_for_update(
                 session,
                 turn.visit_matter_id,
                 turn.participant_id,
@@ -474,6 +626,71 @@ class PostgresVisitConversationStore:
         if visit_matter is None:
             raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
         return visit_matter
+
+    @classmethod
+    async def _require_active_visit_matter(
+        cls,
+        session: AsyncSession,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitMatterRecord:
+        visit_matter = await cls._require_visit_matter(
+            session,
+            visit_matter_id,
+            participant_id,
+        )
+        if visit_matter.archived_at is not None:
+            raise VisitMatterArchivedError("就诊事项已归档，请恢复后继续")
+        return visit_matter
+
+    @staticmethod
+    async def _require_active_visit_matter_for_update(
+        session: AsyncSession,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> VisitMatterRecord:
+        visit_matter = await session.scalar(
+            select(VisitMatterRecord)
+            .where(
+                VisitMatterRecord.id == visit_matter_id,
+                VisitMatterRecord.participant_id == participant_id,
+            )
+            .with_for_update()
+        )
+        if visit_matter is None:
+            raise VisitMatterNotFoundError("就诊事项不存在或参与者不匹配")
+        if visit_matter.archived_at is not None:
+            raise VisitMatterArchivedError("就诊事项已归档，请恢复后继续")
+        return visit_matter
+
+    @staticmethod
+    async def _visit_matter_is_busy(
+        session: AsyncSession,
+        visit_matter_id: str,
+        *,
+        pending_action: bool | None = None,
+    ) -> bool:
+        records = (
+            await session.scalars(
+                select(ConversationMessageRecord).where(
+                    ConversationMessageRecord.visit_matter_id == visit_matter_id,
+                )
+            )
+        ).all()
+        participant_turns = {
+            record.turn_id for record in records if record.role == "participant"
+        }
+        assistant_turns = {
+            record.turn_id for record in records if record.role == "assistant"
+        }
+        return bool(participant_turns - assistant_turns) or any(
+            (record.role == "assistant" and record.state in {"pending", "streaming"})
+            or (
+                pending_action is None
+                and has_pending_action_proposal(tuple(record.parts))
+            )
+            for record in records
+        ) or pending_action is True
 
     @staticmethod
     async def _seed_record(

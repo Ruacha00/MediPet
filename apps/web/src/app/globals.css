@@ -144,6 +144,28 @@ button {
   text-transform: uppercase;
 }
 
+.rail-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.archive-toggle {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(247, 244, 233, 0.7);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.archive-toggle:hover {
+  color: #fffdf7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .visit-list {
   min-height: 0;
   display: grid;
@@ -151,6 +173,18 @@ button {
   gap: 8px;
   overflow-y: auto;
   padding-right: 3px;
+}
+
+.visit-entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  border-radius: 14px;
+}
+
+.visit-entry.active {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .visit-item {
@@ -164,9 +198,8 @@ button {
   cursor: pointer;
 }
 
-.visit-item.active {
+.visit-entry.active .visit-item {
   color: #fffdf7;
-  background: rgba(255, 255, 255, 0.12);
 }
 
 .visit-item span,
@@ -180,6 +213,74 @@ button {
   opacity: 0.58;
 }
 
+.visit-actions {
+  display: flex;
+  gap: 2px;
+  padding-right: 7px;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.visit-entry:hover .visit-actions,
+.visit-entry:focus-within .visit-actions,
+.visit-entry.active .visit-actions {
+  opacity: 1;
+}
+
+.visit-actions button {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(247, 244, 233, 0.68);
+  cursor: pointer;
+}
+
+.visit-actions button:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #fffdf7;
+}
+
+.visit-rename {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 5px;
+  padding: 7px;
+}
+
+.visit-rename input {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  outline: 0;
+  background: rgba(255, 255, 255, 0.11);
+  color: #fffdf7;
+}
+
+.visit-rename button {
+  padding: 5px;
+  border: 0;
+  background: transparent;
+  color: rgba(247, 244, 233, 0.78);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.rail-empty {
+  margin: 8px 0;
+  padding: 14px 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.17);
+  border-radius: 13px;
+  color: rgba(247, 244, 233, 0.58);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .rail-error {
   margin: 12px 0 0;
   padding: 10px 12px;
@@ -189,6 +290,13 @@ button {
   color: #fff4ed;
   font-size: 12px;
   line-height: 1.5;
+}
+
+.visit-management-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.82rem;
 }
 
 .rail-footer {
@@ -231,6 +339,10 @@ button {
   display: none;
 }
 
+.mobile-rename {
+  display: none;
+}
+
 .online-badge {
   display: inline-flex;
   align-items: center;
@@ -266,6 +378,49 @@ button {
   justify-items: center;
   text-align: center;
   animation: rise 500ms ease both;
+}
+
+.empty-history-state {
+  min-height: 100%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  animation: rise 420ms ease both;
+}
+
+.empty-history-mark {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(11, 97, 92, 0.18);
+  border-radius: 24px 24px 24px 8px;
+  background: var(--teal-pale);
+  color: var(--teal-deep);
+}
+
+.empty-history-state h1 {
+  margin: 22px 0 8px;
+  font-family: "Noto Serif SC", "Source Han Serif CN", "Songti SC", serif;
+  font-size: clamp(26px, 3vw, 38px);
+}
+
+.empty-history-state p {
+  max-width: 430px;
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+
+.empty-history-state button {
+  margin-top: 22px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--teal);
+  color: white;
+  cursor: pointer;
 }
 
 .welcome-orbit {
@@ -959,6 +1114,33 @@ button {
     place-items: center;
     border: 0;
     border-radius: 12px;
+    background: var(--teal);
+    color: white;
+  }
+
+  .mobile-rename {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .mobile-rename input,
+  .mobile-rename button {
+    min-width: 0;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+  }
+
+  .mobile-rename input {
+    padding: 0 11px;
+    background: var(--paper-strong);
+    color: var(--ink);
+  }
+
+  .mobile-rename button {
+    padding: 0 13px;
     background: var(--teal);
     color: white;
   }

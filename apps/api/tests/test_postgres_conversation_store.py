@@ -7,10 +7,16 @@ from uuid import uuid4
 import pytest
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import create_async_engine
 from test_conversation_store import exercise_store_contract
 
-from medipet.persistence.conversation import DevelopmentVisitMatter, VisitTurn
-from medipet.persistence.postgres import PostgresVisitConversationStore
+from medipet.persistence.conversation import (
+    DevelopmentVisitMatter,
+    VisitMatterArchivedError,
+    VisitTurn,
+)
+from medipet.persistence.postgres import PostgresVisitConversationStore, postgres_async_url
 
 DATABASE_URL = os.getenv("MEDIPET_TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(
@@ -95,6 +101,60 @@ async def test_interleaved_turn_completion_preserves_each_message() -> None:
         ]
     finally:
         await store.close()
+
+
+@pytest.mark.asyncio
+async def test_archive_and_message_claim_are_serialized_by_the_visit_row() -> None:
+    await upgrade_database()
+    first_store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
+    second_store = PostgresVisitConversationStore.from_url(DATABASE_URL or "")
+    lock_engine = create_async_engine(postgres_async_url(DATABASE_URL or ""))
+    suffix = uuid4().hex
+    visit = DevelopmentVisitMatter(
+        patient_id=f"patient-{suffix}",
+        patient_display_name="演示患者",
+        participant_id=f"participant-{suffix}",
+        participant_display_name="患者本人",
+        visit_matter_id=f"visit-{suffix}",
+        visit_matter_title="并发归档",
+    )
+    try:
+        await first_store.seed_development_visit_matter(visit)
+        async with lock_engine.connect() as connection:
+            transaction = await connection.begin()
+            await connection.execute(
+                text("SELECT id FROM visit_matters WHERE id = :id FOR UPDATE"),
+                {"id": visit.visit_matter_id},
+            )
+            archive_task = asyncio.create_task(
+                first_store.archive_visit_matter(
+                    visit.visit_matter_id,
+                    visit.participant_id,
+                )
+            )
+            await asyncio.sleep(0.05)
+            message_task = asyncio.create_task(
+                second_store.add_participant_message(
+                    turn=VisitTurn(
+                        visit_matter_id=visit.visit_matter_id,
+                        participant_id=visit.participant_id,
+                        turn_id="concurrent-turn",
+                    ),
+                    content="不应写入已归档事项",
+                )
+            )
+            await asyncio.sleep(0.05)
+            await transaction.commit()
+
+            archived = await archive_task
+            assert archived.archived_at is not None
+            with pytest.raises(VisitMatterArchivedError):
+                await message_task
+        assert await first_store.list_messages(visit.visit_matter_id) == []
+    finally:
+        await first_store.close()
+        await second_store.close()
+        await lock_engine.dispose()
 
 
 @pytest.mark.asyncio

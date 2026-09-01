@@ -4,6 +4,7 @@ import { use, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import {
   ArrowUp,
+  Archive,
   Bold,
   Bot,
   Building2,
@@ -15,6 +16,8 @@ import {
   HeartPulse,
   List,
   ListOrdered,
+  Pencil,
+  RotateCcw,
   ShieldCheck,
   Square,
 } from "lucide-react";
@@ -24,7 +27,6 @@ import type { CapabilityStatus } from "./capabilities";
 import {
   backendBaseUrl,
   demoParticipantId,
-  demoVisitMatterId,
 } from "./chat-config";
 import {
   loadConversationHistory,
@@ -43,7 +45,11 @@ import {
   decideProposal,
 } from "./transport";
 import {
+  archiveVisitMatter,
   createVisitMatter,
+  loadVisitMatters,
+  renameVisitMatter,
+  restoreVisitMatter,
   type VisitMatterSummary,
 } from "./visit-matters";
 
@@ -53,54 +59,50 @@ const suggestions = [
   { label: '了解流程', prompt: '请介绍一般门诊就诊前需要做哪些准备', note: '了解通用流程，不使用医院数据' },
 ];
 const unavailableCapabilities = Promise.resolve({ hospitalDataAvailable: false });
-const fallbackVisitMatterList: VisitMatterSummary[] = [
-  {
-    visit_matter_id: demoVisitMatterId,
-    title: "初次咨询",
-    visit_stage: "pre_visit",
-    patient_display_name: "演示患者",
-    participant_display_name: "患者本人",
-  },
-];
-const fallbackVisitMatters = Promise.resolve(fallbackVisitMatterList);
+const emptyVisitMatters = Promise.resolve<VisitMatterSummary[]>([]);
 
 export function ChatShell({
   history,
   capabilityStatus,
   visitMatters,
+  visitMattersFailed = false,
 }: {
   history: Promise<ConversationHistoryRestoration>;
   capabilityStatus?: Promise<CapabilityStatus>;
   visitMatters?: Promise<VisitMatterSummary[]>;
+  visitMattersFailed?: boolean;
 }) {
   const restoredHistory = use(history);
   const capabilities = use(capabilityStatus ?? unavailableCapabilities);
-  const restoredVisitMatters = use(visitMatters ?? fallbackVisitMatters);
+  const restoredVisitMatters = use(visitMatters ?? emptyVisitMatters);
   const [agentStatus, setAgentStatus] = useState<string | null>(null);
   const [visitMatterError, setVisitMatterError] = useState<string | null>(null);
   const [visitMatterBusy, setVisitMatterBusy] = useState(false);
   const [historyFailed, setHistoryFailed] = useState(restoredHistory.failed);
-  const [availableVisitMatters, setAvailableVisitMatters] = useState(
-    restoredVisitMatters.length > 0 ? restoredVisitMatters : fallbackVisitMatterList,
+  const [visitMatterListFailed, setVisitMatterListFailed] = useState(visitMattersFailed);
+  const [availableVisitMatters, setAvailableVisitMatters] = useState(restoredVisitMatters);
+  const [archivedVisitMatters, setArchivedVisitMatters] = useState<VisitMatterSummary[]>([]);
+  const [archivedLoaded, setArchivedLoaded] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [selectedVisitMatterId, setSelectedVisitMatterId] = useState<string | null>(
+    restoredVisitMatters[0]?.visit_matter_id ?? null,
   );
-  const [activeVisitMatterId, setActiveVisitMatterId] = useState(
-    availableVisitMatters.some((item) => item.visit_matter_id === demoVisitMatterId)
-      ? demoVisitMatterId
-      : availableVisitMatters[0].visit_matter_id,
-  );
+  const [editingVisitMatterId, setEditingVisitMatterId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
   const [initialMessages, setInitialMessages] = useState(restoredHistory.messages);
   const [decisionStates, setDecisionStates] = useState<Record<string, ProposalDecisionState>>({});
   const threadEndRef = useRef<HTMLDivElement>(null);
   const chatTransport = useMemo(
-    () => createChatTransport(activeVisitMatterId, demoParticipantId),
-    [activeVisitMatterId],
+    () => createChatTransport(selectedVisitMatterId ?? "no-active-visit", demoParticipantId),
+    [selectedVisitMatterId],
   );
-  const activeVisitMatter = availableVisitMatters.find(
-    (item) => item.visit_matter_id === activeVisitMatterId,
+  const displayedVisitMatters = showArchived ? archivedVisitMatters : availableVisitMatters;
+  const selectedVisitMatter = displayedVisitMatters.find(
+    (item) => item.visit_matter_id === selectedVisitMatterId,
   );
 
   const { messages, sendMessage, status, stop, setMessages, error } = useChat<MediPetMessage>({
-    id: activeVisitMatterId,
+    id: selectedVisitMatterId ?? "no-active-visit",
     messages: initialMessages,
     transport: chatTransport,
     onData: (part) => {
@@ -110,7 +112,11 @@ export function ChatShell({
     },
     onFinish: () => {
       setAgentStatus(null);
-      setAvailableVisitMatters((current) => moveVisitMatterFirst(current, activeVisitMatterId));
+      if (selectedVisitMatterId && !showArchived) {
+        setAvailableVisitMatters((current) => (
+          moveVisitMatterFirst(current, selectedVisitMatterId)
+        ));
+      }
     },
     onError: () => setAgentStatus(null),
   });
@@ -126,18 +132,19 @@ export function ChatShell({
 
   async function submit(text: string) {
     const value = text.trim();
-    if (!value || active) return;
+    if (!value || active || showArchived || !selectedVisitMatterId) return;
     await sendMessage({ text: value });
   }
 
   async function handleDecision(proposalId: string, decision: ProposalDecision) {
+    if (!selectedVisitMatterId || showArchived) return;
     setAgentStatus(null);
     setDecisionStates((current) => ({ ...current, [proposalId]: "working" }));
     try {
       const updated = await decideProposal(
         proposalId,
         decision,
-        activeVisitMatterId,
+        selectedVisitMatterId,
         demoParticipantId,
       );
       if (updated) {
@@ -155,7 +162,7 @@ export function ChatShell({
   }
 
   async function handleSelectSlot(slot: SlotOption) {
-    if (active) return;
+    if (active || showArchived || !selectedVisitMatterId) return;
     await sendMessage(
       {
         text: `我选择 ${slot.department} ${slot.doctor} 医生在 ${formatSlotTime(slot.startsAt)} 的号源`,
@@ -177,8 +184,9 @@ export function ChatShell({
         created,
         ...current.filter((item) => item.visit_matter_id !== created.visit_matter_id),
       ]);
+      setShowArchived(false);
       setInitialMessages([]);
-      setActiveVisitMatterId(created.visit_matter_id);
+      setSelectedVisitMatterId(created.visit_matter_id);
       setHistoryFailed(false);
       setDecisionStates({});
     } catch (creationError) {
@@ -196,7 +204,7 @@ export function ChatShell({
     if (
       active
       || visitMatterBusy
-      || visitMatterId === activeVisitMatterId
+      || visitMatterId === selectedVisitMatterId
     ) return;
     setVisitMatterBusy(true);
     setVisitMatterError(null);
@@ -207,7 +215,7 @@ export function ChatShell({
         demoParticipantId,
       );
       setInitialMessages(nextMessages);
-      setActiveVisitMatterId(visitMatterId);
+      setSelectedVisitMatterId(visitMatterId);
       setHistoryFailed(false);
       setDecisionStates({});
     } catch {
@@ -215,6 +223,193 @@ export function ChatShell({
     } finally {
       setVisitMatterBusy(false);
     }
+  }
+
+  async function handleShowArchived() {
+    if (active || visitMatterBusy) return;
+    if (showArchived) {
+      setShowArchived(false);
+      const next = availableVisitMatters[0];
+      if (next) await selectVisitMatterAfterLifecycle(next.visit_matter_id);
+      else clearSelectedVisitMatter();
+      return;
+    }
+    setVisitMatterBusy(true);
+    setVisitMatterError(null);
+    try {
+      const archived = archivedLoaded
+        ? archivedVisitMatters
+        : await loadVisitMatters(backendBaseUrl, demoParticipantId, true);
+      setArchivedVisitMatters(archived);
+      setArchivedLoaded(true);
+      setShowArchived(true);
+      if (archived[0]) await selectVisitMatterAfterLifecycle(archived[0].visit_matter_id);
+      else clearSelectedVisitMatter();
+    } catch (loadError) {
+      setVisitMatterError(
+        loadError instanceof Error ? loadError.message : "已归档历史加载失败，请稍后重试。",
+      );
+    } finally {
+      setVisitMatterBusy(false);
+    }
+  }
+
+  async function handleArchive(visitMatter: VisitMatterSummary) {
+    if (active || visitMatterBusy) return;
+    setVisitMatterBusy(true);
+    setVisitMatterError(null);
+    try {
+      const archived = await archiveVisitMatter(
+        backendBaseUrl,
+        visitMatter.visit_matter_id,
+        demoParticipantId,
+      );
+      const remaining = availableVisitMatters.filter(
+        (item) => item.visit_matter_id !== visitMatter.visit_matter_id,
+      );
+      setAvailableVisitMatters(remaining);
+      setArchivedVisitMatters((current) => [
+        ...current.filter((item) => item.visit_matter_id !== archived.visit_matter_id),
+        archived,
+      ]);
+      setArchivedLoaded(true);
+      if (selectedVisitMatterId === visitMatter.visit_matter_id) {
+        if (remaining[0]) await selectVisitMatterAfterLifecycle(remaining[0].visit_matter_id);
+        else clearSelectedVisitMatter();
+      }
+      try {
+        const [activeItems, archivedItems] = await Promise.all([
+          loadVisitMatters(backendBaseUrl, demoParticipantId),
+          loadVisitMatters(backendBaseUrl, demoParticipantId, true),
+        ]);
+        setAvailableVisitMatters(activeItems);
+        setArchivedVisitMatters(archivedItems);
+      } catch {
+        setVisitMatterError("归档已完成，但历史记录列表刷新失败，请稍后重试。");
+      }
+    } catch (archiveError) {
+      setVisitMatterError(
+        archiveError instanceof Error ? archiveError.message : "归档失败，请稍后重试。",
+      );
+    } finally {
+      setVisitMatterBusy(false);
+    }
+  }
+
+  async function handleRestore(visitMatter: VisitMatterSummary) {
+    if (visitMatterBusy) return;
+    setVisitMatterBusy(true);
+    setVisitMatterError(null);
+    try {
+      const restored = await restoreVisitMatter(
+        backendBaseUrl,
+        visitMatter.visit_matter_id,
+        demoParticipantId,
+      );
+      setArchivedVisitMatters((current) => current.filter(
+        (item) => item.visit_matter_id !== restored.visit_matter_id
+      ));
+      setAvailableVisitMatters((current) => [
+        ...current.filter((item) => item.visit_matter_id !== restored.visit_matter_id),
+        restored,
+      ]);
+      setArchivedLoaded(true);
+      setShowArchived(false);
+      await selectVisitMatterAfterLifecycle(restored.visit_matter_id);
+      try {
+        const [activeItems, archivedItems] = await Promise.all([
+          loadVisitMatters(backendBaseUrl, demoParticipantId),
+          loadVisitMatters(backendBaseUrl, demoParticipantId, true),
+        ]);
+        setAvailableVisitMatters(activeItems);
+        setArchivedVisitMatters(archivedItems);
+      } catch {
+        setVisitMatterError("恢复已完成，但历史记录列表刷新失败，请稍后重试。");
+      }
+    } catch (restoreError) {
+      setVisitMatterError(
+        restoreError instanceof Error ? restoreError.message : "恢复失败，请稍后重试。",
+      );
+    } finally {
+      setVisitMatterBusy(false);
+    }
+  }
+
+  function startRenaming(visitMatter: VisitMatterSummary) {
+    setEditingVisitMatterId(visitMatter.visit_matter_id);
+    setEditingTitle(visitMatter.title);
+  }
+
+  async function handleRename(visitMatter: VisitMatterSummary) {
+    const title = editingTitle.trim();
+    if (!title || visitMatterBusy) return;
+    setVisitMatterBusy(true);
+    setVisitMatterError(null);
+    try {
+      const renamed = await renameVisitMatter(
+        backendBaseUrl,
+        visitMatter.visit_matter_id,
+        demoParticipantId,
+        title,
+      );
+      const replaceRenamed = (items: VisitMatterSummary[]) => items.map(
+        (item) => item.visit_matter_id === renamed.visit_matter_id ? renamed : item,
+      );
+      setAvailableVisitMatters(replaceRenamed);
+      setArchivedVisitMatters(replaceRenamed);
+      setEditingVisitMatterId(null);
+    } catch (renameError) {
+      setVisitMatterError(
+        renameError instanceof Error ? renameError.message : "重命名失败，请稍后重试。",
+      );
+    } finally {
+      setVisitMatterBusy(false);
+    }
+  }
+
+  async function selectVisitMatterAfterLifecycle(visitMatterId: string) {
+    let nextMessages: MediPetMessage[] = [];
+    let failed = false;
+    try {
+      nextMessages = await loadConversationHistory(
+        backendBaseUrl,
+        visitMatterId,
+        demoParticipantId,
+      );
+    } catch {
+      failed = true;
+    }
+    setInitialMessages(nextMessages);
+    if (visitMatterId === selectedVisitMatterId) setMessages(nextMessages);
+    setSelectedVisitMatterId(visitMatterId);
+    setHistoryFailed(failed);
+    setDecisionStates({});
+  }
+
+  async function handleRetryVisitMatters() {
+    if (visitMatterBusy) return;
+    setVisitMatterBusy(true);
+    setVisitMatterError(null);
+    try {
+      const activeItems = await loadVisitMatters(backendBaseUrl, demoParticipantId);
+      setAvailableVisitMatters(activeItems);
+      setVisitMatterListFailed(false);
+      if (activeItems[0]) await selectVisitMatterAfterLifecycle(activeItems[0].visit_matter_id);
+      else clearSelectedVisitMatter();
+    } catch (loadError) {
+      setVisitMatterError(
+        loadError instanceof Error ? loadError.message : "历史记录加载失败，请稍后重试。",
+      );
+    } finally {
+      setVisitMatterBusy(false);
+    }
+  }
+
+  function clearSelectedVisitMatter() {
+    setInitialMessages([]);
+    setSelectedVisitMatterId(null);
+    setHistoryFailed(false);
+    setDecisionStates({});
   }
 
   return (
@@ -234,26 +429,79 @@ export function ChatShell({
           {visitMatterBusy ? "正在准备…" : "新建就诊事项"}
         </button>
 
-        <p className="rail-label">就诊事项</p>
-        <nav className="visit-list" aria-label="就诊事项列表">
-          {availableVisitMatters.map((visitMatter) => {
-            const current = visitMatter.visit_matter_id === activeVisitMatterId;
+        <div className="rail-section-heading">
+          <p className="rail-label">{showArchived ? "已归档" : "历史记录"}</p>
+          <button
+            className="archive-toggle"
+            disabled={active || visitMatterBusy}
+            onClick={handleShowArchived}
+            type="button"
+          >
+            {showArchived ? "返回活动历史" : "查看已归档"}
+          </button>
+        </div>
+        <nav className="visit-list" aria-label="历史记录列表">
+          {displayedVisitMatters.map((visitMatter) => {
+            const current = visitMatter.visit_matter_id === selectedVisitMatterId;
+            const editing = editingVisitMatterId === visitMatter.visit_matter_id;
             return (
-              <button
-                aria-current={current ? "page" : undefined}
-                className={`visit-item ${current ? "active" : ""}`}
-                disabled={active || visitMatterBusy}
-                key={visitMatter.visit_matter_id}
-                onClick={() => handleSelectVisitMatter(visitMatter.visit_matter_id)}
-              >
-                <span>{visitMatter.patient_display_name} · {visitMatter.title}</span>
-                <small>{visitStageLabel(visitMatter.visit_stage)}</small>
-              </button>
+              <div className={`visit-entry ${current ? "active" : ""}`} key={visitMatter.visit_matter_id}>
+                {editing ? (
+                  <form
+                    className="visit-rename"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void handleRename(visitMatter);
+                    }}
+                  >
+                    <input
+                      aria-label="新的历史记录名称"
+                      autoFocus
+                      maxLength={200}
+                      onChange={(event) => setEditingTitle(event.target.value)}
+                      value={editingTitle}
+                    />
+                    <button aria-label="保存名称" disabled={!editingTitle.trim()} type="submit">保存</button>
+                    <button onClick={() => setEditingVisitMatterId(null)} type="button">取消</button>
+                  </form>
+                ) : (
+                  <>
+                    <button
+                      aria-current={current ? "page" : undefined}
+                      className="visit-item"
+                      disabled={active || visitMatterBusy}
+                      onClick={() => handleSelectVisitMatter(visitMatter.visit_matter_id)}
+                    >
+                      <span>{visitMatter.patient_display_name} · {visitMatter.title}</span>
+                      <small>{showArchived ? "已归档 · 可查看" : visitStageLabel(visitMatter.visit_stage)}</small>
+                    </button>
+                    <div className="visit-actions">
+                      <button
+                        aria-label={`重命名 ${visitMatter.title}`}
+                        disabled={active || visitMatterBusy}
+                        onClick={() => startRenaming(visitMatter)}
+                        title="重命名"
+                        type="button"
+                      ><Pencil size={13} /></button>
+                      <button
+                        aria-label={`${showArchived ? "恢复" : "归档"} ${visitMatter.title}`}
+                        disabled={active || visitMatterBusy}
+                        onClick={() => showArchived
+                          ? void handleRestore(visitMatter)
+                          : void handleArchive(visitMatter)}
+                        title={showArchived ? "恢复" : "归档"}
+                        type="button"
+                      >{showArchived ? <RotateCcw size={13} /> : <Archive size={13} />}</button>
+                    </div>
+                  </>
+                )}
+              </div>
             );
           })}
+          {displayedVisitMatters.length === 0 && (
+            <p className="rail-empty">{showArchived ? "没有已归档记录" : "还没有历史记录"}</p>
+          )}
         </nav>
-        {visitMatterError && <p className="rail-error" role="alert">{visitMatterError}</p>}
-
         <div className="rail-footer">
           <ShieldCheck size={16} aria-hidden="true" />
           <p>一次就诊事项只对应一位患者。确认操作前请核对患者与预约信息。</p>
@@ -263,25 +511,56 @@ export function ChatShell({
       <section className="chat-panel panel" aria-label="MediPet 对话">
         <header className="chat-header">
           <div className="chat-heading">
-            <h2 className="chat-title">{activeVisitMatter?.title ?? "门诊协助"}</h2>
+            <h2 className="chat-title">{selectedVisitMatter?.title ?? "暂无活动就诊事项"}</h2>
             <p className="chat-subtitle">
-              独立就诊上下文 · {visitStageLabel(activeVisitMatter?.visit_stage ?? "pre_visit")}
+              {showArchived
+                ? "已归档 · 历史只读"
+                : selectedVisitMatter
+                  ? `独立就诊上下文 · ${visitStageLabel(selectedVisitMatter.visit_stage)}`
+                  : "新建事项后即可开始门诊协助"}
             </p>
           </div>
           <span className="online-badge">开发环境</span>
           <div className="mobile-visit-controls">
             <select
               aria-label="切换就诊事项"
-              disabled={active || visitMatterBusy}
+              disabled={active || visitMatterBusy || displayedVisitMatters.length === 0}
               onChange={(event) => handleSelectVisitMatter(event.target.value)}
-              value={activeVisitMatterId}
+              value={selectedVisitMatterId ?? ""}
             >
-              {availableVisitMatters.map((visitMatter) => (
+              {displayedVisitMatters.length === 0 && <option value="">暂无记录</option>}
+              {displayedVisitMatters.map((visitMatter) => (
                 <option key={visitMatter.visit_matter_id} value={visitMatter.visit_matter_id}>
                   {visitMatter.title}
                 </option>
               ))}
             </select>
+            <button
+              aria-label={showArchived ? "移动端返回活动历史" : "移动端查看已归档"}
+              disabled={active || visitMatterBusy}
+              onClick={handleShowArchived}
+              type="button"
+            >
+              {showArchived ? <RotateCcw size={17} /> : <Archive size={17} />}
+            </button>
+            {selectedVisitMatter && (
+              <>
+                <button
+                  aria-label={`移动端重命名 ${selectedVisitMatter.title}`}
+                  disabled={active || visitMatterBusy}
+                  onClick={() => startRenaming(selectedVisitMatter)}
+                  type="button"
+                ><Pencil size={17} /></button>
+                <button
+                  aria-label={`移动端${showArchived ? "恢复" : "归档"} ${selectedVisitMatter.title}`}
+                  disabled={active || visitMatterBusy}
+                  onClick={() => showArchived
+                    ? void handleRestore(selectedVisitMatter)
+                    : void handleArchive(selectedVisitMatter)}
+                  type="button"
+                >{showArchived ? <RotateCcw size={17} /> : <Archive size={17} />}</button>
+              </>
+            )}
             <button
               aria-label="在移动端新建就诊事项"
               disabled={active || visitMatterBusy}
@@ -291,13 +570,63 @@ export function ChatShell({
               <CirclePlus size={17} aria-hidden="true" />
             </button>
           </div>
+          {selectedVisitMatter && editingVisitMatterId === selectedVisitMatter.visit_matter_id && (
+            <form
+              className="mobile-rename"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void handleRename(selectedVisitMatter);
+              }}
+            >
+              <input
+                aria-label="移动端新的历史记录名称"
+                maxLength={200}
+                onChange={(event) => setEditingTitle(event.target.value)}
+                value={editingTitle}
+              />
+              <button disabled={!editingTitle.trim()} type="submit">保存</button>
+            </form>
+          )}
+          {visitMatterError && (
+            <p className="visit-management-error" role="alert">{visitMatterError}</p>
+          )}
         </header>
 
         <div className="thread" aria-live="polite">
           {historyFailed && (
             <div className="data-card urgent">历史对话暂时无法恢复，请稍后刷新重试。</div>
           )}
-          {messages.length === 0 ? (
+          {visitMatterListFailed && !selectedVisitMatter && !showArchived ? (
+            <section className="empty-history-state">
+              <div className="empty-history-mark"><Archive size={28} aria-hidden="true" /></div>
+              <h1>历史记录加载失败</h1>
+              <p>暂时无法连接历史记录服务，请稍后重试。</p>
+              <button
+                disabled={visitMatterBusy}
+                onClick={() => void handleRetryVisitMatters()}
+                type="button"
+              >重新加载</button>
+            </section>
+          ) : !selectedVisitMatter ? (
+            <section className="empty-history-state">
+              <div className="empty-history-mark"><Archive size={28} aria-hidden="true" /></div>
+              <h1>{showArchived ? "没有已归档记录" : "还没有历史记录"}</h1>
+              <p>
+                {showArchived
+                  ? "归档后的就诊事项会保留在这里，随时可以恢复。"
+                  : "新建一个就诊事项，开始独立保存这次门诊协助。"}
+              </p>
+              {!showArchived && (
+                <button onClick={handleCreateVisitMatter} type="button">新建就诊事项</button>
+              )}
+            </section>
+          ) : showArchived && messages.length === 0 ? (
+            <section className="empty-history-state">
+              <div className="empty-history-mark"><Archive size={28} aria-hidden="true" /></div>
+              <h1>已归档历史</h1>
+              <p>这条记录没有对话内容。恢复后才能继续咨询或处理待确认操作。</p>
+            </section>
+          ) : messages.length === 0 ? (
             <section className="welcome">
               <div className="welcome-orbit"><Bot size={34} aria-hidden="true" /></div>
               <h1>把复杂的门诊流程，变成一次从容的对话。</h1>
@@ -339,6 +668,7 @@ export function ChatShell({
                             decisionState={proposalId ? decisionStates[proposalId] ?? null : null}
                             onDecision={handleDecision}
                             onSelectSlot={handleSelectSlot}
+                            readOnly={showArchived}
                           />
                         );
                       })}
@@ -356,7 +686,8 @@ export function ChatShell({
 
         <ChatComposer
           active={active}
-          key={activeVisitMatterId}
+          disabled={!selectedVisitMatter || showArchived}
+          key={selectedVisitMatterId ?? "empty"}
           onStop={stop}
           onSubmit={submit}
         />
@@ -366,11 +697,11 @@ export function ChatShell({
         <section className="context-card">
           <h2>本次就诊</h2>
           <div className="context-row">
-            <span>患者</span><strong>{activeVisitMatter?.patient_display_name ?? "演示患者"}</strong>
+            <span>患者</span><strong>{selectedVisitMatter?.patient_display_name ?? "尚未选择"}</strong>
           </div>
           <div className="context-row">
             <span>参与者</span>
-            <strong>{activeVisitMatter?.participant_display_name ?? "患者本人"}</strong>
+            <strong>{selectedVisitMatter?.participant_display_name ?? "尚未选择"}</strong>
           </div>
           <div className="context-row"><span>授权状态</span><strong>本人操作</strong></div>
         </section>
@@ -378,10 +709,10 @@ export function ChatShell({
         <section className="context-card">
           <h2>就诊阶段</h2>
           <div className="stage-track">
-            <div className={`stage ${activeVisitMatter?.visit_stage !== "in_visit" ? "active" : ""}`}>
+            <div className={`stage ${selectedVisitMatter?.visit_stage !== "in_visit" ? "active" : ""}`}>
               诊前准备
             </div>
-            <div className={`stage ${activeVisitMatter?.visit_stage === "in_visit" ? "active" : ""}`}>
+            <div className={`stage ${selectedVisitMatter?.visit_stage === "in_visit" ? "active" : ""}`}>
               诊中协助
             </div>
           </div>
@@ -402,10 +733,12 @@ export function ChatShell({
 
 function ChatComposer({
   active,
+  disabled,
   onStop,
   onSubmit,
 }: {
   active: boolean;
+  disabled: boolean;
   onStop: () => void;
   onSubmit: (text: string) => Promise<void>;
 }) {
@@ -415,7 +748,7 @@ function ChatComposer({
 
   function submitInput() {
     const value = input.trim();
-    if (!value || active) return;
+    if (!value || active || disabled) return;
     setInput("");
     void onSubmit(value);
   }
@@ -448,28 +781,28 @@ function ChatComposer({
           <div className="format-actions">
             <button
               aria-label="加粗"
-              disabled={active}
+              disabled={active || disabled}
               onClick={() => applyMarkdown("**", "**", "重点内容")}
               title="加粗"
               type="button"
             ><Bold size={15} /></button>
             <button
               aria-label="行内代码"
-              disabled={active}
+              disabled={active || disabled}
               onClick={() => applyMarkdown("`", "`", "代码或配置")}
               title="行内代码"
               type="button"
             ><Code2 size={15} /></button>
             <button
               aria-label="无序列表"
-              disabled={active}
+              disabled={active || disabled}
               onClick={() => applyMarkdown("- ", "", "列表项")}
               title="无序列表"
               type="button"
             ><List size={15} /></button>
             <button
               aria-label="有序列表"
-              disabled={active}
+              disabled={active || disabled}
               onClick={() => applyMarkdown("1. ", "", "列表项")}
               title="有序列表"
               type="button"
@@ -479,6 +812,7 @@ function ChatComposer({
             aria-label={showPreview ? "关闭 Markdown 预览" : "打开 Markdown 预览"}
             aria-pressed={showPreview}
             className={`preview-toggle ${showPreview ? "active" : ""}`}
+            disabled={disabled}
             onClick={() => setShowPreview((current) => !current)}
             type="button"
           >
@@ -501,6 +835,7 @@ function ChatComposer({
         >
           <textarea
             aria-label="输入就诊需求"
+            disabled={disabled}
             placeholder="描述主要不适，或用 Markdown 整理时间线与问题清单…"
             ref={composerRef}
             rows={1}
@@ -517,14 +852,16 @@ function ChatComposer({
             className="send-button"
             type={active ? "button" : "submit"}
             aria-label={active ? "停止生成" : "发送消息"}
-            disabled={!active && !input.trim()}
+            disabled={disabled || (!active && !input.trim())}
             onClick={active ? onStop : undefined}
           >
             {active ? <Square size={16} fill="currentColor" /> : <ArrowUp size={19} />}
           </button>
         </form>
       </div>
-      <p className="composer-note">MediPet 提供非诊断性就诊协助，不能替代医生判断。</p>
+      <p className="composer-note">
+        {disabled ? "已归档记录仅供查看；恢复或新建事项后可继续对话。" : "MediPet 提供非诊断性就诊协助，不能替代医生判断。"}
+      </p>
     </footer>
   );
 }

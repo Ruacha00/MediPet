@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ActionProposalCard,
@@ -7,7 +7,59 @@ import {
   SlotOptionsCard,
 } from "./message-parts";
 
+afterEach(cleanup);
+
 describe("MessagePartView", () => {
+  it("disables pending action decisions in read-only history", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "data-action-proposal",
+          data: {
+            proposalId: "proposal-read-only",
+            status: "pending",
+            arguments: {},
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+        readOnly
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "确认操作" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "拒绝操作" })).toBeDisabled();
+  });
+
+  it("disables slot selection in read-only history", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "data-slot-options",
+          data: {
+            slots: [{
+              id: "slot-read-only",
+              department: "儿科",
+              doctor: "周安",
+              doctorTitle: "主治医师",
+              startsAt: "2030-01-02T14:00:00+08:00",
+              endsAt: "2030-01-02T14:30:00+08:00",
+              feeCents: 2000,
+              currency: "CNY",
+            }],
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+        readOnly
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "选择此号源" })).toBeDisabled();
+  });
+
   it("renders GitHub-flavored Markdown as structured message content", () => {
     render(
       <MessagePartView

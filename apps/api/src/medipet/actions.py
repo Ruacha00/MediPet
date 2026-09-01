@@ -101,6 +101,12 @@ class ActionProposalExpiredError(ActionDecisionError):
 
 
 class ActionStore(Protocol):
+    async def has_pending_proposal(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> bool | None: ...
+
     async def find_request_proposal(
         self,
         tool: ToolDefinition,
@@ -152,6 +158,21 @@ class InMemoryActionStore:
         self._request_proposals: dict[tuple[str, str, str], str] = {}
         self._receipts: dict[str, ActionReceipt] = {}
         self._audits: list[ActionAudit] = []
+
+    async def has_pending_proposal(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> bool:
+        async with self._lock:
+            now = self._now()
+            return any(
+                proposal.visit_matter_id == visit_matter_id
+                and proposal.participant_id == participant_id
+                and proposal.status == "pending"
+                and proposal.expires_at > now
+                for proposal in self._proposals.values()
+            )
 
     async def find_request_proposal(
         self,
@@ -463,6 +484,14 @@ class UnavailableActionStore:
     @staticmethod
     def _unavailable() -> ActionDecisionError:
         return ActionDecisionError("Action Proposal 持久化不可用")
+
+    async def has_pending_proposal(
+        self,
+        visit_matter_id: str,
+        participant_id: str,
+    ) -> bool | None:
+        del visit_matter_id, participant_id
+        return None
 
     async def find_request_proposal(
         self,
