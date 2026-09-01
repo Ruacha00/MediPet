@@ -474,5 +474,69 @@
       "day_offset": 1,
       "time": "09:00"
     }
-  ]
+  ],
+  "wayfinding": {
+    "data_version": "minghe-wayfinding-2026-09-01",
+    "origins": [
+      {"id": "origin-main-entrance", "display_name": "门诊楼一层主入口", "aliases": ["主入口"]},
+      {"id": "origin-outpatient-lobby", "display_name": "门诊大厅服务台", "aliases": ["服务台"]}
+    ],
+    "service_locations": [
+      {"id": "location-pediatrics", "display_name": "儿科门诊", "category": "department", "aliases": ["儿科"]},
+      {"id": "location-pharmacy", "display_name": "门诊药房", "category": "service", "aliases": ["药房"]},
+      {"id": "location-laboratory", "display_name": "门诊检验处", "category": "service", "aliases": ["检验处"]},
+      {"id": "location-imaging", "display_name": "医学影像登记处", "category": "service", "aliases": ["影像登记处"]},
+      {"id": "location-cashier", "display_name": "门诊收费处", "category": "service", "aliases": ["收费处"]}
+    ],
+    "guidance": [
+      {
+        "origin_id": "origin-main-entrance",
+        "destination_id": "location-pediatrics",
+        "mode": "standard",
+        "steps": [
+          "从主入口进入门诊大厅，按儿科门诊指示牌前往扶梯。",
+          "乘扶梯到二层后左转，沿走廊直行。",
+          "在儿科门诊报到台前等候。"
+        ],
+        "notice": "如扶梯暂停，请向大厅服务台询问电梯位置。"
+      },
+      {
+        "origin_id": "origin-main-entrance",
+        "destination_id": "location-pediatrics",
+        "mode": "accessible",
+        "steps": [
+          "从主入口进入门诊大厅，沿右侧无障碍通道前行至电梯厅。",
+          "乘电梯到二层，出电梯后按儿科门诊指示牌左转。",
+          "沿走廊前行至儿科门诊报到台。"
+        ]
+      },
+      {
+        "origin_id": "origin-main-entrance",
+        "destination_id": "location-pharmacy",
+        "mode": "standard",
+        "steps": [
+          "从主入口进入门诊大厅后向左前方行进。",
+          "经过收费处后继续直行至门诊药房取药窗口。"
+        ]
+      },
+      {
+        "origin_id": "origin-main-entrance",
+        "destination_id": "location-pharmacy",
+        "mode": "accessible",
+        "steps": [
+          "从主入口进入门诊大厅，沿左侧平缓通道前行。",
+          "经过收费处后继续直行至门诊药房无障碍窗口。"
+        ]
+      },
+      {
+        "origin_id": "origin-outpatient-lobby",
+        "destination_id": "location-laboratory",
+        "mode": "standard",
+        "steps": [
+          "面向大厅服务台向右转，沿检验指示牌直行。",
+          "经过自助服务区后到达门诊检验处。"
+        ]
+      }
+    ]
+  }
 }

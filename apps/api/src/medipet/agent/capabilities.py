@@ -8,6 +8,12 @@ VisitStage = Literal["pre_visit", "in_visit"]
 
 
 @dataclass(frozen=True)
+class ParticipantToolSelection:
+    tool_name: str
+    arguments: tuple[tuple[str, str], ...]
+
+
+@dataclass(frozen=True)
 class ToolContext:
     visit_matter_id: str = ""
     participant_id: str = ""
@@ -16,6 +22,7 @@ class ToolContext:
     visit_stage: VisitStage = "pre_visit"
     patient_id: str = ""
     patient_display_name: str = ""
+    participant_tool_selection: ParticipantToolSelection | None = None
 
 
 ToolExecutor = Callable[[dict[str, object], ToolContext], Awaitable[dict[str, object]]]

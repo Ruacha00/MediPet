@@ -5,11 +5,19 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import time, timedelta, timezone, tzinfo
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from medipet.capability_files import fake_hospital_data_path
-from medipet.hospital.operations import Department, Doctor, Hospital, HospitalDataError
+from medipet.hospital.operations import (
+    Department,
+    Doctor,
+    Hospital,
+    HospitalDataError,
+    HospitalServiceLocation,
+    HospitalWayfindingGuidance,
+    WayfindingOrigin,
+)
 
 
 @dataclass(frozen=True)
@@ -38,6 +46,9 @@ class FakeHospitalDataSource:
     doctors: tuple[Doctor, ...]
     schedules: tuple[ScheduleTemplate, ...]
     initial_bookings: tuple[InitialBooking, ...]
+    wayfinding_origins: tuple[WayfindingOrigin, ...]
+    service_locations: tuple[HospitalServiceLocation, ...]
+    wayfinding_guidance: tuple[HospitalWayfindingGuidance, ...]
 
     @classmethod
     def load_default(cls, path: Path | None = None) -> FakeHospitalDataSource:
@@ -106,7 +117,48 @@ class FakeHospitalDataSource:
             )
             for item in _object_list(raw, "initial_bookings", required=False)
         )
-        source = cls(hospital, departments, doctors, schedules, initial_bookings)
+        wayfinding_raw = raw.get("wayfinding")
+        if wayfinding_raw is None:
+            origins: tuple[WayfindingOrigin, ...] = ()
+            locations: tuple[HospitalServiceLocation, ...] = ()
+            guidance: tuple[HospitalWayfindingGuidance, ...] = ()
+        else:
+            if not isinstance(wayfinding_raw, dict):
+                raise HospitalDataError("wayfinding 必须是对象")
+            data_version = _text(wayfinding_raw, "data_version")
+            origins = tuple(
+                WayfindingOrigin(
+                    origin_id=_text(item, "id"),
+                    display_name=_text(item, "display_name"),
+                    aliases=_optional_text_tuple(item, "aliases"),
+                )
+                for item in _object_list(wayfinding_raw, "origins")
+            )
+            locations = tuple(
+                HospitalServiceLocation(
+                    location_id=_text(item, "id"),
+                    display_name=_text(item, "display_name"),
+                    category=_location_category(item),
+                    aliases=_optional_text_tuple(item, "aliases"),
+                )
+                for item in _object_list(wayfinding_raw, "service_locations")
+            )
+            origins_by_id = {item.origin_id: item for item in origins}
+            locations_by_id = {item.location_id: item for item in locations}
+            guidance = tuple(
+                _wayfinding_guidance(item, origins_by_id, locations_by_id, data_version)
+                for item in _object_list(wayfinding_raw, "guidance")
+            )
+        source = cls(
+            hospital,
+            departments,
+            doctors,
+            schedules,
+            initial_bookings,
+            origins,
+            locations,
+            guidance,
+        )
         source._validate_references()
         return source
 
@@ -115,6 +167,24 @@ class FakeHospitalDataSource:
         _require_unique((item.doctor_id for item in self.doctors), "医生 ID")
         _require_unique((item.template_id for item in self.schedules), "排班模板 ID")
         _require_unique((item.appointment_id for item in self.initial_bookings), "预约 ID")
+        _require_unique((item.origin_id for item in self.wayfinding_origins), "方位指引起点 ID")
+        _require_unique((item.location_id for item in self.service_locations), "院内服务地点 ID")
+        _require_unique(
+            (
+                alias
+                for item in self.wayfinding_origins
+                for alias in (item.display_name, *item.aliases)
+            ),
+            "方位指引起点名称或别名",
+        )
+        _require_unique(
+            (
+                alias
+                for item in self.service_locations
+                for alias in (item.display_name, *item.aliases)
+            ),
+            "院内服务地点名称或别名",
+        )
         department_ids = {item.department_id for item in self.departments}
         doctor_ids = {item.doctor_id for item in self.doctors}
         templates = {item.template_id: item for item in self.schedules}
@@ -151,6 +221,51 @@ class FakeHospitalDataSource:
         ]
         if len(occupied_slots) != len(set(occupied_slots)):
             raise HospitalDataError("初始预约不能重复占用同一号源")
+        combinations = [
+            (item.origin.origin_id, item.destination.location_id, item.mode)
+            for item in self.wayfinding_guidance
+        ]
+        if len(combinations) != len(set(combinations)):
+            raise HospitalDataError("方位指引组合不能重复")
+
+
+def _wayfinding_guidance(
+    raw: dict[str, Any],
+    origins: dict[str, WayfindingOrigin],
+    locations: dict[str, HospitalServiceLocation],
+    data_version: str,
+) -> HospitalWayfindingGuidance:
+    origin_id = _text(raw, "origin_id")
+    destination_id = _text(raw, "destination_id")
+    try:
+        origin = origins[origin_id]
+    except KeyError:
+        raise HospitalDataError("方位指引引用了不存在的起点") from None
+    try:
+        destination = locations[destination_id]
+    except KeyError:
+        raise HospitalDataError("方位指引引用了不存在的服务地点") from None
+    mode = _text(raw, "mode")
+    if mode not in {"standard", "accessible"}:
+        raise HospitalDataError("方位指引模式必须是 standard 或 accessible")
+    steps = _text_tuple(raw, "steps")
+    if not steps:
+        raise HospitalDataError("方位指引步骤不能为空")
+    return HospitalWayfindingGuidance(
+        origin=origin,
+        destination=destination,
+        mode=cast(Literal["standard", "accessible"], mode),
+        steps=steps,
+        notice=_optional_text(raw, "notice"),
+        data_version=data_version,
+    )
+
+
+def _location_category(raw: dict[str, Any]) -> Literal["department", "service"]:
+    value = _text(raw, "category")
+    if value not in {"department", "service"}:
+        raise HospitalDataError("院内服务地点类别必须是 department 或 service")
+    return cast(Literal["department", "service"], value)
 
 
 def _object(raw: dict[str, Any], name: str) -> dict[str, Any]:
@@ -176,11 +291,22 @@ def _text(raw: dict[str, Any], name: str) -> str:
     return value.strip()
 
 
+def _optional_text(raw: dict[str, Any], name: str) -> str | None:
+    value = raw.get(name)
+    if value is None:
+        return None
+    return _text({name: value}, name)
+
+
 def _text_tuple(raw: dict[str, Any], name: str) -> tuple[str, ...]:
     value = raw[name]
     if not isinstance(value, list):
         raise HospitalDataError(f"{name} 必须是文本数组")
     return tuple(_text({name: item}, name) for item in value)
+
+
+def _optional_text_tuple(raw: dict[str, Any], name: str) -> tuple[str, ...]:
+    return () if name not in raw else _text_tuple(raw, name)
 
 
 def _integer_tuple(raw: dict[str, Any], name: str) -> tuple[int, ...]:

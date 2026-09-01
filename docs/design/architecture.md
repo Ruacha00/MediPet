@@ -55,13 +55,13 @@ Current implementation:
 - PostgreSQL is the source of truth for visit matters, messages, action proposals, receipts, capability governance, and audits.
 - LangGraph runs the model/Tool ReAct loop, but the graph is compiled without a persistent checkpointer; action confirmation is resumed through persisted proposals outside the graph.
 - completed conversation history survives API restart, while an unfinished graph node does not resume from a LangGraph checkpoint.
-- the Fake HospitalOperations Adapter supplies catalog, slot, and appointment behaviour, but no authoritative in-hospital wayfinding data.
-- Web has a legacy `data-hospital-route` presentation shell, not an end-to-end route or wayfinding capability.
+- the Fake HospitalOperations Adapter supplies catalog, slot, appointment, and versioned authoritative text wayfinding data for the fictional development hospital.
+- Web renders application-owned `data-hospital-wayfinding` and `data-hospital-wayfinding-unavailable` cards for the local fictional hospital; it does not model a building, draw a map, or perform pathfinding.
 
 Approved next-state boundaries:
 
 - visit-matter history management adds rename, reversible archive, restore, and a real empty state without permanent deletion;
-- authoritative in-hospital wayfinding remains gated on the real HospitalOperations Adapter and earlier roadmap work;
+- local authoritative text wayfinding is the current product slice; real hospital integration is not on the personal-development roadmap;
 - persistent LangGraph checkpoints remain deferred until a graph-internal human interrupt, cross-process long-running task, or concrete need to avoid repeating an expensive Tool establishes a recovery requirement.
 
 Module extraction follows those slices. For example, checkpoint work may eventually separate serializable graph state from runtime dependencies, while wayfinding may justify a cohesive Tool or message-part module. Neither future possibility authorizes a repository-wide layout migration.
@@ -119,7 +119,8 @@ The thread renders these typed data parts:
 | `data-agent-status` | Transient progress such as checking hospital slots |
 | `data-slot-options` | Selectable doctor, date, time, and fee options |
 | `data-action-proposal` | Exact create/cancel proposal with confirm and reject controls |
-| `data-hospital-wayfinding` | Hospital-approved origin, destination, ordered text directions, mode, and optional notice; planned, not currently emitted |
+| `data-hospital-wayfinding` | Local fictional-hospital origin, destination, ordered authoritative text directions, mode, and optional notice |
+| `data-hospital-wayfinding-unavailable` | Recoverable explanation when an exact origin/destination/mode selection has no available text guidance |
 | `data-handoff` | Human or emergency handoff with priority-specific treatment |
 
 Internal Thought text is never streamed. The client may show understandable progress, Skill names, and completed outcomes, but never chain-of-thought.
@@ -298,7 +299,7 @@ Initial Skills:
 | `commit_appointment` | Write | Create an authorized, confirmed appointment idempotently |
 | `prepare_cancellation` | Read | Build an exact cancellation proposal |
 | `commit_cancellation` | Write | Cancel an authorized, confirmed appointment idempotently |
-| `hospital-wayfinding` | Read | Planned: return an exact hospital-approved text direction for a named origin, destination, and mode |
+| `hospital-wayfinding` | Read | Return an exact local fictional-hospital text direction for a participant-selected origin, destination, and mode |
 | `handoff-to-human` | Write | Planned: create a handoff record for hospital staff |
 
 The model cannot invent a Skill name or bypass the prepare/confirm/commit sequence.
@@ -313,7 +314,7 @@ class HospitalOperations(Protocol):
     async def commit(self, action: ConfirmedHospitalAction) -> ActionReceipt: ...
 ```
 
-The production Adapter translates between MediPet's domain types and the hospital's systems. The current Fake Adapter supplies deterministic departments, doctors, slots, appointments, and failures for development and tests. It does not publish wayfinding data. Authoritative text directions extend this same HospitalOperations query boundary only after the production Adapter defines stable origins, service locations, modes, and data versions; they do not create a parallel Adapter hierarchy.
+A future production Adapter may translate between MediPet's domain types and hospital systems, but it is not required by the personal-development roadmap. The current Fake Adapter supplies deterministic departments, doctors, slots, appointments, failures, and versioned text wayfinding for the fictional development hospital. Those directions extend the same HospitalOperations query boundary with stable origins, service locations, modes, and data versions; they do not create a parallel Adapter hierarchy or a building model.
 
 There is no hospital selector, tenant identifier, cross-hospital query, or tenant-aware configuration in this Interface.
 

@@ -754,7 +754,7 @@ button {
 }
 
 .candidate-list,
-.route-list {
+.wayfinding-steps {
   margin: 12px 0 0;
   padding: 0;
   list-style: none;
@@ -763,10 +763,56 @@ button {
 }
 
 .candidate-list li,
-.route-list li {
+.wayfinding-steps li {
   padding: 10px 12px;
   border-radius: 12px;
   background: var(--teal-pale);
+}
+
+.wayfinding-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(11, 97, 92, 0.14);
+  border-radius: 14px;
+  background: rgba(233, 245, 242, 0.58);
+}
+
+.wayfinding-summary small,
+.wayfinding-summary strong {
+  display: block;
+}
+
+.wayfinding-summary small {
+  margin-bottom: 3px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.wayfinding-arrow {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.data-card .wayfinding-mode {
+  width: fit-content;
+  margin-top: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(11, 97, 92, 0.1);
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.data-card .wayfinding-notice {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(11, 97, 92, 0.12);
+  font-size: 13px;
 }
 
 .candidate-list strong,

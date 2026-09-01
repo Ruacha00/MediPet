@@ -468,6 +468,7 @@ def _build_react_graph(
                 return {"terminal": True, "pending_calls": ()}
             writer({"kind": "status", "data": {"label": "正在查询可用信息"}})
             tool_started = metrics.begin_tool_call() if metrics is not None else None
+            terminal_after_presentation = False
             try:
                 observation = await tool.execute(call.arguments, state["context"])
                 if (
@@ -490,6 +491,11 @@ def _build_react_graph(
                 if tool.present is not None:
                     for data_part in await tool.present(observation, state["context"]):
                         writer({"kind": "data", "data": data_part})
+                        if data_part.get("type") in {
+                            "data-hospital-wayfinding",
+                            "data-hospital-wayfinding-unavailable",
+                        }:
+                            terminal_after_presentation = True
             except Exception:
                 writer({"kind": "failed", "data": {"message": TOOL_FAILURE}})
                 return {"terminal": True, "pending_calls": ()}
@@ -503,6 +509,13 @@ def _build_react_graph(
                     tool_call_id=call.id,
                 )
             )
+            if terminal_after_presentation:
+                return {
+                    "messages": tuple(messages),
+                    "pending_calls": (),
+                    "terminal": True,
+                    "loaded_skill_ids": tuple(loaded_skill_ids),
+                }
 
         return {
             "messages": tuple(messages),

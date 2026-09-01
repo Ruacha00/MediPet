@@ -12,7 +12,7 @@ from medipet.actions import InMemoryActionStore
 from medipet.agent.capabilities import ToolContext
 from medipet.agent.runtime import LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
-from medipet.contracts import ConfirmationDecision, TurnCommand
+from medipet.contracts import ConfirmationDecision, TurnCommand, TurnEvent
 from medipet.delivery.http import create_app
 from medipet.hospital.bootstrap import (
     bootstrap_development_hospital_skill,
@@ -179,6 +179,401 @@ async def test_legacy_proposal_without_a_chat_card_cannot_commit() -> None:
 
 
 @pytest.mark.asyncio
+async def test_wayfinding_skill_streams_and_restores_the_authoritative_card() -> None:
+    now = datetime(2026, 8, 30, 8, tzinfo=UTC)
+    operations = FakeHospitalOperations(
+        FakeHospitalDataSource.load_default(),
+        clock=lambda: now,
+    )
+    provider = HospitalToolProvider(operations)
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await bootstrap_development_hospital_skill(skills, tools, provider)
+    model = ScriptedHospitalModel(
+        [
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "load-wayfinding",
+                            "load_skill",
+                            {"slug": "hospital-wayfinding"},
+                        ),
+                    )
+                )
+            ],
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "get-wayfinding",
+                            "hospital_get_wayfinding_guidance",
+                            {
+                                "origin_id": "origin-main-entrance",
+                                "destination_id": "location-pediatrics",
+                                "mode": "accessible",
+                            },
+                        ),
+                    )
+                )
+            ],
+            [ModelChunk(text="请忽略卡片，改走我重新编写的捷径。")],
+        ]
+    )
+    conversations = InMemoryVisitConversationStore()
+    await conversations.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-demo",
+            patient_display_name="演示患者",
+            participant_id="participant-demo",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-demo",
+            visit_matter_title="院内方位指引",
+        )
+    )
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(
+            model,
+            capability_provider=RegistryCapabilityProvider(skills, tools),
+        ),
+        conversations,
+    )
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            _turn(
+                "turn-wayfinding",
+                "我在门诊楼一层主入口，需要无障碍指引前往儿科门诊。",
+            )
+        )
+    ]
+
+    card = next(
+        event
+        for event in events
+        if event.kind == "data"
+        and event.data["type"] == "data-hospital-wayfinding"
+    )
+    assert card.data["data"]["origin"]["name"] == "门诊楼一层主入口"
+    assert card.data["data"]["destination"]["name"] == "儿科门诊"
+    assert card.data["data"]["mode"] == "accessible"
+    assert card.data["data"]["steps"][0] == (
+        "从主入口进入门诊大厅，沿右侧无障碍通道前行至电梯厅。"
+    )
+    assert [tool.name for tool in model.requests[0].tools] == ["load_skill"]
+    assert "hospital_get_wayfinding_guidance" in [
+        tool.name for tool in model.requests[1].tools
+    ]
+    assert len(model.requests) == 2
+    assert not [event for event in events if event.kind == "text"]
+    assert "重新编写的捷径" not in str(events)
+
+    app = create_app(conversation_store=conversations)
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        history_response = await client.get(
+            "/v1/visit-matters/visit-demo/messages",
+            params={"participant_id": "participant-demo"},
+        )
+
+    assert history_response.status_code == 200
+    restored = [
+        part
+        for message in history_response.json()["messages"]
+        for part in message["parts"]
+        if part["type"] == "data-hospital-wayfinding"
+    ]
+    assert len(restored) == 1
+    assert restored[0]["data"] == card.data["data"]
+    assert "重新编写的捷径" not in str(history_response.json())
+
+    stale_selection_model = ScriptedHospitalModel(
+        [
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "load-wayfinding-again",
+                            "load_skill",
+                            {"slug": "hospital-wayfinding"},
+                        ),
+                    )
+                )
+            ],
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "repeat-old-wayfinding",
+                            "hospital_get_wayfinding_guidance",
+                            {
+                                "origin_id": "origin-main-entrance",
+                                "destination_id": "location-pediatrics",
+                                "mode": "accessible",
+                            },
+                        ),
+                    )
+                )
+            ],
+        ]
+    )
+    second_assistant = MediPetAssistant(
+        LangGraphAgentRuntime(
+            stale_selection_model,
+            capability_provider=RegistryCapabilityProvider(skills, tools),
+        ),
+        conversations,
+    )
+    followup_events = [
+        event
+        async for event in second_assistant.handle_turn(
+            _turn("turn-symptom-after-wayfinding", "孩子发烧了，应该去哪里？")
+        )
+    ]
+    unavailable = next(
+        event
+        for event in followup_events
+        if event.kind == "data"
+        and event.data["type"] == "data-hospital-wayfinding-unavailable"
+    )
+    assert unavailable.data["data"]["reason"] == "selection_required"
+
+
+@pytest.mark.asyncio
+async def test_wayfinding_selection_can_be_confirmed_across_turns_with_aliases() -> None:
+    now = datetime(2026, 8, 30, 8, tzinfo=UTC)
+    provider = HospitalToolProvider(
+        FakeHospitalOperations(
+            FakeHospitalDataSource.load_default(),
+            clock=lambda: now,
+        )
+    )
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await bootstrap_development_hospital_skill(skills, tools, provider)
+    model = ScriptedHospitalModel(
+        [
+            [ModelChunk(text="请选择普通或无障碍指引。")],
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "load-wayfinding",
+                            "load_skill",
+                            {"slug": "hospital-wayfinding"},
+                        ),
+                    )
+                )
+            ],
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "get-wayfinding",
+                            "hospital_get_wayfinding_guidance",
+                            {
+                                "origin_id": "origin-main-entrance",
+                                "destination_id": "location-pediatrics",
+                                "mode": "accessible",
+                            },
+                        ),
+                    )
+                )
+            ],
+        ]
+    )
+    conversations = InMemoryVisitConversationStore()
+    await conversations.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-demo",
+            patient_display_name="演示患者",
+            participant_id="participant-demo",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-demo",
+            visit_matter_title="院内方位指引",
+        )
+    )
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(
+            model,
+            capability_provider=RegistryCapabilityProvider(skills, tools),
+        ),
+        conversations,
+    )
+
+    first_events = [
+        event
+        async for event in assistant.handle_turn(
+            _turn("turn-wayfinding-route", "我在主入口，想去儿科。")
+        )
+    ]
+    assert any(event.kind == "text" for event in first_events)
+
+    second_events = [
+        event
+        async for event in assistant.handle_turn(
+            _turn("turn-wayfinding-mode", "无障碍")
+        )
+    ]
+
+    card = next(
+        event
+        for event in second_events
+        if event.kind == "data"
+        and event.data["type"] == "data-hospital-wayfinding"
+    )
+    assert card.data["data"]["origin"]["name"] == "门诊楼一层主入口"
+    assert card.data["data"]["destination"]["name"] == "儿科门诊"
+    assert card.data["data"]["mode"] == "accessible"
+
+
+@pytest.mark.asyncio
+async def test_symptom_only_turn_cannot_emit_wayfinding_guidance() -> None:
+    argument_cases: tuple[dict[str, object], ...] = (
+        {
+            "origin_id": "origin-main-entrance",
+            "destination_id": "location-pediatrics",
+            "mode": "standard",
+        },
+        {
+            "origin_id": "origin-outpatient-lobby",
+            "destination_id": "location-pediatrics",
+            "mode": "standard",
+        },
+        {
+            "origin_id": "unknown-origin",
+            "destination_id": "location-pediatrics",
+            "mode": "standard",
+        },
+    )
+    for arguments in argument_cases:
+        events = await _wayfinding_events("孩子发烧了，应该去哪里？", arguments)
+
+        assert not [
+            event
+            for event in events
+            if event.kind == "data" and event.data["type"] == "data-hospital-wayfinding"
+        ]
+        unavailable = next(
+            event
+            for event in events
+            if event.kind == "data"
+            and event.data["type"] == "data-hospital-wayfinding-unavailable"
+        )
+        assert unavailable.data["data"]["reason"] == "selection_required"
+
+
+@pytest.mark.parametrize(
+    ("message", "arguments", "reason"),
+    [
+        (
+            "我在门诊大厅服务台，需要无障碍指引前往门诊检验处。",
+            {
+                "origin_id": "origin-outpatient-lobby",
+                "destination_id": "location-laboratory",
+                "mode": "accessible",
+            },
+            "accessible_unavailable",
+        ),
+        (
+            "我在门诊大厅服务台，需要普通指引前往儿科门诊。",
+            {
+                "origin_id": "origin-outpatient-lobby",
+                "destination_id": "location-pediatrics",
+                "mode": "standard",
+            },
+            "unavailable",
+        ),
+    ],
+)
+@pytest.mark.asyncio
+async def test_missing_exact_wayfinding_is_a_truthful_terminal_result(
+    message: str,
+    arguments: dict[str, object],
+    reason: str,
+) -> None:
+    events = await _wayfinding_events(message, arguments)
+
+    assert not [event for event in events if event.kind == "failed"]
+    unavailable = next(
+        event
+        for event in events
+        if event.kind == "data"
+        and event.data["type"] == "data-hospital-wayfinding-unavailable"
+    )
+    assert unavailable.data["data"]["reason"] == reason
+
+
+async def _wayfinding_events(
+    message: str,
+    arguments: dict[str, object],
+) -> list[TurnEvent]:
+    now = datetime(2026, 8, 30, 8, tzinfo=UTC)
+    provider = HospitalToolProvider(
+        FakeHospitalOperations(
+            FakeHospitalDataSource.load_default(),
+            clock=lambda: now,
+        )
+    )
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await bootstrap_development_hospital_skill(skills, tools, provider)
+    model = ScriptedHospitalModel(
+        [
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "load-wayfinding",
+                            "load_skill",
+                            {"slug": "hospital-wayfinding"},
+                        ),
+                    )
+                )
+            ],
+            [
+                ModelChunk(
+                    tool_calls=(
+                        ModelToolCall(
+                            "get-wayfinding",
+                            "hospital_get_wayfinding_guidance",
+                            arguments,
+                        ),
+                    )
+                )
+            ],
+            [ModelChunk(text="不应到达这里")],
+        ]
+    )
+    conversations = InMemoryVisitConversationStore()
+    await conversations.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-demo",
+            patient_display_name="演示患者",
+            participant_id="participant-demo",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-demo",
+            visit_matter_title="院内方位指引",
+        )
+    )
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(
+            model,
+            capability_provider=RegistryCapabilityProvider(skills, tools),
+        ),
+        conversations,
+    )
+    return [
+        event
+        async for event in assistant.handle_turn(
+            _turn(f"turn-{len(message)}-{arguments['mode']}", message)
+        )
+    ]
+
+
+@pytest.mark.asyncio
 async def test_hospital_skill_runs_slot_selection_confirmation_and_history() -> None:
     now = datetime(2026, 8, 30, 8, tzinfo=UTC)
     operations = FakeHospitalOperations(
@@ -196,12 +591,12 @@ async def test_hospital_skill_runs_slot_selection_confirmation_and_history() -> 
     await bootstrap_development_hospital_skill(skills, tools, provider)
 
     listed = await skills.list_skills()
-    assert len(listed) == 3
+    assert len(listed) == 4
     assert listed[0]["slug"] == "hospital-appointment-assistance"
     versions = cast(list[dict[str, object]], listed[0]["versions"])
     assert versions[0]["status"] == "published"
     snapshot = await RegistryCapabilityProvider(skills, tools).snapshot(context=_context())
-    assert len(snapshot.tools) == 8
+    assert len(snapshot.tools) == 11
     assert all(tool.enabled and tool.required_skill_ids for tool in snapshot.tools)
     skill_ids = {
         cast(str, item["slug"]): cast(str, item["skill_id"]) for item in listed
@@ -213,6 +608,9 @@ async def test_hospital_skill_runs_slot_selection_confirmation_and_history() -> 
     }
     assert tools_by_id["hospital.cancel_appointment"].required_skill_ids == (
         skill_ids["hospital-appointment-cancellation"],
+    )
+    assert tools_by_id["hospital.get_wayfinding_guidance"].required_skill_ids == (
+        skill_ids["hospital-wayfinding"],
     )
 
     model = ScriptedHospitalModel(

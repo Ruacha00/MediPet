@@ -120,6 +120,56 @@
       ],
       "additionalProperties": false
     },
+    "wayfinding_origin": {
+      "type": "object",
+      "properties": {
+        "origin_id": {"type": "string"},
+        "display_name": {"type": "string"}
+      },
+      "required": ["origin_id", "display_name"],
+      "additionalProperties": false
+    },
+    "service_location": {
+      "type": "object",
+      "properties": {
+        "location_id": {"type": "string"},
+        "display_name": {"type": "string"},
+        "category": {"type": "string", "enum": ["department", "service"]}
+      },
+      "required": ["location_id", "display_name", "category"],
+      "additionalProperties": false
+    },
+    "wayfinding_guidance": {
+      "type": "object",
+      "properties": {
+        "origin": {"$ref": "#/$defs/wayfinding_origin"},
+        "destination": {"$ref": "#/$defs/service_location"},
+        "mode": {"type": "string", "enum": ["standard", "accessible"]},
+        "steps": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "notice": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+        "data_version": {"type": "string"}
+      },
+      "required": ["origin", "destination", "mode", "steps", "notice", "data_version"],
+      "additionalProperties": false
+    },
+    "wayfinding_unavailable": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "enum": [
+            "selection_required",
+            "origin_not_found",
+            "destination_not_found",
+            "accessible_unavailable",
+            "unavailable"
+          ]
+        },
+        "message": {"type": "string"}
+      },
+      "required": ["reason", "message"],
+      "additionalProperties": false
+    },
     "appointment_cancellation_confirmation": {
       "type": "object",
       "properties": {
@@ -261,6 +311,77 @@
           "appointments": {"type": "array", "items": {"$ref": "#/$defs/appointment"}}
         },
         "required": ["appointments"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.list_wayfinding_origins",
+      "version": "1",
+      "name": "hospital_list_wayfinding_origins",
+      "description": "列出虚构服务医院认可的院内方位指引常用起点。",
+      "input_schema": {"$ref": "#/$defs/empty_input"},
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "origins": {"type": "array", "items": {"$ref": "#/$defs/wayfinding_origin"}}
+        },
+        "required": ["origins"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.list_service_locations",
+      "version": "1",
+      "name": "hospital_list_service_locations",
+      "description": "列出虚构服务医院认可的院内方位指引目的地。",
+      "input_schema": {"$ref": "#/$defs/empty_input"},
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "locations": {"type": "array", "items": {"$ref": "#/$defs/service_location"}}
+        },
+        "required": ["locations"],
+        "additionalProperties": false
+      },
+      "effect": "read",
+      "approval_required": false
+    },
+    {
+      "tool_id": "hospital.get_wayfinding_guidance",
+      "version": "1",
+      "name": "hospital_get_wayfinding_guidance",
+      "description": "精确读取虚构服务医院认可的院内文字方位指引，不生成或拼接步骤。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "origin_id": {"type": "string"},
+          "destination_id": {"type": "string"},
+          "mode": {"type": "string", "enum": ["standard", "accessible"]}
+        },
+        "required": ["origin_id", "destination_id", "mode"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "guidance": {
+            "anyOf": [
+              {"$ref": "#/$defs/wayfinding_guidance"},
+              {"type": "null"}
+            ]
+          },
+          "unavailable": {
+            "anyOf": [
+              {"$ref": "#/$defs/wayfinding_unavailable"},
+              {"type": "null"}
+            ]
+          }
+        },
+        "required": ["guidance", "unavailable"],
         "additionalProperties": false
       },
       "effect": "read",

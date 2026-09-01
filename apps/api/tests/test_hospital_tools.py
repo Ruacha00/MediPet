@@ -5,7 +5,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from medipet.actions import ActionDecisionError, InMemoryActionStore
-from medipet.agent.capabilities import ToolContext, ToolDefinition
+from medipet.agent.capabilities import (
+    ParticipantToolSelection,
+    ToolContext,
+    ToolDefinition,
+)
 from medipet.delivery.http import create_app
 from medipet.hospital.data_source import FakeHospitalDataSource
 from medipet.hospital.fake import FakeHospitalFailurePlan, FakeHospitalOperations
@@ -154,6 +158,48 @@ CANCELLATION_CONFIRMATION_SCHEMA = _object_schema(
         "currency",
     ],
 )
+WAYFINDING_ORIGIN_SCHEMA = _object_schema(
+    {
+        "origin_id": {"type": "string"},
+        "display_name": {"type": "string"},
+    },
+    ["origin_id", "display_name"],
+)
+SERVICE_LOCATION_SCHEMA = _object_schema(
+    {
+        "location_id": {"type": "string"},
+        "display_name": {"type": "string"},
+        "category": {"type": "string", "enum": ["department", "service"]},
+    },
+    ["location_id", "display_name", "category"],
+)
+WAYFINDING_GUIDANCE_SCHEMA = _object_schema(
+    {
+        "origin": WAYFINDING_ORIGIN_SCHEMA,
+        "destination": SERVICE_LOCATION_SCHEMA,
+        "mode": {"type": "string", "enum": ["standard", "accessible"]},
+        "steps": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "notice": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+        "data_version": {"type": "string"},
+    },
+    ["origin", "destination", "mode", "steps", "notice", "data_version"],
+)
+WAYFINDING_UNAVAILABLE_SCHEMA = _object_schema(
+    {
+        "reason": {
+            "type": "string",
+            "enum": [
+                "selection_required",
+                "origin_not_found",
+                "destination_not_found",
+                "accessible_unavailable",
+                "unavailable",
+            ],
+        },
+        "message": {"type": "string"},
+    },
+    ["reason", "message"],
+)
 
 
 @pytest.fixture
@@ -270,6 +316,75 @@ async def test_provider_exposes_eight_complete_public_contracts(
             None,
         ),
         (
+            "hospital.list_wayfinding_origins",
+            "hospital_list_wayfinding_origins",
+            "列出虚构服务医院认可的院内方位指引常用起点。",
+            empty_input,
+            _object_schema(
+                {
+                    "origins": {
+                        "type": "array",
+                        "items": WAYFINDING_ORIGIN_SCHEMA,
+                    }
+                },
+                ["origins"],
+            ),
+            "read",
+            False,
+            ["pre_visit", "in_visit"],
+            None,
+        ),
+        (
+            "hospital.list_service_locations",
+            "hospital_list_service_locations",
+            "列出虚构服务医院认可的院内方位指引目的地。",
+            empty_input,
+            _object_schema(
+                {
+                    "locations": {
+                        "type": "array",
+                        "items": SERVICE_LOCATION_SCHEMA,
+                    }
+                },
+                ["locations"],
+            ),
+            "read",
+            False,
+            ["pre_visit", "in_visit"],
+            None,
+        ),
+        (
+            "hospital.get_wayfinding_guidance",
+            "hospital_get_wayfinding_guidance",
+            "精确读取虚构服务医院认可的院内文字方位指引，不生成或拼接步骤。",
+            _object_schema(
+                {
+                    "origin_id": {"type": "string"},
+                    "destination_id": {"type": "string"},
+                    "mode": {
+                        "type": "string",
+                        "enum": ["standard", "accessible"],
+                    },
+                },
+                ["origin_id", "destination_id", "mode"],
+            ),
+            _object_schema(
+                {
+                    "guidance": {
+                        "anyOf": [WAYFINDING_GUIDANCE_SCHEMA, {"type": "null"}]
+                    },
+                    "unavailable": {
+                        "anyOf": [WAYFINDING_UNAVAILABLE_SCHEMA, {"type": "null"}]
+                    },
+                },
+                ["guidance", "unavailable"],
+            ),
+            "read",
+            False,
+            ["pre_visit", "in_visit"],
+            None,
+        ),
+        (
             "hospital.create_appointment",
             "hospital_create_appointment",
             "为当前患者创建预约挂号。",
@@ -362,6 +477,85 @@ async def test_get_hospital_tool_has_public_contract_and_stable_envelope(
             "timezone": "Asia/Shanghai",
         }
     }
+
+
+@pytest.mark.asyncio
+async def test_wayfinding_tools_return_exact_data_and_a_structured_card(
+    hospital_operations: FakeHospitalOperations,
+) -> None:
+    tools = {
+        item.tool_id: item
+        for item in await HospitalToolProvider(hospital_operations).tools()
+    }
+
+    origins = await tools["hospital.list_wayfinding_origins"].execute({}, ToolContext())
+    locations = await tools["hospital.list_service_locations"].execute({}, ToolContext())
+    guidance_tool = tools["hospital.get_wayfinding_guidance"]
+    guidance = await guidance_tool.execute(
+        {
+            "origin_id": "origin-main-entrance",
+            "destination_id": "location-pediatrics",
+            "mode": "accessible",
+        },
+        ToolContext(
+            participant_tool_selection=ParticipantToolSelection(
+                tool_name="hospital_get_wayfinding_guidance",
+                arguments=(
+                    ("destination_id", "location-pediatrics"),
+                    ("mode", "accessible"),
+                    ("origin_id", "origin-main-entrance"),
+                ),
+            )
+        ),
+    )
+    origin_items = cast(list[dict[str, object]], origins["origins"])
+    location_items = cast(list[dict[str, object]], locations["locations"])
+    guidance_data = cast(dict[str, object], guidance["guidance"])
+
+    assert origin_items[0] == {
+        "origin_id": "origin-main-entrance",
+        "display_name": "门诊楼一层主入口",
+    }
+    assert location_items[0] == {
+        "location_id": "location-pediatrics",
+        "display_name": "儿科门诊",
+        "category": "department",
+    }
+    assert guidance == {
+        "guidance": {
+            "origin": origin_items[0],
+            "destination": location_items[0],
+            "mode": "accessible",
+            "steps": [
+                "从主入口进入门诊大厅，沿右侧无障碍通道前行至电梯厅。",
+                "乘电梯到二层，出电梯后按儿科门诊指示牌左转。",
+                "沿走廊前行至儿科门诊报到台。",
+            ],
+            "notice": None,
+            "data_version": "minghe-wayfinding-2026-09-01",
+        },
+        "unavailable": None,
+    }
+    assert guidance_tool.present is not None
+    assert await guidance_tool.present(guidance, ToolContext()) == (
+        {
+            "type": "data-hospital-wayfinding",
+            "data": {
+                "origin": {
+                    "id": "origin-main-entrance",
+                    "name": "门诊楼一层主入口",
+                },
+                "destination": {
+                    "id": "location-pediatrics",
+                    "name": "儿科门诊",
+                },
+                "mode": "accessible",
+                "steps": guidance_data["steps"],
+                "notice": None,
+                "dataVersion": "minghe-wayfinding-2026-09-01",
+            },
+        },
+    )
 
 
 @pytest.mark.asyncio
@@ -699,6 +893,9 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "hospital.search_slots",
         "hospital.get_appointment",
         "hospital.list_appointments",
+        "hospital.list_wayfinding_origins",
+        "hospital.list_service_locations",
+        "hospital.get_wayfinding_guidance",
         "hospital.create_appointment",
         "hospital.cancel_appointment",
     ]
@@ -710,6 +907,9 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "1",
         "2",
         "2",
+        "1",
+        "1",
+        "1",
         "2",
         "1",
     ]
@@ -722,10 +922,16 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         "hospital_search_slots",
         "hospital_get_appointment",
         "hospital_list_appointments",
+        "hospital_list_wayfinding_origins",
+        "hospital_list_service_locations",
+        "hospital_get_wayfinding_guidance",
         "hospital_create_appointment",
         "hospital_cancel_appointment",
     ]
     assert [item["effect"] for item in versions] == [
+        "read",
+        "read",
+        "read",
         "read",
         "read",
         "read",
@@ -742,10 +948,16 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         ["slots"],
         ["appointment"],
         ["appointments"],
+        ["origins"],
+        ["locations"],
+        ["guidance", "unavailable"],
         ["receipt_id", "appointment"],
         ["receipt_id", "appointment"],
     ]
     assert [item["provider_approval_required"] for item in versions] == [
+        False,
+        False,
+        False,
         False,
         False,
         False,
@@ -762,6 +974,9 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         False,
         False,
         False,
+        False,
+        False,
+        False,
         True,
         True,
     ]
@@ -772,10 +987,16 @@ def test_startup_synchronizes_all_hospital_tools_as_disabled() -> None:
         False,
         False,
         False,
+        False,
+        False,
+        False,
         True,
         True,
     ]
     assert [item["allowed_stages"] for item in versions] == [
+        ["pre_visit", "in_visit"],
+        ["pre_visit", "in_visit"],
+        ["pre_visit", "in_visit"],
         ["pre_visit", "in_visit"],
         ["pre_visit", "in_visit"],
         ["pre_visit", "in_visit"],
