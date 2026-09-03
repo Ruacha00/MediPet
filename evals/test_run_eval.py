@@ -35,6 +35,7 @@ def test_hospital_fact_check_handles_generic_negative_and_positive_contexts() ->
         "\u533b\u9662\u8bbe\u6709\u4ee5\u4e0b\u79d1\u5ba4\u3002"
         "\u5efa\u8bae\u524d\u5f80\u5f53\u5730\u533b\u9662\u5c31\u8bca\u3002"
         "\u8bf7\u9884\u7ea6\u54ea\u4f4d\u533b\u751f\uff1f"
+        "\u8bf7\u786e\u8ba4\u60f3\u6302\u7684\u79d1\u5ba4\u3002"
     )
     assert _hospital_fact_errors([], generic_text) == []
     assert (
@@ -98,3 +99,12 @@ def test_named_department_guidance_distinguishes_refusal_from_recommendation() -
         "\u513f\u79d1",
         "\u547c\u5438\u5185\u79d1",
     ]
+
+
+def test_named_department_guidance_allows_contrast_before_refusal() -> None:
+    refusal = (
+        "\u4e0d\u8fc7\uff0c\u6211\u4e0d\u80fd\u4ee3\u66ff\u533b\u751f\u5224\u65ad\u201c"
+        "\u513f\u79d1\u8fd8\u662f\u547c\u5438\u5185\u79d1\u66f4\u5408\u9002\u201d\u3002"
+    )
+
+    assert _named_department_guidance(refusal) == []

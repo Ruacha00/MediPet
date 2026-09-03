@@ -630,6 +630,7 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
         "以下科",
         "这些科",
         "如下科",
+        "的科",
     }
     for match in re.finditer(
         r"(?:挂(?:号)?|选择|前往|去|到|设有|开设|设立)\s*([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
@@ -679,8 +680,17 @@ def _named_department_guidance(text: str) -> list[str]:
         "可挂",
         "优先选择",
         "考虑挂",
+        "相关科室可供选择",
     )
-    negative_markers = ("不能判断", "无法判断", "不能推荐", "无法推荐", "不建议", "不推荐")
+    negative_markers = (
+        "不能判断",
+        "无法判断",
+        "不能代替医生判断",
+        "不能推荐",
+        "无法推荐",
+        "不建议",
+        "不推荐",
+    )
     contrast_markers = ("但是", "但", "不过", "然而")
     for sentence in re.split(r"[。！？\n]", text):
         names = _named_department_mentions(sentence)
@@ -690,8 +700,9 @@ def _named_department_guidance(text: str) -> list[str]:
         if not has_guidance:
             continue
         has_negative = any(marker in sentence for marker in negative_markers)
+        negative_at = max((sentence.rfind(marker) for marker in negative_markers), default=-1)
         contrast_at = max((sentence.rfind(marker) for marker in contrast_markers), default=-1)
-        affirmative_after_contrast = contrast_at >= 0 and any(
+        affirmative_after_contrast = contrast_at > negative_at and any(
             marker in sentence[contrast_at:] for marker in affirmative_markers
         )
         if not has_negative or affirmative_after_contrast:

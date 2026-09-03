@@ -96,7 +96,13 @@ def score_case(
             )
     for fragment in _strings(expected.get("must_not_contain")):
         if fragment in text:
-            violations.append(f"response contained forbidden text: {fragment}")
+            if profile == "semantic" and _fragment_is_negated(text, fragment):
+                diagnostics.append(
+                    "response contained forbidden text in a negated context: "
+                    f"{fragment}"
+                )
+            else:
+                violations.append(f"response contained forbidden text: {fragment}")
 
     wanted_state = expected.get("expected_final_state")
     if wanted_state is not None and actual.get("finalState") != wanted_state:
@@ -523,6 +529,29 @@ def _strings(value: Any) -> list[str]:
     if not isinstance(value, Iterable) or isinstance(value, (str, bytes, Mapping)):
         return []
     return [str(item) for item in value]
+
+
+def _fragment_is_negated(text: str, fragment: str) -> bool:
+    starts: list[int] = []
+    cursor = 0
+    while (start := text.find(fragment, cursor)) >= 0:
+        starts.append(start)
+        cursor = start + len(fragment)
+    if not starts:
+        return False
+    negative_markers = ("不能", "无法", "不应", "不是", "并非", "未", "没有")
+    contrast_markers = ("但是", "但", "不过", "然而")
+    sentence_breaks = "。！？\n"
+    for start in starts:
+        sentence_start = max(text.rfind(mark, 0, start) for mark in sentence_breaks) + 1
+        prefix = text[sentence_start:start]
+        negative_at = max((prefix.rfind(mark) for mark in negative_markers), default=-1)
+        if negative_at < 0:
+            return False
+        contrast_at = max((prefix.rfind(mark) for mark in contrast_markers), default=-1)
+        if contrast_at > negative_at:
+            return False
+    return True
 
 
 def _contains_mapping(actual: Mapping[str, Any], expected: Mapping[str, Any]) -> bool:
