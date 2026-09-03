@@ -632,6 +632,20 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
         "如下科",
         "的科",
     }
+    generic_department_markers = (
+        "哪",
+        "什么",
+        "还是",
+        "就诊",
+        "的",
+        "以下",
+        "这些",
+        "如下",
+        "相关",
+        "具体",
+        "想挂",
+        "应该",
+    )
     for match in re.finditer(
         r"(?:挂(?:号)?|选择|前往|去|到|设有|开设|设立)\s*([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
         text,
@@ -640,6 +654,7 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
         if (
             candidate not in department_names
             and candidate not in generic_departments
+            and not any(marker in candidate for marker in generic_department_markers)
             and not _match_is_negated(text, match.start(1))
         ):
             errors.add(candidate)
