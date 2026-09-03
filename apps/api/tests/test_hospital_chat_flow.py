@@ -332,13 +332,11 @@ async def test_wayfinding_skill_streams_and_restores_the_authoritative_card() ->
             _turn("turn-symptom-after-wayfinding", "孩子发烧了，应该去哪里？")
         )
     ]
-    unavailable = next(
-        event
-        for event in followup_events
-        if event.kind == "data"
-        and event.data["type"] == "data-hospital-wayfinding-unavailable"
-    )
-    assert unavailable.data["data"]["reason"] == "selection_required"
+    assert [event.kind for event in followup_events] == ["text", "completed"]
+    assert followup_events[0].data == {
+        "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+    }
+    assert stale_selection_model.requests == []
 
 
 @pytest.mark.asyncio
@@ -451,18 +449,10 @@ async def test_symptom_only_turn_cannot_emit_wayfinding_guidance() -> None:
     for arguments in argument_cases:
         events = await _wayfinding_events("孩子发烧了，应该去哪里？", arguments)
 
-        assert not [
-            event
-            for event in events
-            if event.kind == "data" and event.data["type"] == "data-hospital-wayfinding"
-        ]
-        unavailable = next(
-            event
-            for event in events
-            if event.kind == "data"
-            and event.data["type"] == "data-hospital-wayfinding-unavailable"
-        )
-        assert unavailable.data["data"]["reason"] == "selection_required"
+        assert [event.kind for event in events] == ["text", "completed"]
+        assert events[0].data == {
+            "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+        }
 
 
 @pytest.mark.parametrize(

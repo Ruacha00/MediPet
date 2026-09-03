@@ -38,3 +38,4 @@ def test_symptom_only_cases_forbid_named_department_guidance() -> None:
     ):
         assertions = cases[case_id]["expected"].get("semantic_assertions", [])
         assert "no_named_department_guidance" in assertions
+        assert "requires_manual_triage_guidance" in assertions

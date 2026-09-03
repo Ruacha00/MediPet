@@ -112,3 +112,24 @@ def test_named_department_guidance_allows_contrast_before_refusal() -> None:
     )
 
     assert _named_department_guidance(refusal) == []
+
+
+def test_named_department_guidance_covers_indirect_phrasing() -> None:
+    assert _named_department_guidance("通常可考虑儿科。") == ["儿科"]
+    assert _named_department_guidance("这类情况通常对应儿科门诊范畴。") == ["儿科"]
+    assert _named_department_guidance("建议以儿科或接诊医生的评估为准。") == ["儿科"]
+
+
+def test_named_department_guidance_detects_cross_sentence_implication() -> None:
+    text = (
+        "医院设有儿科，主要为儿童提供门诊服务，可供参考。"
+        "孩子出现发烧时，是否应该就诊儿科需要专业判断。"
+    )
+
+    assert _named_department_guidance(text) == ["儿科"]
+
+
+def test_named_department_guidance_rejects_recommendation_before_disclaimer() -> None:
+    text = "通常可考虑儿科，但我不能替您推荐科室。"
+
+    assert _named_department_guidance(text) == ["儿科"]

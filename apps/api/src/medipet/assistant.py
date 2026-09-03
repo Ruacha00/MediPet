@@ -28,6 +28,7 @@ from medipet.run_metrics import (
     RunMetricStore,
     TerminalOutcome,
 )
+from medipet.triage import manual_triage_guidance_for
 
 LOGGER = logging.getLogger(__name__)
 
@@ -251,6 +252,20 @@ class MediPetAssistant:
                 )
                 await finalize("completed")
                 yield TurnEvent(kind="data", data=handoff_part)
+                yield TurnEvent(kind="completed", data={"traceId": trace_id})
+                return
+
+            manual_triage_guidance = manual_triage_guidance_for(command.message)
+            if manual_triage_guidance is not None:
+                await self._conversation_store.mark_assistant_streaming(
+                    assistant_message.id
+                )
+                await self._conversation_store.append_assistant_text(
+                    assistant_message.id,
+                    manual_triage_guidance,
+                )
+                await finalize("completed")
+                yield TurnEvent(kind="text", data={"text": manual_triage_guidance})
                 yield TurnEvent(kind="completed", data={"traceId": trace_id})
                 return
 

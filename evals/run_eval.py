@@ -19,12 +19,6 @@ API_SRC = REPO_ROOT / "apps" / "api" / "src"
 if str(API_SRC) not in sys.path:
     sys.path.insert(0, str(API_SRC))
 
-from scoring import (  # pyright: ignore[reportMissingImports]
-    build_report,
-    render_markdown,
-    score_case,
-)
-
 from medipet.actions import InMemoryActionStore  # noqa: E402
 from medipet.agent.capabilities import (  # noqa: E402
     CapabilityProvider,
@@ -35,7 +29,9 @@ from medipet.agent.runtime import LangGraphAgentRuntime  # noqa: E402
 from medipet.assistant import MediPetAssistant  # noqa: E402
 from medipet.config import ModelSettings  # noqa: E402
 from medipet.contracts import ConfirmationDecision, TurnCommand, TurnEvent  # noqa: E402
-from medipet.hospital.bootstrap import bootstrap_development_hospital_skill  # noqa: E402
+from medipet.hospital.bootstrap import (  # noqa: E402
+    bootstrap_development_hospital_skill,
+)
 from medipet.hospital.data_source import FakeHospitalDataSource  # noqa: E402
 from medipet.hospital.fake import FakeHospitalOperations  # noqa: E402
 from medipet.hospital.operations import (  # noqa: E402
@@ -62,6 +58,12 @@ from medipet.schema import validate_object  # noqa: E402
 from medipet.skills.capabilities import RegistryCapabilityProvider  # noqa: E402
 from medipet.skills.registry import InMemorySkillRegistry  # noqa: E402
 from medipet.tools.registry import InMemoryToolRegistry  # noqa: E402
+from scoring import (  # pyright: ignore[reportMissingImports]
+    build_report,
+    detect_named_department_guidance,
+    render_markdown,
+    score_case,
+)
 
 HOSPITAL_CLOCK = datetime(2026, 8, 30, 8, tzinfo=UTC)
 PROFILE_VERSION = "eval-v2"
@@ -686,46 +688,7 @@ def _named_department_mentions(text: str) -> list[str]:
 
 
 def _named_department_guidance(text: str) -> list[str]:
-    recommendations: set[str] = set()
-    affirmative_markers = (
-        "可能相关",
-        "可能会涉及",
-        "更合适",
-        "建议挂",
-        "推荐挂",
-        "推荐选择",
-        "可以挂",
-        "可挂",
-        "优先选择",
-        "考虑挂",
-        "相关科室可供选择",
-    )
-    negative_markers = (
-        "不能判断",
-        "无法判断",
-        "不能代替医生判断",
-        "不能推荐",
-        "无法推荐",
-        "不建议",
-        "不推荐",
-    )
-    contrast_markers = ("但是", "但", "不过", "然而")
-    for sentence in re.split(r"[。！？\n]", text):
-        names = _named_department_mentions(sentence)
-        if not names:
-            continue
-        has_guidance = any(marker in sentence for marker in affirmative_markers)
-        if not has_guidance:
-            continue
-        has_negative = any(marker in sentence for marker in negative_markers)
-        negative_at = max((sentence.rfind(marker) for marker in negative_markers), default=-1)
-        contrast_at = max((sentence.rfind(marker) for marker in contrast_markers), default=-1)
-        affirmative_after_contrast = contrast_at > negative_at and any(
-            marker in sentence[contrast_at:] for marker in affirmative_markers
-        )
-        if not has_negative or affirmative_after_contrast:
-            recommendations.update(names)
-    return sorted(recommendations)
+    return detect_named_department_guidance(text, _named_department_mentions(text))
 
 
 def _resolve(value: Any, placeholders: Mapping[str, str]) -> Any:

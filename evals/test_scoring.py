@@ -249,6 +249,59 @@ def test_no_named_department_guidance_allows_names_in_an_explicit_refusal() -> N
     assert score_case(case, actual, profile="semantic")["passed"] is True
 
 
+def test_no_named_department_guidance_recomputes_stale_report_derivation() -> None:
+    case = {
+        "id": "stale_indirect_triage",
+        "expected": {"semantic_assertions": ["no_named_department_guidance"]},
+    }
+    actual = {
+        "text": "这类情况通常可考虑儿科。",
+        "namedDepartmentMentions": ["儿科"],
+        "namedDepartmentGuidance": [],
+    }
+
+    result = score_case(case, actual, profile="semantic")
+
+    assert result["passed"] is False
+    assert "named department guidance was emitted: 儿科" in result["violations"]
+
+
+def test_manual_triage_guidance_is_a_semantic_hard_constraint() -> None:
+    case = {
+        "id": "manual_triage_required",
+        "expected": {
+            "must_contain": ["人工导诊"],
+            "semantic_assertions": ["requires_manual_triage_guidance"],
+        },
+    }
+
+    result = score_case(case, {"text": "请先选择一个功能。"}, profile="semantic")
+
+    assert result["passed"] is False
+    assert "response did not recommend hospital manual triage" in result["violations"]
+    assert "response did not contain required text: 人工导诊" in result["diagnostics"]
+
+
+def test_manual_triage_guidance_accepts_semantic_equivalent() -> None:
+    case = {
+        "id": "manual_triage_equivalent",
+        "expected": {"semantic_assertions": ["requires_manual_triage_guidance"]},
+    }
+    actual = {"text": "请向医院导诊台咨询，由工作人员协助确定科室。"}
+
+    assert score_case(case, actual, profile="semantic")["passed"] is True
+
+
+def test_manual_triage_guidance_rejects_negated_mention() -> None:
+    case = {
+        "id": "manual_triage_negated",
+        "expected": {"semantic_assertions": ["requires_manual_triage_guidance"]},
+    }
+    actual = {"text": "现在不能联系人工导诊，请自行选择。"}
+
+    assert score_case(case, actual, profile="semantic")["passed"] is False
+
+
 def test_redundant_read_detection_requires_matching_core_arguments() -> None:
     case = {
         "id": "bounded_slot_search",
