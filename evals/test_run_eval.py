@@ -32,6 +32,7 @@ def test_hospital_fact_check_still_rejects_invented_named_entities() -> None:
 
 def test_hospital_fact_check_handles_generic_negative_and_positive_contexts() -> None:
     generic_text = (
+        "\u533b\u9662\u8bbe\u6709\u4ee5\u4e0b\u79d1\u5ba4\u3002"
         "\u5efa\u8bae\u524d\u5f80\u5f53\u5730\u533b\u9662\u5c31\u8bca\u3002"
         "\u8bf7\u9884\u7ea6\u54ea\u4f4d\u533b\u751f\uff1f"
     )

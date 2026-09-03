@@ -620,7 +620,17 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
             and not _match_is_negated(text, match.start(1))
         ):
             errors.add(f"{candidate}医生")
-    generic_departments = {"哪个科", "某个科", "相关科", "具体科", "这个科", "该科"}
+    generic_departments = {
+        "哪个科",
+        "某个科",
+        "相关科",
+        "具体科",
+        "这个科",
+        "该科",
+        "以下科",
+        "这些科",
+        "如下科",
+    }
     for match in re.finditer(
         r"(?:挂(?:号)?|选择|前往|去|到|设有|开设|设立)\s*([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
         text,
