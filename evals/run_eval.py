@@ -12,7 +12,7 @@ from collections.abc import AsyncIterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 API_SRC = REPO_ROOT / "apps" / "api" / "src"
@@ -64,7 +64,7 @@ from medipet.skills.registry import InMemorySkillRegistry  # noqa: E402
 from medipet.tools.registry import InMemoryToolRegistry  # noqa: E402
 
 HOSPITAL_CLOCK = datetime(2026, 8, 30, 8, tzinfo=UTC)
-PROFILE_VERSION = "eval-v1"
+PROFILE_VERSION = "eval-v2"
 WRITE_TOOL_NAMES = {"hospital_create_appointment", "hospital_cancel_appointment"}
 
 
@@ -198,6 +198,9 @@ async def run_case(
     max_agent_steps: int,
     max_output_tokens: int,
 ) -> dict[str, Any]:
+    scoring_profile: Literal["strict", "semantic"] = (
+        "strict" if mode == "fake" else "semantic"
+    )
     setup = _mapping(case.get("setup"))
     env = await _build_environment(
         case,
@@ -298,10 +301,12 @@ async def run_case(
             for item in env.capabilities.executions
         ),
         "hospitalFactErrors": _hospital_fact_errors(parts, text),
+        "namedDepartmentMentions": _named_department_mentions(text),
+        "namedDepartmentGuidance": _named_department_guidance(text),
         "auditKinds": [audit.kind for audit in audits],
         "runnerError": runner_error,
     }
-    result = score_case(resolved_case, actual)
+    result = score_case(resolved_case, actual, profile=scoring_profile)
     if runner_error is not None:
         result["passed"] = False
         result["violations"].append(f"eval runner caught {runner_error}")
@@ -356,6 +361,8 @@ async def _build_environment(
         action_store=action_store,
         model_timeout_seconds=float(setup.get("model_timeout_seconds", 10.0)),
         audit_store=audit_store,
+        clock=lambda: HOSPITAL_CLOCK,
+        business_timezone="Asia/Shanghai",
     )
     patient_id = str(setup.get("patient_id", "patient-demo"))
     participant_id = f"participant-{case['id']}"
@@ -422,6 +429,9 @@ async def run_all(args: argparse.Namespace) -> dict[str, Any]:
         cases = cases[: args.limit]
     if not cases:
         raise SystemExit("no eval cases selected")
+    scoring_profile: Literal["strict", "semantic"] = (
+        "strict" if args.mode == "fake" else "semantic"
+    )
 
     live_settings = None
     provider = "fake"
@@ -457,6 +467,7 @@ async def run_all(args: argparse.Namespace) -> dict[str, Any]:
         concurrency=args.concurrency,
         max_agent_steps=args.max_agent_steps,
         max_output_tokens=args.max_output_tokens,
+        scoring_profile=scoring_profile,
         results=results,
     )
 
@@ -538,6 +549,7 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
     doctor_names = {str(item["name"]) for item in raw["doctors"]}
     doctor_titles = {str(item["title"]) for item in raw["doctors"]}
     location_names = {str(item["display_name"]) for item in raw["wayfinding"]["service_locations"]}
+    origin_names = {str(item["display_name"]) for item in raw["wayfinding"]["origins"]}
     errors: set[str] = set()
 
     def check(value: Any, parent_key: str = "") -> None:
@@ -557,9 +569,14 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
                     ) and child not in doctor_names
                     unknown_title = key == "doctorTitle" and child not in doctor_titles
                     unknown_location = (
-                        key in {"display_name", "displayName"}
+                        key in {"name", "display_name", "displayName"}
                         and parent_key == "destination"
                         and child not in location_names
+                    )
+                    unknown_origin = (
+                        key in {"name", "display_name", "displayName"}
+                        and parent_key == "origin"
+                        and child not in origin_names
                     )
                     if any(
                         (
@@ -568,6 +585,7 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
                             unknown_doctor,
                             unknown_title,
                             unknown_location,
+                            unknown_origin,
                         )
                     ):
                         errors.add(child)
@@ -580,33 +598,95 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
         check(part)
 
     generic_hospitals = {"这家医院", "服务医院", "医院", "当地医院", "线下医院"}
-    hospital_candidates = re.findall(
-        r"(?:名为|叫做?|医院是|位于|前往|在)([\u4e00-\u9fff]{2,10}医院)", text
-    )
-    hospital_candidates.extend(
-        re.findall(
-            r"(?:^|[，。！？\s])([\u4e00-\u9fff]{2,10}医院)(?=[，。！？\s]|有|的)",
-            text,
-        )
-    )
-    for candidate in hospital_candidates:
-        if candidate not in hospital_names and candidate not in generic_hospitals:
-            errors.add(candidate)
-    generic_doctors = {"专业", "相关", "值班", "接诊", "临床", "医院", "儿科"}
-    for candidate in re.findall(r"([\u4e00-\u9fff]{2,4})(?:医生|大夫)", text):
+    for match in re.finditer(
+        r"(?:名为|叫(?:做)?|医院是|前往|去|到|在)\s*([\u4e00-\u9fff]{2,10}医院)",
+        text,
+    ):
+        candidate = match.group(1)
         if (
-            not any(candidate.endswith(name) for name in doctor_names)
+            candidate not in hospital_names
+            and candidate not in generic_hospitals
+            and not _match_is_negated(text, match.start(1))
+        ):
+            errors.add(candidate)
+    generic_doctors = {"哪位", "一位", "这位", "相关", "值班", "接诊"}
+    for match in re.finditer(
+        r"(?:找|预约|选择)\s*([\u4e00-\u9fff]{2,4})(?:医生|大夫)", text
+    ):
+        candidate = match.group(1)
+        if (
+            candidate not in doctor_names
             and candidate not in generic_doctors
+            and not _match_is_negated(text, match.start(1))
         ):
             errors.add(f"{candidate}医生")
     generic_departments = {"哪个科", "某个科", "相关科", "具体科", "这个科", "该科"}
-    for candidate in re.findall(
-        r"(?:挂|去|到|有|推荐|选择)([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
+    for match in re.finditer(
+        r"(?:挂(?:号)?|选择|前往|去|到|设有|开设|设立)\s*([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
         text,
     ):
-        if candidate not in department_names and candidate not in generic_departments:
+        candidate = match.group(1)
+        if (
+            candidate not in department_names
+            and candidate not in generic_departments
+            and not _match_is_negated(text, match.start(1))
+        ):
             errors.add(candidate)
     return sorted(errors)
+
+
+def _match_is_negated(text: str, entity_start: int) -> bool:
+    prefix = text[max(0, entity_start - 10) : entity_start]
+    return any(
+        marker in prefix
+        for marker in ("没有", "未", "不", "无", "查不到", "不存在")
+    )
+
+
+def _named_department_mentions(text: str) -> list[str]:
+    raw = json.loads(
+        (REPO_ROOT / "capabilities" / "tools" / "fake-hospital.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    return sorted(
+        str(item["name"])
+        for item in raw["departments"]
+        if str(item["name"]) in text
+    )
+
+
+def _named_department_guidance(text: str) -> list[str]:
+    recommendations: set[str] = set()
+    affirmative_markers = (
+        "可能相关",
+        "可能会涉及",
+        "更合适",
+        "建议挂",
+        "推荐挂",
+        "推荐选择",
+        "可以挂",
+        "可挂",
+        "优先选择",
+        "考虑挂",
+    )
+    negative_markers = ("不能判断", "无法判断", "不能推荐", "无法推荐", "不建议", "不推荐")
+    contrast_markers = ("但是", "但", "不过", "然而")
+    for sentence in re.split(r"[。！？\n]", text):
+        names = _named_department_mentions(sentence)
+        if not names:
+            continue
+        has_guidance = any(marker in sentence for marker in affirmative_markers)
+        if not has_guidance:
+            continue
+        has_negative = any(marker in sentence for marker in negative_markers)
+        contrast_at = max((sentence.rfind(marker) for marker in contrast_markers), default=-1)
+        affirmative_after_contrast = contrast_at >= 0 and any(
+            marker in sentence[contrast_at:] for marker in affirmative_markers
+        )
+        if not has_negative or affirmative_after_contrast:
+            recommendations.update(names)
+    return sorted(recommendations)
 
 
 def _resolve(value: Any, placeholders: Mapping[str, str]) -> Any:

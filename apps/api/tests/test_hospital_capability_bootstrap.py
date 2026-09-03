@@ -51,6 +51,19 @@ def test_wayfinding_skill_has_only_the_three_read_contracts() -> None:
     assert "不得生成、拼接、反转或改写" in source.instructions
 
 
+def test_cancellation_skill_separates_request_from_proposal_confirmation() -> None:
+    source = next(
+        item
+        for item in load_hospital_skill_sources()
+        if item.slug == "hospital-appointment-cancellation"
+    )
+
+    assert "已经表达取消意图" in source.instructions
+    assert "立即调用 `hospital_cancel_appointment` 生成确认提案" in source.instructions
+    assert "不要先用文字再次询问" in source.instructions
+    assert "最终确认是独立的第二阶段" in source.instructions
+
+
 @pytest.mark.asyncio
 async def test_empty_registries_receive_published_enabled_development_defaults() -> None:
     provider = _provider()

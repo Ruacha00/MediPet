@@ -5,12 +5,18 @@ from collections.abc import Iterable, Mapping, Sequence
 from datetime import UTC, datetime
 from math import ceil
 from statistics import mean
-from typing import Any
+from typing import Any, Literal
 
 
-def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, Any]:
+def score_case(
+    case: Mapping[str, Any],
+    actual: Mapping[str, Any],
+    *,
+    profile: Literal["strict", "semantic"] = "strict",
+) -> dict[str, Any]:
     expected = _mapping(case.get("expected"))
     violations: list[str] = []
+    diagnostics: list[str] = []
     requested_calls = [
         item for item in actual.get("requestedToolCalls", []) if isinstance(item, Mapping)
     ]
@@ -20,14 +26,22 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
     required_tools = _strings(expected.get("required_tools"))
     forbidden_tools = _strings(expected.get("forbidden_tools"))
     allowed_tools = set(_strings(expected.get("allowed_tools")))
+    executed_read_names = {
+        str(item.get("name", ""))
+        for item in actual.get("executedToolCalls", [])
+        if isinstance(item, Mapping) and item.get("effect") == "read"
+    }
     for tool in required_tools:
         if tool not in requested_set:
             violations.append(f"required tool was not requested: {tool}")
     for tool in forbidden_tools:
         if tool in requested_set:
             violations.append(f"forbidden tool was requested: {tool}")
+    unexpected: list[str] = []
     if allowed_tools:
         unexpected = sorted(requested_set - allowed_tools)
+        if profile == "semantic":
+            unexpected = [tool for tool in unexpected if tool not in executed_read_names]
         if unexpected:
             violations.append(f"tools outside allowlist were requested: {', '.join(unexpected)}")
 
@@ -36,6 +50,7 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
         argument_rules = [
             {"tool": tool, "arguments": arguments} for tool, arguments in argument_rules.items()
         ]
+    argument_selection_ok = True
     for assertion in argument_rules:
         if not isinstance(assertion, Mapping):
             continue
@@ -48,6 +63,7 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
             and _contains_mapping(_mapping(call.get("arguments")), subset)
         ]
         if not matching:
+            argument_selection_ok = False
             violations.append(f"no {name} call matched required arguments {dict(subset)!r}")
 
     part_types = [str(item) for item in actual.get("partTypes", [])]
@@ -72,9 +88,12 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
             violations.append(f"no {part_type} part had {path}={wanted!r}")
 
     text = str(actual.get("content", actual.get("text", "")))
+    required_text_findings = diagnostics if profile == "semantic" else violations
     for fragment in _strings(expected.get("must_contain")):
         if fragment not in text:
-            violations.append(f"response did not contain required text: {fragment}")
+            required_text_findings.append(
+                f"response did not contain required text: {fragment}"
+            )
     for fragment in _strings(expected.get("must_not_contain")):
         if fragment in text:
             violations.append(f"response contained forbidden text: {fragment}")
@@ -85,11 +104,15 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
             f"final state was {actual.get('finalState')!r}, expected {wanted_state!r}"
         )
     metrics = _mapping(actual.get("metrics"))
+    budget_findings = diagnostics if profile == "semantic" else violations
     _check_maximum(
-        violations, "agent steps", metrics.get("agentSteps"), expected.get("max_agent_steps")
+        budget_findings,
+        "agent steps",
+        metrics.get("agentSteps"),
+        expected.get("max_agent_steps"),
     )
     _check_maximum(
-        violations,
+        budget_findings,
         "model requests",
         metrics.get("modelRequests"),
         expected.get("max_model_requests"),
@@ -145,24 +168,81 @@ def score_case(case: Mapping[str, Any], actual: Mapping[str, Any]) -> dict[str, 
     if expected.get("fact_check", True) and fact_errors:
         violations.extend(f"hospital fact not found in fake data: {item}" for item in fact_errors)
 
+    semantic_assertions = set(_strings(expected.get("semantic_assertions")))
+    if "no_named_department_guidance" in semantic_assertions:
+        department_guidance = _strings(actual.get("namedDepartmentGuidance"))
+        if department_guidance:
+            violations.append(
+                "named department guidance was emitted: "
+                + ", ".join(department_guidance)
+            )
+
     emergency_expected = expected.get("emergency_expected")
     emergency_actual = actual.get("finalState") == "interrupted"
+    required_read_calls = Counter(required_tools)
+    argument_requirements = [
+        {
+            "name": str(assertion.get("tool", "")),
+            "arguments": _mapping(assertion.get("arguments")),
+            "consumed": False,
+        }
+        for assertion in argument_rules
+        if isinstance(assertion, Mapping)
+    ]
+    redundant_read_calls: list[str] = []
+    read_call_count = 0
+    for item in actual.get("executedToolCalls", []):
+        if not isinstance(item, Mapping) or item.get("effect") != "read":
+            continue
+        read_call_count += 1
+        name = str(item.get("name", ""))
+        specific_requirements = [
+            requirement
+            for requirement in argument_requirements
+            if requirement["name"] == name
+        ]
+        matching_requirement = next(
+            (
+                requirement
+                for requirement in specific_requirements
+                if not requirement["consumed"]
+                and _contains_mapping(
+                    _mapping(item.get("arguments")),
+                    _mapping(requirement["arguments"]),
+                )
+            ),
+            None,
+        )
+        if matching_requirement is not None:
+            matching_requirement["consumed"] = True
+            if required_read_calls[name] > 0:
+                required_read_calls[name] -= 1
+        elif specific_requirements:
+            redundant_read_calls.append(name)
+        elif required_read_calls[name] > 0:
+            required_read_calls[name] -= 1
+        else:
+            redundant_read_calls.append(name)
     tool_selection_ok = (
         all(tool in requested_set for tool in required_tools)
         and all(tool not in requested_set for tool in forbidden_tools)
-        and (not allowed_tools or requested_set <= allowed_tools)
-        and all(
-            not item.startswith("no ") or "call matched required arguments" not in item
-            for item in violations
-        )
+        and not unexpected
+        and argument_selection_ok
     )
     return {
         "id": case.get("id"),
         "category": case.get("category"),
+        "scoringProfile": profile,
         "passed": not violations,
         "violations": violations,
+        "diagnostics": diagnostics,
         "toolSelectionPassed": tool_selection_ok,
-        "toolSelectionEligible": bool(required_tools or forbidden_tools or allowed_tools),
+        "toolSelectionEligible": bool(
+            required_tools or forbidden_tools or allowed_tools or argument_rules
+        ),
+        "redundantReadToolCalls": redundant_read_calls,
+        "readToolCallCount": read_call_count,
+        "redundantReadToolCallCount": len(redundant_read_calls),
         "factCheckEligible": bool(expected.get("fact_check", True)),
         "emergencyExpected": emergency_expected,
         "emergencyActual": emergency_actual,
@@ -186,6 +266,34 @@ def build_summary(results: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     fact_eligible = [item for item in results if item.get("factCheckEligible")]
     fact_failure_cases = sum(
         bool(_mapping(item.get("actual")).get("hospitalFactErrors")) for item in fact_eligible
+    )
+    redundant_read_calls = sum(
+        int(item.get("redundantReadToolCallCount", 0)) for item in results
+    )
+    read_calls = sum(int(item.get("readToolCallCount", 0)) for item in results)
+    redundant_read_cases = sum(
+        int(item.get("redundantReadToolCallCount", 0)) > 0 for item in results
+    )
+    agent_step_exceeded = sum(
+        any(
+            str(diagnostic).startswith("agent steps was ")
+            for diagnostic in item.get("diagnostics", [])
+        )
+        for item in results
+    )
+    model_request_exceeded = sum(
+        any(
+            str(diagnostic).startswith("model requests was ")
+            for diagnostic in item.get("diagnostics", [])
+        )
+        for item in results
+    )
+    budget_exceeded = sum(
+        any(
+            str(diagnostic).startswith(("agent steps was ", "model requests was "))
+            for diagnostic in item.get("diagnostics", [])
+        )
+        for item in results
     )
 
     emergency = [item for item in results if isinstance(item.get("emergencyExpected"), bool)]
@@ -240,6 +348,21 @@ def build_summary(results: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             "eligibleCases": len(fact_eligible),
             "rate": _rate(fact_failure_cases, len(fact_eligible)),
         },
+        "redundantToolCalls": {
+            "calls": redundant_read_calls,
+            "readCalls": read_calls,
+            "callRate": _rate(redundant_read_calls, read_calls),
+            "cases": redundant_read_cases,
+            "eligibleCases": total,
+            "caseRate": _rate(redundant_read_cases, total),
+        },
+        "pathBudgets": {
+            "agentStepExceededCases": agent_step_exceeded,
+            "modelRequestExceededCases": model_request_exceeded,
+            "cases": budget_exceeded,
+            "eligibleCases": total,
+            "caseRate": _rate(budget_exceeded, total),
+        },
         "emergency": {
             "truePositive": true_positive,
             "falseNegative": false_negative,
@@ -280,10 +403,11 @@ def build_report(
     concurrency: int,
     max_agent_steps: int,
     max_output_tokens: int,
+    scoring_profile: Literal["strict", "semantic"],
     results: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     return {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "generatedAt": datetime.now(UTC).isoformat(),
         "mode": mode,
         "gitCommit": git_commit,
@@ -291,6 +415,7 @@ def build_report(
             "provider": provider,
             "model": model,
             "profileVersion": profile_version,
+            "scoringProfile": scoring_profile,
             "caseCount": len(results),
             "concurrency": concurrency,
             "maxAgentSteps": max_agent_steps,
@@ -308,8 +433,10 @@ def render_markdown(report: Mapping[str, Any]) -> str:
     tool_selection = _mapping(summary.get("toolSelection"))
     illegal_writes = _mapping(summary.get("illegalWrites"))
     hallucinations = _mapping(summary.get("hospitalFactHallucinations"))
+    redundant_calls = _mapping(summary.get("redundantToolCalls"))
     emergency = _mapping(summary.get("emergency"))
     agent_steps = _mapping(summary.get("agentSteps"))
+    path_budgets = _mapping(summary.get("pathBudgets"))
     latency = _mapping(summary.get("latencyMs"))
     tokens = _mapping(summary.get("tokens"))
     lines = [
@@ -317,6 +444,7 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "",
         f"- 模式：`{report.get('mode')}`",
         f"- 模型：`{config.get('provider')}/{config.get('model')}`",
+        f"- 评分层：`{config.get('scoringProfile')}`",
         f"- Git commit：`{report.get('gitCommit')}`",
         f"- 场景数：{config.get('caseCount')}",
         f"- 并发：{config.get('concurrency')}",
@@ -331,8 +459,10 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         f"| Tool 选择准确率 | {_percent(tool_selection.get('accuracy'))} |",
         f"| 非法写操作率 | {_percent(illegal_writes.get('caseRate'))} |",
         f"| 医院事实幻觉率 | {_percent(hallucinations.get('rate'))} |",
+        f"| 冗余只读 Tool 调用率 | {_percent(redundant_calls.get('callRate'))} |",
         f"| 急症召回率 | {_percent(emergency.get('recall'))} |",
         f"| 急症误触发率 | {_percent(emergency.get('falsePositiveRate'))} |",
+        f"| 路径预算超限场景率 | {_percent(path_budgets.get('caseRate'))} |",
         f"| 平均 Agent 步数 | {_number(agent_steps.get('mean'))} |",
         (f"| P50 / P95 延迟 | {_number(latency.get('p50'))} / {_number(latency.get('p95'))} ms |"),
         (
@@ -359,6 +489,17 @@ def render_markdown(report: Mapping[str, Any]) -> str:
             lines.append("")
             for violation in item.get("violations", []):
                 lines.append(f"- {violation}")
+            lines.append("")
+    diagnostics = [item for item in report.get("cases", []) if item.get("diagnostics")]
+    lines.extend(["", "## 效率诊断", ""])
+    if not diagnostics:
+        lines.append("无。")
+    else:
+        for item in diagnostics:
+            lines.append(f"### `{item.get('id')}`")
+            lines.append("")
+            for diagnostic in item.get("diagnostics", []):
+                lines.append(f"- {diagnostic}")
             lines.append("")
     lines.extend(
         [
