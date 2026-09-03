@@ -481,6 +481,9 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "| 类别 | 通过 | 通过率 |",
         "| --- | ---: | ---: |",
     ]
+    scoring_commit = report.get("scoringGitCommit")
+    if scoring_commit:
+        lines.insert(7, f"- 重评分 commit：`{scoring_commit}`")
     for category, value in _mapping(summary.get("categories")).items():
         item = _mapping(value)
         passed = f"{item.get('passed')}/{item.get('total')}"

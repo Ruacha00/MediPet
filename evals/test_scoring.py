@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from scoring import build_summary, score_case  # pyright: ignore[reportMissingImports]
+from scoring import (  # pyright: ignore[reportMissingImports]
+    build_summary,
+    render_markdown,
+    score_case,
+)
 
 
 def test_wrong_tool_is_scored_as_failure() -> None:
@@ -317,3 +321,19 @@ def test_summary_reports_semantic_path_budget_diagnostics() -> None:
         "eligibleCases": 2,
         "caseRate": 0.5,
     }
+
+
+def test_markdown_discloses_a_distinct_rescoring_commit() -> None:
+    report = {
+        "mode": "live",
+        "gitCommit": "execution-sha",
+        "scoringGitCommit": "scoring-sha",
+        "config": {},
+        "summary": {},
+        "cases": [],
+    }
+
+    markdown = render_markdown(report)
+
+    assert "Git commit：`execution-sha`" in markdown
+    assert "重评分 commit：`scoring-sha`" in markdown

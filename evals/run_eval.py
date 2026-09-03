@@ -645,6 +645,9 @@ def _hospital_fact_errors(parts: Sequence[Mapping[str, Any]], text: str) -> list
         "具体",
         "想挂",
         "应该",
+        "医院",
+        "挂号",
+        "号",
     )
     for match in re.finditer(
         r"(?:挂(?:号)?|选择|前往|去|到|设有|开设|设立)\s*([\u4e00-\u9fff]{1,8}(?:医学科|内科|外科|科))",
