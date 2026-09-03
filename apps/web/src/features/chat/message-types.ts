@@ -55,9 +55,23 @@ export type ActionProposalData = {
   receiptId?: string;
 };
 
-export type HospitalRouteData = {
-  destination: string;
+export type HospitalWayfindingData = {
+  origin: { id: string; name: string };
+  destination: { id: string; name: string };
+  mode: "standard" | "accessible";
   steps: string[];
+  notice: string | null;
+  dataVersion: string;
+};
+
+export type HospitalWayfindingUnavailableData = {
+  reason:
+    | "selection_required"
+    | "origin_not_found"
+    | "destination_not_found"
+    | "accessible_unavailable"
+    | "unavailable";
+  message: string;
 };
 
 export type HandoffData = {
@@ -70,7 +84,8 @@ export type MediPetDataParts = {
   "agent-status": AgentStatusData;
   "slot-options": SlotOptionsData;
   "action-proposal": ActionProposalData;
-  "hospital-route": HospitalRouteData;
+  "hospital-wayfinding": HospitalWayfindingData;
+  "hospital-wayfinding-unavailable": HospitalWayfindingUnavailableData;
   handoff: HandoffData;
 };
 

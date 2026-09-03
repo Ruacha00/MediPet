@@ -11,8 +11,10 @@ from medipet.agent.capabilities import ToolContext
 from medipet.agent.runtime import AgentRequest, AgentRuntime
 from medipet.contracts import TurnCommand, TurnEvent
 from medipet.emergency import emergency_interruption_for
+from medipet.hospital.selection import resolve_wayfinding_selection
 from medipet.model.port import ModelMessage
 from medipet.persistence.conversation import (
+    StoredMessage,
     TerminalMessageState,
     VisitConversationStore,
     VisitMatterArchivedError,
@@ -26,6 +28,7 @@ from medipet.run_metrics import (
     RunMetricStore,
     TerminalOutcome,
 )
+from medipet.triage import manual_triage_guidance_for
 
 LOGGER = logging.getLogger(__name__)
 
@@ -252,6 +255,20 @@ class MediPetAssistant:
                 yield TurnEvent(kind="completed", data={"traceId": trace_id})
                 return
 
+            manual_triage_guidance = manual_triage_guidance_for(command.message)
+            if manual_triage_guidance is not None:
+                await self._conversation_store.mark_assistant_streaming(
+                    assistant_message.id
+                )
+                await self._conversation_store.append_assistant_text(
+                    assistant_message.id,
+                    manual_triage_guidance,
+                )
+                await finalize("completed")
+                yield TurnEvent(kind="text", data={"text": manual_triage_guidance})
+                yield TurnEvent(kind="completed", data={"traceId": trace_id})
+                return
+
             completed_history = await self._conversation_store.list_completed_messages(
                 command.visit_matter_id,
                 limit=self._context_message_limit,
@@ -280,6 +297,9 @@ class MediPetAssistant:
                     visit_stage=visit_context.visit_stage,
                     patient_id=visit_context.patient_id,
                     patient_display_name=visit_context.patient_display_name,
+                    participant_tool_selection=resolve_wayfinding_selection(
+                        _unresolved_wayfinding_messages(completed_history)
+                    ),
                 ),
                 trace_id=trace_id,
                 metrics=metrics,
@@ -329,6 +349,30 @@ def _selected_slot_message(content: str, slot_id: str) -> str:
         f"{content}\n\n"
         "[本轮界面已选择号源；准确的 slot_id 为 "
         f"{slot_id}。这只代表参与者的选择，仍须通过医院 Tool 生成权威确认。]"
+    )
+
+
+def _unresolved_wayfinding_messages(
+    messages: list[StoredMessage],
+) -> tuple[str, ...]:
+    start = 0
+    for index, message in enumerate(messages):
+        if message.role != "assistant":
+            continue
+        for part in message.parts:
+            part_type = part.get("type")
+            if part_type == "data-hospital-wayfinding":
+                start = index + 1
+                break
+            if part_type == "data-hospital-wayfinding-unavailable":
+                data = part.get("data")
+                if isinstance(data, dict) and data.get("reason") != "selection_required":
+                    start = index + 1
+                    break
+    return tuple(
+        message.content
+        for message in messages[start:]
+        if message.role == "participant"
     )
 
 

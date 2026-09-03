@@ -107,6 +107,85 @@ async def test_zero_capability_runtime_streams_text_and_completes() -> None:
 
 
 @pytest.mark.asyncio
+async def test_runtime_resolves_relative_dates_in_the_model_context() -> None:
+    model = ScriptedModel([[ModelChunk(text="请选择号源。")]])
+    runtime = LangGraphAgentRuntime(
+        model,
+        clock=lambda: datetime(2026, 8, 30, 8, tzinfo=UTC),
+        business_timezone="Asia/Shanghai",
+    )
+    request = AgentRequest(
+        messages=(ModelMessage(role="user", content="帮我查明天下午儿科号源。"),)
+    )
+
+    events = [event async for event in runtime.run(request)]
+
+    assert [event.kind for event in events] == ["status", "text"]
+    system_message, user_message = model.requests[0].messages
+    assert system_message.role == "system"
+    assert "当前业务日期：2026-08-30" in system_message.content
+    assert "服务医院业务时区：Asia/Shanghai" in system_message.content
+    assert "明天=2026-08-31" in user_message.content
+    assert "start_date` 和 `end_date`" in system_message.content
+    assert "都传入 2026-08-31" in system_message.content
+
+
+@pytest.mark.asyncio
+async def test_runtime_preserves_relative_date_range_semantics() -> None:
+    model = ScriptedModel([[ModelChunk(text="请选择号源。")]])
+    runtime = LangGraphAgentRuntime(
+        model,
+        clock=lambda: datetime(2026, 8, 30, 8, tzinfo=UTC),
+    )
+    request = AgentRequest(messages=(ModelMessage(role="user", content="查明天到后天的号源。"),))
+
+    _ = [event async for event in runtime.run(request)]
+
+    system_message, user_message = model.requests[0].messages
+    assert "仅指定“明天”单日" in system_message.content
+    assert "明天=2026-08-31" in user_message.content
+    assert "后天=2026-09-01" not in user_message.content
+
+
+@pytest.mark.asyncio
+async def test_runtime_does_not_parse_day_after_substrings_as_dates() -> None:
+    model = ScriptedModel([[ModelChunk(text="已记录。")]])
+    runtime = LangGraphAgentRuntime(
+        model,
+        clock=lambda: datetime(2026, 8, 30, 8, tzinfo=UTC),
+    )
+    request = AgentRequest(
+        messages=(
+            ModelMessage(
+                role="user",
+                content="大后天复诊，但担心后天性疾病。",
+            ),
+        )
+    )
+
+    _ = [event async for event in runtime.run(request)]
+
+    _, user_message = model.requests[0].messages
+    assert "服务医院业务日期解析" not in user_message.content
+
+
+@pytest.mark.asyncio
+async def test_runtime_uses_shanghai_date_across_the_utc_day_boundary() -> None:
+    model = ScriptedModel([[ModelChunk(text="请选择号源。")]])
+    runtime = LangGraphAgentRuntime(
+        model,
+        clock=lambda: datetime(2026, 8, 30, 16, 30, tzinfo=UTC),
+    )
+    request = AgentRequest(messages=(ModelMessage(role="user", content="帮我查明天号源。"),))
+
+    _ = [event async for event in runtime.run(request)]
+
+    system_message, user_message = model.requests[0].messages
+    assert "当前业务日期：2026-08-31" in system_message.content
+    assert "明天=2026-09-01" in user_message.content
+
+
+@pytest.mark.asyncio
 async def test_test_only_read_tool_returns_observation_to_the_model() -> None:
     executions: list[tuple[dict[str, object], ToolContext]] = []
 

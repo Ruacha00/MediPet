@@ -9,6 +9,7 @@ from typing import Any
 import pytest
 
 from medipet.hospital import (
+    AccessibleWayfindingUnavailableError,
     ActionReceipt,
     Appointment,
     AppointmentNotCancellableError,
@@ -19,6 +20,7 @@ from medipet.hospital import (
     FakeHospitalOperations,
     GetAppointmentQuery,
     GetHospitalQuery,
+    GetWayfindingGuidanceQuery,
     Hospital,
     HospitalDataError,
     HospitalNotFoundError,
@@ -28,8 +30,13 @@ from medipet.hospital import (
     ListAppointmentsQuery,
     ListDepartmentsQuery,
     ListDoctorsQuery,
+    ListServiceLocationsQuery,
+    ListWayfindingOriginsQuery,
     SearchSlotsQuery,
+    ServiceLocationNotFoundError,
     SlotUnavailableError,
+    WayfindingOriginNotFoundError,
+    WayfindingUnavailableError,
 )
 
 SHANGHAI = timezone(timedelta(hours=8), name="Asia/Shanghai")
@@ -96,6 +103,70 @@ async def test_default_fake_hospital_catalog_is_queryable() -> None:
     assert all(slot.starts_at.tzname() == "Asia/Shanghai" for slot in slots)
     assert all(slot.starts_at.utcoffset() == timedelta(hours=8) for slot in slots)
     assert all(slot.fee_cents > 0 and slot.currency == "CNY" for slot in slots)
+
+
+@pytest.mark.asyncio
+async def test_default_fake_hospital_wayfinding_is_exact_and_authoritative() -> None:
+    operations = FakeHospitalOperations(
+        FakeHospitalDataSource.load_default(),
+        clock=fixed_clock,
+    )
+
+    origins = await operations.query(ListWayfindingOriginsQuery())
+    locations = await operations.query(ListServiceLocationsQuery())
+    guidance = await operations.query(
+        GetWayfindingGuidanceQuery(
+            origin_id="origin-main-entrance",
+            destination_id="location-pediatrics",
+            mode="accessible",
+        )
+    )
+
+    assert [(item.origin_id, item.display_name) for item in origins] == [
+        ("origin-main-entrance", "门诊楼一层主入口"),
+        ("origin-outpatient-lobby", "门诊大厅服务台"),
+    ]
+    assert ("location-pediatrics", "儿科门诊") in [
+        (item.location_id, item.display_name) for item in locations
+    ]
+    assert guidance.origin == origins[0]
+    assert guidance.destination.display_name == "儿科门诊"
+    assert guidance.mode == "accessible"
+    assert guidance.steps == (
+        "从主入口进入门诊大厅，沿右侧无障碍通道前行至电梯厅。",
+        "乘电梯到二层，出电梯后按儿科门诊指示牌左转。",
+        "沿走廊前行至儿科门诊报到台。",
+    )
+    assert guidance.data_version == "minghe-wayfinding-2026-09-01"
+
+
+@pytest.mark.asyncio
+async def test_wayfinding_rejects_unknown_ids_and_missing_exact_modes() -> None:
+    operations = FakeHospitalOperations(
+        FakeHospitalDataSource.load_default(),
+        clock=fixed_clock,
+    )
+
+    with pytest.raises(WayfindingOriginNotFoundError):
+        await operations.query(
+            GetWayfindingGuidanceQuery("origin-unknown", "location-pediatrics")
+        )
+    with pytest.raises(ServiceLocationNotFoundError):
+        await operations.query(
+            GetWayfindingGuidanceQuery("origin-main-entrance", "location-unknown")
+        )
+    with pytest.raises(AccessibleWayfindingUnavailableError):
+        await operations.query(
+            GetWayfindingGuidanceQuery(
+                "origin-outpatient-lobby", "location-laboratory", "accessible"
+            )
+        )
+    with pytest.raises(WayfindingUnavailableError):
+        await operations.query(
+            GetWayfindingGuidanceQuery(
+                "origin-outpatient-lobby", "location-pediatrics", "standard"
+            )
+        )
 
 
 @pytest.mark.asyncio

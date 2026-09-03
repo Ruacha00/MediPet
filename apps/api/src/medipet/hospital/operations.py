@@ -37,6 +37,22 @@ class HospitalUnavailableError(HospitalOperationsError):
     """The hospital operation failed before producing a result."""
 
 
+class WayfindingOriginNotFoundError(HospitalOperationsError):
+    """A named common origin does not exist."""
+
+
+class ServiceLocationNotFoundError(HospitalOperationsError):
+    """A named in-hospital service location does not exist."""
+
+
+class WayfindingUnavailableError(HospitalOperationsError):
+    """The exact origin, destination, and mode combination is unavailable."""
+
+
+class AccessibleWayfindingUnavailableError(WayfindingUnavailableError):
+    """The exact combination has no hospital-authored accessible guidance."""
+
+
 @dataclass(frozen=True)
 class Hospital:
     hospital_id: str
@@ -85,6 +101,31 @@ class Appointment:
 
 
 @dataclass(frozen=True)
+class WayfindingOrigin:
+    origin_id: str
+    display_name: str
+    aliases: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class HospitalServiceLocation:
+    location_id: str
+    display_name: str
+    category: Literal["department", "service"]
+    aliases: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class HospitalWayfindingGuidance:
+    origin: WayfindingOrigin
+    destination: HospitalServiceLocation
+    mode: Literal["standard", "accessible"]
+    steps: tuple[str, ...]
+    data_version: str
+    notice: str | None = None
+
+
+@dataclass(frozen=True)
 class GetHospitalQuery:
     pass
 
@@ -118,6 +159,23 @@ class ListAppointmentsQuery:
     patient_id: str
 
 
+@dataclass(frozen=True)
+class ListWayfindingOriginsQuery:
+    pass
+
+
+@dataclass(frozen=True)
+class ListServiceLocationsQuery:
+    pass
+
+
+@dataclass(frozen=True)
+class GetWayfindingGuidanceQuery:
+    origin_id: str
+    destination_id: str
+    mode: Literal["standard", "accessible"] = "standard"
+
+
 type HospitalQuery = (
     GetHospitalQuery
     | ListDepartmentsQuery
@@ -125,6 +183,9 @@ type HospitalQuery = (
     | SearchSlotsQuery
     | GetAppointmentQuery
     | ListAppointmentsQuery
+    | ListWayfindingOriginsQuery
+    | ListServiceLocationsQuery
+    | GetWayfindingGuidanceQuery
 )
 type HospitalQueryResult = (
     Hospital
@@ -133,6 +194,9 @@ type HospitalQueryResult = (
     | tuple[AppointmentSlot, ...]
     | Appointment
     | tuple[Appointment, ...]
+    | tuple[WayfindingOrigin, ...]
+    | tuple[HospitalServiceLocation, ...]
+    | HospitalWayfindingGuidance
 )
 
 
@@ -178,6 +242,21 @@ class HospitalOperations(Protocol):
 
     @overload
     async def query(self, query: ListAppointmentsQuery) -> tuple[Appointment, ...]: ...
+
+    @overload
+    async def query(
+        self, query: ListWayfindingOriginsQuery
+    ) -> tuple[WayfindingOrigin, ...]: ...
+
+    @overload
+    async def query(
+        self, query: ListServiceLocationsQuery
+    ) -> tuple[HospitalServiceLocation, ...]: ...
+
+    @overload
+    async def query(
+        self, query: GetWayfindingGuidanceQuery
+    ) -> HospitalWayfindingGuidance: ...
 
     async def query(self, query: HospitalQuery) -> HospitalQueryResult: ...
 

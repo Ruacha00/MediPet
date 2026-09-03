@@ -88,6 +88,107 @@ describe("MessagePartView", () => {
       "https://example.com/help",
     );
   });
+
+  it("renders authoritative text wayfinding without exposing a map model", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "data-hospital-wayfinding",
+          data: {
+            origin: { id: "origin-main-entrance", name: "门诊楼一层主入口" },
+            destination: { id: "location-pediatrics", name: "儿科门诊" },
+            mode: "accessible",
+            steps: [
+              "沿右侧无障碍通道前行至电梯厅。",
+              "乘电梯到二层后按儿科门诊指示牌左转。",
+            ],
+            notice: "如需协助，请询问大厅服务台。",
+            dataVersion: "minghe-wayfinding-2026-09-01",
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+      />,
+    );
+
+    const card = screen.getByRole("region", { name: "院内方位指引" });
+    expect(within(card).getByText("门诊楼一层主入口")).toBeVisible();
+    expect(within(card).getByText("儿科门诊")).toBeVisible();
+    expect(within(card).getByText("无障碍指引")).toBeVisible();
+    expect(within(card).getByRole("list")).toHaveAttribute("role", "list");
+    expect(within(card).getAllByRole("listitem")).toHaveLength(2);
+    expect(within(card).getByText(/如需协助，请询问大厅服务台。/)).toBeVisible();
+    expect(within(card).queryByText("origin-main-entrance")).not.toBeInTheDocument();
+    expect(within(card).queryByText("minghe-wayfinding-2026-09-01")).not.toBeInTheDocument();
+  });
+
+  it("renders repeated authoritative steps without duplicate React keys", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    render(
+      <MessagePartView
+        part={{
+          type: "data-hospital-wayfinding",
+          data: {
+            origin: { id: "origin-1", name: "门诊入口" },
+            destination: { id: "location-1", name: "收费处" },
+            mode: "standard",
+            steps: ["继续直行。", "继续直行。"],
+            notice: null,
+            dataVersion: "v1",
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+      />,
+    );
+
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+    expect(consoleError.mock.calls.flat().join(" ")).not.toContain("same key");
+    consoleError.mockRestore();
+  });
+
+  it("renders a truthful application-owned unavailable result", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "data-hospital-wayfinding-unavailable",
+          data: {
+            reason: "accessible_unavailable",
+            message: "该起点和目的地没有无障碍方位指引，请询问院内工作人员。",
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("region", { name: "院内方位指引不可用" })).toHaveTextContent(
+      "该起点和目的地没有无障碍方位指引，请询问院内工作人员。",
+    );
+    expect(screen.getByRole("heading", { name: /暂无可用方位指引/ })).toBeInTheDocument();
+  });
+
+  it("asks for confirmation only when the structured selection is missing", () => {
+    render(
+      <MessagePartView
+        part={{
+          type: "data-hospital-wayfinding-unavailable",
+          data: {
+            reason: "selection_required",
+            message: "请明确说明当前起点、目的地以及普通或无障碍模式。",
+          },
+        }}
+        decisionState={null}
+        onDecision={vi.fn()}
+        onSelectSlot={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: /需要确认方位信息/ })).toBeInTheDocument();
+  });
 });
 
 describe("ActionProposalCard", () => {

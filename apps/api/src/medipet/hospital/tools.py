@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
+from typing import Literal, cast
 
 from medipet.agent.capabilities import (
     ToolConfirmationContract,
@@ -10,6 +11,7 @@ from medipet.agent.capabilities import (
     ToolPresenter,
 )
 from medipet.hospital.operations import (
+    AccessibleWayfindingUnavailableError,
     Appointment,
     AppointmentNotCancellableError,
     AppointmentSlot,
@@ -19,15 +21,24 @@ from medipet.hospital.operations import (
     Doctor,
     GetAppointmentQuery,
     GetHospitalQuery,
+    GetWayfindingGuidanceQuery,
     Hospital,
     HospitalNotFoundError,
     HospitalOperations,
     HospitalOperationsError,
+    HospitalServiceLocation,
+    HospitalWayfindingGuidance,
     InvalidHospitalRequestError,
     ListAppointmentsQuery,
     ListDepartmentsQuery,
     ListDoctorsQuery,
+    ListServiceLocationsQuery,
+    ListWayfindingOriginsQuery,
     SearchSlotsQuery,
+    ServiceLocationNotFoundError,
+    WayfindingOrigin,
+    WayfindingOriginNotFoundError,
+    WayfindingUnavailableError,
 )
 from medipet.hospital.tool_manifest import load_hospital_tool_specs
 from medipet.tools.registry import ToolRegistryError, TrustedTool
@@ -155,6 +166,71 @@ class HospitalToolProvider:
                 "appointments": [_appointment_data(item) for item in appointments]
             }
 
+        async def list_wayfinding_origins(
+            arguments: dict[str, object], context: ToolContext
+        ) -> dict[str, object]:
+            del arguments, context
+            origins = await self._operations.query(ListWayfindingOriginsQuery())
+            return {"origins": [_wayfinding_origin_data(item) for item in origins]}
+
+        async def list_service_locations(
+            arguments: dict[str, object], context: ToolContext
+        ) -> dict[str, object]:
+            del arguments, context
+            locations = await self._operations.query(ListServiceLocationsQuery())
+            return {"locations": [_service_location_data(item) for item in locations]}
+
+        async def get_wayfinding_guidance(
+            arguments: dict[str, object], context: ToolContext
+        ) -> dict[str, object]:
+            origin_id = _required_text(arguments, "origin_id")
+            destination_id = _required_text(arguments, "destination_id")
+            mode = _wayfinding_mode(arguments)
+            if not _participant_selected_wayfinding(
+                origin_id, destination_id, mode, context
+            ):
+                return _wayfinding_unavailable(
+                    "selection_required",
+                    "请明确说明当前起点、目的地以及普通或无障碍模式。",
+                )
+            try:
+                guidance = await self._operations.query(
+                    GetWayfindingGuidanceQuery(
+                        origin_id=origin_id,
+                        destination_id=destination_id,
+                        mode=mode,
+                    )
+                )
+            except WayfindingOriginNotFoundError:
+                return _wayfinding_unavailable(
+                    "origin_not_found", "未找到这个院内方位指引起点。"
+                )
+            except ServiceLocationNotFoundError:
+                return _wayfinding_unavailable(
+                    "destination_not_found", "未找到这个院内服务地点。"
+                )
+            except AccessibleWayfindingUnavailableError:
+                return _wayfinding_unavailable(
+                    "accessible_unavailable",
+                    "该起点和目的地没有无障碍方位指引，请询问院内工作人员。",
+                )
+            except WayfindingUnavailableError:
+                return _wayfinding_unavailable(
+                    "unavailable",
+                    "该起点和目的地没有可用方位指引，请询问院内工作人员。",
+                )
+            return {
+                "guidance": _wayfinding_guidance_data(guidance),
+                "unavailable": None,
+            }
+
+        async def present_wayfinding(
+            observation: dict[str, object], context: ToolContext
+        ) -> tuple[dict[str, object], ...]:
+            del context
+            part = _wayfinding_part(observation)
+            return () if part is None else (part,)
+
         async def prepare_create_appointment(
             arguments: dict[str, object], context: ToolContext
         ) -> dict[str, object]:
@@ -231,11 +307,15 @@ class HospitalToolProvider:
             "hospital.search_slots": search_slots,
             "hospital.get_appointment": get_appointment,
             "hospital.list_appointments": list_appointments,
+            "hospital.list_wayfinding_origins": list_wayfinding_origins,
+            "hospital.list_service_locations": list_service_locations,
+            "hospital.get_wayfinding_guidance": get_wayfinding_guidance,
             "hospital.create_appointment": create_appointment,
             "hospital.cancel_appointment": cancel_appointment,
         }
         presenters: dict[str, ToolPresenter] = {
             "hospital.search_slots": present_slots,
+            "hospital.get_wayfinding_guidance": present_wayfinding,
         }
         manifest_ids = {spec.tool_id for spec in specs}
         if manifest_ids != executors.keys() or len(manifest_ids) != len(specs):
@@ -430,6 +510,105 @@ def _appointment_data(appointment: Appointment) -> dict[str, object]:
         "currency": appointment.currency,
         "status": appointment.status,
     }
+
+
+def _wayfinding_origin_data(origin: WayfindingOrigin) -> dict[str, object]:
+    return {"origin_id": origin.origin_id, "display_name": origin.display_name}
+
+
+def _service_location_data(location: HospitalServiceLocation) -> dict[str, object]:
+    return {
+        "location_id": location.location_id,
+        "display_name": location.display_name,
+        "category": location.category,
+    }
+
+
+def _wayfinding_guidance_data(
+    guidance: HospitalWayfindingGuidance,
+) -> dict[str, object]:
+    return {
+        "origin": _wayfinding_origin_data(guidance.origin),
+        "destination": _service_location_data(guidance.destination),
+        "mode": guidance.mode,
+        "steps": list(guidance.steps),
+        "notice": guidance.notice,
+        "data_version": guidance.data_version,
+    }
+
+
+def _wayfinding_part(observation: dict[str, object]) -> dict[str, object] | None:
+    unavailable = observation.get("unavailable")
+    if isinstance(unavailable, dict):
+        return {
+            "type": "data-hospital-wayfinding-unavailable",
+            "data": {
+                "reason": unavailable.get("reason"),
+                "message": unavailable.get("message"),
+            },
+        }
+    guidance = observation.get("guidance")
+    if not isinstance(guidance, dict):
+        return None
+    origin = guidance.get("origin")
+    destination = guidance.get("destination")
+    steps = guidance.get("steps")
+    mode = guidance.get("mode")
+    data_version = guidance.get("data_version")
+    if (
+        not isinstance(origin, dict)
+        or not isinstance(destination, dict)
+        or not isinstance(steps, list)
+        or mode not in {"standard", "accessible"}
+        or not isinstance(data_version, str)
+    ):
+        return None
+    return {
+        "type": "data-hospital-wayfinding",
+        "data": {
+            "origin": {"id": origin.get("origin_id"), "name": origin.get("display_name")},
+            "destination": {
+                "id": destination.get("location_id"),
+                "name": destination.get("display_name"),
+            },
+            "mode": mode,
+            "steps": steps,
+            "notice": guidance.get("notice"),
+            "dataVersion": data_version,
+        },
+    }
+
+
+def _wayfinding_unavailable(reason: str, message: str) -> dict[str, object]:
+    return {
+        "guidance": None,
+        "unavailable": {"reason": reason, "message": message},
+    }
+
+
+def _participant_selected_wayfinding(
+    origin_id: str,
+    destination_id: str,
+    mode: Literal["standard", "accessible"],
+    context: ToolContext,
+) -> bool:
+    selection = context.participant_tool_selection
+    return selection is not None and selection.tool_name == (
+        "hospital_get_wayfinding_guidance"
+    ) and dict(selection.arguments) == {
+        "origin_id": origin_id,
+        "destination_id": destination_id,
+        "mode": mode,
+    }
+
+
+def _wayfinding_mode(
+    arguments: dict[str, object],
+) -> Literal["standard", "accessible"]:
+    value = _required_text(arguments, "mode")
+    if value not in {"standard", "accessible"}:
+        raise InvalidHospitalRequestError("mode 必须是 standard 或 accessible")
+    return cast(Literal["standard", "accessible"], value)
 
 
 def _optional_text(arguments: dict[str, object], name: str) -> str | None:

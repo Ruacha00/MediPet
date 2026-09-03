@@ -108,7 +108,29 @@ def main() -> None:
                             'id': 'message-restored-assistant',
                             'role': 'assistant',
                             'state': 'completed',
-                            'parts': [{'type': 'text', 'text': markdown_answer}],
+                            'parts': [
+                                {'type': 'text', 'text': markdown_answer},
+                                {
+                                    'type': 'data-hospital-wayfinding',
+                                    'data': {
+                                        'origin': {
+                                            'id': 'origin-main-entrance',
+                                            'name': '门诊楼一层主入口',
+                                        },
+                                        'destination': {
+                                            'id': 'location-pediatrics',
+                                            'name': '儿科门诊',
+                                        },
+                                        'mode': 'accessible',
+                                        'steps': [
+                                            '沿右侧无障碍通道前行至电梯厅。',
+                                            '乘电梯到二层后按儿科门诊指示牌左转。',
+                                        ],
+                                        'notice': '如需协助，请询问大厅服务台。',
+                                        'dataVersion': 'minghe-wayfinding-2026-09-01',
+                                    },
+                                },
+                            ],
                             'created_at': '2030-01-01T00:00:01Z',
                             'updated_at': '2030-01-01T00:00:01Z',
                         },
@@ -306,6 +328,13 @@ def main() -> None:
         page.get_by_role('button', name='演示患者 · 初次咨询 诊前准备').click()
         page.get_by_text('请整理就诊准备', exact=True).wait_for()
         page.get_by_role('heading', name='就诊准备', level=2).wait_for()
+        wayfinding_card = page.get_by_role('region', name='院内方位指引')
+        wayfinding_card.wait_for()
+        wayfinding_card.get_by_text('门诊楼一层主入口', exact=True).wait_for()
+        wayfinding_card.get_by_text('儿科门诊', exact=True).wait_for()
+        wayfinding_card.get_by_text('无障碍指引', exact=True).wait_for()
+        assert wayfinding_card.get_by_role('listitem').count() == 2
+        assert 'origin-main-entrance' not in wayfinding_card.inner_text()
         active_visit_matter_ids[:] = ['visit-matter-demo', 'visit-matter-new']
 
         composer.fill('再次发送')
@@ -336,6 +365,7 @@ def main() -> None:
         assert not browser_errors, browser_errors
 
         page.set_viewport_size({'width': 390, 'height': 844})
+        page.get_by_role('region', name='院内方位指引').wait_for()
         page.get_by_role('combobox', name='切换就诊事项').wait_for()
         page.get_by_role('button', name='在移动端新建就诊事项').wait_for()
         page.get_by_role('button', name='移动端查看已归档').wait_for()

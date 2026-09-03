@@ -8,6 +8,7 @@ from typing import Literal, overload
 
 from medipet.hospital.data_source import FakeHospitalDataSource, hospital_timezone
 from medipet.hospital.operations import (
+    AccessibleWayfindingUnavailableError,
     ActionReceipt,
     Appointment,
     AppointmentNotCancellableError,
@@ -19,18 +20,27 @@ from medipet.hospital.operations import (
     Doctor,
     GetAppointmentQuery,
     GetHospitalQuery,
+    GetWayfindingGuidanceQuery,
     Hospital,
     HospitalNotFoundError,
     HospitalQuery,
     HospitalQueryResult,
+    HospitalServiceLocation,
     HospitalUnavailableError,
+    HospitalWayfindingGuidance,
     IdempotencyConflictError,
     InvalidHospitalRequestError,
     ListAppointmentsQuery,
     ListDepartmentsQuery,
     ListDoctorsQuery,
+    ListServiceLocationsQuery,
+    ListWayfindingOriginsQuery,
     SearchSlotsQuery,
+    ServiceLocationNotFoundError,
     SlotUnavailableError,
+    WayfindingOrigin,
+    WayfindingOriginNotFoundError,
+    WayfindingUnavailableError,
 )
 
 
@@ -107,6 +117,21 @@ class FakeHospitalOperations:
     @overload
     async def query(self, query: ListAppointmentsQuery) -> tuple[Appointment, ...]: ...
 
+    @overload
+    async def query(
+        self, query: ListWayfindingOriginsQuery
+    ) -> tuple[WayfindingOrigin, ...]: ...
+
+    @overload
+    async def query(
+        self, query: ListServiceLocationsQuery
+    ) -> tuple[HospitalServiceLocation, ...]: ...
+
+    @overload
+    async def query(
+        self, query: GetWayfindingGuidanceQuery
+    ) -> HospitalWayfindingGuidance: ...
+
     async def query(self, query: HospitalQuery) -> HospitalQueryResult:
         if isinstance(query, (GetAppointmentQuery, ListAppointmentsQuery)) and not (
             query.patient_id.strip()
@@ -119,6 +144,15 @@ class FakeHospitalOperations:
             and query.start_date > query.end_date
         ):
             raise InvalidHospitalRequestError("号源查询日期范围无效")
+        if isinstance(query, GetWayfindingGuidanceQuery) and (
+            not query.origin_id.strip() or not query.destination_id.strip()
+        ):
+            raise InvalidHospitalRequestError("方位指引起点和目的地不能为空")
+        if isinstance(query, GetWayfindingGuidanceQuery) and query.mode not in {
+            "standard",
+            "accessible",
+        }:
+            raise InvalidHospitalRequestError("方位指引模式无效")
         async with self._lock:
             self._consume_failure("query")
             if isinstance(query, GetHospitalQuery):
@@ -154,6 +188,38 @@ class FakeHospitalOperations:
                     for appointment in self._appointments.values()
                     if appointment.patient_id == query.patient_id
                 )
+            if isinstance(query, ListWayfindingOriginsQuery):
+                return self._source.wayfinding_origins
+            if isinstance(query, ListServiceLocationsQuery):
+                return self._source.service_locations
+            if isinstance(query, GetWayfindingGuidanceQuery):
+                origins = {
+                    item.origin_id: item for item in self._source.wayfinding_origins
+                }
+                if query.origin_id not in origins:
+                    raise WayfindingOriginNotFoundError("方位指引起点不存在")
+                locations = {
+                    item.location_id: item for item in self._source.service_locations
+                }
+                if query.destination_id not in locations:
+                    raise ServiceLocationNotFoundError("院内服务地点不存在")
+                guidance = next(
+                    (
+                        item
+                        for item in self._source.wayfinding_guidance
+                        if item.origin.origin_id == query.origin_id
+                        and item.destination.location_id == query.destination_id
+                        and item.mode == query.mode
+                    ),
+                    None,
+                )
+                if guidance is not None:
+                    return guidance
+                if query.mode == "accessible":
+                    raise AccessibleWayfindingUnavailableError(
+                        "该起点和目的地没有无障碍方位指引"
+                    )
+                raise WayfindingUnavailableError("该起点和目的地没有方位指引")
             raise TypeError(f"不支持的医院查询: {type(query).__name__}")
 
     async def commit(self, action: ConfirmedHospitalAction) -> ActionReceipt:

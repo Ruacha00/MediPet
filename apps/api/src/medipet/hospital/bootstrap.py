@@ -73,12 +73,15 @@ async def bootstrap_development_hospital_skill(
     sources = load_hospital_skill_sources() if skill_sources is None else skill_sources
     tools = await tool_provider.tools()
     tools_by_id = {tool.tool_id: tool for tool in tools}
-    provision_defaults = (
-        not await skill_registry.list_skills() and not await tool_registry.list_tools()
-    )
+    listed_skills = await skill_registry.list_skills()
+    listed_tools = await tool_registry.list_tools()
+    existing_skill_slugs = {cast(str, item["slug"]) for item in listed_skills}
+    existing_tool_ids = {cast(str, item["tool_id"]) for item in listed_tools}
+    provision_defaults = not listed_skills and not listed_tools
+    new_tool_ids = tools_by_id.keys() - existing_tool_ids
     await tool_registry.synchronize(tools, actor="development-bootstrap")
-    if provision_defaults:
-        for tool in tools:
+    for tool in tools:
+        if provision_defaults or tool.tool_id in new_tool_ids:
             await tool_registry.configure(
                 tool.tool_id,
                 tool.version,
@@ -110,7 +113,14 @@ async def bootstrap_development_hospital_skill(
                 skill_registry,
                 tool_registry,
                 tools_by_id,
-                provision_defaults=provision_defaults,
+                publish_default=(
+                    provision_defaults
+                    or (
+                        source.slug not in existing_skill_slugs
+                        and bool(source.tool_bindings)
+                        and set(source.tool_bindings) <= new_tool_ids
+                    )
+                ),
             )
         )
     return tuple(results)
@@ -123,7 +133,7 @@ async def _bootstrap_hospital_skill_source(
     tool_registry: ToolRegistry,
     tools_by_id: dict[str, TrustedTool],
     *,
-    provision_defaults: bool,
+    publish_default: bool,
 ) -> SkillVersion | dict[str, object]:
     listed = await skill_registry.list_skills()
     existing = next((item for item in listed if item["slug"] == source.slug), None)
@@ -187,7 +197,7 @@ async def _bootstrap_hospital_skill_source(
             tool.version,
             actor="development-bootstrap",
         )
-    if not provision_defaults or status in {"published", "retired"}:
+    if not publish_default or status in {"published", "retired"}:
         return selected
     if status == "draft":
         selected = await skill_registry.transition(

@@ -384,6 +384,28 @@ async def test_obvious_emergency_interrupts_the_agent_with_offline_guidance() ->
 @pytest.mark.parametrize(
     "message",
     [
+        "孩子发烧了，应该去哪里？",
+        "孩子昨天呼吸困难，今天已经好了，想预约检查。",
+        "孩子昨天呼吸困难今天好了，儿科和呼吸内科哪个更合适？",
+        "同事昨天昏迷了，今天好了，想预约检查",
+    ],
+)
+@pytest.mark.asyncio
+async def test_symptom_routing_requests_use_deterministic_manual_triage(
+    message: str,
+) -> None:
+    events, model = await run_emergency_scenario(message, model_text="不应调用模型")
+
+    assert [event.kind for event in events] == ["text", "completed"]
+    assert events[0].data == {
+        "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+    }
+    assert model.requests == []
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
         "家里老人突然昏迷，怎么叫都叫不醒",
         "我突然胸痛，而且越来越重",
         "孩子现在呼吸困难",
@@ -431,12 +453,10 @@ async def test_explicitly_negated_emergency_signals_continue_to_the_agent(
     [
         "我上周胸痛，已经去过急诊，想预约复查",
         "同事以前抽搐过，现在已经恢复了",
-        "孩子昨天呼吸困难，今天已经好了，想预约检查",
         "去年体检时医生记录我有反复发作的胸痛，现在只是想查报告",
         "我有昏迷病史，想预约复查",
         "医生说他有过大量出血，现在想复查",
         "我现在想咨询昏迷病史",
-        "同事昨天昏迷了，今天好了，想预约检查",
         "我上周胸痛了，已经去过急诊，想预约复查",
     ],
 )

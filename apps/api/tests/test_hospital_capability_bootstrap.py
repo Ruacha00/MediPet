@@ -35,6 +35,35 @@ def _changed_sources() -> tuple[HospitalSkillSource, ...]:
     )
 
 
+def test_wayfinding_skill_has_only_the_three_read_contracts() -> None:
+    source = next(
+        item
+        for item in load_hospital_skill_sources()
+        if item.slug == "hospital-wayfinding"
+    )
+
+    assert source.tool_bindings == (
+        "hospital.list_wayfinding_origins",
+        "hospital.list_service_locations",
+        "hospital.get_wayfinding_guidance",
+    )
+    assert "不得根据症状选择科室" in source.instructions
+    assert "不得生成、拼接、反转或改写" in source.instructions
+
+
+def test_cancellation_skill_separates_request_from_proposal_confirmation() -> None:
+    source = next(
+        item
+        for item in load_hospital_skill_sources()
+        if item.slug == "hospital-appointment-cancellation"
+    )
+
+    assert "已经表达取消意图" in source.instructions
+    assert "立即调用 `hospital_cancel_appointment` 生成确认提案" in source.instructions
+    assert "不要先用文字再次询问" in source.instructions
+    assert "最终确认是独立的第二阶段" in source.instructions
+
+
 @pytest.mark.asyncio
 async def test_empty_registries_receive_published_enabled_development_defaults() -> None:
     provider = _provider()
@@ -50,6 +79,49 @@ async def test_empty_registries_receive_published_enabled_development_defaults()
         for item in listed_tools
         for version in cast(list[dict[str, object]], item["versions"])
     )
+
+
+@pytest.mark.asyncio
+async def test_new_bundled_capability_is_activated_in_an_existing_development_registry() -> None:
+    provider = _provider()
+    deployed_tools = await provider.tools()
+    old_tools = tuple(
+        tool
+        for tool in deployed_tools
+        if tool.tool_id
+        not in {
+            "hospital.list_wayfinding_origins",
+            "hospital.list_service_locations",
+            "hospital.get_wayfinding_guidance",
+        }
+    )
+    sources = load_hospital_skill_sources()
+    old_sources = tuple(
+        source for source in sources if source.slug != "hospital-wayfinding"
+    )
+    tools = InMemoryToolRegistry()
+    skills = InMemorySkillRegistry(tool_registry=tools)
+    await bootstrap_development_hospital_skill(
+        skills,
+        tools,
+        StaticToolProvider(old_tools),
+        skill_sources=old_sources,
+    )
+
+    await bootstrap_development_hospital_skill(skills, tools, provider)
+
+    wayfinding = next(
+        item for item in await skills.list_skills() if item["slug"] == "hospital-wayfinding"
+    )
+    version = cast(list[dict[str, object]], wayfinding["versions"])[-1]
+    assert version["status"] == "published"
+    assert version["active"] is True
+    for tool_id in (
+        "hospital.list_wayfinding_origins",
+        "hospital.list_service_locations",
+        "hospital.get_wayfinding_guidance",
+    ):
+        assert (await tools.resolve(tool_id, "1")).enabled is True
     listed_skills = await skills.list_skills()
     assert listed_skills
     assert all(

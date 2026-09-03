@@ -5,7 +5,8 @@ import remarkGfm from "remark-gfm";
 import type {
   ActionProposalData,
   HandoffData,
-  HospitalRouteData,
+  HospitalWayfindingData,
+  HospitalWayfindingUnavailableData,
   MediPetMessagePart,
   ProposalDecision,
   ProposalDecisionState,
@@ -42,8 +43,10 @@ export function MessagePartView({
           readOnly={readOnly}
         />
       );
-    case "data-hospital-route":
-      return <HospitalRouteCard data={part.data} />;
+    case "data-hospital-wayfinding":
+      return <HospitalWayfindingCard data={part.data} />;
+    case "data-hospital-wayfinding-unavailable":
+      return <HospitalWayfindingUnavailableCard data={part.data} />;
     case "data-handoff":
       return <HandoffCard data={part.data} />;
     default:
@@ -174,14 +177,48 @@ export function ActionProposalCard({
   );
 }
 
-function HospitalRouteCard({ data }: { data: HospitalRouteData }) {
+function HospitalWayfindingCard({ data }: { data: HospitalWayfindingData }) {
   return (
-    <section className="data-card" aria-label="院内路线">
-      <p className="card-kicker">Hospital route</p>
-      <h3><MapPin size={17} aria-hidden="true" /> {data.destination}</h3>
-      <ol className="route-list">
-        {data.steps.map((step, index) => <li key={step}>{index + 1}. {step}</li>)}
+    <section className="data-card wayfinding-card" aria-label="院内方位指引">
+      <p className="card-kicker">Hospital wayfinding</p>
+      <h3><MapPin size={17} aria-hidden="true" /> 院内方位指引</h3>
+      <div className="wayfinding-summary">
+        <div>
+          <small>从</small>
+          <strong>{data.origin.name}</strong>
+        </div>
+        <span className="wayfinding-arrow" aria-hidden="true">→</span>
+        <div>
+          <small>前往</small>
+          <strong>{data.destination.name}</strong>
+        </div>
+      </div>
+      <p className="wayfinding-mode">
+        {data.mode === "accessible" ? "无障碍指引" : "普通指引"}
+      </p>
+      <ol className="wayfinding-steps" role="list">
+        {data.steps.map((step, index) => (
+          <li key={`${index}:${step}`}>{index + 1}. {step}</li>
+        ))}
       </ol>
+      {data.notice && <p className="wayfinding-notice">提示：{data.notice}</p>}
+    </section>
+  );
+}
+
+function HospitalWayfindingUnavailableCard({
+  data,
+}: {
+  data: HospitalWayfindingUnavailableData;
+}) {
+  const title = data.reason === "selection_required"
+    ? "需要确认方位信息"
+    : "暂无可用方位指引";
+  return (
+    <section className="data-card" aria-label="院内方位指引不可用">
+      <p className="card-kicker">Hospital wayfinding</p>
+      <h3><MapPin size={17} aria-hidden="true" /> {title}</h3>
+      <p>{data.message}</p>
     </section>
   );
 }

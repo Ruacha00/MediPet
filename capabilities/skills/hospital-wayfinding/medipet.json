@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "display_name": "院内方位指引",
+  "change_note": "新增虚构医院受控文字方位指引能力",
+  "risk_level": "standard",
+  "required_approvals": 0,
+  "skill_type": "tool-assisted",
+  "tool_bindings": [
+    "hospital.list_wayfinding_origins",
+    "hospital.list_service_locations",
+    "hospital.get_wayfinding_guidance"
+  ]
+}

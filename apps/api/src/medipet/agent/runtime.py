@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import asyncio
 import json
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Callable
 from contextlib import aclosing
 from copy import deepcopy
 from dataclasses import dataclass, replace
+from datetime import UTC, date, datetime, timedelta, timezone
 from typing import Any, Literal, Protocol, TypedDict, cast
 
 from langgraph.config import get_stream_writer
@@ -89,6 +90,8 @@ class ReActState(TypedDict):
     available_tool_names: tuple[str, ...]
     loaded_skill_ids: tuple[str, ...]
     hospital_data_available: bool
+    business_date: date
+    business_timezone: str
     pending_calls: tuple[ModelToolCall, ...]
     correction_used: bool
     invalid_signatures: tuple[str, ...]
@@ -96,6 +99,30 @@ class ReActState(TypedDict):
     terminal: bool
     trace_id: str
     metrics: RunMetricsRecorder | None
+
+
+def _resolve_relative_date_messages(
+    messages: tuple[ModelMessage, ...],
+    *,
+    business_date: date,
+    business_timezone: str,
+) -> tuple[ModelMessage, ...]:
+    user_index = next(
+        (index for index in range(len(messages) - 1, -1, -1) if messages[index].role == "user"),
+        None,
+    )
+    if user_index is None:
+        return messages
+    message = messages[user_index]
+    resolved = []
+    if "明天" in message.content:
+        resolved.append(f"明天={(business_date + timedelta(days=1)).isoformat()}")
+    if not resolved:
+        return messages
+    annotation = f"\n\n[服务医院业务日期解析（{business_timezone}）：" + "；".join(resolved) + "。]"
+    updated = list(messages)
+    updated[user_index] = replace(message, content=message.content + annotation)
+    return tuple(updated)
 
 
 class LangGraphAgentRuntime:
@@ -109,6 +136,8 @@ class LangGraphAgentRuntime:
         action_store: ActionStore | None = None,
         model_timeout_seconds: float = 30.0,
         audit_store: RunAuditStore | None = None,
+        clock: Callable[[], datetime] | None = None,
+        business_timezone: str = "Asia/Shanghai",
     ) -> None:
         self._action_store = action_store or UnavailableActionStore()
         self._audit_store = audit_store or NullRunAuditStore()
@@ -122,9 +151,23 @@ class LangGraphAgentRuntime:
         self._capability_provider = capability_provider or StaticCapabilityProvider()
         self._max_steps = max_steps
         self._profile_version = profile_version
+        self._clock = clock or (lambda: datetime.now(UTC))
+        if business_timezone != "Asia/Shanghai":
+            raise ValueError("unsupported business timezone")
+        self._business_timezone = business_timezone
+        self._business_zone = timezone(timedelta(hours=8), business_timezone)
 
     async def run(self, request: AgentRequest) -> AsyncGenerator[AgentEvent, None]:
         context = replace(request.context, profile_version=self._profile_version)
+        current = self._clock()
+        if current.tzinfo is None:
+            current = current.replace(tzinfo=UTC)
+        business_date = current.astimezone(self._business_zone).date()
+        model_messages = _resolve_relative_date_messages(
+            request.messages,
+            business_date=business_date,
+            business_timezone=self._business_timezone,
+        )
         try:
             source_capabilities = await self._capability_provider.snapshot(context)
             pinned_skills = tuple(source_capabilities.skills)
@@ -181,9 +224,7 @@ class LangGraphAgentRuntime:
                     )
                     for tool in (*source_capabilities.tools, *platform_tools)
                 ),
-                record_unknown_tool_rejection=(
-                    source_capabilities.record_unknown_tool_rejection
-                ),
+                record_unknown_tool_rejection=(source_capabilities.record_unknown_tool_rejection),
             )
             available_tool_names = _available_tool_names(capabilities, context, ())
             hospital_data_is_available = _hospital_data_available(capabilities, context)
@@ -197,12 +238,14 @@ class LangGraphAgentRuntime:
                     AsyncGenerator[dict[str, Any], None],
                     self._graph.astream(
                         {
-                            "messages": request.messages,
+                            "messages": model_messages,
                             "context": context,
                             "capabilities": capabilities,
                             "available_tool_names": available_tool_names,
                             "loaded_skill_ids": (),
                             "hospital_data_available": hospital_data_is_available,
+                            "business_date": business_date,
+                            "business_timezone": self._business_timezone,
                             "pending_calls": (),
                             "correction_used": False,
                             "invalid_signatures": (),
@@ -235,13 +278,9 @@ class LangGraphAgentRuntime:
     ) -> AgentEvent:
         context = replace(context, profile_version=self._profile_version)
         try:
-            persisted = await self._action_store.validate_decision_scope(
-                proposal_id, context
-            )
+            persisted = await self._action_store.validate_decision_scope(proposal_id, context)
             if not proposal_visible:
-                raise ActionDecisionError(
-                    "预约确认已不在当前聊天历史中，请重新发起。"
-                )
+                raise ActionDecisionError("预约确认已不在当前聊天历史中，请重新发起。")
             if decision == "reject":
                 proposal = await self._action_store.reject(proposal_id, context)
             else:
@@ -256,9 +295,7 @@ class LangGraphAgentRuntime:
                     None,
                 )
                 if tool is None:
-                    raise ActionDecisionError(
-                        "操作参数、Tool 版本或作用域已变化，请重新发起"
-                    )
+                    raise ActionDecisionError("操作参数、Tool 版本或作用域已变化，请重新发起")
                 proposal, _ = await self._action_store.confirm(
                     proposal_id,
                     context,
@@ -321,7 +358,9 @@ def _build_react_graph(
                 ModelMessage(
                     role="system",
                     content=outpatient_assistant_system_prompt(
-                        hospital_data_available=state["hospital_data_available"]
+                        hospital_data_available=state["hospital_data_available"],
+                        business_date=state["business_date"],
+                        business_timezone=state["business_timezone"],
                     ),
                 ),
                 *state["messages"],
@@ -410,8 +449,7 @@ def _build_react_graph(
                 if tool is not None and tool.record_rejection is not None:
                     await tool.record_rejection(state["context"])
                 elif (
-                    tool is None
-                    and state["capabilities"].record_unknown_tool_rejection is not None
+                    tool is None and state["capabilities"].record_unknown_tool_rejection is not None
                 ):
                     await state["capabilities"].record_unknown_tool_rejection(
                         call.name, state["context"]
@@ -468,6 +506,7 @@ def _build_react_graph(
                 return {"terminal": True, "pending_calls": ()}
             writer({"kind": "status", "data": {"label": "正在查询可用信息"}})
             tool_started = metrics.begin_tool_call() if metrics is not None else None
+            terminal_after_presentation = False
             try:
                 observation = await tool.execute(call.arguments, state["context"])
                 if (
@@ -482,14 +521,16 @@ def _build_react_graph(
                 )
                 if call.name == "load_skill":
                     loaded_skill_id = observation.get("skill_id")
-                    if (
-                        isinstance(loaded_skill_id, str)
-                        and loaded_skill_id not in loaded_skill_ids
-                    ):
+                    if isinstance(loaded_skill_id, str) and loaded_skill_id not in loaded_skill_ids:
                         loaded_skill_ids.append(loaded_skill_id)
                 if tool.present is not None:
                     for data_part in await tool.present(observation, state["context"]):
                         writer({"kind": "data", "data": data_part})
+                        if data_part.get("type") in {
+                            "data-hospital-wayfinding",
+                            "data-hospital-wayfinding-unavailable",
+                        }:
+                            terminal_after_presentation = True
             except Exception:
                 writer({"kind": "failed", "data": {"message": TOOL_FAILURE}})
                 return {"terminal": True, "pending_calls": ()}
@@ -503,6 +544,13 @@ def _build_react_graph(
                     tool_call_id=call.id,
                 )
             )
+            if terminal_after_presentation:
+                return {
+                    "messages": tuple(messages),
+                    "pending_calls": (),
+                    "terminal": True,
+                    "loaded_skill_ids": tuple(loaded_skill_ids),
+                }
 
         return {
             "messages": tuple(messages),
@@ -562,10 +610,7 @@ def _available_tool_names(
         and tool.bound
         and (tool.effect == "read" or tool.approval_required)
         and tool.authorize(context)
-        and (
-            not tool.required_skill_ids
-            or bool(loaded.intersection(tool.required_skill_ids))
-        )
+        and (not tool.required_skill_ids or bool(loaded.intersection(tool.required_skill_ids)))
     )
 
 
