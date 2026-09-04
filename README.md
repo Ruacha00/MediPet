@@ -1,5 +1,8 @@
 # MediPet
 
+[![CI](https://github.com/Ruacha00/MediPet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ruacha00/MediPet/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Ruacha00/MediPet?display_name=tag&sort=semver)](https://github.com/Ruacha00/MediPet/releases/latest)
+
 MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一个可运行的最小全栈切片：开发者可连接符合 OpenAI Chat Completions 契约的模型，就诊参与者可获得逐步流式、非诊断性的门诊就诊协助。
 
 ## 技术栈
