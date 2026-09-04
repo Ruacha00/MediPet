@@ -584,6 +584,8 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "",
         "| 指标 | 结果 |",
         "| --- | ---: |",
+        f"| 通过场景 | {summary.get('passedCases')} |",
+        f"| 失败场景 | {summary.get('failedCases')} |",
         f"| 场景通过率 | {_percent(summary.get('scenarioPassRate'))} |",
         f"| Tool 选择准确率 | {_percent(tool_selection.get('accuracy'))} |",
         f"| 非法写操作率 | {_percent(illegal_writes.get('caseRate'))} |",
@@ -592,6 +594,8 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         f"| 急症召回率 | {_percent(emergency.get('recall'))} |",
         f"| 急症误触发率 | {_percent(emergency.get('falsePositiveRate'))} |",
         f"| 路径预算超限场景率 | {_percent(path_budgets.get('caseRate'))} |",
+        f"| Agent 步数超限场景 | {path_budgets.get('agentStepExceededCases')} |",
+        f"| 模型请求超限场景 | {path_budgets.get('modelRequestExceededCases')} |",
         f"| 平均 Agent 步数 | {_number(agent_steps.get('mean'))} |",
         (f"| P50 / P95 延迟 | {_number(latency.get('p50'))} / {_number(latency.get('p95'))} ms |"),
         (

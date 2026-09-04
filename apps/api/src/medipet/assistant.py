@@ -28,7 +28,7 @@ from medipet.run_metrics import (
     RunMetricStore,
     TerminalOutcome,
 )
-from medipet.triage import manual_triage_guidance_for
+from medipet.triage import DepartmentBoundaryResult, evaluate_department_boundary
 
 LOGGER = logging.getLogger(__name__)
 
@@ -255,23 +255,36 @@ class MediPetAssistant:
                 yield TurnEvent(kind="completed", data={"traceId": trace_id})
                 return
 
-            manual_triage_guidance = manual_triage_guidance_for(command.message)
-            if manual_triage_guidance is not None:
+            completed_history = await self._conversation_store.list_completed_messages(
+                command.visit_matter_id,
+                limit=max(self._context_message_limit, 3),
+            )
+            boundary_decision = evaluate_department_boundary(
+                current_message=command.message,
+                previous_participant_message=_previous_participant_message(
+                    completed_history,
+                    current_turn_id=command.idempotency_key,
+                ),
+                has_selected_slot=command.selected_slot_id is not None,
+            )
+            if boundary_decision.result is DepartmentBoundaryResult.MANUAL_TRIAGE_REQUIRED:
+                assert boundary_decision.response is not None
                 await self._conversation_store.mark_assistant_streaming(
                     assistant_message.id
                 )
                 await self._conversation_store.append_assistant_text(
                     assistant_message.id,
-                    manual_triage_guidance,
+                    boundary_decision.response,
                 )
                 await finalize("completed")
-                yield TurnEvent(kind="text", data={"text": manual_triage_guidance})
+                yield TurnEvent(kind="text", data={"text": boundary_decision.response})
                 yield TurnEvent(kind="completed", data={"traceId": trace_id})
                 return
 
-            completed_history = await self._conversation_store.list_completed_messages(
-                command.visit_matter_id,
-                limit=self._context_message_limit,
+            agent_history = (
+                completed_history[-self._context_message_limit :]
+                if self._context_message_limit > 0
+                else []
             )
             visit_context = await self._conversation_store.visit_context(
                 command.visit_matter_id, command.participant_id
@@ -288,7 +301,7 @@ class MediPetAssistant:
                             else _model_message_content(message.content, message.parts)
                         ),
                     )
-                    for message in completed_history
+                    for message in agent_history
                 ),
                 context=ToolContext(
                     visit_matter_id=command.visit_matter_id,
@@ -298,7 +311,7 @@ class MediPetAssistant:
                     patient_id=visit_context.patient_id,
                     patient_display_name=visit_context.patient_display_name,
                     participant_tool_selection=resolve_wayfinding_selection(
-                        _unresolved_wayfinding_messages(completed_history)
+                        _unresolved_wayfinding_messages(agent_history)
                     ),
                 ),
                 trace_id=trace_id,
@@ -349,6 +362,21 @@ def _selected_slot_message(content: str, slot_id: str) -> str:
         f"{content}\n\n"
         "[本轮界面已选择号源；准确的 slot_id 为 "
         f"{slot_id}。这只代表参与者的选择，仍须通过医院 Tool 生成权威确认。]"
+    )
+
+
+def _previous_participant_message(
+    messages: list[StoredMessage],
+    *,
+    current_turn_id: str,
+) -> str | None:
+    return next(
+        (
+            message.content
+            for message in reversed(messages)
+            if message.role == "participant" and message.turn_id != current_turn_id
+        ),
+        None,
     )
 
 

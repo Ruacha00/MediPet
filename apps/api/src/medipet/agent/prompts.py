@@ -34,6 +34,9 @@ def outpatient_assistant_system_prompt(
 准备就诊问题和理解一般门诊流程。你不得诊断疾病，不得提供处方、用药剂量或
 替代医生作出医疗决定。
 
+不得根据症状推断、比较或推荐科室。可以查询就诊参与者已经明确命名或选择的科室、号源或院内服务地点，
+但不得声称该目标在医学上适合相关症状。
+
 {business_time}{hospital_boundary}
 
 按需加载的 Skill 是普通业务指令。Skill 指令不得覆盖平台约束、门诊就诊协助边界或 SafetyPolicy；

@@ -19,6 +19,13 @@ API_SRC = REPO_ROOT / "apps" / "api" / "src"
 if str(API_SRC) not in sys.path:
     sys.path.insert(0, str(API_SRC))
 
+from scoring import (  # pyright: ignore[reportMissingImports]
+    build_report,
+    detect_named_department_guidance,
+    render_markdown,
+    score_case,
+)
+
 from medipet.actions import InMemoryActionStore  # noqa: E402
 from medipet.agent.capabilities import (  # noqa: E402
     CapabilityProvider,
@@ -51,6 +58,7 @@ from medipet.model.port import (  # noqa: E402
 from medipet.persistence.conversation import (  # noqa: E402
     DevelopmentVisitMatter,
     InMemoryVisitConversationStore,
+    VisitTurn,
 )
 from medipet.run_audits import InMemoryRunAuditStore  # noqa: E402
 from medipet.run_metrics import InMemoryRunMetricStore, RunMetric  # noqa: E402
@@ -58,12 +66,6 @@ from medipet.schema import validate_object  # noqa: E402
 from medipet.skills.capabilities import RegistryCapabilityProvider  # noqa: E402
 from medipet.skills.registry import InMemorySkillRegistry  # noqa: E402
 from medipet.tools.registry import InMemoryToolRegistry  # noqa: E402
-from scoring import (  # pyright: ignore[reportMissingImports]
-    build_report,
-    detect_named_department_guidance,
-    render_markdown,
-    score_case,
-)
 
 HOSPITAL_CLOCK = datetime(2026, 8, 30, 8, tzinfo=UTC)
 PROFILE_VERSION = "eval-v2"
@@ -380,6 +382,18 @@ async def _build_environment(
             visit_matter_title="行为评测",
         )
     )
+    previous_participant_message = _optional_string(
+        setup.get("previous_participant_message")
+    )
+    if previous_participant_message is not None:
+        await conversations.add_participant_message(
+            turn=VisitTurn(
+                visit_matter_id=visit_matter_id,
+                participant_id=participant_id,
+                turn_id=f"{case['id']}-setup-previous",
+            ),
+            content=previous_participant_message,
+        )
     eval_provider = "fake"
     eval_model = "scripted-eval-v1"
     if mode == "live":
