@@ -55,13 +55,14 @@ _SYMPTOM_MARKERS = (
 )
 
 _DEPARTMENT_REQUEST = re.compile(
-    r"(?:(?:挂|看|就诊|选择|推荐).{0,6}(?:哪|哪个|哪一|什么).{0,3}(?:科|科室)|"
+    r"(?:(?:挂|看|去|就诊|选择|推荐).{0,6}(?:哪|哪个|哪一|什么).{0,3}(?:科|科室)|"
     r"(?:哪|哪个|哪一|什么).{0,3}(?:科|科室).{0,3}(?:合适|适合|好))"
 )
 _DEPARTMENT_COMPARISON = re.compile(r"(?:哪个|哪一).{0,4}(?:更)?(?:合适|适合)")
-_DEPARTMENT_SUITABILITY = re.compile(r"(?:科|科室).{0,3}(?:合适|适合)")
+_DEPARTMENT_SUITABILITY = re.compile(r"(?:科|科室).{0,5}(?:合适|适合|好)")
 _SYMPTOM_DESTINATION = re.compile(r"(?:应该|需要|可以).{0,3}(?:去|到).{0,3}(?:哪里|哪儿)")
 _NAMED_DEPARTMENT = re.compile(r"[\u4e00-\u9fff]{1,12}科(?:室|门诊)?")
+_SEMANTIC_FRAGMENT_BOUNDARY = re.compile(r"(?:但是|不过|然而|但)|[，。！？；,.!?;]")
 
 _EXPLICIT_TARGET_ACTIONS = (
     "医生",
@@ -156,9 +157,34 @@ def _is_current_symptom_routing_request(compact: str) -> bool:
 
 
 def _has_current_symptom_context(compact: str) -> bool:
-    return bool(compact) and any(
-        marker in compact for marker in _SYMPTOM_MARKERS
-    ) and not _has_excluded_routing_context(compact)
+    if not compact or _has_excluded_routing_context(compact):
+        return False
+    fragments = [
+        fragment
+        for fragment in _SEMANTIC_FRAGMENT_BOUNDARY.split(compact)
+        if fragment
+    ]
+    for index, fragment in enumerate(fragments):
+        if not any(marker in fragment for marker in _SYMPTOM_MARKERS):
+            continue
+        if _is_resolved_historical_symptom(fragments, index):
+            continue
+        return True
+    return False
+
+
+def _is_resolved_historical_symptom(fragments: list[str], index: int) -> bool:
+    fragment = fragments[index]
+    if not any(marker in fragment for marker in _HISTORICAL_CONTEXT_MARKERS):
+        return False
+    for candidate_index, candidate in enumerate(fragments[index:], start=index):
+        if candidate_index > index and any(
+            marker in candidate for marker in _SYMPTOM_MARKERS
+        ):
+            break
+        if any(marker in candidate for marker in _RESOLVED_CONTEXT_MARKERS):
+            return True
+    return False
 
 
 def _is_routing_followup(compact: str) -> bool:
@@ -176,11 +202,7 @@ def _is_routing_followup(compact: str) -> bool:
 def _has_excluded_routing_context(compact: str) -> bool:
     if any(marker in compact for marker in _ROUTING_NEGATION_MARKERS):
         return True
-    if any(marker in compact for marker in _ROUTING_EDUCATION_MARKERS):
-        return True
-    return any(marker in compact for marker in _HISTORICAL_CONTEXT_MARKERS) and any(
-        marker in compact for marker in _RESOLVED_CONTEXT_MARKERS
-    )
+    return any(marker in compact for marker in _ROUTING_EDUCATION_MARKERS)
 
 
 def _has_explicit_target(compact: str) -> bool:

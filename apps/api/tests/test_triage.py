@@ -16,6 +16,9 @@ from medipet.triage import (
         "头痛应该去哪里？",
         "咳嗽看儿科还是全科医学科？",
         "发烧，儿科合适吗？",
+        "孩子发烧，儿科好吗？",
+        "孩子咳嗽，该去哪个科？",
+        "孩子昨天头痛已经好了，但今天发烧，应该挂哪科？",
     ],
 )
 def test_current_symptom_routing_requests_require_manual_triage(message: str) -> None:
@@ -100,6 +103,11 @@ def test_ordinary_assistance_does_not_inherit_a_routing_decision(message: str) -
         ),
         (
             "儿科是否合适？",
+            DepartmentBoundaryResult.MANUAL_TRIAGE_REQUIRED,
+            DepartmentBoundaryReason.FOLLOWUP_SYMPTOM_ROUTING_REQUEST,
+        ),
+        (
+            "儿科是不是更合适？",
             DepartmentBoundaryResult.MANUAL_TRIAGE_REQUIRED,
             DepartmentBoundaryReason.FOLLOWUP_SYMPTOM_ROUTING_REQUEST,
         ),
