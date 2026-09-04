@@ -35,7 +35,10 @@ jobs:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
-      - run: uv run alembic upgrade head
+      - name: Run migrations
+        run: uv run alembic upgrade head
+        env:
+          MEDIPET_DATABASE_URL: ${{ env.MEDIPET_TEST_DATABASE_URL }}
       - run: uv run pytest --basetemp .pytest-tmp
       - run: uv run ruff check .
       - run: uv run pyright
@@ -48,12 +51,13 @@ jobs:
         working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/setup@v1
         with:
-          node-version: "22"
-          cache: pnpm
+          version: 11.24.0
+          runtime: node@22
+          cache: true
           cache-dependency-path: apps/web/pnpm-lock.yaml
-      - run: corepack enable
+          install: false
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm lint
@@ -67,16 +71,17 @@ jobs:
         working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/setup@v1
         with:
-          node-version: "22"
-          cache: pnpm
+          version: 11.24.0
+          runtime: node@22
+          cache: true
           cache-dependency-path: apps/web/pnpm-lock.yaml
+          install: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
-      - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: uv run --with playwright playwright install --with-deps chromium
