@@ -334,7 +334,7 @@ async def test_wayfinding_skill_streams_and_restores_the_authoritative_card() ->
     ]
     assert [event.kind for event in followup_events] == ["text", "completed"]
     assert followup_events[0].data == {
-        "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+        "text": "我不能诊断，也不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
     }
     assert stale_selection_model.requests == []
 
@@ -451,8 +451,30 @@ async def test_symptom_only_turn_cannot_emit_wayfinding_guidance() -> None:
 
         assert [event.kind for event in events] == ["text", "completed"]
         assert events[0].data == {
-            "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+            "text": "我不能诊断，也不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
         }
+
+
+@pytest.mark.asyncio
+async def test_participant_selected_service_location_remains_available_with_symptoms() -> None:
+    events = await _wayfinding_events(
+        "孩子发烧，但我已经决定去儿科门诊，请给我从主入口前往那里的无障碍指引。",
+        {
+            "origin_id": "origin-main-entrance",
+            "destination_id": "location-pediatrics",
+            "mode": "accessible",
+        },
+    )
+
+    card = next(
+        event
+        for event in events
+        if event.kind == "data" and event.data["type"] == "data-hospital-wayfinding"
+    )
+    assert card.data["data"]["destination"]["name"] == "儿科门诊"
+    assert card.data["data"]["mode"] == "accessible"
+    assert "合适" not in str(events)
+    assert "推荐" not in str(events)
 
 
 @pytest.mark.parametrize(

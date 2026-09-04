@@ -74,6 +74,8 @@ flowchart LR
     Web[Next.js chat client]
     HTTP[FastAPI delivery Adapter]
     Assistant[MediPet Assistant]
+    Emergency[Emergency handoff]
+    Manual[Fixed manual-triage response]
     Agent[LangGraph Agent Runtime]
     Skills[Skill Runtime]
     Policy[Policy and confirmation]
@@ -86,7 +88,10 @@ flowchart LR
     Browser --> Web
     Web -->|AI SDK UI stream over HTTP/SSE| HTTP
     HTTP --> Assistant
-    Assistant --> Agent
+    Assistant -->|highest priority, independent| Emergency
+    Assistant -->|turn policy: manual triage| Manual
+    Assistant -->|turn policy: explicit target allowed| Agent
+    Assistant -->|turn policy: ordinary Agent allowed| Agent
     Agent --> Model
     Agent --> Skills
     Agent -.->|activation trigger required| Checkpoints
@@ -212,7 +217,16 @@ Interface invariants:
 - a pending effectful action ends the current ReAct run.
 - a success event is emitted only after required state and audit records are persisted.
 
-The implementation loads the visit matter, invokes the Agent Runtime, maps approved internal events into `TurnEvent` values, persists resulting state and audit records, then closes the stream with one terminal event.
+The implementation loads the visit matter, applies deterministic turn handling, maps approved internal events into `TurnEvent` values, persists resulting state and audit records, then closes the stream with one terminal event. It owns four effective routes:
+
+1. **Emergency handoff:** an independent current-message check runs first and has the highest priority. A match persists and returns the emergency handoff without entering the turn policy, model, or Skill execution.
+2. **Manual triage:** the turn policy returns a fixed participant-facing manual-triage response. The Assistant persists and streams that response without invoking the model, Agent Runtime, or any Tool.
+3. **Explicit target allowed:** a current-turn department, hospital service location, or selected slot may proceed, but only as a participant-selected target for trusted hospital lookup or an authorized action. It does not establish that the target is medically suitable for the stated symptoms.
+4. **Ordinary Agent allowed:** other permitted visit assistance proceeds normally.
+
+The last two routes converge on the same existing Skill-first Agent Runtime. The policy is not a second business-intent router and does not select Skills or Tools; Skill discovery, trusted Tool exposure, hospital facts, authorization, confirmation, and execution remain owned by the existing runtime seams.
+
+The turn policy receives only `current_message`, the optional nearest strictly earlier participant message, and whether the current turn contains a selected slot. The previous participant message is found by excluding the just-persisted current turn and skipping intervening Assistant messages; it is used only for an elliptical department-choice, comparison, suitability, or destination follow-up. The policy does not scan the complete visit matter for symptom context. Only a slot selected in the current turn is an allow signal: a department or hospital service location recovered from historical wayfinding or other earlier structured state cannot authorize the current turn.
 
 ### 2. Agent Runtime
 
@@ -237,7 +251,7 @@ The runtime hides:
 
 The current implementation uses LangGraph for the ReAct state graph and streaming. It does not yet compile a persistent checkpointer or use graph interrupts and resume. Those capabilities may be added behind this Interface only after an approved recovery trigger is present. LangGraph types do not cross this Interface, so callers and tests do not depend on graph nodes, future checkpoint schemas, or framework message types.
 
-The Assistant applies deterministic emergency interruption before entering the graph. The current graph contains model calls, validated Tool execution, action-proposal production, and finish paths; persisted proposal decisions and confirmed writes execute outside the graph. Human handoff and graph-internal pause/resume are future slices, not latent requirements to pre-build nodes. Only explicitly mapped `AgentEvent` values may leave the runtime.
+The Assistant applies deterministic emergency interruption and the turn policy before entering the graph. Only explicit-target and ordinary-Agent outcomes enter this runtime, and both use this same Skill-first path. The current graph contains model calls, validated Tool execution, action-proposal production, and finish paths; persisted proposal decisions and confirmed writes execute outside the graph. Human handoff and graph-internal pause/resume are future slices, not latent requirements to pre-build nodes. Only explicitly mapped `AgentEvent` values may leave the runtime.
 
 The model crosses a true external Seam:
 
@@ -356,9 +370,9 @@ A confirmation is bound to the exact patient, hospital operation, parameters, ex
 
 Before model or Skill execution, the Assistant checks only the current participant message for a finite set of explicit emergency signals drawn from official 120 public guidance. A match persists and returns an `EmergencyHandoff`, stops the turn, and directs the participant to call 120, seek the nearest emergency department, or ask someone nearby for help. The check does not produce a diagnosis or risk score and does not create a review queue, notification, or resumable workflow.
 
-Explicit negation and clearly educational or hypothetical questions do not trigger the interruption. Messages without a matching signal continue through the ordinary Agent flow; Skills and the model cannot suppress a handoff once the Assistant has produced it.
+Explicit negation and clearly educational or hypothetical questions do not trigger the interruption. Messages without a matching signal continue to the deterministic turn policy, which may return fixed manual triage, explicit-target allowance, or ordinary-Agent allowance. Skills and the model cannot suppress a handoff once the Assistant has produced it.
 
-This emergency boundary is independent from advising a participant to contact hospital staff when they cannot choose a department. That advice is a fallback, not an automated department-guidance workflow. The boundary removes only the former emergency risk-review queue, notification, and resume workflow.
+This emergency boundary is independent from the manual-triage route used when a participant asks MediPet to choose, compare, or judge the suitability of a department from symptoms. Manual triage returns fixed text and bypasses both model and Tool execution; it is not an automated department-guidance workflow. The emergency boundary removes only the former emergency risk-review queue, notification, and resume workflow.
 
 ## Deployment shape
 

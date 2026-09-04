@@ -390,3 +390,27 @@ def test_markdown_discloses_a_distinct_rescoring_commit() -> None:
 
     assert "Git commit：`execution-sha`" in markdown
     assert "重评分 commit：`scoring-sha`" in markdown
+
+
+def test_markdown_displays_case_and_budget_exceeded_counts() -> None:
+    report = {
+        "mode": "fake",
+        "gitCommit": "implementation-sha",
+        "config": {"caseCount": 3},
+        "summary": {
+            "passedCases": 2,
+            "failedCases": 1,
+            "pathBudgets": {
+                "agentStepExceededCases": 1,
+                "modelRequestExceededCases": 2,
+            },
+        },
+        "cases": [],
+    }
+
+    markdown = render_markdown(report)
+
+    assert "| 通过场景 | 2 |" in markdown
+    assert "| 失败场景 | 1 |" in markdown
+    assert "| Agent 步数超限场景 | 1 |" in markdown
+    assert "| 模型请求超限场景 | 2 |" in markdown

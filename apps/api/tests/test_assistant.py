@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 
 import pytest
 
+from medipet.agent.prompts import outpatient_assistant_system_prompt
 from medipet.agent.runtime import AgentRequest, LangGraphAgentRuntime
 from medipet.assistant import MediPetAssistant
 from medipet.contracts import TurnCommand, TurnEvent
@@ -18,6 +19,7 @@ from medipet.persistence.conversation import (
     InMemoryVisitConversationStore,
 )
 from medipet.run_audits import InMemoryRunAuditStore
+from medipet.triage import MANUAL_TRIAGE_GUIDANCE
 
 
 class DeterministicModel(ModelPort):
@@ -29,6 +31,16 @@ class DeterministicModel(ModelPort):
         self.requests.append(request)
         for text in self._chunks:
             yield ModelChunk(text=text)
+
+
+def test_outpatient_prompt_enforces_the_symptom_department_boundary() -> None:
+    prompt = outpatient_assistant_system_prompt(hospital_data_available=True)
+    compact_prompt = "".join(prompt.split())
+
+    assert "不得根据症状推断、比较或推荐科室" in prompt
+    assert "可以查询就诊参与者已经明确命名或选择的科室、号源或院内服务地点" in prompt
+    assert "不得声称该目标在医学上适合相关症状" in prompt
+    assert "只有Tool返回的数据可以作为服务医院事实" in compact_prompt
 
 
 async def run_emergency_scenario(
@@ -385,7 +397,6 @@ async def test_obvious_emergency_interrupts_the_agent_with_offline_guidance() ->
     "message",
     [
         "孩子发烧了，应该去哪里？",
-        "孩子昨天呼吸困难，今天已经好了，想预约检查。",
         "孩子昨天呼吸困难今天好了，儿科和呼吸内科哪个更合适？",
         "同事昨天昏迷了，今天好了，想预约检查",
     ],
@@ -398,7 +409,7 @@ async def test_symptom_routing_requests_use_deterministic_manual_triage(
 
     assert [event.kind for event in events] == ["text", "completed"]
     assert events[0].data == {
-        "text": "我不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
+        "text": "我不能诊断，也不能根据症状判断或推荐科室，请联系服务医院人工导诊。"
     }
     assert model.requests == []
 
@@ -707,3 +718,213 @@ async def test_history_load_failure_marks_created_assistant_message_failed() -> 
 
     persisted = await store.list_messages("visit-1")
     assert [message.state for message in persisted] == ["completed", "failed"]
+
+
+@pytest.mark.asyncio
+async def test_emergency_still_precedes_a_symptom_department_request() -> None:
+    events, model = await run_emergency_scenario(
+        "我现在胸口剧痛，而且越来越重，该挂哪科？",
+        model_text="不应调用模型",
+    )
+
+    assert [event.kind for event in events] == ["data", "completed"]
+    assert events[0].data["type"] == "data-handoff"
+    assert model.requests == []
+
+
+@pytest.mark.asyncio
+async def test_explicit_department_target_with_symptoms_continues_to_the_agent() -> None:
+    events, model = await run_emergency_scenario(
+        "发烧，但我已经决定挂儿科，帮我查号源。",
+        model_text="进入医院服务查询。",
+    )
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert len(model.requests) == 1
+
+
+@pytest.mark.asyncio
+async def test_selected_slot_continues_to_the_agent_as_an_explicit_current_choice() -> None:
+    model = DeterministicModel(["准备权威预约确认。"])
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model), await seeded_store())
+
+    events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="selected-slot-turn",
+                message="我选择这个号源。",
+                selected_slot_id="slot-pediatrics-1",
+            )
+        )
+    ]
+
+    assert [event.kind for event in events] == ["status", "text", "completed"]
+    assert "slot-pediatrics-1" in model.requests[0].messages[-1].content
+
+
+@pytest.mark.asyncio
+async def test_one_turn_symptom_context_routes_an_elliptical_followup_offline() -> None:
+    store = await seeded_store()
+    model = DeterministicModel(["请继续描述。", "不应调用第二次模型"])
+    assistant = MediPetAssistant(
+        LangGraphAgentRuntime(model),
+        store,
+        context_message_limit=1,
+    )
+
+    first_events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="symptom-context-turn",
+                message="孩子发烧两天了。",
+            )
+        )
+    ]
+    followup_events = [
+        event
+        async for event in assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="routing-followup-turn",
+                message="那要挂哪科？",
+            )
+        )
+    ]
+
+    assert first_events[-1].kind == "completed"
+    assert [event.kind for event in followup_events] == ["text", "completed"]
+    assert followup_events[0].data == {"text": MANUAL_TRIAGE_GUIDANCE}
+    assert len(model.requests) == 1
+
+
+@pytest.mark.asyncio
+async def test_only_the_nearest_earlier_participant_message_supplies_symptom_context() -> None:
+    store = await seeded_store()
+    model = DeterministicModel(["第一轮。", "第二轮。", "第三轮。"])
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model), store)
+
+    turn_messages = (
+        ("old-symptom-turn", "孩子发烧两天了。"),
+        ("ordinary-turn", "请介绍一般门诊流程。"),
+        ("new-routing-question", "那要挂哪科？"),
+    )
+    collected = []
+    for turn_id, message in turn_messages:
+        collected.append(
+            [
+                event
+                async for event in assistant.handle_turn(
+                    TurnCommand(
+                        visit_matter_id="visit-1",
+                        participant_id="participant-1",
+                        idempotency_key=turn_id,
+                        message=message,
+                    )
+                )
+            ]
+        )
+
+    assert all(events[-1].kind == "completed" for events in collected)
+    assert len(model.requests) == 3
+
+
+@pytest.mark.asyncio
+async def test_previous_symptoms_do_not_block_a_current_explicit_department_query() -> None:
+    store = await seeded_store()
+    model = DeterministicModel(["请继续描述。", "儿科医生目录。"])
+    assistant = MediPetAssistant(LangGraphAgentRuntime(model), store)
+
+    for turn_id, message in (
+        ("symptom-turn", "孩子发烧两天了。"),
+        ("department-query-turn", "儿科有哪些医生？"),
+    ):
+        events = [
+            event
+            async for event in assistant.handle_turn(
+                TurnCommand(
+                    visit_matter_id="visit-1",
+                    participant_id="participant-1",
+                    idempotency_key=turn_id,
+                    message=message,
+                )
+            )
+        ]
+        assert events[-1].kind == "completed"
+
+    assert len(model.requests) == 2
+
+
+class HistoryCountingStore(InMemoryVisitConversationStore):
+    def __init__(self) -> None:
+        super().__init__()
+        self.history_reads = 0
+
+    async def list_completed_messages(
+        self,
+        visit_matter_id: str,
+        *,
+        limit: int,
+    ):
+        self.history_reads += 1
+        return await super().list_completed_messages(visit_matter_id, limit=limit)
+
+
+async def history_counting_store() -> HistoryCountingStore:
+    store = HistoryCountingStore()
+    await store.seed_development_visit_matter(
+        DevelopmentVisitMatter(
+            patient_id="patient-1",
+            patient_display_name="演示患者",
+            participant_id="participant-1",
+            participant_display_name="患者本人",
+            visit_matter_id="visit-1",
+            visit_matter_title="初次咨询",
+        )
+    )
+    return store
+
+
+@pytest.mark.asyncio
+async def test_emergency_and_completed_replay_do_not_reload_policy_history() -> None:
+    emergency_store = await history_counting_store()
+    emergency_assistant = MediPetAssistant(
+        LangGraphAgentRuntime(DeterministicModel(["不应调用模型"])),
+        emergency_store,
+    )
+    _ = [
+        event
+        async for event in emergency_assistant.handle_turn(
+            TurnCommand(
+                visit_matter_id="visit-1",
+                participant_id="participant-1",
+                idempotency_key="emergency-no-history",
+                message="我现在胸口剧痛，该挂哪科？",
+            )
+        )
+    ]
+    assert emergency_store.history_reads == 0
+
+    replay_store = await history_counting_store()
+    replay_assistant = MediPetAssistant(
+        LangGraphAgentRuntime(DeterministicModel(["不应调用模型"])),
+        replay_store,
+    )
+    turn = TurnCommand(
+        visit_matter_id="visit-1",
+        participant_id="participant-1",
+        idempotency_key="manual-triage-replay",
+        message="孩子发烧了，应该挂哪科？",
+    )
+    first = [event async for event in replay_assistant.handle_turn(turn)]
+    replay = [event async for event in replay_assistant.handle_turn(turn)]
+
+    assert [event.kind for event in first] == ["text", "completed"]
+    assert [event.kind for event in replay] == ["text", "completed"]
+    assert replay_store.history_reads == 1

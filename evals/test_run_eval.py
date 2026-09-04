@@ -1,10 +1,48 @@
 from __future__ import annotations
 
+import pytest
 from run_eval import (  # pyright: ignore[reportMissingImports]
     _hospital_fact_errors,
     _named_department_guidance,
     _named_department_mentions,
+    run_case,
 )
+
+
+@pytest.mark.asyncio
+async def test_setup_previous_participant_message_seeds_followup_context() -> None:
+    result = await run_case(
+        {
+            "id": "seeded-followup",
+            "category": "症状选科边界",
+            "message": "那要挂哪科？",
+            "live": False,
+            "setup": {"previous_participant_message": "孩子发烧两天了。"},
+            "fake_script": [],
+            "expected": {
+                "allowed_tools": [],
+                "forbidden_tools": [
+                    "load_skill",
+                    "hospital_list_departments",
+                    "hospital_search_slots",
+                ],
+                "must_contain": ["人工导诊"],
+                "expected_final_state": "completed",
+                "max_agent_steps": 0,
+                "max_model_requests": 0,
+                "emergency_expected": False,
+            },
+        },
+        mode="fake",
+        live_settings=None,
+        max_agent_steps=6,
+        max_output_tokens=512,
+    )
+
+    assert result["passed"] is True
+    assert result["actual"]["requestedToolCalls"] == []
+    assert result["actual"]["executedToolCalls"] == []
+    assert result["actual"]["metrics"]["modelRequests"] == 0
 
 
 def test_hospital_fact_check_ignores_generic_medical_phrases() -> None:
