@@ -13,3 +13,23 @@ test-results/
 .env
 .env.local
 *.log
+
+# Local evaluation experiments (2026-09-14)
+/.scratch/p4-20260914/
+/evals/loading_efficiency/
+/evals/p4-dev-cases.jsonl
+/evals/p4-holdout-cases.jsonl
+/evals/p4_compare.py
+/evals/p4_efficiency.py
+/evals/p4_run.py
+/evals/reliability_evidence/
+/evals/reports/p4-20260914/
+/evals/reports/transactions-20260914/
+/evals/test_p4_efficiency.py
+/evals/test_p4_run.py
+/evals/test_transaction_run.py
+/evals/transaction-cases.json
+/evals/transaction_governance.py
+/evals/transaction_report.py
+/evals/transaction_run.py
+/evals/transaction_score.py

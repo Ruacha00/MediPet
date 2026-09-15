@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Ruacha00/MediPet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ruacha00/MediPet/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Ruacha00/MediPet?display_name=tag&sort=semver)](https://github.com/Ruacha00/MediPet/releases/latest)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 MediPet 是面向单家门诊医院的智能就诊助手。当前仓库提供一个可运行的最小全栈切片：开发者可连接符合 OpenAI Chat Completions 契约的模型，就诊参与者可获得逐步流式、非诊断性的门诊就诊协助。
 
@@ -136,3 +137,7 @@ uv run python -m medipet.benchmark live --iterations 3
 ```
 
 两种命令都只发送内置虚构文本，输出按 provider/model/profile 区分的去标识化 JSON 报告。CI 只运行 fake benchmark，不配置或访问真实、收费模型，也不采用跨供应商绝对延迟门槛。
+
+## 开源许可
+
+MediPet 的原创代码、文档和配置文件以 [Apache License 2.0](LICENSE) 授权，除非相关文件或目录另有说明。第三方依赖及其许可证不受本仓库许可证变更影响。
