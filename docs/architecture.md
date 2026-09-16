@@ -47,7 +47,7 @@ flowchart TD
 
 ## 报告上传是独立的确定性入口
 
-`POST /reports/preprocess` 先校验患者与事项，再调用 [health/report_upload.py](../health/report_upload.py)。文字 PDF 提取文本；无文本的扫描页与 PNG/JPEG/WebP 使用本地 Tesseract 中英文 OCR。文件最多 10 MB，PDF 为 1–10 页；损坏、加密、超限、无文字或识别失败返回明确错误。整个上传预处理不请求大模型。
+`POST /reports/preprocess` 先校验患者与事项，再调用 [health/report_upload.py](../health/report_upload.py)。文字 PDF 提取文本；无文本扫描页、含图片的混合页与 PNG/JPEG/WebP 使用本地 Tesseract 中英文 OCR。混合页保留原文字层并标记未经核对的 OCR 补充，不能因页眉已有文字就跳过扫描正文。文件最多 10 MB，PDF 为 1–10 页；损坏、加密、超限、无文字或识别失败返回明确错误。整个上传预处理不请求大模型。
 
 [health/reports.py](../health/reports.py) 只整理原文项目、数值、单位及明确参考范围；无法可靠解析的项标为待核对，OCR 低置信度时不做范围判断。API 不保存原始文件，保存的是当前事项中的上传消息、提取文字和 `report_summary` 卡片。后续 Triage 通过 `read_current_report` 读取当前绑定患者、当前事项的最新报告；没有报告时返回未找到，不跨事项借用，也不凭压缩摘要重造数值。具体边界见[健康咨询](health-consultation.md)。
 

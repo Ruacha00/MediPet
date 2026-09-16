@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1350" viewBox="0 0 1440 1350" role="img" aria-labelledby="title desc">
+<title id="title">三个入口，三个明确的完成条件</title><desc id="desc">普通聊天负责协作；确认负责事务；上传负责本地报告预处理。对应 MediPet U001，源码基准 bb0600c。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6c8499"/></marker></defs>
+<rect width="1440" height="1350" fill="#f3f6fa"/>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, Segoe UI, sans-serif">
+<text id="text-1" x="40" y="45" font-size="15" font-weight="700" fill="#087f83" data-max-width="1200">MEDIPET  /  ENGINEERING GUIDE</text>
+<text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">三个入口，三个明确的完成条件</text>
+<text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">普通聊天负责协作；确认负责事务；上传负责本地报告预处理</text>
+<text id="text-4" x="40" y="1323" font-size="15" font-weight="400" fill="#597087" data-max-width="670">02  /  U001 · bb0600c · 2026-09-16</text>
+<text id="text-5" x="810" y="1323" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<text id="text-6" x="40" y="189" font-size="24" font-weight="700" fill="#087f83" data-max-width="650">A  聊天 /chat</text>
+<text id="text-7" x="750" y="189" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="300">B  预约确认</text>
+<text id="text-8" x="1100" y="189" font-size="24" font-weight="700" fill="#956616" data-max-width="300">C  报告上传</text>
+<rect x="40" y="217" width="650" height="118" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="233" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-9" x="62" y="256" font-size="24" font-weight="700" fill="#087f83" data-max-width="606">校验当前事项与患者</text>
+<text id="text-10" x="62" y="293" font-size="19" font-weight="400" fill="#20384f" data-max-width="606">先于普通记忆、意图模型和预约工具</text>
+<polyline points="365,335 365,377" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="377" width="650" height="118" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="393" width="5" height="32" rx="2" fill="#b33f4a"/>
+<text id="text-11" x="62" y="416" font-size="24" font-weight="700" fill="#b33f4a" data-max-width="606">共享急症规则</text>
+<text id="text-12" x="62" y="453" font-size="19" font-weight="400" fill="#20384f" data-max-width="606">有限关键词与语境；检查否定、历史和一般咨询</text>
+<polyline points="210,495 210,546" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<text id="text-13" x="80" y="525" font-size="16" font-weight="400" fill="#597087" data-max-width="750">未命中</text>
+<polyline points="525,495 525,546" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<text id="text-14" x="538" y="525" font-size="16" font-weight="400" fill="#597087" data-max-width="750">命中</text>
+<rect x="40" y="546" width="310" height="171" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="562" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-15" x="62" y="585" font-size="24" font-weight="700" fill="#087f83" data-max-width="266">普通上下文</text>
+<text id="text-16" x="62" y="622" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">工作窗口与记忆</text>
+<text id="text-17" x="62" y="652" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">一次意图识别</text>
+<text id="text-18" x="62" y="682" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">主辅角色路由</text>
+<rect x="380" y="546" width="310" height="171" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="380" y="562" width="5" height="32" rx="2" fill="#b33f4a"/>
+<text id="text-19" x="402" y="585" font-size="24" font-weight="700" fill="#b33f4a" data-max-width="266">固定提示</text>
+<text id="text-20" x="402" y="622" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">当地急救 / 联系资料</text>
+<text id="text-21" x="402" y="652" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">不走普通模型</text>
+<text id="text-22" x="402" y="682" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">不执行预约</text>
+<polyline points="195,717 195,763" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="763" width="310" height="173" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="779" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-23" x="62" y="802" font-size="24" font-weight="700" fill="#087f83" data-max-width="266">角色与工具</text>
+<text id="text-24" x="62" y="839" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">按需检索或业务查询</text>
+<text id="text-25" x="62" y="869" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">收集真实卡片和轨迹</text>
+<text id="text-26" x="62" y="899" font-size="18" font-weight="400" fill="#20384f" data-max-width="266">每角色模型调用有界</text>
+<polyline points="535,717 535,1000" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="195,936 195,1000" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1000" width="650" height="173" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="1016" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-27" x="62" y="1039" font-size="24" font-weight="700" fill="#087f83" data-max-width="606">先保存完整历史，再更新工作窗口</text>
+<text id="text-28" x="62" y="1076" font-size="18" font-weight="400" fill="#20384f" data-max-width="606">急症写窗口使用 compress=False，不启动摘要/画像模型</text>
+<text id="text-29" x="62" y="1106" font-size="18" font-weight="400" fill="#20384f" data-max-width="606">普通回答保留路由、工具结果、来源与失败信息</text>
+<text id="text-30" x="62" y="1136" font-size="18" font-weight="400" fill="#20384f" data-max-width="606">页面展示文字 + artifacts，文本不等于执行成功</text>
+<rect x="750" y="217" width="300" height="171" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="750" y="233" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-31" x="772" y="256" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="256">用户点击确认</text>
+<text id="text-32" x="772" y="293" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">方案 ID + 当前身份</text>
+<text id="text-33" x="772" y="323" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">独立 HTTP 请求</text>
+<text id="text-34" x="772" y="353" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">聊天“确认”不执行</text>
+<polyline points="900,388 900,442" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="750" y="442" width="300" height="214" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="750" y="458" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-35" x="772" y="481" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="256">校验与事务</text>
+<text id="text-36" x="772" y="518" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">归属 / 到期 / 库存</text>
+<text id="text-37" x="772" y="548" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">WATCH</text>
+<text id="text-38" x="772" y="578" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">MULTI / EXEC</text>
+<text id="text-39" x="772" y="608" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">重复请求取原回执</text>
+<polyline points="900,656 900,715" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="750" y="715" width="300" height="181" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="750" y="731" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-40" x="772" y="754" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="256">业务结果回执</text>
+<text id="text-41" x="772" y="791" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">成功、冲突或失效</text>
+<text id="text-42" x="772" y="821" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">不是模型生成的事实</text>
+<text id="text-43" x="772" y="851" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">稳定消息 ID 去重</text>
+<polyline points="900,896 900,1000" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="750" y="1000" width="300" height="173" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="750" y="1016" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-44" x="772" y="1039" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="256">保存并恢复上下文</text>
+<text id="text-45" x="772" y="1076" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">回执写完整历史</text>
+<text id="text-46" x="772" y="1106" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">工作窗口失效</text>
+<text id="text-47" x="772" y="1136" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">下次从真实历史恢复</text>
+<rect x="1100" y="217" width="300" height="171" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="1100" y="233" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-48" x="1122" y="256" font-size="24" font-weight="700" fill="#956616" data-max-width="256">文件与身份校验</text>
+<text id="text-49" x="1122" y="293" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">PDF / PNG / JPEG</text>
+<text id="text-50" x="1122" y="323" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">WebP 单帧图片</text>
+<text id="text-51" x="1122" y="353" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">10 MB / PDF 10 页</text>
+<polyline points="1250,388 1250,442" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1100" y="442" width="300" height="214" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="1100" y="458" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-52" x="1122" y="481" font-size="24" font-weight="700" fill="#956616" data-max-width="256">本地提取与 OCR</text>
+<text id="text-53" x="1122" y="518" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">文字层优先保留</text>
+<text id="text-54" x="1122" y="548" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">扫描 / 混合页 OCR</text>
+<text id="text-55" x="1122" y="578" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">chi_sim + eng</text>
+<text id="text-56" x="1122" y="608" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">有页数/像素/时间限制</text>
+<polyline points="1250,656 1250,715" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1100" y="715" width="300" height="181" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="1100" y="731" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-57" x="1122" y="754" font-size="24" font-weight="700" fill="#956616" data-max-width="256">原文范围比较</text>
+<text id="text-58" x="1122" y="791" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">低置信度 → 待核对</text>
+<text id="text-59" x="1122" y="821" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">不补猜缺失范围</text>
+<text id="text-60" x="1122" y="851" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">不请求大模型</text>
+<polyline points="1250,896 1250,1000" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1100" y="1000" width="300" height="173" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="1100" y="1016" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-61" x="1122" y="1039" font-size="24" font-weight="700" fill="#956616" data-max-width="256">保存派生结果</text>
+<text id="text-62" x="1122" y="1076" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">原件不保留</text>
+<text id="text-63" x="1122" y="1106" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">文字/卡片入当前事项</text>
+<text id="text-64" x="1122" y="1136" font-size="18" font-weight="400" fill="#20384f" data-max-width="256">后续聊天可使用模型</text>
+<rect x="40" y="1210" width="1360" height="84" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<text id="text-65" x="62" y="1246" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">共同约束</text>
+<text id="text-66" x="62" y="1279" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">患者与事项身份贯穿入口、工具、存储和结果；当前演示归属检查不等于生产登录认证。</text>
+</g></svg>

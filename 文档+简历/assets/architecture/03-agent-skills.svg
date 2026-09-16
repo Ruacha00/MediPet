@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1090" viewBox="0 0 1440 1090" role="img" aria-labelledby="title desc">
+<title id="title">角色、规则与工具权限一起决定行为</title><desc id="desc">六角色 + 六组 Skills；核心约束由程序与规则共同承载。对应 MediPet U001，源码基准 bb0600c。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6c8499"/></marker></defs>
+<rect width="1440" height="1090" fill="#f3f6fa"/>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, Segoe UI, sans-serif">
+<text id="text-1" x="40" y="45" font-size="15" font-weight="700" fill="#087f83" data-max-width="1200">MEDIPET  /  ENGINEERING GUIDE</text>
+<text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">角色、规则与工具权限一起决定行为</text>
+<text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">六角色 + 六组 Skills；核心约束由程序与规则共同承载</text>
+<text id="text-4" x="40" y="1063" font-size="15" font-weight="400" fill="#597087" data-max-width="670">03  /  U001 · bb0600c · 2026-09-16</text>
+<text id="text-5" x="810" y="1063" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<rect x="40" y="175" width="1360" height="111" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<text id="text-6" x="62" y="211" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">共享入口：意图 → 主角色 + 按需辅助角色</text>
+<text id="text-7" x="62" y="244" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">service_boundaries 配置覆盖六角色；普通角色注入 prompt，Escalation 由固定代码保证边界。</text>
+<text id="text-8" x="62" y="272" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">主辅可以并行；不是每轮运行六个角色。</text>
+<rect x="40" y="335" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="351" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-9" x="62" y="374" font-size="24" font-weight="700" fill="#087f83" data-max-width="386">General / 医院信息</text>
+<text id="text-10" x="62" y="411" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">general_visit</text>
+<text id="text-11" x="62" y="441" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">医院、科室、医生与澄清</text>
+<text id="text-12" x="62" y="471" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">公开目录或静态检索</text>
+<rect x="505" y="335" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="505" y="351" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-13" x="527" y="374" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="386">Guidance / 就诊指引</text>
+<text id="text-14" x="527" y="411" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">visit_guidance</text>
+<text id="text-15" x="527" y="441" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">材料、报到与文字路线</text>
+<text id="text-16" x="527" y="471" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">已知起终点时直接查询</text>
+<rect x="970" y="335" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="970" y="351" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-17" x="992" y="374" font-size="24" font-weight="700" fill="#087f83" data-max-width="386">Appointment / 预约</text>
+<text id="text-18" x="992" y="411" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">appointment_assistance</text>
+<text id="text-19" x="992" y="441" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">号源与预约状态查询</text>
+<text id="text-20" x="992" y="471" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">准备创建/取消方案</text>
+<rect x="40" y="585" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="601" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-21" x="62" y="624" font-size="24" font-weight="700" fill="#956616" data-max-width="386">Triage / 分诊与报告</text>
+<text id="text-22" x="62" y="661" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">health_triage</text>
+<text id="text-23" x="62" y="691" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">有限症状的科室方向</text>
+<text id="text-24" x="62" y="721" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">预处理与当前事项报告读取</text>
+<rect x="505" y="585" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="505" y="601" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-25" x="527" y="624" font-size="24" font-weight="700" fill="#956616" data-max-width="386">Medication / 用药资料</text>
+<text id="text-26" x="527" y="661" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">medication_information</text>
+<text id="text-27" x="527" y="691" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">两个指定美国药品标签</text>
+<text id="text-28" x="527" y="721" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">未知药品/剂型不能据此判断</text>
+<rect x="970" y="585" width="430" height="205" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="970" y="601" width="5" height="32" rx="2" fill="#b33f4a"/>
+<text id="text-29" x="992" y="624" font-size="24" font-weight="700" fill="#b33f4a" data-max-width="386">Escalation / 联系导诊</text>
+<text id="text-30" x="992" y="661" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">固定代码边界（不读 Skill prompt）</text>
+<text id="text-31" x="992" y="691" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">固定急症提示、人工联系</text>
+<text id="text-32" x="992" y="721" font-size="18" font-weight="400" fill="#20384f" data-max-width="386">不声称已通知工作人员</text>
+<rect x="40" y="844" width="1360" height="120" rx="14" fill="#eaf0f9" stroke="#dbe4ed"/>
+<text id="text-33" x="62" y="880" font-size="22" font-weight="700" fill="#3c62ad" data-max-width="1316">规则加载与执行限制</text>
+<text id="text-34" x="62" y="913" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">修改 Skill 后需主动 reload；规则文本不授予新工具权限，不绕过患者校验或显式确认。</text>
+<text id="text-35" x="62" y="941" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">带工具的单角色生成最多三次模型请求；这不是一次聊天的所有模型调用总量。</text>
+<text id="text-36" x="40" y="1009" font-size="17" font-weight="400" fill="#597087" data-max-width="1360">源码：agents/agent_orchestrator.py · agents/tools.py · core/skill_loader.py · skills/</text>
+</g></svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1160" viewBox="0 0 1440 1160" role="img" aria-labelledby="title desc">
+<title id="title">完整历史不是模型工作窗口</title><desc id="desc">存储职责、身份范围与保留周期分开解释。对应 MediPet U001，源码基准 bb0600c。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6c8499"/></marker></defs>
+<rect width="1440" height="1160" fill="#f3f6fa"/>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, Segoe UI, sans-serif">
+<text id="text-1" x="40" y="45" font-size="15" font-weight="700" fill="#087f83" data-max-width="1200">MEDIPET  /  ENGINEERING GUIDE</text>
+<text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">完整历史不是模型工作窗口</text>
+<text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">存储职责、身份范围与保留周期分开解释</text>
+<text id="text-4" x="40" y="1133" font-size="15" font-weight="400" fill="#597087" data-max-width="670">04  /  U001 · bb0600c · 2026-09-16</text>
+<text id="text-5" x="810" y="1133" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<rect x="40" y="177" width="1360" height="111" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<text id="text-6" x="62" y="213" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">身份：user_id → patient_id → conv_id</text>
+<text id="text-7" x="62" y="246" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">一个事项固定属于一位患者；卡片确认和报告追问都重新验证当前事项归属。</text>
+<text id="text-8" x="62" y="274" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">报告事实只读当前事项最新报告；记忆摘要不能代替其原始数值。</text>
+<polyline points="370,288 370,342" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1060,288 1060,342" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="342" width="665" height="554" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<rect x="735" y="342" width="665" height="554" rx="14" fill="#eaf0f9" stroke="#dbe4ed"/>
+<text id="text-9" x="64" y="384" font-size="25" font-weight="700" fill="#087f83" data-max-width="600">Redis / 业务记录与工作上下文</text>
+<text id="text-10" x="759" y="384" font-size="25" font-weight="700" fill="#3c62ad" data-max-width="600">Chroma / 三个独立集合</text>
+<rect x="62" y="413" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="62" y="429" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-11" x="84" y="452" font-size="24" font-weight="700" fill="#087f83" data-max-width="577">业务事务</text>
+<text id="text-12" x="84" y="489" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">库存、方案、预约、原回执</text>
+<text id="text-13" x="84" y="519" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">WATCH/MULTI/EXEC；不使用工作窗口 TTL</text>
+<rect x="62" y="570" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="62" y="586" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-14" x="84" y="609" font-size="24" font-weight="700" fill="#087f83" data-max-width="577">完整事项历史</text>
+<text id="text-15" x="84" y="646" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">消息 ID、卡片、metadata、报告提取文字</text>
+<text id="text-16" x="84" y="676" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">归档不删除；页面恢复与报告追问的事实入口</text>
+<rect x="62" y="727" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="62" y="743" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-17" x="84" y="766" font-size="24" font-weight="700" fill="#087f83" data-max-width="577">工作窗口与摘要</text>
+<text id="text-18" x="84" y="803" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">有限模型上下文；24 小时 TTL</text>
+<text id="text-19" x="84" y="833" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">压缩只缩小窗口，过期可从完整历史重建</text>
+<rect x="757" y="413" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="757" y="429" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-20" x="779" y="452" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="577">medipet_knowledge</text>
+<text id="text-21" x="779" y="489" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">24 份默认文档 + 用户导入的公开资料</text>
+<text id="text-22" x="779" y="519" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">固定默认文档 ID 同步；报告不作为公共知识入库</text>
+<rect x="757" y="570" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="757" y="586" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-23" x="779" y="609" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="577">medipet_episodic</text>
+<text id="text-24" x="779" y="646" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">摘要片段按患者和事项过滤</text>
+<text id="text-25" x="779" y="676" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">不足时可召回同患者其他事项作为背景</text>
+<rect x="757" y="727" width="621" height="139" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="757" y="743" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-26" x="779" y="766" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="577">medipet_profiles</text>
+<text id="text-27" x="779" y="803" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">患者资料与参与者表达偏好分开</text>
+<text id="text-28" x="779" y="833" font-size="18" font-weight="400" fill="#20384f" data-max-width="577">模型提取后校验原句子串；不是实时业务记录</text>
+<rect x="40" y="936" width="665" height="143" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="952" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-29" x="62" y="975" font-size="24" font-weight="700" fill="#087f83" data-max-width="621">文件与卷</text>
+<text id="text-30" x="62" y="1012" font-size="18" font-weight="400" fill="#20384f" data-max-width="621">skills/ 只读挂载；knowledge/ 与医疗来源随代码</text>
+<text id="text-31" x="62" y="1042" font-size="18" font-weight="400" fill="#20384f" data-max-width="621">API 数据卷保留评测候选/基线，Redis/Chroma 各有卷</text>
+<rect x="735" y="936" width="665" height="143" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="735" y="952" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-32" x="757" y="975" font-size="24" font-weight="700" fill="#956616" data-max-width="621">报告数据边界</text>
+<text id="text-33" x="757" y="1012" font-size="18" font-weight="400" fill="#20384f" data-max-width="621">PDF / 图片原件不保留；提取文字与卡片持久保存</text>
+<text id="text-34" x="757" y="1042" font-size="18" font-weight="400" fill="#20384f" data-max-width="621">上传提取不调用模型，后续聊天可携带处理后的内容</text>
+</g></svg>

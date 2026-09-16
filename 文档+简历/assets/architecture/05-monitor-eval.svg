@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1230" viewBox="0 0 1440 1230" role="img" aria-labelledby="title desc">
+<title id="title">让运行统计与评测证据各司其职</title><desc id="desc">运行正常、回答质量、业务正确与医学有效性不是同一指标。对应 MediPet U001，源码基准 bb0600c。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6c8499"/></marker></defs>
+<rect width="1440" height="1230" fill="#f3f6fa"/>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, Segoe UI, sans-serif">
+<text id="text-1" x="40" y="45" font-size="15" font-weight="700" fill="#087f83" data-max-width="1200">MEDIPET  /  ENGINEERING GUIDE</text>
+<text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">让运行统计与评测证据各司其职</text>
+<text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">运行正常、回答质量、业务正确与医学有效性不是同一指标</text>
+<text id="text-4" x="40" y="1203" font-size="15" font-weight="400" fill="#597087" data-max-width="670">05  /  U001 · bb0600c · 2026-09-16</text>
+<text id="text-5" x="810" y="1203" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<text id="text-6" x="40" y="193" font-size="25" font-weight="700" fill="#087f83" data-max-width="600">运行时观察</text>
+<text id="text-7" x="760" y="193" font-size="25" font-weight="700" fill="#3c62ad" data-max-width="600">离线 / 手动评测</text>
+<rect x="40" y="222" width="635" height="151" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="238" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-8" x="62" y="261" font-size="24" font-weight="700" fill="#087f83" data-max-width="591">Agent 与工具运行事件</text>
+<text id="text-9" x="62" y="298" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">成功、异常、延迟、工具状态</text>
+<text id="text-10" x="62" y="328" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">Monitor 汇总 → 页面、指标接口</text>
+<polyline points="357,373 357,423" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="423" width="635" height="151" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="439" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-11" x="62" y="462" font-size="24" font-weight="700" fill="#087f83" data-max-width="591">路由惩罚值</text>
+<text id="text-12" x="62" y="499" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">监控结果可影响后续实例选择分数</text>
+<text id="text-13" x="62" y="529" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">单实例角色不保证能切换到其他实例</text>
+<polyline points="357,574 357,624" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="624" width="635" height="182" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="640" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-14" x="62" y="663" font-size="24" font-weight="700" fill="#087f83" data-max-width="591">排查与人工改进</text>
+<text id="text-15" x="62" y="700" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">对照失败请求、工具轨迹和来源</text>
+<text id="text-16" x="62" y="730" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">修改实现/规则后重新验证</text>
+<text id="text-17" x="62" y="760" font-size="19" font-weight="400" fill="#20384f" data-max-width="591">不是自动学习或自动改写提示词</text>
+<rect x="760" y="222" width="640" height="121" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="760" y="238" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-18" x="782" y="261" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="596">固定输入与明确版本</text>
+<text id="text-19" x="782" y="298" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">66 条意图 / 15 组多轮 / 12 组边界</text>
+<polyline points="1080,343 1080,393" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="760" y="393" width="640" height="182" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="760" y="409" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-20" x="782" y="432" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="596">分开评价</text>
+<text id="text-21" x="782" y="469" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">意图预测：分类是否匹配</text>
+<text id="text-22" x="782" y="499" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">LLM-as-Judge：回答质量</text>
+<text id="text-23" x="782" y="529" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">业务断言：卡片、工具、状态、患者范围</text>
+<polyline points="1080,575 1080,625" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="760" y="625" width="640" height="182" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="760" y="641" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-24" x="782" y="664" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="596">candidate → 人工复核 → 接受基线</text>
+<text id="text-25" x="782" y="701" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">保留失败、调用异常、Judge 失败与跳过</text>
+<text id="text-26" x="782" y="731" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">固定样本结果不代表任意输入效果</text>
+<text id="text-27" x="782" y="761" font-size="19" font-weight="400" fill="#20384f" data-max-width="596">新旧候选均未自动接受</text>
+<rect x="40" y="856" width="1360" height="144" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<text id="text-28" x="62" y="892" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">本版已有证据 / 2026-09-16</text>
+<text id="text-29" x="62" y="925" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">后端 684 passed / 21 skipped；前端 35/35 与构建通过。</text>
+<text id="text-30" x="62" y="953" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">完整模型：66/66 意图，57/58 结果项。修复后原场景 3/3，未重跑全量 58 项。</text>
+<text id="text-31" x="62" y="981" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">测试总量与模型通过率不可相加；完整后端测试先于最后的指引提示修复，随后定向 119 项通过。</text>
+<rect x="40" y="1015" width="1360" height="126" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="1031" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-32" x="62" y="1054" font-size="24" font-weight="700" fill="#956616" data-max-width="1316">按问题选择验证层</text>
+<text id="text-33" x="62" y="1091" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">确定性测试 → 真实存储/OCR → 浏览器业务流程 → 实际模型候选；每层保留自己的失败与证据。</text>
+<text id="text-34" x="62" y="1121" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">医疗资料与临床有效性还需要专业审核，本项目测试不能提供医学认证。</text>
+</g></svg>

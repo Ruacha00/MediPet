@@ -52,7 +52,7 @@
 | [medication_information](../skills/medication_information/SKILL.md) | Medication 常驻 | 指定标签、未知药/组合、个人用药与处方边界 |
 | [service_boundaries](../skills/service_boundaries/SKILL.md) | 六角色常驻 | 不替代医生诊断、不开处方、不评论其他医院或医生方案；急症、身份与确认边界 |
 
-当前共 **6 组 Skills**。报告由 Triage 处理，不新增 ReportAgent；两个医疗 Skill 与全局边界共同约束输出，个体剂量、儿童、孕哺期和肝肾异常交医师或药师核对。症状建议与药品资料只覆盖[已收录范围](health-consultation.md)，提示词不是医学有效性或模型遵守保证。
+当前共 **6 组 Skills**。表中角色范围描述加载配置：普通角色构建 prompt 时注入匹配规则，Escalation 则直接返回固定响应，不读取 Skill prompt，修改并重载规则不会改变它的固定内容。报告由 Triage 处理，不新增 ReportAgent；两个医疗 Skill 与全局边界共同约束普通角色输出，个体剂量、儿童、孕哺期和肝肾异常交医师或药师核对。症状建议与药品资料只覆盖[已收录范围](health-consultation.md)，提示词不是医学有效性或模型遵守保证。
 
 文件修改不会自动进入已加载对象。`GET /skills` 查看已加载内容摘要和解析错误，`POST /skills/reload` 重新扫描并更新编排器，后续请求使用新内容。单个文件解析失败会记录错误，其他文件仍可加载。Skill 是提示规则，不改变工具白名单、身份权限或预约事务校验。
 

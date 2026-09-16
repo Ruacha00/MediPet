@@ -90,6 +90,8 @@ docker compose up -d
 
 ## 演示与代码导航
 
+完整学习资料见[教程与项目文档中心](文档+简历/文档中心.md)：包含学习路线、使用指南、业务流程、重点代码、6 张架构图与项目海报、技术亮点及带证据的简历和面试模板，内容对应当前医疗扩展实现。后续医院运营设想另行标注为未实现。
+
 按[固定演示脚本](docs/demo-script.md)体验“孩子查号与材料 → 确认预约 → 恢复历史 → 指引 → 取消”，再核对医疗扩展的分诊、药品和报告用例。[面试说明](docs/interview-notes.md)把设计理由、代码入口、证据和取舍放在一起。当前六角色为 General、Guidance、Appointment、Escalation、Triage 和 Medication；报告由 Triage 处理，知识库共 24 份文档，Skills 共 6 组。
 
 | 目录 | 职责 | 说明 |

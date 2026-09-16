@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1120" viewBox="0 0 1440 1120" role="img" aria-labelledby="title desc">
+<title id="title">从患者事项到可核验的业务结果</title><desc id="desc">总体架构 · 聊天、确认和报告预处理拥有不同执行路径。对应 MediPet U001，源码基准 bb0600c。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6c8499"/></marker></defs>
+<rect width="1440" height="1120" fill="#f3f6fa"/>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, Segoe UI, sans-serif">
+<text id="text-1" x="40" y="45" font-size="15" font-weight="700" fill="#087f83" data-max-width="1200">MEDIPET  /  ENGINEERING GUIDE</text>
+<text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">从患者事项到可核验的业务结果</text>
+<text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">总体架构 · 聊天、确认和报告预处理拥有不同执行路径</text>
+<text id="text-4" x="40" y="1093" font-size="15" font-weight="400" fill="#597087" data-max-width="670">01  /  U001 · bb0600c · 2026-09-16</text>
+<text id="text-5" x="810" y="1093" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<rect x="40" y="178" width="850" height="116" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="194" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-6" x="62" y="217" font-size="24" font-weight="700" fill="#087f83" data-max-width="806">Vue / Vite 页面 → Nginx</text>
+<text id="text-7" x="62" y="254" font-size="19" font-weight="400" fill="#20384f" data-max-width="806">患者与事项 · 对话与业务卡片 · 知识库 · 监控与评测</text>
+<rect x="960" y="178" width="440" height="116" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="960" y="194" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-8" x="982" y="217" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="396">外部模型</text>
+<text id="text-9" x="982" y="254" font-size="18" font-weight="400" fill="#20384f" data-max-width="396">Anthropic SDK / deepseek-flash</text>
+<polyline points="465,294 465,340" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="340" width="850" height="124" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="356" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-10" x="62" y="379" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="806">FastAPI：先绑定 user / patient / visit</text>
+<text id="text-11" x="62" y="416" font-size="18" font-weight="400" fill="#20384f" data-max-width="806">/chat  ·  /reports/preprocess</text>
+<text id="text-12" x="62" y="446" font-size="18" font-weight="400" fill="#20384f" data-max-width="806">/appointment-proposals/{proposal_id}/confirm</text>
+<polyline points="890,400 1180,400 1180,294" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<text id="text-13" x="968" y="379" font-size="16" font-weight="400" fill="#597087" data-max-width="750">普通模型模块按需调用</text>
+<polyline points="465,464 465,493 250,493 250,534" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="465,464 465,493 715,493 715,534" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="465,464 465,493 1180,493 1180,534" fill="none" stroke="#6c8499" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="534" width="430" height="183" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="550" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-14" x="62" y="573" font-size="24" font-weight="700" fill="#087f83" data-max-width="386">聊天编排</text>
+<text id="text-15" x="62" y="610" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">急症固定响应 / 普通主辅角色</text>
+<text id="text-16" x="62" y="640" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">6 个角色 + 工具白名单</text>
+<text id="text-17" x="62" y="670" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">Skills · 按需 RAG · 有限调用</text>
+<rect x="505" y="534" width="430" height="183" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="505" y="550" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-18" x="527" y="573" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="386">预约与业务服务</text>
+<text id="text-19" x="527" y="610" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">目录 / 号源 / 材料 / 文字路线</text>
+<text id="text-20" x="527" y="640" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">方案 → 显式确认 → 事务回执</text>
+<text id="text-21" x="527" y="670" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">库存与患者归属由程序检查</text>
+<rect x="970" y="534" width="430" height="183" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="970" y="550" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-22" x="992" y="573" font-size="24" font-weight="700" fill="#956616" data-max-width="386">医疗信息与报告</text>
+<text id="text-23" x="992" y="610" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">有限症状 · 两个指定药品标签</text>
+<text id="text-24" x="992" y="640" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">文字 / PDF / 图片本地提取</text>
+<text id="text-25" x="992" y="670" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">原文参考范围比较，不做诊断</text>
+<path d="M255 717V751" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M720 717V751" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M1185 717V751" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M255 751H1185" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6"/>
+<polyline points="255,751 255,789" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<polyline points="720,751 720,789" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<polyline points="1185,751 1185,789" fill="none" stroke="#6c8499" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<rect x="40" y="789" width="430" height="158" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="40" y="805" width="5" height="32" rx="2" fill="#087f83"/>
+<text id="text-26" x="62" y="828" font-size="24" font-weight="700" fill="#087f83" data-max-width="386">Redis</text>
+<text id="text-27" x="62" y="865" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">预约、库存、完整事项历史</text>
+<text id="text-28" x="62" y="895" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">工作窗口 / 摘要：24 小时 TTL</text>
+<rect x="505" y="789" width="430" height="158" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="505" y="805" width="5" height="32" rx="2" fill="#3c62ad"/>
+<text id="text-29" x="527" y="828" font-size="24" font-weight="700" fill="#3c62ad" data-max-width="386">Chroma</text>
+<text id="text-30" x="527" y="865" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">静态知识 / 情景记忆 / 资料</text>
+<text id="text-31" x="527" y="895" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">身份过滤 · 客户端生成向量</text>
+<rect x="970" y="789" width="430" height="158" rx="14" fill="white" stroke="#dbe4ed"/>
+<rect x="970" y="805" width="5" height="32" rx="2" fill="#956616"/>
+<text id="text-32" x="992" y="828" font-size="24" font-weight="700" fill="#956616" data-max-width="386">文件与运行记录</text>
+<text id="text-33" x="992" y="865" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">24 份知识 · 6 组 Skills</text>
+<text id="text-34" x="992" y="895" font-size="19" font-weight="400" fill="#20384f" data-max-width="386">医疗来源 · 评测候选与基线</text>
+<rect x="40" y="978" width="1360" height="84" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
+<text id="text-35" x="62" y="1014" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">读图边界</text>
+<text id="text-36" x="62" y="1047" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">虚线概括按需依赖；并非每个请求都会访问所有存储或模型。业务卡片来自工具结果。</text>
+</g></svg>

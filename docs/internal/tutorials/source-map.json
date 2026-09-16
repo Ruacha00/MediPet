@@ -1,0 +1,154 @@
+{
+  "revision_date": "2026-09-16",
+  "implementation_commit": "bb0600c776728e8d5391776b135bd98ba26406b4",
+  "source_directory": "D:/Projects/Agent Learn/Project/EchoMind所有代码+详细文档+简历/文档+简历",
+  "source_file_count": 18,
+  "source_unchanged": true,
+  "scope": "Original-based incremental revision: retain chapter order, teaching explanations and operation steps in 11 Markdown files; reuse 7 verified MediPet SVG diagrams. Original inputs are read-only.",
+  "files": [
+    {
+      "source": "assets/architecture/01-overall-architecture.svg",
+      "source_bytes": 18754,
+      "source_sha256": "376a1a446ab2b7ed2a114a794bb1309246110968a465f2dd224960a01b2d48af",
+      "output": "文档+简历/assets/architecture/01-overall-architecture.svg",
+      "output_bytes": 8870,
+      "output_sha256": "e630e119b9bd514bacb294c8a9e6d6c2fd7627d033d2461e072fcf20f2ea7f7e"
+    },
+    {
+      "source": "assets/architecture/02-chat-flow.svg",
+      "source_bytes": 10549,
+      "source_sha256": "d0e10b7103b1aac9c1bdd26db8d45e65aae896f416f39858e5f9aff5ff19a4df",
+      "output": "文档+简历/assets/architecture/02-chat-flow.svg",
+      "output_bytes": 13482,
+      "output_sha256": "330206118105acd94799289e186785bab3f1b039e8a1077569164de2fcde1a4e"
+    },
+    {
+      "source": "assets/architecture/03-agent-skills.svg",
+      "source_bytes": 9819,
+      "source_sha256": "9313626f58fa9ed18a52cd616939bf70e9505dfad170e2d18326ce7133f7fbea",
+      "output": "文档+简历/assets/architecture/03-agent-skills.svg",
+      "output_bytes": 7243,
+      "output_sha256": "c769ee4e575871b39f6ae6b22aab87b7731ca09a1213acd8006b9fed16cd2cdd"
+    },
+    {
+      "source": "assets/architecture/04-data-storage.svg",
+      "source_bytes": 7950,
+      "source_sha256": "b7db491493c4962bb142f67eb8c30126c1353cf79320240bb8be0f97691495bf",
+      "output": "文档+简历/assets/architecture/04-data-storage.svg",
+      "output_bytes": 7651,
+      "output_sha256": "a18b41d7ea031dbfbf116ebfccab22d54f0ad78b3bdac5cfddc336f56aac2d64"
+    },
+    {
+      "source": "assets/architecture/05-monitor-eval.svg",
+      "source_bytes": 9918,
+      "source_sha256": "170f13402a40a4d6c2ef272406e4bc30964a9db511190554e17fc348eb868f63",
+      "output": "文档+简历/assets/architecture/05-monitor-eval.svg",
+      "output_bytes": 7658,
+      "output_sha256": "18a23e7edc85f4aa6ea9bd438caf9b0cf4fe0cbe9a888ee4794a8ad553422b9a"
+    },
+    {
+      "source": "assets/architecture/06-deployment.svg",
+      "source_bytes": 4190,
+      "source_sha256": "6aca9825a0768abfe11b72ab8993fe9c34daeed4adeb15343d3a12033783d7c9",
+      "output": "文档+简历/assets/architecture/06-deployment.svg",
+      "output_bytes": 8046,
+      "output_sha256": "ed98b7b5a3362615f85c46c8213666ca8cbd071d8857da9fee7a7733ff73a636"
+    },
+    {
+      "source": "assets/posters/echomind-update-poster.svg",
+      "source_bytes": 10790,
+      "source_sha256": "6fd11b2afd7d1f5ad69a37a62132639b7e2921c21baf7b5e8533fb38db447dd3",
+      "output": "文档+简历/assets/posters/medipet-overview-poster.svg",
+      "output_bytes": 10236,
+      "output_sha256": "47c6c4c7564dbc262755c4a5bb3072440b5ce5d06ea92661a52ad5a4bea2d3ed"
+    },
+    {
+      "source": "EchoMind学习文档.md",
+      "source_bytes": 22713,
+      "source_sha256": "6bd3f0340bae536bbfcfa70878aa177bd5bbca3f0ce1e68248d9f62e16d12824",
+      "output": "文档+简历/MediPet学习文档.md",
+      "output_bytes": 40511,
+      "output_sha256": "c471b66a8c98a607b5dea5e5f08765bde66eb28af0b05d8939bf5c8ab522d56d"
+    },
+    {
+      "source": "EchoMind定位与技术亮点.md",
+      "source_bytes": 10825,
+      "source_sha256": "12117c0df1fc6d1df05ac953a4ce266bcafedbe23fd0b859c01e33541e1d18e9",
+      "output": "文档+简历/MediPet定位与技术亮点.md",
+      "output_bytes": 16833,
+      "output_sha256": "acbfe3c1aff030c8a1ba3cf7eb28a7b0287c9547be43bebb1e65452cf7c21b25"
+    },
+    {
+      "source": "NexusOps企业智能运营协同中枢.md",
+      "source_bytes": 14215,
+      "source_sha256": "da3b4200c6fe6baef2345dc9baa799992993f0d524af19ba93048a3bd33b6d23",
+      "output": "文档+简历/医院运营扩展构想（未实现）.md",
+      "output_bytes": 20273,
+      "output_sha256": "52894eec605a46f4c26006191f0ff8f22e4604dd76bcdfe4566d11f4b76a9683"
+    },
+    {
+      "source": "业务流程说明.md",
+      "source_bytes": 17505,
+      "source_sha256": "fcc9b80b0a8b9f22ccc4077565401daa3229b74004e0cfd2128bdbf0893885b1",
+      "output": "文档+简历/业务流程说明.md",
+      "output_bytes": 24052,
+      "output_sha256": "dfe5cbea0a7e1ffbb916e7be612c75b3e5efc8a41cd140a177e004bfcf65562c"
+    },
+    {
+      "source": "完整使用指南.md",
+      "source_bytes": 38089,
+      "source_sha256": "59335bba307a278f0782461bc37ec9154bfc9f7f0c59d38933e128f6b1089458",
+      "output": "文档+简历/完整使用指南.md",
+      "output_bytes": 62816,
+      "output_sha256": "692d3ff251481ef2a3050ba8df40d46f8e2c2a5ea6870f15cd27c446f23f7e39"
+    },
+    {
+      "source": "带数据指标的加强版简历模板.md",
+      "source_bytes": 14369,
+      "source_sha256": "f299491187c16353f184be3e10fc860a1daaddeaa91ba60c91ac7ffc6a42b136",
+      "output": "文档+简历/带数据指标的加强版简历模板.md",
+      "output_bytes": 13955,
+      "output_sha256": "3e6182b0d7744c8f8dcb6b429eb8bdaf71857f144bd7a6dd5801510964ec3793"
+    },
+    {
+      "source": "技术亮点.md",
+      "source_bytes": 12711,
+      "source_sha256": "e50c91ba5988044474bf51084459dc8411754e8e8ca981628c59d65a25edb27f",
+      "output": "文档+简历/技术亮点.md",
+      "output_bytes": 21296,
+      "output_sha256": "38ded722698c237761082654950dcf6a432d4b87232bafa06dcf5d0dd8621878"
+    },
+    {
+      "source": "文档中心.md",
+      "source_bytes": 2318,
+      "source_sha256": "98a2f73d34dc475b04ef6e299dde38894f24f519c0842c7f1f5928d70b3c7bc2",
+      "output": "文档+简历/文档中心.md",
+      "output_bytes": 3974,
+      "output_sha256": "ef8d31aff2c0b16794eee7c54ebb6d0ee947c078d16b1719358e1407aa0d47d5"
+    },
+    {
+      "source": "架构图.md",
+      "source_bytes": 3440,
+      "source_sha256": "5a83baff3256d8319e05d80392a889ecdeb822fc9b52d12b6ee53438d3a0e664",
+      "output": "文档+简历/架构图.md",
+      "output_bytes": 7697,
+      "output_sha256": "4de9bfe999ca43a0c1788d1a30d747e4496bfbbb9587b474d951eddb9a1b89e1"
+    },
+    {
+      "source": "简历包装.md",
+      "source_bytes": 9207,
+      "source_sha256": "4e650074a5128ad30161dee4834b1e4dd8774b99f978d8c952f1511bc4042815",
+      "output": "文档+简历/简历包装.md",
+      "output_bytes": 11673,
+      "output_sha256": "9121018393b0036d92a78cc1acebaea8ec025c5f0d7b6ed9c31aba0684c30fb6"
+    },
+    {
+      "source": "重点代码.md",
+      "source_bytes": 11502,
+      "source_sha256": "660303195af75f965526f9f31b16afcb39f89adbeadeeac31f646a9ad86d929f",
+      "output": "文档+简历/重点代码.md",
+      "output_bytes": 31314,
+      "output_sha256": "644f2ff192b2bb630152fa423f0d6bd302d08e08cf1900f96553a6d2ddf27fca"
+    }
+  ]
+}
