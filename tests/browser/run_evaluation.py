@@ -17,7 +17,7 @@ from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[2]
-EXPECTED_COUNTS = {"intent": 54, "dialog": 12, "boundary": 12}
+EXPECTED_COUNTS = {"intent": 66, "dialog": 15, "boundary": 12}
 CASE_FILES = {"intent": "intents.json", "dialog": "dialogs.json", "boundary": "boundaries.json"}
 CONFIG_NAMES = {
     "ANTHROPIC_MODEL", "ANTHROPIC_BASE_URL", "MEDIPET_THINKING",
@@ -45,7 +45,7 @@ def save_json(path, value):
 
 def source_manifest():
     paths = set()
-    for directory in ("agents", "api", "core", "hospital", "memory", "mcp", "monitor",
+    for directory in ("agents", "api", "core", "health", "hospital", "memory", "mcp", "monitor",
                       "skills", "knowledge", "evaluation/cases", "frontend/src", "frontend/public"):
         paths.update(p for p in (ROOT / directory).rglob("*")
                      if p.is_file() and p.suffix in SOURCE_SUFFIXES and "__pycache__" not in p.parts)

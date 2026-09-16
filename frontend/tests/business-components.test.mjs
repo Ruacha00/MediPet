@@ -22,6 +22,8 @@ async function component(name) {
 }
 const Business = await component('BusinessArtifacts')
 const Panel = await component('PatientVisitPanel')
+const Health = await component('HealthArtifacts')
+const ReportUpload = await component('ReportUpload')
 const html = (comp, props) => renderToString(Vue.createSSRApp(comp, props))
 
 function mounted(t, comp, props) {
@@ -138,4 +140,31 @@ test('both standalone Vue components bundle with their scoped styles', async () 
   const assets = (Array.isArray(output) ? output : [output]).flatMap(bundle => bundle.output)
   assert.ok(assets.some(item => item.type === 'asset' && item.fileName.endsWith('.css')))
   assert.equal(assets.filter(item => item.type === 'chunk' && item.isEntry).length, 2)
+})
+
+test('health cards show actual fields, flags, original text and safely linked sources', async () => {
+  const sources = [{ source_id: 'fact', title: '公开资料', url: 'https://example.org/medicine', reviewed_at: '2026-09-16' }]
+  const rendered = await html(Health, { artifacts: [
+    { id: 'triage', type: 'triage_guidance', data: { title: '科室参考', summary: '仅为初步建议', recommended_departments: [{ department_id: 'dep', name: '内科', reason: '依据描述' }], missing_information: ['持续多久？'], sources } },
+    { id: 'med', type: 'medication_info', data: { title: '药品信息', drug_name: '演示药名', formulation: '片剂', summary: '公开说明', sections: [{ heading: '禁忌', items: ['需核对说明书'] }], sources } },
+    { id: 'report', type: 'report_summary', data: { title: '报告整理', summary: '核对原文', input_kind: 'image', extracted_text: 'Test 8 mg/L 4-6\n<script>bad()</script>', observations: [{ item: 'Test', value: '8', unit: 'mg/L', reference_range: '4–6', flag: 'above', raw_line: 'Test 8 mg/L 4-6' }], warnings: ['不推断疾病'], sources: [{ ...sources[0], url: 'javascript:bad()' }] } }
+  ] })
+  for (const text of ['triage_guidance', 'medication_info', 'report_summary', '内科', '持续多久', '演示药名', '片剂', '需核对说明书', '8 mg/L', '4–6', '高于原报告区间', 'Test 8 mg/L 4-6', '不推断疾病', '2026-09-16']) assert.ok(rendered.includes(text), text)
+  assert.ok(rendered.includes('data-report-flag="above"'))
+  assert.ok(rendered.includes('https://example.org/medicine'))
+  assert.ok(!rendered.includes('href="javascript:') && !rendered.includes('<script>bad()'))
+})
+
+test('report picker emits a valid file once, rejects extension/size, and respects busy state', async t => {
+  const events = []
+  const view = mounted(t, ReportUpload, { onUpload: file => events.push(file), busy: false })
+  const change = file => view.all().find(item => item.type === 'input').props.onChange({ target: { files: [file], value: 'selected' } })
+  change({ name: 'report.exe', size: 100 }); await Vue.nextTick()
+  assert.equal(events.length, 0)
+  change({ name: 'large.pdf', size: 10 * 1024 * 1024 + 1 }); await Vue.nextTick()
+  assert.equal(events.length, 0)
+  const file = { name: 'scan.png', size: 100 }
+  change(file); assert.deepEqual(events, [file])
+  view.state.busy = true; await Vue.nextTick(); change(file)
+  assert.equal(events.length, 1)
 })

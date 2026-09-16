@@ -1,0 +1,461 @@
+{
+  "timestamp": "2026-09-16T10:16:54.276609+00:00",
+  "total": 3,
+  "passed": 3,
+  "pass_rate": 1.0,
+  "avg_scores": {
+    "relevance": 1.0,
+    "accuracy": 1.0,
+    "completeness": 0.95,
+    "helpfulness": 0.975
+  },
+  "regressions": [],
+  "recommendations": [
+    "所有已测指标均达标，继续保持"
+  ],
+  "results": [
+    {
+      "test_id": "accessible-route:turn:0",
+      "passed": true,
+      "scores": {
+        "relevance": 1.0,
+        "accuracy": 1.0,
+        "completeness": 0.9,
+        "helpfulness": 0.95,
+        "overall": 0.9625
+      },
+      "detail": "综合评分 0.963",
+      "metadata": {
+        "question": "从门诊大厅去眼科诊区如何走？",
+        "response": "从门诊大厅到眼科诊区的普通路线如下：\n\n1. 从门诊大厅沿右侧走廊到楼梯。\n2. 上至三层，按眼科标识进入眼科诊区。\n\n来源：明和虚构医院文字指引（预置院内路线）。\n\n如需无障碍路线，请告诉我，我可以改用无障碍模式重新查询。",
+        "turn": 0,
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-92674255c8b04c46946decd635b9ebb4",
+        "emergency": false,
+        "agent_type": "guidance",
+        "intent": "wayfinding",
+        "agent_types": [
+          "guidance"
+        ],
+        "primary_agent": "guidance",
+        "supporting_agents": [],
+        "tools_used": [
+          "get_wayfinding"
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "guidance",
+            "tool_name": "get_wayfinding",
+            "tool_use_id": "call_00_P0vmcYAiEd2a1MuieQ5T1142",
+            "input": {
+              "origin": "门诊大厅",
+              "destination": "眼科诊区",
+              "mode": "normal"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.3,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "route_id",
+                "origin_id",
+                "destination_id",
+                "mode",
+                "steps",
+                "source"
+              ],
+              "artifact_ids": [
+                "wayfinding:2fabf86bdf484e65ac5f2314f0c9b522"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "wayfinding:2fabf86bdf484e65ac5f2314f0c9b522",
+            "type": "wayfinding",
+            "data": {
+              "route_id": "hall-ophthalmology-room-normal",
+              "origin_id": "hall",
+              "destination_id": "ophthalmology-room",
+              "mode": "normal",
+              "steps": [
+                "从门诊大厅沿右侧走廊到楼梯。",
+                "上至三层，按眼科标识进入眼科诊区。"
+              ],
+              "source": {
+                "source_id": "hospital-wayfinding",
+                "title": "明和虚构医院文字指引"
+              }
+            }
+          }
+        ],
+        "latency_ms": 2219.332683000175,
+        "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=0.95, general=0.20, appointment=0.00, triage=0.00, medication=0.00]",
+        "routing_confidence": 0.95,
+        "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_self\\\", \\\"conv_id\\\": \\\"visit-92674255c8b04c46946decd635b9ebb4\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_self\",\n      \"conv_id\": \"visit-92674255c8b04c46946decd635b9ebb4\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"wayfinding:2fabf86bdf484e65ac5f2314f0c9b522\",\n        \"type\": \"wayfinding\",\n        \"data\": {\n          \"route_id\": \"hall-ophthalmology-room-normal\",\n          \"origin_id\": \"hall\",\n          \"destination_id\": \"ophthalmology-room\",\n          \"mode\": \"normal\",\n          \"steps\": [\n            \"从门诊大厅沿右侧走廊到楼梯。\",\n            \"上至三层，按眼科标识进入眼科诊区。\"\n          ],\n          \"source\": {\n            \"source_id\": \"hospital-wayfinding\",\n            \"title\": \"明和虚构医院文字指引\"\n          }\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"get_wayfinding\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"guidance\",\n        \"tool_name\": \"get_wayfinding\",\n        \"tool_use_id\": \"call_00_P0vmcYAiEd2a1MuieQ5T1142\",\n        \"input\": {\n          \"origin\": \"门诊大厅\",\n          \"destination\": \"眼科诊区\",\n          \"mode\": \"normal\"\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 0.3,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"route_id\",\n            \"origin_id\",\n            \"destination_id\",\n            \"mode\",\n            \"steps\",\n            \"source\"\n          ],\n          \"artifact_ids\": [\n            \"wayfinding:2fabf86bdf484e65ac5f2314f0c9b522\"\n          ],\n          \"result_count\": 0\n        }\n      }\n    ]\n  }\n}",
+        "kind": "quality",
+        "status": "passed",
+        "judge_failed": false,
+        "judge_error": null
+      }
+    },
+    {
+      "test_id": "accessible-route:turn:1",
+      "passed": true,
+      "scores": {
+        "relevance": 1.0,
+        "accuracy": 1.0,
+        "completeness": 1.0,
+        "helpfulness": 1.0,
+        "overall": 1.0
+      },
+      "detail": "综合评分 1.000",
+      "metadata": {
+        "question": "改用无障碍的文字指引。",
+        "response": "从门诊大厅到眼科诊区的无障碍路线如下：\n\n1. 从门诊大厅沿无台阶通道到无障碍电梯。\n2. 乘电梯至三层，出电梯沿眼科标识进入眼科诊区。\n\n来源：明和虚构医院文字指引（预置院内路线）。\n\n如需改回普通路线，或需要其他地点之间的指引，请告诉我。",
+        "turn": 1,
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-92674255c8b04c46946decd635b9ebb4",
+        "emergency": false,
+        "agent_type": "guidance",
+        "intent": "wayfinding",
+        "agent_types": [
+          "guidance"
+        ],
+        "primary_agent": "guidance",
+        "supporting_agents": [],
+        "tools_used": [
+          "get_wayfinding"
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "guidance",
+            "tool_name": "get_wayfinding",
+            "tool_use_id": "call_00_0vxEEgNPZhIlLtomgrnN1338",
+            "input": {
+              "origin": "门诊大厅",
+              "destination": "眼科诊区",
+              "mode": "accessible"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.3,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "route_id",
+                "origin_id",
+                "destination_id",
+                "mode",
+                "steps",
+                "source"
+              ],
+              "artifact_ids": [
+                "wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d",
+            "type": "wayfinding",
+            "data": {
+              "route_id": "hall-ophthalmology-room-accessible",
+              "origin_id": "hall",
+              "destination_id": "ophthalmology-room",
+              "mode": "accessible",
+              "steps": [
+                "从门诊大厅沿无台阶通道到无障碍电梯。",
+                "乘电梯至三层，出电梯沿眼科标识进入眼科诊区。"
+              ],
+              "source": {
+                "source_id": "hospital-wayfinding",
+                "title": "明和虚构医院文字指引"
+              }
+            }
+          }
+        ],
+        "latency_ms": 1933.140220000496,
+        "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=1.13, general=0.10, appointment=0.00, triage=0.00, medication=0.00]",
+        "routing_confidence": 1.0,
+        "judge_context": "{\n  \"prior_context\": \"[最近对话]\\n\\nuser: 从门诊大厅去眼科诊区如何走？\\n\\nassistant: 从门诊大厅到眼科诊区的普通路线如下：\\n\\n1. 从门诊大厅沿右侧走廊到楼梯。\\n2. 上至三层，按眼科标识进入眼科诊区。\\n\\n来源：明和虚构医院文字指引（预置院内路线）。\\n\\n如需无障碍路线，请告诉我，我可以改用无障碍模式重新查询。\\n\\n[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_self\\\", \\\"conv_id\\\": \\\"visit-92674255c8b04c46946decd635b9ebb4\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_self\",\n      \"conv_id\": \"visit-92674255c8b04c46946decd635b9ebb4\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d\",\n        \"type\": \"wayfinding\",\n        \"data\": {\n          \"route_id\": \"hall-ophthalmology-room-accessible\",\n          \"origin_id\": \"hall\",\n          \"destination_id\": \"ophthalmology-room\",\n          \"mode\": \"accessible\",\n          \"steps\": [\n            \"从门诊大厅沿无台阶通道到无障碍电梯。\",\n            \"乘电梯至三层，出电梯沿眼科标识进入眼科诊区。\"\n          ],\n          \"source\": {\n            \"source_id\": \"hospital-wayfinding\",\n            \"title\": \"明和虚构医院文字指引\"\n          }\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"get_wayfinding\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"guidance\",\n        \"tool_name\": \"get_wayfinding\",\n        \"tool_use_id\": \"call_00_0vxEEgNPZhIlLtomgrnN1338\",\n        \"input\": {\n          \"origin\": \"门诊大厅\",\n          \"destination\": \"眼科诊区\",\n          \"mode\": \"accessible\"\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 0.3,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"route_id\",\n            \"origin_id\",\n            \"destination_id\",\n            \"mode\",\n            \"steps\",\n            \"source\"\n          ],\n          \"artifact_ids\": [\n            \"wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d\"\n          ],\n          \"result_count\": 0\n        }\n      }\n    ]\n  }\n}",
+        "kind": "quality",
+        "status": "passed",
+        "judge_failed": false,
+        "judge_error": null
+      }
+    },
+    {
+      "test_id": "accessible-route:business",
+      "passed": true,
+      "scores": {},
+      "detail": "业务状态断言（独立于 Judge）",
+      "metadata": {
+        "kind": "business",
+        "status": "passed",
+        "assertions": [
+          {
+            "assertion": "wayfinding.destination_id=ophthalmology-room",
+            "actual": "ophthalmology-room",
+            "expected": "ophthalmology-room",
+            "status": "passed"
+          },
+          {
+            "assertion": "wayfinding.mode=accessible",
+            "actual": "accessible",
+            "expected": "accessible",
+            "status": "passed"
+          }
+        ],
+        "facts": {
+          "appointments.count": 0,
+          "slot_delta": 0,
+          "proposal.status": null,
+          "proposal.target_id": null,
+          "current_proposal.target_id": null,
+          "query.department_id": null,
+          "query.date": null,
+          "query.period": null,
+          "selection.status": "empty",
+          "selection.slots.count": 0,
+          "agents.include": [
+            "guidance"
+          ],
+          "has_artifact": [
+            "wayfinding"
+          ],
+          "has_artifacts": [
+            "wayfinding"
+          ],
+          "knowledge_sources.nonempty": false,
+          "knowledge.sources.count": 0,
+          "trace.retrieval_failed": false,
+          "tool.error_code": [],
+          "memory.recall_calls": 2,
+          "emergency.interrupted": false,
+          "model.calls": 6,
+          "self.appointments.count": 0,
+          "self.selection.slots.count": 0,
+          "wayfinding.destination_id": "ophthalmology-room",
+          "wayfinding.mode": "accessible"
+        },
+        "identity": {
+          "user_id": "anonymous",
+          "patient_id": "patient_self",
+          "conv_id": "visit-92674255c8b04c46946decd635b9ebb4"
+        },
+        "clock": "2026-09-16T10:00:00+08:00",
+        "actions": [],
+        "turns": [
+          {
+            "question": "从门诊大厅去眼科诊区如何走？",
+            "response": "从门诊大厅到眼科诊区的普通路线如下：\n\n1. 从门诊大厅沿右侧走廊到楼梯。\n2. 上至三层，按眼科标识进入眼科诊区。\n\n来源：明和虚构医院文字指引（预置院内路线）。\n\n如需无障碍路线，请告诉我，我可以改用无障碍模式重新查询。",
+            "turn": 0,
+            "user_id": "anonymous",
+            "patient_id": "patient_self",
+            "conv_id": "visit-92674255c8b04c46946decd635b9ebb4",
+            "emergency": false,
+            "agent_type": "guidance",
+            "intent": "wayfinding",
+            "agent_types": [
+              "guidance"
+            ],
+            "primary_agent": "guidance",
+            "supporting_agents": [],
+            "tools_used": [
+              "get_wayfinding"
+            ],
+            "tool_traces": [
+              {
+                "agent_type": "guidance",
+                "tool_name": "get_wayfinding",
+                "tool_use_id": "call_00_P0vmcYAiEd2a1MuieQ5T1142",
+                "input": {
+                  "origin": "门诊大厅",
+                  "destination": "眼科诊区",
+                  "mode": "normal"
+                },
+                "kind": "tool_call",
+                "success": true,
+                "call_success": true,
+                "result_success": true,
+                "latency_ms": 0.3,
+                "cached": false,
+                "reranked": false,
+                "error": "",
+                "error_code": null,
+                "result_summary": {
+                  "success": true,
+                  "data_keys": [
+                    "route_id",
+                    "origin_id",
+                    "destination_id",
+                    "mode",
+                    "steps",
+                    "source"
+                  ],
+                  "artifact_ids": [
+                    "wayfinding:2fabf86bdf484e65ac5f2314f0c9b522"
+                  ],
+                  "result_count": 0
+                }
+              }
+            ],
+            "artifacts": [
+              {
+                "id": "wayfinding:2fabf86bdf484e65ac5f2314f0c9b522",
+                "type": "wayfinding",
+                "data": {
+                  "route_id": "hall-ophthalmology-room-normal",
+                  "origin_id": "hall",
+                  "destination_id": "ophthalmology-room",
+                  "mode": "normal",
+                  "steps": [
+                    "从门诊大厅沿右侧走廊到楼梯。",
+                    "上至三层，按眼科标识进入眼科诊区。"
+                  ],
+                  "source": {
+                    "source_id": "hospital-wayfinding",
+                    "title": "明和虚构医院文字指引"
+                  }
+                }
+              }
+            ],
+            "latency_ms": 2219.332683000175,
+            "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=0.95, general=0.20, appointment=0.00, triage=0.00, medication=0.00]",
+            "routing_confidence": 0.95,
+            "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_self\\\", \\\"conv_id\\\": \\\"visit-92674255c8b04c46946decd635b9ebb4\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_self\",\n      \"conv_id\": \"visit-92674255c8b04c46946decd635b9ebb4\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"wayfinding:2fabf86bdf484e65ac5f2314f0c9b522\",\n        \"type\": \"wayfinding\",\n        \"data\": {\n          \"route_id\": \"hall-ophthalmology-room-normal\",\n          \"origin_id\": \"hall\",\n          \"destination_id\": \"ophthalmology-room\",\n          \"mode\": \"normal\",\n          \"steps\": [\n            \"从门诊大厅沿右侧走廊到楼梯。\",\n            \"上至三层，按眼科标识进入眼科诊区。\"\n          ],\n          \"source\": {\n            \"source_id\": \"hospital-wayfinding\",\n            \"title\": \"明和虚构医院文字指引\"\n          }\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"get_wayfinding\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"guidance\",\n        \"tool_name\": \"get_wayfinding\",\n        \"tool_use_id\": \"call_00_P0vmcYAiEd2a1MuieQ5T1142\",\n        \"input\": {\n          \"origin\": \"门诊大厅\",\n          \"destination\": \"眼科诊区\",\n          \"mode\": \"normal\"\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 0.3,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"route_id\",\n            \"origin_id\",\n            \"destination_id\",\n            \"mode\",\n            \"steps\",\n            \"source\"\n          ],\n          \"artifact_ids\": [\n            \"wayfinding:2fabf86bdf484e65ac5f2314f0c9b522\"\n          ],\n          \"result_count\": 0\n        }\n      }\n    ]\n  }\n}"
+          },
+          {
+            "question": "改用无障碍的文字指引。",
+            "response": "从门诊大厅到眼科诊区的无障碍路线如下：\n\n1. 从门诊大厅沿无台阶通道到无障碍电梯。\n2. 乘电梯至三层，出电梯沿眼科标识进入眼科诊区。\n\n来源：明和虚构医院文字指引（预置院内路线）。\n\n如需改回普通路线，或需要其他地点之间的指引，请告诉我。",
+            "turn": 1,
+            "user_id": "anonymous",
+            "patient_id": "patient_self",
+            "conv_id": "visit-92674255c8b04c46946decd635b9ebb4",
+            "emergency": false,
+            "agent_type": "guidance",
+            "intent": "wayfinding",
+            "agent_types": [
+              "guidance"
+            ],
+            "primary_agent": "guidance",
+            "supporting_agents": [],
+            "tools_used": [
+              "get_wayfinding"
+            ],
+            "tool_traces": [
+              {
+                "agent_type": "guidance",
+                "tool_name": "get_wayfinding",
+                "tool_use_id": "call_00_0vxEEgNPZhIlLtomgrnN1338",
+                "input": {
+                  "origin": "门诊大厅",
+                  "destination": "眼科诊区",
+                  "mode": "accessible"
+                },
+                "kind": "tool_call",
+                "success": true,
+                "call_success": true,
+                "result_success": true,
+                "latency_ms": 0.3,
+                "cached": false,
+                "reranked": false,
+                "error": "",
+                "error_code": null,
+                "result_summary": {
+                  "success": true,
+                  "data_keys": [
+                    "route_id",
+                    "origin_id",
+                    "destination_id",
+                    "mode",
+                    "steps",
+                    "source"
+                  ],
+                  "artifact_ids": [
+                    "wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d"
+                  ],
+                  "result_count": 0
+                }
+              }
+            ],
+            "artifacts": [
+              {
+                "id": "wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d",
+                "type": "wayfinding",
+                "data": {
+                  "route_id": "hall-ophthalmology-room-accessible",
+                  "origin_id": "hall",
+                  "destination_id": "ophthalmology-room",
+                  "mode": "accessible",
+                  "steps": [
+                    "从门诊大厅沿无台阶通道到无障碍电梯。",
+                    "乘电梯至三层，出电梯沿眼科标识进入眼科诊区。"
+                  ],
+                  "source": {
+                    "source_id": "hospital-wayfinding",
+                    "title": "明和虚构医院文字指引"
+                  }
+                }
+              }
+            ],
+            "latency_ms": 1933.140220000496,
+            "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=1.13, general=0.10, appointment=0.00, triage=0.00, medication=0.00]",
+            "routing_confidence": 1.0,
+            "judge_context": "{\n  \"prior_context\": \"[最近对话]\\n\\nuser: 从门诊大厅去眼科诊区如何走？\\n\\nassistant: 从门诊大厅到眼科诊区的普通路线如下：\\n\\n1. 从门诊大厅沿右侧走廊到楼梯。\\n2. 上至三层，按眼科标识进入眼科诊区。\\n\\n来源：明和虚构医院文字指引（预置院内路线）。\\n\\n如需无障碍路线，请告诉我，我可以改用无障碍模式重新查询。\\n\\n[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_self\\\", \\\"conv_id\\\": \\\"visit-92674255c8b04c46946decd635b9ebb4\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_self\",\n      \"conv_id\": \"visit-92674255c8b04c46946decd635b9ebb4\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d\",\n        \"type\": \"wayfinding\",\n        \"data\": {\n          \"route_id\": \"hall-ophthalmology-room-accessible\",\n          \"origin_id\": \"hall\",\n          \"destination_id\": \"ophthalmology-room\",\n          \"mode\": \"accessible\",\n          \"steps\": [\n            \"从门诊大厅沿无台阶通道到无障碍电梯。\",\n            \"乘电梯至三层，出电梯沿眼科标识进入眼科诊区。\"\n          ],\n          \"source\": {\n            \"source_id\": \"hospital-wayfinding\",\n            \"title\": \"明和虚构医院文字指引\"\n          }\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"get_wayfinding\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"guidance\",\n        \"tool_name\": \"get_wayfinding\",\n        \"tool_use_id\": \"call_00_0vxEEgNPZhIlLtomgrnN1338\",\n        \"input\": {\n          \"origin\": \"门诊大厅\",\n          \"destination\": \"眼科诊区\",\n          \"mode\": \"accessible\"\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 0.3,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"route_id\",\n            \"origin_id\",\n            \"destination_id\",\n            \"mode\",\n            \"steps\",\n            \"source\"\n          ],\n          \"artifact_ids\": [\n            \"wayfinding:1f283fb61dc9415eb05a7e70fa9f4a1d\"\n          ],\n          \"result_count\": 0\n        }\n      }\n    ]\n  }\n}"
+          }
+        ]
+      }
+    }
+  ],
+  "run_id": "d31b791e74224995887fbd2bba3199c4",
+  "metadata": {
+    "entrypoint": "api",
+    "model": "deepseek-flash",
+    "intent_vectors": "local character n-gram",
+    "knowledge_vectors": "Chroma all-MiniLM-L6-v2",
+    "storage": "isolated Redis keys and Chroma collections",
+    "judge_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 256
+    },
+    "input_sha256": "a5c75defa183f5ecb2327e28aedef1ea850017c123ad81e1caaa19a975625312",
+    "case_counts": {
+      "intent": 0,
+      "dialog": 1,
+      "boundary": 0
+    },
+    "valid_quality_count": 2,
+    "business_assertions": [
+      "accessible-route:business"
+    ],
+    "business_failures": [],
+    "baseline_status": "candidate",
+    "scope": "direct_orchestrator_and_service; HTTP assertions belong to I04"
+  },
+  "judge_failures": [],
+  "call_failures": [],
+  "skipped": [],
+  "candidate_path": "/app/data/eval/candidates/d31b791e74224995887fbd2bba3199c4.json",
+  "accepted_by": null
+}

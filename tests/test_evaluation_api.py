@@ -24,5 +24,6 @@ async def test_evaluation_endpoint_preserves_failures_and_candidate_status(monke
         assert result["accepted_by"] is None and result["candidate_path"].endswith("candidate-1.json")
         assert run.call_args.kwargs["boundary_cases"] == [] and run.call_args.kwargs["dialog_cases"] == []
         await client.post("/eval/run")
-        assert len(run.call_args.kwargs["intent_cases"]) == 54
-        assert len(run.call_args.kwargs["dialog_cases"]) == len(run.call_args.kwargs["boundary_cases"]) == 12
+        assert len(run.call_args.kwargs["intent_cases"]) == 66
+        assert len(run.call_args.kwargs["dialog_cases"]) == 15
+        assert len(run.call_args.kwargs["boundary_cases"]) == 12

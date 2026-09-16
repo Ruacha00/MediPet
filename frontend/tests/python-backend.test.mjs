@@ -108,7 +108,7 @@ test('the actual App health handler reports one failed request without service f
   const { descriptor } = parse(source)
   const script = compileScript(descriptor, { id: 'b02-health-check' }).content
     // This handler-only SSR probe does not render child components; App integration tests mount them.
-    .replace(/^import (BusinessArtifacts|PatientVisitPanel) from '.+'$/gm, 'const $1 = {}')
+    .replace(/^import (BusinessArtifacts|PatientVisitPanel|HealthArtifacts|ReportUpload) from '.+'$/gm, 'const $1 = {}')
     .replace("from 'vue'", `from '${import.meta.resolve('vue')}'`)
     .replace("from './lib/backends'", `from '${backendUrl.href}'`)
   const { default: App } = await import(`data:text/javascript;base64,${Buffer.from(script).toString('base64')}`)

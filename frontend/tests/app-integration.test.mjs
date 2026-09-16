@@ -25,10 +25,14 @@ async function compile(path, imports = {}) {
 }
 const Business = await compile('../src/components/BusinessArtifacts.vue')
 const Panel = await compile('../src/components/PatientVisitPanel.vue')
+const Health = await compile('../src/components/HealthArtifacts.vue')
+const ReportUpload = await compile('../src/components/ReportUpload.vue')
 const App = await compile('../src/App.vue', {
   './lib/backends': api,
   './components/BusinessArtifacts.vue': { default: Business, __esModule: true },
-  './components/PatientVisitPanel.vue': { default: Panel, __esModule: true }
+  './components/PatientVisitPanel.vue': { default: Panel, __esModule: true },
+  './components/HealthArtifacts.vue': { default: Health, __esModule: true },
+  './components/ReportUpload.vue': { default: ReportUpload, __esModule: true }
 })
 const patients = (await fixture('patients')).items
 const childVisit = await fixture('visit')
@@ -388,4 +392,31 @@ test('evaluation renders failure classes and sample evidence; baseline acceptanc
   assert.equal(view.state.evalData.value, null)
   assert.ok(view.text().includes('评测依赖不可用'))
   assert.ok(!view.all().some(item => item.props['data-baseline-status']))
+})
+
+
+test('report upload uses bound identity and survives a patient switch through server history', async t => {
+  const hold = deferred()
+  const card = { id: 'report-1', type: 'report_summary', data: { title: '报告整理', summary: '请核对', input_kind: 'pdf', extracted_text: 'Test 8 mg/L 4-6', observations: [{ item: 'Test', value: '8', unit: 'mg/L', reference_range: '4–6', flag: 'above', raw_line: 'Test 8 mg/L 4-6' }], warnings: [], sources: [] } }
+  const backend = server(t, { management: async (path, body) => {
+    if (path !== '/reports/preprocess') return undefined
+    assert.equal(body.get('patient_id'), 'patient_child')
+    assert.equal(body.get('conv_id'), childVisit.conv_id)
+    assert.equal(body.get('user_id'), 'anonymous')
+    assert.equal(body.get('file').name, 'report.pdf')
+    await hold.promise
+    backend.records.get(childVisit.conv_id).push(message(childVisit, 'report-result', '请核对报告', [card]))
+    return { ...childVisit, visit: childVisit, artifacts: [card], response: '请核对报告' }
+  } })
+  const view = mount(t); await settle()
+  const pending = view.state.submitReport(new File(['%PDF-test'], 'report.pdf', { type: 'application/pdf' }))
+  await settle(); assert.equal(view.state.reportPending.value, true)
+  await view.state.selectPatient('patient_self'); await settle()
+  hold.resolve(); await pending; await settle()
+  assert.equal(view.state.patientId.value, 'patient_self')
+  assert.ok(!view.text().includes('Test 8 mg/L'))
+  await view.state.selectPatient('patient_child'); await view.state.selectVisit(childVisit.conv_id); await settle()
+  assert.ok(view.text().includes('Test 8 mg/L') && view.text().includes('高于原报告区间'))
+  assert.equal(backend.calls.filter(call => call.path === '/reports/preprocess').length, 1)
+  assert.equal(backend.calls.filter(call => call.path === '/chat' || call.path.includes('/confirm')).length, 0)
 })

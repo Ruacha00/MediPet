@@ -1,0 +1,24 @@
+{
+  "intent_cases": [],
+  "boundary_cases": [],
+  "dialog_cases": [
+    {
+      "clock": "2026-09-16T10:00:00+08:00",
+      "user_id": "anonymous",
+      "id": "accessible-route",
+      "title": "普通与无障碍路线",
+      "patient_id": "patient_self",
+      "turns": [
+        "从门诊大厅去眼科诊区如何走？",
+        "改用无障碍的文字指引。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "wayfinding.destination_id=ophthalmology-room",
+        "wayfinding.mode=accessible"
+      ]
+    }
+  ]
+}

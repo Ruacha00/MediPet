@@ -108,8 +108,8 @@ async def test_health_skills_and_reload_still_work_with_visit_routes(api_client,
     attached = []
     monkeypatch.setattr(main, "_orchestrator", SimpleNamespace(get_stats=lambda: {"ready": True}, set_skill_manager=attached.append))
     assert (await api_client.client.get("/health")).json() == {"status": "ok", "agents": {"ready": True}}
-    assert (await api_client.client.get("/skills")).json()["count"] == 4
-    assert (await api_client.client.post("/skills/reload")).json()["count"] == 4
+    assert (await api_client.client.get("/skills")).json()["count"] == 6
+    assert (await api_client.client.post("/skills/reload")).json()["count"] == 6
     assert attached == [manager]
 
 

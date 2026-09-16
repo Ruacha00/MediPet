@@ -32,6 +32,7 @@ from anthropic import AsyncAnthropic
 
 from agents.tools import (
     AgentToolSpec,
+    build_health_tools,
     build_hospital_tools,
     build_shared_rag_tools,
 )
@@ -50,6 +51,8 @@ class AgentType(Enum):
     GENERAL   = "general"       # 医院公开信息与澄清
     GUIDANCE = "guidance"       # 就诊准备、流程和文字指引
     APPOINTMENT = "appointment" # 号源与预约事务
+    TRIAGE = "triage"           # 初步科室建议和报告预处理
+    MEDICATION = "medication"   # 有来源的药品说明书信息
     ESCALATION = "escalation"   # 人工导诊与急症固定响应
 
 
@@ -226,7 +229,10 @@ class BaseAgent:
         self._skill_manager = skill_manager
         self.stats   = AgentStats()
         self._shared_tools: Dict[str, AgentToolSpec] = {}
-        self._hospital_tools = build_hospital_tools(self.agent_type.value, hospital_service, visit_store)
+        self._hospital_tools = {
+            **build_hospital_tools(self.agent_type.value, hospital_service, visit_store),
+            **build_health_tools(self.agent_type.value, visit_store or getattr(hospital_service, "visits", None)),
+        }
 
     def get_tools(self) -> Dict[str, AgentToolSpec]:
         """返回该角色真实可调用的工具白名单。"""
@@ -494,7 +500,8 @@ class GeneralAgent(BaseAgent):
     )
     system_prompt = (
         "你是 MediPet 门诊就诊助手，负责医院、科室和医生的公开信息及需求澄清。"
-        "依据已提供的数据回答，不编造医院事实，不根据症状推荐科室，不做诊断或用药建议。"
+        "依据已提供的数据回答，不编造医院事实。症状分诊、药品信息和报告预处理由对应专业角色提供；"
+        "若其工具失败，说明需要补充资料或咨询医师药师，不用模型常识补造诊断、剂量或报告结论。"
     )
 
     def _build_role_packet(self, req: Request) -> str:
@@ -519,7 +526,12 @@ class GuidanceAgent(BaseAgent):
     system_prompt = (
         "你是 MediPet 就诊指引助手，负责材料准备、报到流程和院内文字指引。"
         "仅使用给定清单、检索文档和预置路线，不计算实时导航，不给出诊断或用药建议。"
-        "未知地点和缺失条件应澄清，不能编造办理窗口或路线。"
+        "先结合当前绑定患者、同一事项的上下文核对条件；本轮未重复起点或目的地不等于缺失。"
+        "同事项已有唯一明确起终点，用户仅要求改为无障碍或普通路线时，沿用这些地点，"
+        "立即调用 get_wayfinding，将 mode 分别设为 accessible 或 normal，再按本轮工具结果回答。"
+        "这是只读查询，无需用户再次确认已有地点，不能只口头改写上一条路线。"
+        "身份绑定缺失或冲突、地点未知、条件确实缺失或有多组起终点无法确定时应澄清，不能猜测。"
+        "此规则不改变预约或取消必须由页面确认接口执行的边界，不能编造办理窗口或路线。"
     )
 
     def _build_role_packet(self, req: Request) -> str:
@@ -557,6 +569,50 @@ class AppointmentAgent(BaseAgent):
         }
         packet["confirmation_boundary"] = "仅准备方案；执行结果必须来自页面确认接口"
         return json.dumps(packet, ensure_ascii=False)
+
+class TriageAgent(BaseAgent):
+    agent_type = AgentType.TRIAGE
+    profile = AgentProfile(
+        role="初步分诊与报告预处理",
+        mission="根据用户原话提供有限科室建议，整理报告项目和原文参考范围，不替代医生诊断。",
+        workflow=("核对当前描述", "调用分诊或报告工具", "说明依据与待补信息", "提示专业复核"),
+        input_contract=("当前患者事项", "用户症状原文", "用户报告原文或已提取报告"),
+        output_contract=("初步科室或报告整理", "来源及待核对内容", "不替代医生诊断的说明"),
+        handoff_conditions=("急症信号", "资料不足", "需要医生诊断"),
+        tool_scope=("triage_symptoms", "preprocess_report", "read_current_report", "search_knowledge_base"),
+        temperature=0.0, max_tokens=1200,
+    )
+    system_prompt = (
+        "你是 MediPet 预检分诊与报告预处理助手。症状问题先调用 triage_symptoms；"
+        "粘贴了报告内容时调用 preprocess_report，若只问上传方式，提示使用页面报告上传按钮（PDF或图片）。"
+        "用户追问此前上传或粘贴的报告时先调用 read_current_report，不能从记忆摘要猜测报告值或跨患者取数。"
+        "科室、数值和参考区间以本轮工具为准，保留未评估和待核对项，不根据模型常识补造。"
+        "只能给初步科室建议和信息参考，不替代医生诊断、不开处方，不评论其他医院或医生的诊疗方案。"
+        "没有查到内容时说明范围并澄清，不能把工具失败包装成成功，不替用户直接预约。"
+    )
+
+
+class MedicationAgent(BaseAgent):
+    agent_type = AgentType.MEDICATION
+    profile = AgentProfile(
+        role="药品说明书信息咨询",
+        mission="查询有来源的指定剂型说明书、禁忌和相互作用警示，不开处方或生成个体剂量。",
+        workflow=("核对药名规格剂型", "调用药品查询工具", "展示来源与未知内容", "提示医师药师复核"),
+        input_contract=("用户明确提及的药品", "药品规格剂型", "用户提及的其他药品"),
+        output_contract=("说明书参考信息", "禁忌与组合警示", "资料来源与覆盖范围"),
+        handoff_conditions=("特殊人群", "个体治疗或剂量", "未收录药物或组合", "疑似过量"),
+        tool_scope=("medication_information", "search_knowledge_base"),
+        temperature=0.0, max_tokens=1400,
+    )
+    system_prompt = (
+        "你是 MediPet 药品信息助手。涉及药品先调用 medication_information；参数逐字来自用户药名，"
+        "不得为了适配目录擅改药名、规格、剂型。仅转述工具返回的指定地区产品说明书，"
+        "明确不替代手中药品说明书和医师药师，不将说明书剂量改写成对当前患者的服药指令。"
+        "儿童、孕哺、肝肾异常及个体剂量问题需要医师药师；未知相互作用不能说安全或可同服。"
+        "不开处方、不替用户选药、不建议停改其他医生用药方案，不评论其他医院或医生的诊疗方案。"
+        "不能用模型常识补充未检索到的药品事实，失败时如实说明。"
+    )
+
 
 class EscalationAgent(BaseAgent):
     """人工导诊节点；输出联系摘要，不代表已提交给真实工作人员。"""
@@ -635,6 +691,8 @@ class ResponseComposer:
             "要求：以主 Agent 的结论为主，按用户问题优先级组织内容；去掉重复和冲突表述；"
             "不能补造号源、预约、取消结果，也不能更换当前患者；如果结论冲突，明确说明需要核验；"
             "保留材料、流程、来源和确认边界；失败的子任务不能写成已完成。只输出中文回复，不要提及 Agent。\n\n"
+            "保留医疗来源及未核对项；科室建议与报告整理不等于诊断，说明书信息不等于个体用药指令。"
+            "不替代医生诊断、不开处方、不评论其他医院或医生的诊疗方案。\n"
             f"主 Agent：{successful[0].agent_type.value}\n"
             f"用户问题：{req.message}\n"
             f"候选结果：\n{evidence}"
@@ -693,6 +751,9 @@ class AgentOrchestrator:
         IntentCategory.ESCALATION: AgentType.ESCALATION,
         IntentCategory.HUMAN_HANDOFF: AgentType.ESCALATION,
         IntentCategory.EMERGENCY: AgentType.ESCALATION,
+        IntentCategory.SYMPTOM_QUERY: AgentType.TRIAGE,
+        IntentCategory.REPORT_QUERY: AgentType.TRIAGE,
+        IntentCategory.MEDICATION_QUERY: AgentType.MEDICATION,
         # 其余意图 → GENERAL（默认）
     }
 
@@ -704,6 +765,8 @@ class AgentOrchestrator:
     )
     _APPOINTMENT_KEYWORDS = ("号源", "还有号", "的号", "查号", "预约", "取消", "第一个", "挂号")
     _GENERAL_KEYWORDS = ("医院", "科室", "医生", "介绍", "出诊", "地址", "门诊时间", "咨询", "帮助")
+    _TRIAGE_KEYWORDS = ("挂哪个科", "看哪个科", "症状", "咳嗽", "流鼻涕", "腹痛", "肚子疼", "眼睛发红", "眼睛痒", "眼睛发痒", "发热", "发烧", "报告解读", "化验单", "报告数值", "参考区间", "参考范围")
+    _MEDICATION_KEYWORDS = ("用药", "药物", "药品", "说明书", "禁忌", "相互作用", "同服", "布洛芬", "对乙酰氨基酚", "华法林", "阿司匹林")
 
     def __init__(
         self,
@@ -731,6 +794,8 @@ class AgentOrchestrator:
             AgentType.GENERAL: [self._make_agent(GeneralAgent, client, model, skill_manager, hospital_service, visit_store)],
             AgentType.GUIDANCE: [self._make_agent(GuidanceAgent, client, model, skill_manager, hospital_service, visit_store)],
             AgentType.APPOINTMENT: [self._make_agent(AppointmentAgent, client, model, skill_manager, hospital_service, visit_store)],
+            AgentType.TRIAGE: [self._make_agent(TriageAgent, client, model, skill_manager, hospital_service, visit_store)],
+            AgentType.MEDICATION: [self._make_agent(MedicationAgent, client, model, skill_manager, hospital_service, visit_store)],
             AgentType.ESCALATION: [self._make_agent(EscalationAgent, client, model, skill_manager, hospital_service, visit_store)],
         }
         self.set_shared_tools(build_shared_rag_tools(rag_tool_manager))
@@ -1041,6 +1106,8 @@ class AgentOrchestrator:
             AgentType.GENERAL: 0.1,
             AgentType.GUIDANCE: 0.0,
             AgentType.APPOINTMENT: 0.0,
+            AgentType.TRIAGE: 0.0,
+            AgentType.MEDICATION: 0.0,
         }
 
         intent_target = self._INTENT_ROUTING.get(req.intent, AgentType.GENERAL)
@@ -1056,6 +1123,8 @@ class AgentOrchestrator:
         scores[AgentType.GUIDANCE] += min(0.45, guidance_hits * 0.18)
         scores[AgentType.APPOINTMENT] += min(0.45, appointment_hits * 0.18)
         scores[AgentType.GENERAL] += min(0.35, general_hits * 0.12)
+        scores[AgentType.TRIAGE] += min(0.45, sum(1 for kw in self._TRIAGE_KEYWORDS if kw in msg) * 0.18)
+        scores[AgentType.MEDICATION] += min(0.45, sum(1 for kw in self._MEDICATION_KEYWORDS if kw in msg) * 0.18)
 
         entities = req.entities or {}
         if any(entities.get(key) for key in ("origin", "destination", "accessibility")):
@@ -1102,6 +1171,10 @@ class AgentOrchestrator:
             targets.append(AgentType.GUIDANCE)
         if intent_target is AgentType.APPOINTMENT or any(kw in msg for kw in self._APPOINTMENT_KEYWORDS):
             targets.append(AgentType.APPOINTMENT)
+        if intent_target is AgentType.TRIAGE or any(kw in msg for kw in self._TRIAGE_KEYWORDS):
+            targets.append(AgentType.TRIAGE)
+        if intent_target is AgentType.MEDICATION or any(kw in msg for kw in self._MEDICATION_KEYWORDS):
+            targets.append(AgentType.MEDICATION)
 
         # 保持顺序去重，并只返回当前有实例的 Agent 类型。
         deduped = list(dict.fromkeys(targets))

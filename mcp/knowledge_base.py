@@ -67,7 +67,7 @@ class KnowledgeBase:
             metadata={"description": "MediPet RAG 知识库"},
         )
 
-        # 非空集合也补齐缺失文档；稳定片段 ID 避免重复导入。
+        # 同步内置文档的内容变更，保留用户上传与其他集合。
         self._load_default_docs()
 
     # ── 文档管理 ──────────────────────────────────────────────────────────────
@@ -208,7 +208,7 @@ class KnowledgeBase:
         return chunks
 
     def _load_default_docs(self) -> None:
-        """从带固定来源的医院 Markdown 文档补充缺失片段。"""
+        """同步带固定来源的内置 Markdown 文档，升级时也替换旧内容。"""
         documents = []
         doc_ids = set()
         for path in sorted(self._knowledge_dir.glob("*.md")):
@@ -228,5 +228,35 @@ class KnowledgeBase:
             documents.append({**metadata, "content": match.group(2).strip()})
         if not documents:
             raise ValueError("未找到医院知识文档")
-        added = self.add_documents(documents)
-        logger.info("医院知识初始化: %s 篇文档，新增 %s 个片段", len(documents), added)
+        changed = self._sync_default_documents(documents)
+        logger.info("医院知识初始化: %s 篇文档，更新 %s 个片段", len(documents), changed)
+
+    def _sync_default_documents(self, documents: List[Dict[str, str]]) -> int:
+        """仅同步本次内置文档 ID；不重新嵌入未变化内容，不清空集合。"""
+        changed = 0
+        for doc in documents:
+            doc_id = doc["doc_id"]
+            chunks = self._chunk_text(doc["content"], chunk_size=500)
+            records = {
+                f"{doc_id}:{i}": (chunk, {
+                    "doc_id": doc_id, "title": doc["title"],
+                    "source_id": doc["source_id"], "source": doc["source"],
+                    "chunk_index": i, "total_chunks": len(chunks),
+                })
+                for i, chunk in enumerate(chunks)
+            }
+            previous = self._collection.get(
+                where={"doc_id": doc_id}, include=["documents", "metadatas"],
+            )
+            existing = dict(zip(previous["ids"], zip(previous["documents"], previous["metadatas"])))
+            updated = [key for key, record in records.items() if existing.get(key) != record]
+            if updated:
+                self._collection.upsert(
+                    ids=updated, documents=[records[key][0] for key in updated],
+                    metadatas=[records[key][1] for key in updated],
+                )
+            obsolete = sorted(set(existing) - set(records))
+            if obsolete:
+                self._collection.delete(ids=obsolete)
+            changed += len(updated) + len(obsolete)
+        return changed

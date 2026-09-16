@@ -1,0 +1,4086 @@
+{
+  "worktree": "D:\\Projects\\Agent Learn\\Project\\MediPet-Rebuild",
+  "head": "c712e87a7ea38769c46f591e6636c68e092792e9",
+  "started_at": "2026-09-16T10:22:42.414Z",
+  "files": {
+    "Dockerfile": "a66525f3b486f683ed8ed04183739e571584302cbe4e15ca5cd9757e736986bc",
+    "IMPLEMENTATION_PLAN.md": "7e8f77ab89f4340fe4a4ae238b1f6d2001efaf54cfcc3941c3edba87465c84c8",
+    "README.md": "8b911ae999dafa6ecf452a81b2b5111a7600ed18293df4a65bc11956e3689232",
+    "agents/agent_orchestrator.py": "1497c2ea69e48f51f1a895656f39930c677dd992c2241e3bce5a763efa6b700f",
+    "agents/tools.py": "07d79f939d983f0d4477640543eb44c69600d8722c4aa5993f56aabe308b0a4c",
+    "api/main.py": "71cac77905893726febedd1de0ed979e9a5453667c43e55975fff910ddb001a3",
+    "core/emergency.py": "d602baa545e827bc31098afbef232950bddd3ad9ead4ae7297f620e65b90da59",
+    "core/intent_recognizer.py": "dbcc5dddce1f192b72e9e4987828d8138cd7c7160b0397436aeddd6b36b81155",
+    "docs/architecture.md": "ba02fe36d284baa0b7fc4ef0c2bf9f3d7daa2b5f498f45f0c9975e0154dd189a",
+    "docs/demo-script.md": "85be956413b1e5703a1f50d08f9275c483c57180ef5adc50aeb383c6c7c494f9",
+    "docs/evaluation.md": "5fc730ebaa56e15563c6aa8fdda0554cd6773c520148617058e1bdb6ce44937d",
+    "docs/health-consultation.md": "eecb6198a4abe21e42f46fda48972bd8c0595ad218966be8597de87d1e6e428d",
+    "docs/intent-routing.md": "083abb3a5bdfda892089f6f8f540722fdef33bdd8aaf84c7a25af1877eb070eb",
+    "docs/internal/rebuild/EXECUTION.md": "a7319cfcb0612d44a7da9c97259f173840e52a321ba970a2ec7b017f647ce915",
+    "docs/internal/rebuild/README.md": "a94e9626053d3f0a9252cd96f757ee2e89c6bf01cbfc3e195ba14abdb7902f57",
+    "docs/internal/rebuild/contracts.md": "05207338fe1e26d2ef99ac0c3ff2a95f7e29290802b9f977ded54029ddfeee2d",
+    "docs/internal/updates/U001-health-consultation/EXECUTION.md": "8a85c050d103d3996de4dfb21d4cd2214307622fd36dc871a24b4743c888b587",
+    "docs/internal/updates/U001-health-consultation/contracts.md": "b44e2d0c86312099a2cd3f35cce2f5c7734cd4a8a296ff725e31685a4746ada2",
+    "docs/internal/updates/U001-health-consultation/evidence/acceptance.md": "3865298e52aab7ac0b1b963c953ef26c1b588ec6e8487482f0bdd48e21d51b49",
+    "docs/internal/updates/U001-health-consultation/evidence/backend-tests.xml": "287c2a3273345dfe870f4aa3ac99cb83466b2f25d9391effcde4cde69028f92a",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-1440.png": "0182b866f6da74498a97fc1f21884ba60ccd454756160f943196ce1aa62fb5cf",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-390.png": "a163b831a3480691f9313881a339dc63a707866787d061f3ed817ff65983b04b",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-768.png": "7494839a24311da5fafa186fdad8143274578ddedc1bdc78e031fc0633b9ed75",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business.json": "23496c61e9eb3ab6314be24121678ca80c925bbfcc9bd7314f86fa926d9cc251",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/failure.png": "e40a4c2240667912aee53d93ea7d3843ac160802b5f4fc40f4e65bfe147cc952",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-image.png": "43ee512e1261a26bfa7093a10643b27af35c57cdce681cd5be6ff878b9800861",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-scan.pdf": "9028b381f0c08805288aa9d12f0689dae1bcf9667f5d26cb5d895490d354a693",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-text.pdf": "7c633ed654657a258890d70a163838252b17e9cf56e9e252a6a55f7b3ad0b9fc",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/health.json": "0048c3a6c6203543ccb2a2aaae43c57d3df05e1583be886480893a9ad1243f48",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-image.png": "43ee512e1261a26bfa7093a10643b27af35c57cdce681cd5be6ff878b9800861",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-scan.pdf": "b14aadcfc685fb3941f49f3ace3996b4d20a69973b8aecb324b1b45ccc9d0f47",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-text.pdf": "c10d714add80e58714bfabb8c844634ed3b787fae5b7a5fb7a66da34c23829c5",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-1440.png": "014d46b57d043b05fbe9142d5f26cdafa94db937e8d046bfb96778eca8478bb1",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-390.png": "33a2acce62a5b11f4df623a57d6674d6604efcc532f2345a5d39f96d7283c7f2",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-768.png": "4f87018fa203f0116792d4206bbd6cb90abf02385f0b0ae2192d6c4db6cb11ff",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-self.png": "b70570ccf0fe0f8db65e05e1a8d06e4ab350723252e10714a29eb3561a78574d",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health.json": "a871efdbcb63e4a56425e8671d6b1b78fe2cc8d76ffed827b2802f2a894b55e9",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/failure.png": "2657577a90d6ef942c2d22bf2db6fa18a0535b02e83e5980c6110d666db10d54",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-image.png": "43ee512e1261a26bfa7093a10643b27af35c57cdce681cd5be6ff878b9800861",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-scan.pdf": "d65444e83435202e5b0a591f708b9200816f6024a94c2a7ae835e637a7b88112",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-text.pdf": "532e6478fd248d0037f81e6602055ac18caf41ae5b2c32bbcfe03d35538ae40a",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/health-self.png": "7740754cd73f0bd455f0dfda248641fd99af72e19f94e902f0d4f2fc9a9fc2b1",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/health.json": "10384969bf69c48a6902a703fe0dbafb3b1ff4cd54920715ced2cc8ec752f2d0",
+    "docs/internal/updates/U001-health-consultation/evidence/container-ocr.json": "277a53b6705cb8d6d4542e5042fe1db2800a4fe9234f40c1c00ea68c5c90a04d",
+    "docs/internal/updates/U001-health-consultation/evidence/delivery-review.json": "e7a6d886179e3c58b15f71b61aac5f9f4e50bda89842a0a363c321bf568e4c7f",
+    "docs/internal/updates/U001-health-consultation/evidence/emergency.md": "7e860f98bbee29f8bc5defdb7a8c2d36dc790364f0fddc6eb1db4105d10e124e",
+    "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md": "fae6c7443356bce844b891747ce5c2ba0fbfe882e056bc4299d264453c16c300",
+    "docs/internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md": "afae7e4ddb802efc118fbdaeccfa4162d03c474c3a671b23b41d1fee995b0683",
+    "docs/internal/updates/U001-health-consultation/evidence/main-8088.json": "08d39c6441aff407f830818344a36d32559d91e90a1277e8ee4bf0cfb397b906",
+    "docs/internal/updates/U001-health-consultation/evidence/main-8088.png": "b9dc18a986dd8a2e22be3379dfc31203c1ccf6bdcd8963afb561f07684890595",
+    "docs/internal/updates/U001-health-consultation/evidence/medical-sources.md": "0dca8f0be5cc6a0bf607769dca03a33da98ca81d0dc3f6fad1cc3bd87cd2b07d",
+    "docs/internal/updates/U001-health-consultation/evidence/reports.md": "024598dad099c592dac7d763691a58e02302845f770ffbcbf44d5ac6ade7948d",
+    "docs/internal/updates/U001-health-consultation/evidence/review.md": "b4409346180ebf0af19a22130cdb9362859d12bc679a7c0a268932fe0d5f68be",
+    "docs/internal/updates/U001-health-consultation/evidence/root-impact.json": "d1a3b3aa177eb2a4b89e932734a86141af6079a8f77e988f35e5ecd85ce77df0",
+    "docs/internal/updates/U001-health-consultation/evidence/storage.json": "dab347b76d588afea39197c2e7b6b9f65cc5e35fc8d06994f62ee46b5bcfee32",
+    "docs/internal/updates/U001-health-consultation/intent.md": "2f451e291d925f46c3655af43b87a2811f25db2cd54d88c6657dedc8888b77af",
+    "docs/internal/updates/U001-health-consultation/issues/U001-01.md": "4135a7dbab85e9a80319ba95651e713ddae6717d17063ddfecfadcd297795c70",
+    "docs/internal/updates/U001-health-consultation/issues/U001-02.md": "cb46ec02c780d34ec62593f8c6265df51a0143048c6d22a6bb0ee141526da6a2",
+    "docs/internal/updates/U001-health-consultation/issues/U001-03.md": "d7041b10e4d5bb9d1a57b38614d125b2d636b6c9192a3add7f9a0d33d3a72e99",
+    "docs/internal/updates/U001-health-consultation/issues/U001-04.md": "5dface4abbb31ba631eac9df6305d04eecc06117596f096c715f93c8f2f4620a",
+    "docs/internal/updates/U001-health-consultation/issues/U001-05.md": "22556be4751b0c215ce6efc8543998adf0a161d1324fc5b206f1b9a20c126708",
+    "docs/internal/updates/U001-health-consultation/issues/U001-06.md": "1737203b7331f8948545c62b740b9f46463371532ab41a6318cae94eea00e034",
+    "docs/internal/updates/U001-health-consultation/issues/U001-07.md": "402ca1bbb84a6cf34f771842b7ede2fdf4eb1d7f66107a5531da24b1ba436bd4",
+    "docs/internal/updates/U001-health-consultation/issues/U001-08.md": "30181fdf2220a6da76db0baa1f6e8b20f9f475ab60930efbdd1171b0ebffc1cb",
+    "docs/internal/updates/U001-health-consultation/issues/U001-09.md": "6b772cfd14e790d64ce990a066626db4759441bd153499ac6f65b7da30f0190e",
+    "docs/internal/updates/U001-health-consultation/issues/U001-10.md": "a20a96f219af303dc18a1b075f5ba52eade185d239ab6ae85c8a9e470a5c300d",
+    "docs/internal/updates/U001-health-consultation/issues/U001-11.md": "d12d4f273d9e79081961eca395240fcc055d4bfef57c8b06b855e69e5ab384db",
+    "docs/internal/updates/U001-health-consultation/issues/U001-12.md": "f8e055636bea03481035e169268cbe0ee58b9f5f9cb8d63a0d180b5ff0e980b7",
+    "docs/internal/updates/U001-health-consultation/issues/U001-13.md": "5319fefbcebd2427fc61eb3decfa58ffa34ecc717cad904b38eee3e1ccc4b567",
+    "docs/internal/updates/U001-health-consultation/issues/U001-14.md": "eb436895fa0d2c3b3f7e09318039e12edff51e1828c9bdc1df04f5d7378eaa20",
+    "docs/internal/updates/U001-health-consultation/plan.md": "e88f5f44d8ce2e92c07b220e7c9b759c24e548998c0310d251f1336203cacedf",
+    "docs/internal/updates/U001-health-consultation/specs/S01-routing.md": "f6d47ce2a9a397f0d993e776a3bafc98d1a6bd77eaca99185da9e4ecfdc45cc3",
+    "docs/internal/updates/U001-health-consultation/specs/S02-information.md": "ec9eaae8bbb4ced5bdf1891b1654396c7c30edb89111f4ba41a42a16c370f577",
+    "docs/internal/updates/U001-health-consultation/specs/S03-reports.md": "bac6c3f1c6f31eeeb177ecf21926e062265cbe5156d6657d358a6726f2871807",
+    "docs/internal/updates/U001-health-consultation/specs/S04-validation.md": "a3bef2503c936d1218783d35e65383256d41a9760b5820a7c21fef271d2f6b95",
+    "docs/interview-notes.md": "f395ccd635b7b2ad8fee1d8509bd34a40c8871ca56d72a26cbe734dad8ea907c",
+    "docs/memory-skills.md": "6f8bdfe189d4d5da3eb89da734fcae03e3e06bb5adb684c59e1b83989c3b6c67",
+    "docs/tools-rag.md": "d0dfa5de8143e2ec05fa4dce91d4f9d21801d638b70a16318a764e59130708e8",
+    "evaluation/cases/README.md": "0b0462846c9e8a68be7deceed6d74d54f2f0b9cc3bf22e79af8469aa33222e7f",
+    "evaluation/cases/dialogs.json": "85ffbdddbe68167ec68557ba3a804807a5bdf4347ac61f45aa674d87142b9a6c",
+    "evaluation/cases/intents.json": "792d8c65ecaeb35353848fa8546db793df8baad4d8b84a54093f618c0544be89",
+    "evaluation/reports/live-20260916-u001-route-fix/container-after.json": "850263f6e0552029e4824bc054c3a84b7f716e29b8b9e881b56c78be54cf29e4",
+    "evaluation/reports/live-20260916-u001-route-fix/execution.json": "1ff8b56bb0fac0f2d23825c53c775319d31f9ef468b578dd6b31c05a278a8d4b",
+    "evaluation/reports/live-20260916-u001-route-fix/inputs.json": "c01fd47913cb486d5f8b5d08002182f22bba40c9f3ce61511529500c68c14676",
+    "evaluation/reports/live-20260916-u001-route-fix/notes.md": "5196f6da111850b34b8aa5d6722b9c6011d6de085bc5ab9e878c84ab461a4586",
+    "evaluation/reports/live-20260916-u001-route-fix/response.json": "465ea0b2600ee1961f0d145f1a42f5148ad62f637f8a4d07004e6d2eec458d09",
+    "evaluation/reports/live-20260916-u001/before.png": "3f43c3a14adc59e37979fada2fd29327684905f02f1c85e639650c9ec3f9da53",
+    "evaluation/reports/live-20260916-u001/container-after.json": "e436baf9a5751c0680d9c6807b915060f44febd6088766cf27024b47d6e1bedb",
+    "evaluation/reports/live-20260916-u001/container-before.json": "50395a52ff092f29f5bb764047592ab8356612da6c80f2c4ae0427c8b2a465f3",
+    "evaluation/reports/live-20260916-u001/execution.json": "4f1b5c8b48877bd1eef36612cfc4af17a3d80a2cafa6395193a5bf9e34f48065",
+    "evaluation/reports/live-20260916-u001/inputs.json": "40fa064bc31f6249e2d922e2ba319733cc883fdac7c001944c7ac9d2ded09e74",
+    "evaluation/reports/live-20260916-u001/model-parameters.json": "a83794892ffdcb6d4a8ab722272ac61efff2964b1e5f3c20b089ef39f080c76e",
+    "evaluation/reports/live-20260916-u001/notes.md": "663cb268343ce8bcd5e2eb880117977ff3be9bd37efc72a12742ff83f2994e66",
+    "evaluation/reports/live-20260916-u001/page.html": "eb090c3d08bc2ab49a288274eabaf060fe1b34c0d3985477278b7b1d7d6f72e4",
+    "evaluation/reports/live-20260916-u001/page.txt": "ec26d799556af1e828192582765becf145d6e5593422a010eb43c32dc9497251",
+    "evaluation/reports/live-20260916-u001/report-failures.png": "6e4a145d24106d9e00f0ac229eb57b6b8b3a8bcc9db676aaefe0856b51054978",
+    "evaluation/reports/live-20260916-u001/report-full.png": "7298000ef01e7b315d3656a4811bacdf73b6176fb3ff58152c45db5d80ac158b",
+    "evaluation/reports/live-20260916-u001/response.json": "27592949289f45b51ff5063fea8a3dd3cfd68c6bcc25379ecf770266d0ddbb81",
+    "evaluation/reports/live-20260916-u001/source-manifest-after.json": "8016c4f31a05bb17aac95a61deb38cba611e07139273190eee73790f619febf7",
+    "evaluation/reports/live-20260916-u001/source-manifest-before.json": "8016c4f31a05bb17aac95a61deb38cba611e07139273190eee73790f619febf7",
+    "evaluation/reports/live-20260916-u001/summary.json": "1f231b11130bb733383b17b6801b57d029b2aa63a5c768ed0434811d6ea7bbb1",
+    "frontend/nginx.conf": "fb74169d8232f1650fdde81ce14d1509c195e5b01281c69aa2ae7caa722d172a",
+    "frontend/src/App.vue": "39f04f6e98b54fcae935b5d2e7454886ac1c2605ea5d4b13d95d81440a2b721c",
+    "frontend/src/components/HealthArtifacts.vue": "57c24064627d40ef2b1049c747766ef15005f6c127700260c4dece037062a6b5",
+    "frontend/src/components/ReportUpload.vue": "967a919c947eb7a626bb8b8aecf9f2e26dab1975dd155e4aec0c5e7040f844f1",
+    "frontend/src/lib/backends.js": "f8edce5798d79f615fe0e7458de519e03f67a76e45ca093de2b2adc063383233",
+    "frontend/tests/app-integration.test.mjs": "7e9c1ff7a94c75e398596575ed8d9e9ca874d85338bbbb18c6e701ee14021d78",
+    "frontend/tests/business-components.test.mjs": "54ab34ce8f76a74eac92023aa38ce3368309ca6936b280ca8135ca2946e90516",
+    "frontend/tests/python-backend.test.mjs": "08bde8d263cabddb2965c2176699a6a7ce189e195ffb8aca7231e6acf1a3bbca",
+    "health/__init__.py": "ae070d5fed09fb9bf6f795a5698fa2dfcdd83794b184659901a1a3a4e74c6b6b",
+    "health/data/medications.json": "48913b2baa7a5caa2fc9c6dbbe11d827d287cd19fbdb3833b454107c1cd6bfd6",
+    "health/data/sources.json": "cfc7f1e899fc534882a18a5b7eccadf2b9ad19d92c822ff34bc5f4e4942de3f3",
+    "health/medications.py": "b08309da750110abe61ca37447baae9a441b3347d0aa110ecdd246e199beb11a",
+    "health/models.py": "7c7c38c26d5aa3570649c3bcdd77fc0fc9ca969a8521a5be2460512e54a619c6",
+    "health/report_upload.py": "de724337735f5ad2ccb15e0a963c78eff6d0f805d620dd59aa31937e4007693b",
+    "health/reports.py": "04b6285397f5301b8a0330d329e5b750f7ecc9386c91eea75733d0050a3ba9df",
+    "health/triage.py": "4930a5c6c625eee4f594d7b637d8903dfb4d23a03b7bc702801c4fb3d803492d",
+    "hospital/models.py": "5ba29b3a4b43aa92b24b1a5fccbd61ef928d52225f93dfafeed2d8ea3a6b4455",
+    "knowledge/department-internal.md": "ba7bb8c8ddee5c2a455f708e5c46df2d99bd0097e7bba13e1c313e41ebc8918b",
+    "knowledge/department-ophthalmology.md": "ef0f46d3a691a244ba56d664d0659c27665ee0ed360e27cb649dac5ba21838ec",
+    "knowledge/health-abdominal-symptoms.md": "446f360875b7c9fac1349cf330b05875c63d94e41b37048723dcba3f64fbef8b",
+    "knowledge/health-acetaminophen-label.md": "9babf4c71a9949723cc3cf8889c22f760114aa3ba76064cdae7c30b810ab18f2",
+    "knowledge/health-child-fever.md": "9036d9f17b8d3297cbf1b02f966efc4d71254cda3ae127d935d9b302eafb4e3a",
+    "knowledge/health-common-cold.md": "3d061e725d3a89d3f6c87875b6c403e6ccbdbb7c70277ad81b38b2f4671821e0",
+    "knowledge/health-ibuprofen-label.md": "52abca5635c29ba239e5ecb6620308e54471166e00fecdb298fbb056ea9130e7",
+    "knowledge/health-red-eye.md": "cb66736086547ed9bd774d1f1a188d9a582778aba64cb398688e5cd3cfcd288c",
+    "knowledge/health-report-terms.md": "f7cab0b1baca45c2cbe2813462a610f8f83fc28a991ba6f11b8535854fd0d132",
+    "knowledge/lab-process.md": "61f235f7ea7f7dbc48296d35cdeac8ca538750a389ef1647954b373a9e2e1984",
+    "knowledge/medicine-pickup.md": "09f6862b6d462c8e7a50433226a5dd7129ce6b5a643993c445280a393cf229bd",
+    "mcp/knowledge_base.py": "556b8c7df7b2f7dbe13def90f9f8eda333635d2accc799077e972c7ad09e453d",
+    "requirements.txt": "59f86ef0d288817cb0fefd92863d3ba48e63a77d66847635b5a183aab3706d47",
+    "skills/README.md": "77b411a4fff48a28de95cfbf2fca674435f7a26409a53ecb2ae14d46e821579a",
+    "skills/general_visit/SKILL.md": "a45142c8572d69ac8005eaa2c08e33c16bf7c940d59592b4297d343d4c072bed",
+    "skills/health_triage/SKILL.md": "be1affada5aa702a02bce22df1917d196d43bc50023d8fc570a9df500d3e9cb6",
+    "skills/medication_information/SKILL.md": "0d9a1f02006d28ac9f710e9292e9d2986db7ad217f47728e51336a43f235981e",
+    "skills/service_boundaries/SKILL.md": "a0e6bb171e318b59ef600e63d42b967ea648c8988e611a8a0287da91b699b56a",
+    "skills/visit_guidance/SKILL.md": "e16270408bb0885014829bc95f84910c54e1a1cd5e22dcef80305429bfa809a2",
+    "tests/browser/check_health.py": "e826bc231736a279f82f66564edfc1adfbf9218309ecc1c0f7a096b3f82927c9",
+    "tests/browser/run_evaluation.py": "174762314ff50a6076cdf92bfde416d7b1ca01ce4296a4a5ac12583a27091b64",
+    "tests/test_agent_orchestrator.py": "917b1eb6c92dd2dedf98d3abbcc50c85dc78a87f5f8589f0d4cfc3ec99a2ea63",
+    "tests/test_chat_api.py": "03f8d930a068ec44bce94c1071d5c899485ba192256c0146041f30c5200ee31d",
+    "tests/test_evaluation.py": "d90d2bc9ca9facbdbd183b2254800ea7824f6ffc908878bbe9a6e7f0de3e68a3",
+    "tests/test_evaluation_api.py": "7fb48235398d6f00988c719370e8ce2996202c123516cb587fd0e8f162a97953",
+    "tests/test_health_emergency.py": "e6710089949e064401ba752f0a3d0e640f6d1665fb0a9f67c42b4a0c9ae21065",
+    "tests/test_health_information.py": "c1a7b7c7768cab055408b584fc925da689ba30e2a38c3e87cb81e02bf92824a6",
+    "tests/test_health_routing.py": "7dbf11cbdf2a68a60052f68e7b47b5fcdd964d46bdf8e52fdc8666e758b82d9f",
+    "tests/test_knowledge_skills.py": "f43f0852a1e84429256e0113b8d3f505e76780338607d867c43808d8526691c7",
+    "tests/test_report_preprocessing.py": "4390dc34bdf3aa8da39c7eea7efa297efc2719fdff2cc4c9e1e7657196fb2656",
+    "tests/test_report_upload_api.py": "0c63e104daef45a28d4f267806a45c80effd8c7592c59732859d02fcc1d4525a"
+  },
+  "batches": [
+    {
+      "paths": [
+        "Dockerfile",
+        "IMPLEMENTATION_PLAN.md",
+        "README.md",
+        "agents/agent_orchestrator.py",
+        "agents/tools.py",
+        "api/main.py",
+        "core/emergency.py",
+        "core/intent_recognizer.py",
+        "docs/architecture.md",
+        "docs/demo-script.md",
+        "docs/evaluation.md",
+        "docs/health-consultation.md",
+        "docs/intent-routing.md",
+        "docs/internal/rebuild/EXECUTION.md",
+        "docs/internal/rebuild/README.md",
+        "docs/internal/rebuild/contracts.md",
+        "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+        "docs/internal/updates/U001-health-consultation/contracts.md",
+        "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+        "docs/internal/updates/U001-health-consultation/evidence/backend-tests.xml",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-1440.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-390.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-768.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business.json"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 113,
+          "affected_count": 20,
+          "changed_files": 21,
+          "risk_level": "critical"
+        },
+        "changed_symbols": [
+          {
+            "id": "Section:IMPLEMENTATION_PLAN.md:L1:MediPet 场景适配与重构实施计划",
+            "name": "MediPet 场景适配与重构实施计划",
+            "type": "Section",
+            "filePath": "IMPLEMENTATION_PLAN.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:README.md:L1:MediPet",
+            "name": "MediPet",
+            "type": "Section",
+            "filePath": "README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:README.md:L7:可以体验什么",
+            "name": "可以体验什么",
+            "type": "Section",
+            "filePath": "README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:README.md:L26:用 Docker Compose 启动",
+            "name": "用 Docker Compose 启动",
+            "type": "Section",
+            "filePath": "README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:README.md:L91:演示与代码导航",
+            "name": "演示与代码导航",
+            "type": "Section",
+            "filePath": "README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:README.md:L105:验证状态",
+            "name": "验证状态",
+            "type": "Section",
+            "filePath": "README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:AgentType",
+            "name": "AgentType",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:agents/agent_orchestrator.py:TRIAGE",
+            "name": "TRIAGE",
+            "type": "Variable",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:agents/agent_orchestrator.py:MEDICATION",
+            "name": "MEDICATION",
+            "type": "Variable",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:BaseAgent",
+            "name": "BaseAgent",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:agents/agent_orchestrator.py:BaseAgent.__init__#6",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:GeneralAgent",
+            "name": "GeneralAgent",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:agents/agent_orchestrator.py:system_prompt",
+            "name": "system_prompt",
+            "type": "Variable",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:GuidanceAgent",
+            "name": "GuidanceAgent",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:TriageAgent",
+            "name": "TriageAgent",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:MedicationAgent",
+            "name": "MedicationAgent",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:ResponseComposer",
+            "name": "ResponseComposer",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:agents/agent_orchestrator.py:ResponseComposer.compose#2",
+            "name": "compose",
+            "type": "Method",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:agents/agent_orchestrator.py:AgentOrchestrator",
+            "name": "AgentOrchestrator",
+            "type": "Class",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:agents/agent_orchestrator.py:AgentOrchestrator._INTENT_ROUTING",
+            "name": "_INTENT_ROUTING",
+            "type": "Property",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:agents/agent_orchestrator.py:_TRIAGE_KEYWORDS",
+            "name": "_TRIAGE_KEYWORDS",
+            "type": "Variable",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:agents/agent_orchestrator.py:_MEDICATION_KEYWORDS",
+            "name": "_MEDICATION_KEYWORDS",
+            "type": "Variable",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator.__init__#7",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator._domain_scores#1",
+            "name": "_domain_scores",
+            "type": "Method",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator._collaboration_targets#1",
+            "name": "_collaboration_targets",
+            "type": "Method",
+            "filePath": "agents/agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools",
+            "name": "build_health_tools",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools.result@183:4",
+            "name": "result",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools.symptom_handler@188:4",
+            "name": "symptom_handler",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools.report_handler@192:4",
+            "name": "report_handler",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools.read_report_handler@196:4",
+            "name": "read_report_handler",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:agents/tools.py:build_health_tools.medication_handler@215:4",
+            "name": "medication_handler",
+            "type": "Function",
+            "filePath": "agents/tools.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:api/main.py:preprocess_uploaded_report",
+            "name": "preprocess_uploaded_report",
+            "type": "Function",
+            "filePath": "api/main.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:EMERGENCY_SIGNALS",
+            "name": "EMERGENCY_SIGNALS",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:EMERGENCY_RESPONSE",
+            "name": "EMERGENCY_RESPONSE",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_SYMPTOM",
+            "name": "_SYMPTOM",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_REFERENCE",
+            "name": "_REFERENCE",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_CONDITIONAL",
+            "name": "_CONDITIONAL",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_PAST",
+            "name": "_PAST",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_CURRENT",
+            "name": "_CURRENT",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_NEGATED",
+            "name": "_NEGATED",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_RESOLVED",
+            "name": "_RESOLVED",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_PAST_SUFFIX",
+            "name": "_PAST_SUFFIX",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_SEPARATOR",
+            "name": "_SEPARATOR",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_STRONG_BOUNDARY",
+            "name": "_STRONG_BOUNDARY",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_CURRENT_CLAUSE_JOIN",
+            "name": "_CURRENT_CLAUSE_JOIN",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_UNIT",
+            "name": "_UNIT",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_TEMPERATURE",
+            "name": "_TEMPERATURE",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_BODY_TEMPERATURE",
+            "name": "_BODY_TEMPERATURE",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_OTHER_TEMPERATURE",
+            "name": "_OTHER_TEMPERATURE",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_PATIENT",
+            "name": "_PATIENT",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_UPPER_BOUND",
+            "name": "_UPPER_BOUND",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/emergency.py:_STRICT_LOWER_BOUND",
+            "name": "_STRICT_LOWER_BOUND",
+            "type": "Variable",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:core/emergency.py:_temperature_signals",
+            "name": "_temperature_signals",
+            "type": "Function",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:core/emergency.py:_signals",
+            "name": "_signals",
+            "type": "Function",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:core/emergency.py:_last_position",
+            "name": "_last_position",
+            "type": "Function",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:core/emergency.py:detect_emergency",
+            "name": "detect_emergency",
+            "type": "Function",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:core/emergency.py:is_emergency_reference",
+            "name": "is_emergency_reference",
+            "type": "Function",
+            "filePath": "core/emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:core/intent_recognizer.py:IntentCategory",
+            "name": "IntentCategory",
+            "type": "Class",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/intent_recognizer.py:SYMPTOM_QUERY",
+            "name": "SYMPTOM_QUERY",
+            "type": "Variable",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/intent_recognizer.py:MEDICATION_QUERY",
+            "name": "MEDICATION_QUERY",
+            "type": "Variable",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/intent_recognizer.py:REPORT_QUERY",
+            "name": "REPORT_QUERY",
+            "type": "Variable",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:core/intent_recognizer.py:_TEMPLATES",
+            "name": "_TEMPLATES",
+            "type": "Property",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:core/intent_recognizer.py:_SPECIFIC_INTENTS",
+            "name": "_SPECIFIC_INTENTS",
+            "type": "Variable",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:core/intent_recognizer.py:_INTENT_GROUPS",
+            "name": "_INTENT_GROUPS",
+            "type": "Property",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:core/intent_recognizer.py:IntentRecognizer",
+            "name": "IntentRecognizer",
+            "type": "Class",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:core/intent_recognizer.py:IntentRecognizer._llm_recognize#2",
+            "name": "_llm_recognize",
+            "type": "Method",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:core/intent_recognizer.py:IntentRecognizer._pattern_recognize#1",
+            "name": "_pattern_recognize",
+            "type": "Method",
+            "filePath": "core/intent_recognizer.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L1:MediPet 架构与请求链路",
+            "name": "MediPet 架构与请求链路",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L7:一次聊天怎样完成",
+            "name": "一次聊天怎样完成",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L33:六个角色与工具路径",
+            "name": "六个角色与工具路径",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L48:报告上传是独立的确定性入口",
+            "name": "报告上传是独立的确定性入口",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L54:状态各自存在哪里",
+            "name": "状态各自存在哪里",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/architecture.md:L69:已验证内容与取舍",
+            "name": "已验证内容与取舍",
+            "type": "Section",
+            "filePath": "docs/architecture.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/demo-script.md:L1:MediPet 固定演示脚本",
+            "name": "MediPet 固定演示脚本",
+            "type": "Section",
+            "filePath": "docs/demo-script.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/demo-script.md:L41:补充短用例",
+            "name": "补充短用例",
+            "type": "Section",
+            "filePath": "docs/demo-script.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/demo-script.md:L43:症状方向、药品与报告",
+            "name": "症状方向、药品与报告",
+            "type": "Section",
+            "filePath": "docs/demo-script.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/demo-script.md:L84:导诊与有界急症规则",
+            "name": "导诊与有界急症规则",
+            "type": "Section",
+            "filePath": "docs/demo-script.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/demo-script.md:L88:证据状态",
+            "name": "证据状态",
+            "type": "Section",
+            "filePath": "docs/demo-script.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/evaluation.md:L1:MediPet 评测、监控与证据",
+            "name": "MediPet 评测、监控与证据",
+            "type": "Section",
+            "filePath": "docs/evaluation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/evaluation.md:L7:数据与执行路径",
+            "name": "数据与执行路径",
+            "type": "Section",
+            "filePath": "docs/evaluation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/evaluation.md:L23:指标如何计算",
+            "name": "指标如何计算",
+            "type": "Section",
+            "filePath": "docs/evaluation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/evaluation.md:L78:医疗扩展前的证据",
+            "name": "医疗扩展前的证据",
+            "type": "Section",
+            "filePath": "docs/evaluation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L1:MediPet 健康咨询与报告整理",
+            "name": "MediPet 健康咨询与报告整理",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L5:症状只给初步科室方向",
+            "name": "症状只给初步科室方向",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L13:药品目录固定到两个美国标签",
+            "name": "药品目录固定到两个美国标签",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L26:报告由本地程序提取和比较",
+            "name": "报告由本地程序提取和比较",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L36:原件不存，报告内容进入当前事项",
+            "name": "原件不存，报告内容进入当前事项",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/health-consultation.md:L42:知识、Skills 与验证状态",
+            "name": "知识、Skills 与验证状态",
+            "type": "Section",
+            "filePath": "docs/health-consultation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/intent-routing.md:L1:MediPet 意图识别与主辅路由",
+            "name": "MediPet 意图识别与主辅路由",
+            "type": "Section",
+            "filePath": "docs/intent-routing.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/intent-routing.md:L23:实体是线索，身份来自事项",
+            "name": "实体是线索，身份来自事项",
+            "type": "Section",
+            "filePath": "docs/intent-routing.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/intent-routing.md:L31:医疗扩展的三个意图",
+            "name": "医疗扩展的三个意图",
+            "type": "Section",
+            "filePath": "docs/intent-routing.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/intent-routing.md:L43:领域分工与并行",
+            "name": "领域分工与并行",
+            "type": "Section",
+            "filePath": "docs/intent-routing.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/intent-routing.md:L64:证据与取舍",
+            "name": "证据与取舍",
+            "type": "Section",
+            "filePath": "docs/intent-routing.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/rebuild/EXECUTION.md:L1:重构执行检查点",
+            "name": "重构执行检查点",
+            "type": "Section",
+            "filePath": "docs/internal/rebuild/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/rebuild/README.md:L1:MediPet 重构工作索引",
+            "name": "MediPet 重构工作索引",
+            "type": "Section",
+            "filePath": "docs/internal/rebuild/README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/rebuild/contracts.md:L1:H01 共享业务契约",
+            "name": "H01 共享业务契约",
+            "type": "Section",
+            "filePath": "docs/internal/rebuild/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/rebuild/contracts.md:L69:Artifact 与本轮结果",
+            "name": "Artifact 与本轮结果",
+            "type": "Section",
+            "filePath": "docs/internal/rebuild/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/rebuild/contracts.md:L119:十类卡片完整样例（含 U001 扩展）",
+            "name": "十类卡片完整样例（含 U001 扩展）",
+            "type": "Section",
+            "filePath": "docs/internal/rebuild/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/EXECUTION.md:L1:U001 执行检查点",
+            "name": "U001 执行检查点",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/EXECUTION.md:L3:当前事实",
+            "name": "当前事实",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/EXECUTION.md:L9:活动任务（18:07 检查点）",
+            "name": "活动任务（18:07 检查点）",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/EXECUTION.md:L20:未纳入本次范围的既有文件",
+            "name": "未纳入本次范围的既有文件",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/EXECUTION.md:L24:验证",
+            "name": "验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/contracts.md:L1:U001 共享契约",
+            "name": "U001 共享契约",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/contracts.md:L5:意图和角色",
+            "name": "意图和角色",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/contracts.md:L15:数据模型",
+            "name": "数据模型",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/contracts.md:L29:服务函数",
+            "name": "服务函数",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/contracts.md:L36:报告上传",
+            "name": "报告上传",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/contracts.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/acceptance.md:L1:U001 验收汇总",
+            "name": "U001 验收汇总",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/acceptance.md:L5:确定性与组件",
+            "name": "确定性与组件",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/acceptance.md:L12:真实存储、OCR与页面",
+            "name": "真实存储、OCR与页面",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/acceptance.md:L20:实际模型",
+            "name": "实际模型",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/acceptance.md:L26:实现范围",
+            "name": "实现范围",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/acceptance.md",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": [
+          {
+            "id": "proc_12_symptom_handler",
+            "name": "Symptom_handler → _temperature_signals",
+            "process_type": "cross_community",
+            "step_count": 5,
+            "changed_steps": [
+              {
+                "symbol": "detect_emergency",
+                "step": 3
+              },
+              {
+                "symbol": "_signals",
+                "step": 4
+              },
+              {
+                "symbol": "_temperature_signals",
+                "step": 5
+              },
+              {
+                "symbol": "symptom_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_23_symptom_handler",
+            "name": "Symptom_handler → _last_position",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "detect_emergency",
+                "step": 3
+              },
+              {
+                "symbol": "_last_position",
+                "step": 4
+              },
+              {
+                "symbol": "symptom_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_24_symptom_handler",
+            "name": "Symptom_handler → _age_in_months",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "symptom_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_25_symptom_handler",
+            "name": "Symptom_handler → _mentions",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "symptom_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_37___init__",
+            "name": "__init__ → Make_tool",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "__init__",
+                "step": 2
+              },
+              {
+                "symbol": "build_health_tools",
+                "step": 3
+              }
+            ]
+          },
+          {
+            "id": "proc_38___init__",
+            "name": "__init__ → Handler_for",
+            "process_type": "intra_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "__init__",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_39___init__",
+            "name": "__init__ → Text",
+            "process_type": "intra_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "__init__",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_46_medication_handler",
+            "name": "Medication_handler → _normalize",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "medication_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_47_symptom_handler",
+            "name": "Symptom_handler → Sources",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "symptom_handler",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_67_run_parallel",
+            "name": "Run_parallel → _env_float",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "compose",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_68_run_parallel",
+            "name": "Run_parallel → _env_int",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "compose",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_69_run_parallel",
+            "name": "Run_parallel → Llm_request_options",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "compose",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_91__urgency",
+            "name": "_urgency → _temperature_signals",
+            "process_type": "cross_community",
+            "step_count": 5,
+            "changed_steps": [
+              {
+                "symbol": "is_emergency_reference",
+                "step": 2
+              },
+              {
+                "symbol": "detect_emergency",
+                "step": 3
+              },
+              {
+                "symbol": "_signals",
+                "step": 4
+              },
+              {
+                "symbol": "_temperature_signals",
+                "step": 5
+              }
+            ]
+          },
+          {
+            "id": "proc_96__urgency",
+            "name": "_urgency → _last_position",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "is_emergency_reference",
+                "step": 2
+              },
+              {
+                "symbol": "detect_emergency",
+                "step": 3
+              },
+              {
+                "symbol": "_last_position",
+                "step": 4
+              }
+            ]
+          },
+          {
+            "id": "proc_118_handle",
+            "name": "Handle → _temperature_signals",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "detect_emergency",
+                "step": 2
+              },
+              {
+                "symbol": "_signals",
+                "step": 3
+              },
+              {
+                "symbol": "_temperature_signals",
+                "step": 4
+              }
+            ]
+          },
+          {
+            "id": "proc_122_handle",
+            "name": "Handle → _last_position",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "detect_emergency",
+                "step": 2
+              },
+              {
+                "symbol": "_last_position",
+                "step": 3
+              }
+            ]
+          },
+          {
+            "id": "proc_130_preprocess_uploaded_",
+            "name": "Preprocess_uploaded_report → _identifier",
+            "process_type": "cross_community",
+            "step_count": 6,
+            "changed_steps": [
+              {
+                "symbol": "preprocess_uploaded_report",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_134_preprocess_uploaded_",
+            "name": "Preprocess_uploaded_report → _storage_error",
+            "process_type": "cross_community",
+            "step_count": 5,
+            "changed_steps": [
+              {
+                "symbol": "preprocess_uploaded_report",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_135__pattern_recognize",
+            "name": "_pattern_recognize → _temperature_signals",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "_pattern_recognize",
+                "step": 1
+              },
+              {
+                "symbol": "detect_emergency",
+                "step": 2
+              },
+              {
+                "symbol": "_signals",
+                "step": 3
+              },
+              {
+                "symbol": "_temperature_signals",
+                "step": 4
+              }
+            ]
+          },
+          {
+            "id": "proc_136__pattern_recognize",
+            "name": "_pattern_recognize → _last_position",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "_pattern_recognize",
+                "step": 1
+              },
+              {
+                "symbol": "detect_emergency",
+                "step": 2
+              },
+              {
+                "symbol": "_last_position",
+                "step": 3
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "paths": [
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/failure.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-image.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-scan.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-text.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/health.json",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-image.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-scan.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/fixtures/synthetic-text.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-1440.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-390.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-768.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health-self.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health-verified/health.json",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/failure.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-image.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-scan.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-text.pdf",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/health-self.png",
+        "docs/internal/updates/U001-health-consultation/evidence/browser-health/health.json",
+        "docs/internal/updates/U001-health-consultation/evidence/container-ocr.json",
+        "docs/internal/updates/U001-health-consultation/evidence/delivery-review.json",
+        "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+        "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+        "docs/internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 11,
+          "affected_count": 0,
+          "changed_files": 14,
+          "risk_level": "low"
+        },
+        "changed_symbols": [
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L1:U001 急症规则验证",
+            "name": "U001 急症规则验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L5:官方依据与产品边界",
+            "name": "官方依据与产品边界",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L17:实现与影响",
+            "name": "实现与影响",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L25:实际验证",
+            "name": "实际验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L40:独立审查后的定向修补",
+            "name": "独立审查后的定向修补",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/emergency.md:L46:局限",
+            "name": "局限",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md:L1:U001 评测输入准备与确定性验证",
+            "name": "U001 评测输入准备与确定性验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md:L5:输入范围",
+            "name": "输入范围",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md:L17:替身测试",
+            "name": "替身测试",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md:L35:待实际验收",
+            "name": "待实际验收",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md:L1:U001 内置知识升级验证",
+            "name": "U001 内置知识升级验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": []
+      }
+    },
+    {
+      "paths": [
+        "docs/internal/updates/U001-health-consultation/evidence/main-8088.json",
+        "docs/internal/updates/U001-health-consultation/evidence/main-8088.png",
+        "docs/internal/updates/U001-health-consultation/evidence/medical-sources.md",
+        "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+        "docs/internal/updates/U001-health-consultation/evidence/review.md",
+        "docs/internal/updates/U001-health-consultation/evidence/root-impact.json",
+        "docs/internal/updates/U001-health-consultation/evidence/storage.json",
+        "docs/internal/updates/U001-health-consultation/intent.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-01.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-02.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-03.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-04.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-05.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-06.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-07.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-08.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-09.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-10.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-11.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-12.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-13.md",
+        "docs/internal/updates/U001-health-consultation/issues/U001-14.md",
+        "docs/internal/updates/U001-health-consultation/plan.md",
+        "docs/internal/updates/U001-health-consultation/specs/S01-routing.md"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 55,
+          "affected_count": 0,
+          "changed_files": 23,
+          "risk_level": "low"
+        },
+        "changed_symbols": [
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/medical-sources.md:L1:U001 医疗信息来源与实施边界",
+            "name": "U001 医疗信息来源与实施边界",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/medical-sources.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/medical-sources.md:L23:验证记录",
+            "name": "验证记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/medical-sources.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L1:U001 报告预处理、上传与医疗卡片证据",
+            "name": "U001 报告预处理、上传与医疗卡片证据",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L5:已落地行为",
+            "name": "已落地行为",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L14:依赖与上游依据",
+            "name": "依赖与上游依据",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L25:已执行验证",
+            "name": "已执行验证",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L44:当前树影响分析",
+            "name": "当前树影响分析",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/reports.md:L48:容器与浏览器阶段记录",
+            "name": "容器与浏览器阶段记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L1:U001 独立源码审查",
+            "name": "U001 独立源码审查",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L5:已复现问题",
+            "name": "已复现问题",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L7:1. P1：此前非急症的否定会覆盖“并且现在/且现在”的肯定急症",
+            "name": "1. P1：此前非急症的否定会覆盖“并且现在/且现在”的肯定急症",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L14:2. P2：症状持续“3个月”被当作儿童月龄",
+            "name": "2. P2：症状持续“3个月”被当作儿童月龄",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L21:3. P1：药名子串校验允许丢弃用户明确的未知剂型",
+            "name": "3. P1：药名子串校验允许丢弃用户明确的未知剂型",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L28:4. P2：扫描 PDF 的文字页眉会使整页扫描内容跳过 OCR",
+            "name": "4. P2：扫描 PDF 的文字页眉会使整页扫描内容跳过 OCR",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L35:已核对但未发现新问题的路径",
+            "name": "已核对但未发现新问题的路径",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/evidence/review.md:L42:跟进",
+            "name": "跟进",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/evidence/review.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/intent.md:L1:U001 医疗健康咨询能力补齐",
+            "name": "U001 医疗健康咨询能力补齐",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/intent.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/intent.md:L8:更新意图",
+            "name": "更新意图",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/intent.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/intent.md:L14:可验收的目标",
+            "name": "可验收的目标",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/intent.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/intent.md:L23:边界",
+            "name": "边界",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/intent.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-01.md:L7:U001-01 主分支与更新契约",
+            "name": "U001-01 主分支与更新契约",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-01.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-01.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-01.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-02.md:L7:U001-02 医疗意图识别",
+            "name": "U001-02 医疗意图识别",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-02.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-02.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-02.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-03.md:L7:U001-03 医疗角色与工具集成",
+            "name": "U001-03 医疗角色与工具集成",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-03.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-03.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-03.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-04.md:L7:U001-04 急症规则与固定响应",
+            "name": "U001-04 急症规则与固定响应",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-04.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-04.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-04.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-05.md:L7:U001-05 症状分诊服务",
+            "name": "U001-05 症状分诊服务",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-05.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-05.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-05.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-06.md:L7:U001-06 药品信息服务",
+            "name": "U001-06 药品信息服务",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-06.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-06.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-06.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-07.md:L7:U001-07 知识与常驻Skills",
+            "name": "U001-07 知识与常驻Skills",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-07.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-07.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-07.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-08.md:L7:U001-08 报告文本预处理",
+            "name": "U001-08 报告文本预处理",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-08.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-08.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-08.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-09.md:L7:U001-09 PDF与图片提取",
+            "name": "U001-09 PDF与图片提取",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-09.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-09.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-09.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-10.md:L7:U001-10 报告API与历史",
+            "name": "U001-10 报告API与历史",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-10.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-10.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-10.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-11.md:L7:U001-11 上传入口与医疗卡片",
+            "name": "U001-11 上传入口与医疗卡片",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-11.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-11.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-11.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-12.md:L7:U001-12 集成与全量回归",
+            "name": "U001-12 集成与全量回归",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-12.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-12.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-12.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-13.md:L7:U001-13 真实环境与模型验收",
+            "name": "U001-13 真实环境与模型验收",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-13.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-13.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-13.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-13.md:L17:输入准备（不表示真实验收完成）",
+            "name": "输入准备（不表示真实验收完成）",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-13.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-14.md:L7:U001-14 文档与变更核对",
+            "name": "U001-14 文档与变更核对",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-14.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/issues/U001-14.md:L13:完成记录",
+            "name": "完成记录",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/issues/U001-14.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/plan.md:L1:U001 实施计划",
+            "name": "U001 实施计划",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/plan.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/plan.md:L5:实施路径",
+            "name": "实施路径",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/plan.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/plan.md:L14:依赖与调度",
+            "name": "依赖与调度",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/plan.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/plan.md:L35:共享文件和循环控制",
+            "name": "共享文件和循环控制",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/plan.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/plan.md:L45:验收",
+            "name": "验收",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/plan.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/specs/S01-routing.md:L1:S01-routing 意图与编排",
+            "name": "S01-routing 意图与编排",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/specs/S01-routing.md",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": []
+      }
+    },
+    {
+      "paths": [
+        "docs/internal/updates/U001-health-consultation/specs/S02-information.md",
+        "docs/internal/updates/U001-health-consultation/specs/S03-reports.md",
+        "docs/internal/updates/U001-health-consultation/specs/S04-validation.md",
+        "docs/interview-notes.md",
+        "docs/memory-skills.md",
+        "docs/tools-rag.md",
+        "evaluation/cases/README.md",
+        "evaluation/cases/dialogs.json",
+        "evaluation/cases/intents.json",
+        "evaluation/reports/live-20260916-u001-route-fix/container-after.json",
+        "evaluation/reports/live-20260916-u001-route-fix/execution.json",
+        "evaluation/reports/live-20260916-u001-route-fix/inputs.json",
+        "evaluation/reports/live-20260916-u001-route-fix/notes.md",
+        "evaluation/reports/live-20260916-u001-route-fix/response.json",
+        "evaluation/reports/live-20260916-u001/before.png",
+        "evaluation/reports/live-20260916-u001/container-after.json",
+        "evaluation/reports/live-20260916-u001/container-before.json",
+        "evaluation/reports/live-20260916-u001/execution.json",
+        "evaluation/reports/live-20260916-u001/inputs.json",
+        "evaluation/reports/live-20260916-u001/model-parameters.json",
+        "evaluation/reports/live-20260916-u001/notes.md",
+        "evaluation/reports/live-20260916-u001/page.html",
+        "evaluation/reports/live-20260916-u001/page.txt",
+        "evaluation/reports/live-20260916-u001/report-failures.png"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 27,
+          "affected_count": 0,
+          "changed_files": 22,
+          "risk_level": "low"
+        },
+        "changed_symbols": [
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/specs/S02-information.md:L1:S02-information 分诊与药品信息",
+            "name": "S02-information 分诊与药品信息",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/specs/S02-information.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/specs/S03-reports.md:L1:S03-reports 报告预处理与界面",
+            "name": "S03-reports 报告预处理与界面",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/specs/S03-reports.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/internal/updates/U001-health-consultation/specs/S04-validation.md:L1:S04-validation 验证和交付",
+            "name": "S04-validation 验证和交付",
+            "type": "Section",
+            "filePath": "docs/internal/updates/U001-health-consultation/specs/S04-validation.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L1:MediPet 设计与面试说明",
+            "name": "MediPet 设计与面试说明",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L7:从一次请求讲起",
+            "name": "从一次请求讲起",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L13:设计问题、入口与取舍",
+            "name": "设计问题、入口与取舍",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L30:可以展开回答的细节",
+            "name": "可以展开回答的细节",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L32:意图识别与角色路由解决不同问题",
+            "name": "意图识别与角色路由解决不同问题",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L46:健康信息卡片提供信息，不代替诊疗",
+            "name": "健康信息卡片提供信息，不代替诊疗",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L58:DeepSeek 接入保持现有 SDK",
+            "name": "DeepSeek 接入保持现有 SDK",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L64:怎样避免评测给出漂亮但无效的结论",
+            "name": "怎样避免评测给出漂亮但无效的结论",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/interview-notes.md:L72:展示证据的顺序",
+            "name": "展示证据的顺序",
+            "type": "Section",
+            "filePath": "docs/interview-notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/memory-skills.md:L1:MediPet 记忆、患者范围与 Skills",
+            "name": "MediPet 记忆、患者范围与 Skills",
+            "type": "Section",
+            "filePath": "docs/memory-skills.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/memory-skills.md:L5:完整历史与模型上下文",
+            "name": "完整历史与模型上下文",
+            "type": "Section",
+            "filePath": "docs/memory-skills.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/memory-skills.md:L32:确认和急症怎样接入记忆",
+            "name": "确认和急症怎样接入记忆",
+            "type": "Section",
+            "filePath": "docs/memory-skills.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/memory-skills.md:L42:Skills 如何影响下一次请求",
+            "name": "Skills 如何影响下一次请求",
+            "type": "Section",
+            "filePath": "docs/memory-skills.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/memory-skills.md:L59:证据与取舍",
+            "name": "证据与取舍",
+            "type": "Section",
+            "filePath": "docs/memory-skills.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/tools-rag.md:L1:MediPet 工具调用与知识检索",
+            "name": "MediPet 工具调用与知识检索",
+            "type": "Section",
+            "filePath": "docs/tools-rag.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/tools-rag.md:L5:从模型请求到实际函数",
+            "name": "从模型请求到实际函数",
+            "type": "Section",
+            "filePath": "docs/tools-rag.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/tools-rag.md:L26:业务、健康信息与 RAG 分别执行",
+            "name": "业务、健康信息与 RAG 分别执行",
+            "type": "Section",
+            "filePath": "docs/tools-rag.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/tools-rag.md:L62:文档如何进入 Chroma",
+            "name": "文档如何进入 Chroma",
+            "type": "Section",
+            "filePath": "docs/tools-rag.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:docs/tools-rag.md:L72:已测证据与取舍",
+            "name": "已测证据与取舍",
+            "type": "Section",
+            "filePath": "docs/tools-rag.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:evaluation/cases/README.md:L1:MediPet 评测输入",
+            "name": "MediPet 评测输入",
+            "type": "Section",
+            "filePath": "evaluation/cases/README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:evaluation/reports/live-20260916-u001-route-fix/notes.md:L1:无障碍模式追问定点复测",
+            "name": "无障碍模式追问定点复测",
+            "type": "Section",
+            "filePath": "evaluation/reports/live-20260916-u001-route-fix/notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:evaluation/reports/live-20260916-u001/notes.md:L1:U001 完整模型候选",
+            "name": "U001 完整模型候选",
+            "type": "Section",
+            "filePath": "evaluation/reports/live-20260916-u001/notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:evaluation/reports/live-20260916-u001/notes.md:L5:实际结果",
+            "name": "实际结果",
+            "type": "Section",
+            "filePath": "evaluation/reports/live-20260916-u001/notes.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:evaluation/reports/live-20260916-u001/notes.md:L14:可核对证据",
+            "name": "可核对证据",
+            "type": "Section",
+            "filePath": "evaluation/reports/live-20260916-u001/notes.md",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": []
+      }
+    },
+    {
+      "paths": [
+        "evaluation/reports/live-20260916-u001/report-full.png",
+        "evaluation/reports/live-20260916-u001/response.json",
+        "evaluation/reports/live-20260916-u001/source-manifest-after.json",
+        "evaluation/reports/live-20260916-u001/source-manifest-before.json",
+        "evaluation/reports/live-20260916-u001/summary.json",
+        "frontend/nginx.conf",
+        "frontend/src/App.vue",
+        "frontend/src/components/HealthArtifacts.vue",
+        "frontend/src/components/ReportUpload.vue",
+        "frontend/src/lib/backends.js",
+        "frontend/tests/app-integration.test.mjs",
+        "frontend/tests/business-components.test.mjs",
+        "frontend/tests/python-backend.test.mjs",
+        "health/__init__.py",
+        "health/data/medications.json",
+        "health/data/sources.json",
+        "health/medications.py",
+        "health/models.py",
+        "health/report_upload.py",
+        "health/reports.py",
+        "health/triage.py",
+        "hospital/models.py",
+        "knowledge/department-internal.md",
+        "knowledge/department-ophthalmology.md"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 116,
+          "affected_count": 11,
+          "changed_files": 23,
+          "risk_level": "high"
+        },
+        "changed_symbols": [
+          {
+            "id": "Function:frontend/src/App.vue:chatPending",
+            "name": "chatPending",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/App.vue:reportPending",
+            "name": "reportPending",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/App.vue:usePrompt",
+            "name": "usePrompt",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/App.vue:submitReport",
+            "name": "submitReport",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/App.vue:submitReport.epoch@392:2",
+            "name": "epoch",
+            "type": "Const",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/App.vue:agentLabel",
+            "name": "agentLabel",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/App.vue:messageLabel",
+            "name": "messageLabel",
+            "type": "Function",
+            "filePath": "frontend/src/App.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/HealthArtifacts.vue:props",
+            "name": "props",
+            "type": "Const",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/components/HealthArtifacts.vue:default",
+            "name": "default",
+            "type": "Function",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/HealthArtifacts.vue:types",
+            "name": "types",
+            "type": "Const",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/HealthArtifacts.vue:flags",
+            "name": "flags",
+            "type": "Const",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/src/components/HealthArtifacts.vue:flags.above",
+            "name": "above",
+            "type": "Property",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/src/components/HealthArtifacts.vue:flags.below",
+            "name": "below",
+            "type": "Property",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/src/components/HealthArtifacts.vue:flags.unassessed",
+            "name": "unassessed",
+            "type": "Property",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/src/components/HealthArtifacts.vue:flags.within",
+            "name": "within",
+            "type": "Property",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/components/HealthArtifacts.vue:cards",
+            "name": "cards",
+            "type": "Function",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/components/HealthArtifacts.vue:sourceUrl",
+            "name": "sourceUrl",
+            "type": "Function",
+            "filePath": "frontend/src/components/HealthArtifacts.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/ReportUpload.vue:props",
+            "name": "props",
+            "type": "Const",
+            "filePath": "frontend/src/components/ReportUpload.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/ReportUpload.vue:emit",
+            "name": "emit",
+            "type": "Const",
+            "filePath": "frontend/src/components/ReportUpload.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/src/components/ReportUpload.vue:error",
+            "name": "error",
+            "type": "Const",
+            "filePath": "frontend/src/components/ReportUpload.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/components/ReportUpload.vue:choose",
+            "name": "choose",
+            "type": "Function",
+            "filePath": "frontend/src/components/ReportUpload.vue",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/src/lib/backends.js:uploadReport",
+            "name": "uploadReport",
+            "type": "Function",
+            "filePath": "frontend/src/lib/backends.js",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/tests/app-integration.test.mjs:Health",
+            "name": "Health",
+            "type": "Const",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/tests/app-integration.test.mjs:ReportUpload",
+            "name": "ReportUpload",
+            "type": "Const",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/tests/app-integration.test.mjs:App",
+            "name": "App",
+            "type": "Const",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.data@399:57",
+            "name": "data",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.id@399:17",
+            "name": "id",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.type@399:33",
+            "name": "type",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/tests/app-integration.test.mjs:fn@397:95.management@400:30",
+            "name": "management",
+            "type": "Function",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.management@400:42.artifacts@408:47",
+            "name": "artifacts",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.management@400:42.response@408:66",
+            "name": "response",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/app-integration.test.mjs:fn@397:95.management@400:42.visit@408:28",
+            "name": "visit",
+            "type": "Property",
+            "filePath": "frontend/tests/app-integration.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/tests/business-components.test.mjs:Health",
+            "name": "Health",
+            "type": "Const",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Const:frontend/tests/business-components.test.mjs:ReportUpload",
+            "name": "ReportUpload",
+            "type": "Const",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/tests/business-components.test.mjs:fn@157:95.onUpload@159:42",
+            "name": "onUpload",
+            "type": "Function",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:frontend/tests/business-components.test.mjs:fn@157:95.change@160:2",
+            "name": "change",
+            "type": "Function",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/business-components.test.mjs:fn@157:95.name@165:17",
+            "name": "name",
+            "type": "Property",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:frontend/tests/business-components.test.mjs:fn@157:95.size@165:35",
+            "name": "size",
+            "type": "Property",
+            "filePath": "frontend/tests/business-components.test.mjs",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/medications.py:_DATA",
+            "name": "_DATA",
+            "type": "Variable",
+            "filePath": "health/medications.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/medications.py:_normalize",
+            "name": "_normalize",
+            "type": "Function",
+            "filePath": "health/medications.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/medications.py:medication_information",
+            "name": "medication_information",
+            "type": "Function",
+            "filePath": "health/medications.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:HealthModel",
+            "name": "HealthModel",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/models.py:model_config",
+            "name": "model_config",
+            "type": "Variable",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:SourceCitation",
+            "name": "SourceCitation",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:SourceCitation.source_id",
+            "name": "source_id",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:SourceCitation.title",
+            "name": "title",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:SourceCitation.url",
+            "name": "url",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:SourceCitation.reviewed_at",
+            "name": "reviewed_at",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:GuidanceSection",
+            "name": "GuidanceSection",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:GuidanceSection.heading",
+            "name": "heading",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:GuidanceSection.items",
+            "name": "items",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:RecommendedDepartment",
+            "name": "RecommendedDepartment",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:RecommendedDepartment.department_id",
+            "name": "department_id",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:RecommendedDepartment.name",
+            "name": "name",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:RecommendedDepartment.reason",
+            "name": "reason",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:TriageGuidance",
+            "name": "TriageGuidance",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:TriageGuidance.title",
+            "name": "title",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:TriageGuidance.summary",
+            "name": "summary",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:TriageGuidance.recommended_departments",
+            "name": "recommended_departments",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:TriageGuidance.missing_information",
+            "name": "missing_information",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:TriageGuidance.sources",
+            "name": "sources",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:MedicationInfo",
+            "name": "MedicationInfo",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.title",
+            "name": "title",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.summary",
+            "name": "summary",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.drug_name",
+            "name": "drug_name",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.formulation",
+            "name": "formulation",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.sections",
+            "name": "sections",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:MedicationInfo.sources",
+            "name": "sources",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:ReportObservation",
+            "name": "ReportObservation",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.item",
+            "name": "item",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.value",
+            "name": "value",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.unit",
+            "name": "unit",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.reference_range",
+            "name": "reference_range",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.flag",
+            "name": "flag",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportObservation.raw_line",
+            "name": "raw_line",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/models.py:ReportSummary",
+            "name": "ReportSummary",
+            "type": "Class",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.title",
+            "name": "title",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.summary",
+            "name": "summary",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.input_kind",
+            "name": "input_kind",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.extracted_text",
+            "name": "extracted_text",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.observations",
+            "name": "observations",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.warnings",
+            "name": "warnings",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:health/models.py:ReportSummary.sources",
+            "name": "sources",
+            "type": "Property",
+            "filePath": "health/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:MAX_FILE_BYTES",
+            "name": "MAX_FILE_BYTES",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:MAX_PAGES",
+            "name": "MAX_PAGES",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:MAX_PAGE_PIXELS",
+            "name": "MAX_PAGE_PIXELS",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:OCR_TIMEOUT_SECONDS",
+            "name": "OCR_TIMEOUT_SECONDS",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:PROCESS_TIMEOUT_SECONDS",
+            "name": "PROCESS_TIMEOUT_SECONDS",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/report_upload.py:_WORKER_SLOTS",
+            "name": "_WORKER_SLOTS",
+            "type": "Variable",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:health/report_upload.py:ReportUploadError",
+            "name": "ReportUploadError",
+            "type": "Class",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:health/report_upload.py:ReportUploadError.__init__#3",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:_check_file",
+            "name": "_check_file",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:_ocr",
+            "name": "_ocr",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:_image_text",
+            "name": "_image_text",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:_pdf_text",
+            "name": "_pdf_text",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:extract_report",
+            "name": "extract_report",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:process_report_file",
+            "name": "process_report_file",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/report_upload.py:_worker",
+            "name": "_worker",
+            "type": "Function",
+            "filePath": "health/report_upload.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/reports.py:MAX_REPORT_TEXT",
+            "name": "MAX_REPORT_TEXT",
+            "type": "Variable",
+            "filePath": "health/reports.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/reports.py:_NUMBER",
+            "name": "_NUMBER",
+            "type": "Variable",
+            "filePath": "health/reports.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/reports.py:_ROW",
+            "name": "_ROW",
+            "type": "Variable",
+            "filePath": "health/reports.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/reports.py:_PARTIAL",
+            "name": "_PARTIAL",
+            "type": "Variable",
+            "filePath": "health/reports.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/reports.py:preprocess_report",
+            "name": "preprocess_report",
+            "type": "Function",
+            "filePath": "health/reports.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/triage.py:_NEGATIVE",
+            "name": "_NEGATIVE",
+            "type": "Variable",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/triage.py:_REFERENCE",
+            "name": "_REFERENCE",
+            "type": "Variable",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/triage.py:_EYE",
+            "name": "_EYE",
+            "type": "Variable",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:health/triage.py:_GENERAL",
+            "name": "_GENERAL",
+            "type": "Variable",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/triage.py:_mentions",
+            "name": "_mentions",
+            "type": "Function",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/triage.py:_age_in_months",
+            "name": "_age_in_months",
+            "type": "Function",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/triage.py:_age_group",
+            "name": "_age_group",
+            "type": "Function",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/triage.py:triage_symptoms",
+            "name": "triage_symptoms",
+            "type": "Function",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:health/triage.py:triage_symptoms.sources@71:4",
+            "name": "sources",
+            "type": "Function",
+            "filePath": "health/triage.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:hospital/models.py:ArtifactType",
+            "name": "ArtifactType",
+            "type": "Variable",
+            "filePath": "hospital/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Property:hospital/models.py:ARTIFACT_DATA_MODELS",
+            "name": "ARTIFACT_DATA_MODELS",
+            "type": "Property",
+            "filePath": "hospital/models.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/department-internal.md:L8:内科公开说明",
+            "name": "内科公开说明",
+            "type": "Section",
+            "filePath": "knowledge/department-internal.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/department-ophthalmology.md:L8:眼科公开说明",
+            "name": "眼科公开说明",
+            "type": "Section",
+            "filePath": "knowledge/department-ophthalmology.md",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": [
+          {
+            "id": "proc_12_symptom_handler",
+            "name": "Symptom_handler → _temperature_signals",
+            "process_type": "cross_community",
+            "step_count": 5,
+            "changed_steps": [
+              {
+                "symbol": "triage_symptoms",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_23_symptom_handler",
+            "name": "Symptom_handler → _last_position",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "triage_symptoms",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_24_symptom_handler",
+            "name": "Symptom_handler → _age_in_months",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "triage_symptoms",
+                "step": 2
+              },
+              {
+                "symbol": "_age_group",
+                "step": 3
+              },
+              {
+                "symbol": "_age_in_months",
+                "step": 4
+              }
+            ]
+          },
+          {
+            "id": "proc_25_symptom_handler",
+            "name": "Symptom_handler → _mentions",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "triage_symptoms",
+                "step": 2
+              },
+              {
+                "symbol": "_age_group",
+                "step": 3
+              },
+              {
+                "symbol": "_mentions",
+                "step": 4
+              }
+            ]
+          },
+          {
+            "id": "proc_46_medication_handler",
+            "name": "Medication_handler → _normalize",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "medication_information",
+                "step": 2
+              },
+              {
+                "symbol": "_normalize",
+                "step": 3
+              }
+            ]
+          },
+          {
+            "id": "proc_47_symptom_handler",
+            "name": "Symptom_handler → Sources",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "sources",
+                "step": 3
+              },
+              {
+                "symbol": "triage_symptoms",
+                "step": 2
+              }
+            ]
+          },
+          {
+            "id": "proc_59_extract_report",
+            "name": "Extract_report → _ocr",
+            "process_type": "intra_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "extract_report",
+                "step": 1
+              },
+              {
+                "symbol": "_image_text",
+                "step": 2
+              },
+              {
+                "symbol": "_ocr",
+                "step": 3
+              }
+            ]
+          },
+          {
+            "id": "proc_232_submitreport",
+            "name": "SubmitReport → NormalizeBaseUrl",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "uploadReport",
+                "step": 2
+              },
+              {
+                "symbol": "submitReport",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_233_submitreport",
+            "name": "SubmitReport → Text",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "uploadReport",
+                "step": 2
+              },
+              {
+                "symbol": "submitReport",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_234_submitreport",
+            "name": "SubmitReport → Text",
+            "process_type": "cross_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "uploadReport",
+                "step": 2
+              },
+              {
+                "symbol": "submitReport",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_245_submitreport",
+            "name": "SubmitReport → RequestJson",
+            "process_type": "cross_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "uploadReport",
+                "step": 2
+              },
+              {
+                "symbol": "submitReport",
+                "step": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "paths": [
+        "knowledge/health-abdominal-symptoms.md",
+        "knowledge/health-acetaminophen-label.md",
+        "knowledge/health-child-fever.md",
+        "knowledge/health-common-cold.md",
+        "knowledge/health-ibuprofen-label.md",
+        "knowledge/health-red-eye.md",
+        "knowledge/health-report-terms.md",
+        "knowledge/lab-process.md",
+        "knowledge/medicine-pickup.md",
+        "mcp/knowledge_base.py",
+        "requirements.txt",
+        "skills/README.md",
+        "skills/general_visit/SKILL.md",
+        "skills/health_triage/SKILL.md",
+        "skills/medication_information/SKILL.md",
+        "skills/service_boundaries/SKILL.md",
+        "skills/visit_guidance/SKILL.md",
+        "tests/browser/check_health.py",
+        "tests/browser/run_evaluation.py",
+        "tests/test_agent_orchestrator.py",
+        "tests/test_chat_api.py",
+        "tests/test_evaluation.py",
+        "tests/test_evaluation_api.py",
+        "tests/test_health_emergency.py"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 47,
+          "affected_count": 2,
+          "changed_files": 24,
+          "risk_level": "medium"
+        },
+        "changed_symbols": [
+          {
+            "id": "Section:knowledge/health-abdominal-symptoms.md:L7:常见症状问答：腹痛与腹胀",
+            "name": "常见症状问答：腹痛与腹胀",
+            "type": "Section",
+            "filePath": "knowledge/health-abdominal-symptoms.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-acetaminophen-label.md:L7:对乙酰氨基酚500 mg普通片标签资料边界",
+            "name": "对乙酰氨基酚500 mg普通片标签资料边界",
+            "type": "Section",
+            "filePath": "knowledge/health-acetaminophen-label.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-child-fever.md:L7:常见症状问答：儿童发热与就医信号",
+            "name": "常见症状问答：儿童发热与就医信号",
+            "type": "Section",
+            "filePath": "knowledge/health-child-fever.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-common-cold.md:L7:常见病问答：普通感冒的一般知识",
+            "name": "常见病问答：普通感冒的一般知识",
+            "type": "Section",
+            "filePath": "knowledge/health-common-cold.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-ibuprofen-label.md:L7:布洛芬200 mg普通包衣片标签资料边界",
+            "name": "布洛芬200 mg普通包衣片标签资料边界",
+            "type": "Section",
+            "filePath": "knowledge/health-ibuprofen-label.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-red-eye.md:L7:常见病问答：结膜炎与红眼的一般知识",
+            "name": "常见病问答：结膜炎与红眼的一般知识",
+            "type": "Section",
+            "filePath": "knowledge/health-red-eye.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/health-report-terms.md:L7:报告术语与参考区间说明",
+            "name": "报告术语与参考区间说明",
+            "type": "Section",
+            "filePath": "knowledge/health-report-terms.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/lab-process.md:L8:检验办理流程",
+            "name": "检验办理流程",
+            "type": "Section",
+            "filePath": "knowledge/lab-process.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:knowledge/medicine-pickup.md:L8:取药流程说明",
+            "name": "取药流程说明",
+            "type": "Section",
+            "filePath": "knowledge/medicine-pickup.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:mcp/knowledge_base.py:KnowledgeBase",
+            "name": "KnowledgeBase",
+            "type": "Class",
+            "filePath": "mcp/knowledge_base.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:mcp/knowledge_base.py:KnowledgeBase.__init__#4",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "mcp/knowledge_base.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:mcp/knowledge_base.py:KnowledgeBase._load_default_docs#0",
+            "name": "_load_default_docs",
+            "type": "Method",
+            "filePath": "mcp/knowledge_base.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:mcp/knowledge_base.py:KnowledgeBase._sync_default_documents#1",
+            "name": "_sync_default_documents",
+            "type": "Method",
+            "filePath": "mcp/knowledge_base.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/README.md:L1:MediPet 场景 Skills",
+            "name": "MediPet 场景 Skills",
+            "type": "Section",
+            "filePath": "skills/README.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/general_visit/SKILL.md:L8:医院公开信息",
+            "name": "医院公开信息",
+            "type": "Section",
+            "filePath": "skills/general_visit/SKILL.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/health_triage/SKILL.md:L8:症状分诊与报告整理",
+            "name": "症状分诊与报告整理",
+            "type": "Section",
+            "filePath": "skills/health_triage/SKILL.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/medication_information/SKILL.md:L8:有限药品标签信息",
+            "name": "有限药品标签信息",
+            "type": "Section",
+            "filePath": "skills/medication_information/SKILL.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/service_boundaries/SKILL.md:L8:就诊助手服务边界",
+            "name": "就诊助手服务边界",
+            "type": "Section",
+            "filePath": "skills/service_boundaries/SKILL.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Section:skills/visit_guidance/SKILL.md:L8:材料流程与院内指引",
+            "name": "材料流程与院内指引",
+            "type": "Section",
+            "filePath": "skills/visit_guidance/SKILL.md",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:create_fixtures",
+            "name": "create_fixtures",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health",
+            "name": "check_health",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health.record@48:8",
+            "name": "record",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health.capture@53:8",
+            "name": "capture",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health.chat@62:8",
+            "name": "chat",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health.card@69:8",
+            "name": "card",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/check_health.py:check_health.new_visit@72:8",
+            "name": "new_visit",
+            "type": "Function",
+            "filePath": "tests/browser/check_health.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Variable:tests/browser/run_evaluation.py:EXPECTED_COUNTS",
+            "name": "EXPECTED_COUNTS",
+            "type": "Variable",
+            "filePath": "tests/browser/run_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/browser/run_evaluation.py:source_manifest",
+            "name": "source_manifest",
+            "type": "Function",
+            "filePath": "tests/browser/run_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_agent_orchestrator.py:test_pool_and_model_overrides_use_the_four_hospital_role_names",
+            "name": "test_pool_and_model_overrides_use_the_four_hospital_role_names",
+            "type": "Function",
+            "filePath": "tests/test_agent_orchestrator.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_chat_api.py:test_health_skills_and_reload_still_work_with_visit_routes",
+            "name": "test_health_skills_and_reload_still_work_with_visit_routes",
+            "type": "Function",
+            "filePath": "tests/test_chat_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:tests/test_evaluation.py:ScenarioChat",
+            "name": "ScenarioChat",
+            "type": "Class",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_evaluation.py:ScenarioChat.__init__#3",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_evaluation.py:ScenarioChat.run#1",
+            "name": "run",
+            "type": "Method",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:ScenarioChat.run.call@92:8",
+            "name": "call",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_defaults_load_all_dataset_cases_with_identity_and_clock",
+            "name": "test_defaults_load_all_dataset_cases_with_identity_and_clock",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_all_fixed_scenarios_run_real_business_assertions_without_judge_for_boundaries",
+            "name": "test_all_fixed_scenarios_run_real_business_assertions_without_judge_for_boundaries",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_health_dialogs_feed_real_tool_artifacts_to_judge",
+            "name": "test_health_dialogs_feed_real_tool_artifacts_to_judge",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_health_business_assertions_fail_when_real_output_is_removed",
+            "name": "test_health_business_assertions_fail_when_real_output_is_removed",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_health_business_assertions_fail_when_real_output_is_removed.incomplete_runtime@511:4",
+            "name": "incomplete_runtime",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation.py:test_health_business_assertions_fail_when_real_output_is_removed.incomplete_runtime@511:4.incomplete@515:12",
+            "name": "incomplete",
+            "type": "Function",
+            "filePath": "tests/test_evaluation.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_evaluation_api.py:test_evaluation_endpoint_preserves_failures_and_candidate_status",
+            "name": "test_evaluation_endpoint_preserves_failures_and_candidate_status",
+            "type": "Function",
+            "filePath": "tests/test_evaluation_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_current_affirmative_signals_trigger_fixed_emergency",
+            "name": "test_current_affirmative_signals_trigger_fixed_emergency",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_non_current_or_non_affirmative_signal_is_reference_only",
+            "name": "test_non_current_or_non_affirmative_signal_is_reference_only",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_temperature_boundary_non_body_values_and_unmatched_input_do_not_trigger",
+            "name": "test_temperature_boundary_non_body_values_and_unmatched_input_do_not_trigger",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_fixed_response_identifies_china_and_local_emergency_number_without_diagnosis",
+            "name": "test_fixed_response_identifies_china_and_local_emergency_number_without_diagnosis",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_new_signals_bypass_models_tools_and_compression_through_chat",
+            "name": "test_new_signals_bypass_models_tools_and_compression_through_chat",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_emergency.py:test_counterexamples_reach_regular_chat",
+            "name": "test_counterexamples_reach_regular_chat",
+            "type": "Function",
+            "filePath": "tests/test_health_emergency.py",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": [
+          {
+            "id": "proc_34_check_health",
+            "name": "Check_health → Record",
+            "process_type": "intra_community",
+            "step_count": 4,
+            "changed_steps": [
+              {
+                "symbol": "chat",
+                "step": 2
+              },
+              {
+                "symbol": "capture",
+                "step": 3
+              },
+              {
+                "symbol": "record",
+                "step": 4
+              },
+              {
+                "symbol": "check_health",
+                "step": 1
+              }
+            ]
+          },
+          {
+            "id": "proc_65_run_once",
+            "name": "Run_once → Digest",
+            "process_type": "intra_community",
+            "step_count": 3,
+            "changed_steps": [
+              {
+                "symbol": "source_manifest",
+                "step": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "paths": [
+        "tests/test_health_information.py",
+        "tests/test_health_routing.py",
+        "tests/test_knowledge_skills.py",
+        "tests/test_report_preprocessing.py",
+        "tests/test_report_upload_api.py"
+      ],
+      "result": {
+        "summary": {
+          "changed_count": 79,
+          "affected_count": 0,
+          "changed_files": 5,
+          "risk_level": "low"
+        },
+        "changed_symbols": [
+          {
+            "id": "Variable:tests/test_health_information.py:ROOT",
+            "name": "ROOT",
+            "type": "Variable",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:serialized",
+            "name": "serialized",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_supported_symptoms_reference_real_departments",
+            "name": "test_supported_symptoms_reference_real_departments",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_unknown_symptoms_do_not_invent_department_or_diagnosis",
+            "name": "test_unknown_symptoms_do_not_invent_department_or_diagnosis",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_general_symptoms_require_age_before_department_mapping",
+            "name": "test_general_symptoms_require_age_before_department_mapping",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_conflicting_ages_do_not_guess_whose_symptoms",
+            "name": "test_conflicting_ages_do_not_guess_whose_symptoms",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_symptom_duration_in_months_does_not_supply_child_age",
+            "name": "test_symptom_duration_in_months_does_not_supply_child_age",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_explicit_month_age_still_supports_pediatric_direction",
+            "name": "test_explicit_month_age_still_supports_pediatric_direction",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_child_symptom_duration_is_not_used_as_infant_fever_age",
+            "name": "test_child_symptom_duration_is_not_used_as_infant_fever_age",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_multiple_symptom_groups_remain_separate_without_disease_conclusion",
+            "name": "test_multiple_symptom_groups_remain_separate_without_disease_conclusion",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_negated_or_general_information_is_not_current_symptom_evidence",
+            "name": "test_negated_or_general_information_is_not_current_symptom_evidence",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_negative_clause_does_not_hide_positive_clause",
+            "name": "test_negative_clause_does_not_hide_positive_clause",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_shared_emergency_preempts_normal_department_recommendation",
+            "name": "test_shared_emergency_preempts_normal_department_recommendation",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_urgent_eye_or_abdominal_information_does_not_offer_ordinary_booking",
+            "name": "test_urgent_eye_or_abdominal_information_does_not_offer_ordinary_booking",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_young_infant_fever_does_not_wait_for_39_point_5_demo_threshold",
+            "name": "test_young_infant_fever_does_not_wait_for_39_point_5_demo_threshold",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_infant_reference_or_lower_temperature_does_not_invent_high_fever",
+            "name": "test_infant_reference_or_lower_temperature_does_not_invent_high_fever",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_exact_catalog_label_and_source_are_returned",
+            "name": "test_exact_catalog_label_and_source_are_returned",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_unknown_drug_formulation_or_question_is_not_substring_matched",
+            "name": "test_unknown_drug_formulation_or_question_is_not_substring_matched",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_only_label_supported_interactions_are_reported",
+            "name": "test_only_label_supported_interactions_are_reported",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_unrecorded_combination_never_claims_no_interaction_or_safe",
+            "name": "test_unrecorded_combination_never_claims_no_interaction_or_safe",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_results_are_independent_and_do_not_mutate_catalog",
+            "name": "test_results_are_independent_and_do_not_mutate_catalog",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_six_role_skills_inject_medical_boundaries_without_extra_report_role",
+            "name": "test_six_role_skills_inject_medical_boundaries_without_extra_report_role",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_new_knowledge_sources_are_official_and_contents_cover_each_requirement",
+            "name": "test_new_knowledge_sources_are_official_and_contents_cover_each_requirement",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_information.py:test_new_role_system_prompts_consume_skills_and_reload",
+            "name": "test_new_role_system_prompts_consume_skills_and_reload",
+            "type": "Function",
+            "filePath": "tests/test_health_information.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_new_intents_keep_original_business_distinctions",
+            "name": "test_new_intents_keep_original_business_distinctions",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:orchestrator",
+            "name": "orchestrator",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_health_and_existing_intents_route_to_available_roles",
+            "name": "test_health_and_existing_intents_route_to_available_roles",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_six_roles_are_instantiated_and_health_tools_are_isolated",
+            "name": "test_six_roles_are_instantiated_and_health_tools_are_isolated",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_explicit_medication_and_symptom_query_has_both_roles",
+            "name": "test_explicit_medication_and_symptom_query_has_both_roles",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_medication_tool_rejects_wrong_types_or_invented_medicines",
+            "name": "test_medication_tool_rejects_wrong_types_or_invented_medicines",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_medication_wrapper_rejects_model_omitting_formulation_or_strength",
+            "name": "test_medication_wrapper_rejects_model_omitting_formulation_or_strength",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_medication_wrapper_keeps_formulation_from_recent_user_history_and_other_drugs",
+            "name": "test_medication_wrapper_keeps_formulation_from_recent_user_history_and_other_drugs",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_medication_wrapper_preserves_complete_formulation_for_catalog_lookup",
+            "name": "test_medication_wrapper_preserves_complete_formulation_for_catalog_lookup",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_medication_wrapper_does_not_confuse_taken_quantity_or_previous_message_with_formulation",
+            "name": "test_medication_wrapper_does_not_confuse_taken_quantity_or_previous_message_with_formulation",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_health_tools_create_valid_artifacts_from_real_services",
+            "name": "test_health_tools_create_valid_artifacts_from_real_services",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_model_tool_roundtrip_preserves_health_cards_and_trace",
+            "name": "test_model_tool_roundtrip_preserves_health_cards_and_trace",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:tests/test_health_routing.py:Model",
+            "name": "Model",
+            "type": "Class",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_health_routing.py:Model.__init__#0",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_health_routing.py:Model.create",
+            "name": "create",
+            "type": "Method",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_health_routing.py:test_uploaded_report_followup_reads_only_current_patient_and_visit",
+            "name": "test_uploaded_report_followup_reads_only_current_patient_and_visit",
+            "type": "Function",
+            "filePath": "tests/test_health_routing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_knowledge_skills.py:test_hospital_skills_roles_keywords_and_permanent_boundaries",
+            "name": "test_hospital_skills_roles_keywords_and_permanent_boundaries",
+            "type": "Function",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_knowledge_skills.py:test_skill_changes_apply_only_after_explicit_reload",
+            "name": "test_skill_changes_apply_only_after_explicit_reload",
+            "type": "Function",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Class:tests/test_knowledge_skills.py:Collection",
+            "name": "Collection",
+            "type": "Class",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_knowledge_skills.py:Collection.__init__#0",
+            "name": "__init__",
+            "type": "Method",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_knowledge_skills.py:Collection.get#3",
+            "name": "get",
+            "type": "Method",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_knowledge_skills.py:Collection.upsert#3",
+            "name": "upsert",
+            "type": "Method",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Method:tests/test_knowledge_skills.py:Collection.delete#1",
+            "name": "delete",
+            "type": "Method",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_knowledge_skills.py:test_hospital_initialization_is_idempotent_and_fills_partial_collection",
+            "name": "test_hospital_initialization_is_idempotent_and_fills_partial_collection",
+            "type": "Function",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_knowledge_skills.py:test_default_knowledge_upgrade_replaces_old_chunks_preserves_uploads",
+            "name": "test_default_knowledge_upgrade_replaces_old_chunks_preserves_uploads",
+            "type": "Function",
+            "filePath": "tests/test_knowledge_skills.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:text_pdf",
+            "name": "text_pdf",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:report_image",
+            "name": "report_image",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:image_bytes",
+            "name": "image_bytes",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:mixed_report_pdf",
+            "name": "mixed_report_pdf",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_only_explicit_numeric_unit_and_own_reference_range_are_compared",
+            "name": "test_only_explicit_numeric_unit_and_own_reference_range_are_compared",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_missing_or_suspicious_fields_are_kept_without_inferred_reference",
+            "name": "test_missing_or_suspicious_fields_are_kept_without_inferred_reference",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_negative_values_and_mixed_rows_do_not_invent_units_or_diagnoses",
+            "name": "test_negative_values_and_mixed_rows_do_not_invent_units_or_diagnoses",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_invalid_report_text_is_bounded",
+            "name": "test_invalid_report_text_is_bounded",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_real_text_pdf_does_not_use_ocr",
+            "name": "test_real_text_pdf_does_not_use_ocr",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_real_worker_process_returns_text_pdf_result",
+            "name": "test_real_worker_process_returns_text_pdf_result",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_upload_format_size_and_corruption_errors",
+            "name": "test_upload_format_size_and_corruption_errors",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_pdf_encryption_and_page_limit",
+            "name": "test_pdf_encryption_and_page_limit",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_image_extension_pixels_and_no_text",
+            "name": "test_image_extension_pixels_and_no_text",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_ocr_failure_timeout_and_uncertainty_are_explicit",
+            "name": "test_ocr_failure_timeout_and_uncertainty_are_explicit",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_ocr_failure_timeout_and_uncertainty_are_explicit.timeout@131:4",
+            "name": "timeout",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_real_scanned_pdf_and_image_ocr",
+            "name": "test_real_scanned_pdf_and_image_ocr",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_real_chinese_image_ocr",
+            "name": "test_real_chinese_image_ocr",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_real_mixed_pdf_does_not_mistake_text_header_for_scanned_report_body",
+            "name": "test_real_mixed_pdf_does_not_mistake_text_header_for_scanned_report_body",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_mixed_pdf_low_confidence_ocr_does_not_produce_trusted_range_flags",
+            "name": "test_mixed_pdf_low_confidence_ocr_does_not_produce_trusted_range_flags",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_preprocessing.py:test_mixed_pdf_preserves_text_layer_and_deduplicates_only_exact_ocr_lines",
+            "name": "test_mixed_pdf_preserves_text_layer_and_deduplicates_only_exact_ocr_lines",
+            "type": "Function",
+            "filePath": "tests/test_report_preprocessing.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:report_api",
+            "name": "report_api",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:send",
+            "name": "send",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_upload_binds_patient_and_persists_chat_card_without_touching_selection",
+            "name": "test_upload_binds_patient_and_persists_chat_card_without_touching_selection",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_upload_rejects_identity_before_extraction",
+            "name": "test_upload_rejects_identity_before_extraction",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_archived_visit_and_extraction_errors_leave_history_unchanged",
+            "name": "test_archived_visit_and_extraction_errors_leave_history_unchanged",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_archived_during_extraction_cannot_append_history",
+            "name": "test_archived_during_extraction_cannot_append_history",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_archived_during_extraction_cannot_append_history.extract@77:4",
+            "name": "extract",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_api_reads_at_most_limit_plus_one_and_reports_failure",
+            "name": "test_api_reads_at_most_limit_plus_one_and_reports_failure",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_api_reads_at_most_limit_plus_one_and_reports_failure.extract@89:4",
+            "name": "extract",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          },
+          {
+            "id": "Function:tests/test_report_upload_api.py:test_real_pdf_worker_through_http_preserves_actual_report",
+            "name": "test_real_pdf_worker_through_http_preserves_actual_report",
+            "type": "Function",
+            "filePath": "tests/test_report_upload_api.py",
+            "change_type": "touched"
+          }
+        ],
+        "affected_processes": []
+      }
+    }
+  ],
+  "real_index_unchanged": true,
+  "source_changes_during_run": [],
+  "finished_at": "2026-09-16T10:22:50.370Z"
+}

@@ -7,6 +7,8 @@ model_validate_json()。身份归属、实时号源和状态转换由业务服�
 from datetime import date, datetime
 from typing import Annotated, Literal, Self
 
+from health.models import MedicationInfo, ReportSummary, TriageGuidance
+
 from pydantic import (
     AwareDatetime,
     BaseModel,
@@ -364,8 +366,9 @@ class CatalogData(ContractModel):
 ArtifactType = Literal[
     "catalog", "slot_list", "appointment_proposal", "appointment_record",
     "visit_checklist", "wayfinding", "contact_info",
+    "triage_guidance", "medication_info", "report_summary",
 ]
-ARTIFACT_DATA_MODELS: dict[str, type[ContractModel]] = {
+ARTIFACT_DATA_MODELS: dict[str, type[BaseModel]] = {
     "catalog": CatalogData,
     "slot_list": SlotList,
     "appointment_proposal": AppointmentProposal,
@@ -373,6 +376,9 @@ ARTIFACT_DATA_MODELS: dict[str, type[ContractModel]] = {
     "visit_checklist": VisitChecklist,
     "wayfinding": Wayfinding,
     "contact_info": ContactInfo,
+    "triage_guidance": TriageGuidance,
+    "medication_info": MedicationInfo,
+    "report_summary": ReportSummary,
 }
 
 

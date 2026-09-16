@@ -16,19 +16,19 @@ from core.skill_loader import SkillManager
 def test_hospital_skills_roles_keywords_and_permanent_boundaries():
     manager = SkillManager(str(Path(__file__).parents[1] / "skills"))
     skills = manager.load()
-    assert manager.errors == [] and len(skills) == 4
-    assert {Path(skill.path).parent.name for skill in skills} == {"general_visit", "appointment_assistance", "visit_guidance", "service_boundaries"}
-    for role in ("general", "guidance", "appointment", "escalation"):
+    assert manager.errors == [] and len(skills) == 6
+    assert {Path(skill.path).parent.name for skill in skills} == {"general_visit", "appointment_assistance", "visit_guidance", "service_boundaries", "health_triage", "medication_information"}
+    for role in ("general", "guidance", "appointment", "escalation", "triage", "medication"):
         prompt = manager.prompt_for("嗯", role)
         assert "就诊助手服务边界" in prompt
         assert "模型只能查询或准备资料" in prompt
-    assert "医院公开信息" in manager.prompt_for("儿科有哪些医生", "general")
-    assert "医院公开信息" not in manager.prompt_for("嗯", "general")
+    assert "### 医院公开信息" in manager.prompt_for("儿科有哪些医生", "general")
+    assert "### 医院公开信息" not in manager.prompt_for("嗯", "general")
     assert "预约与取消协助" in manager.prompt_for("第一个", "appointment")
     assert "预约与取消协助" not in manager.prompt_for("第一个", "guidance")
     assert "材料流程与院内指引" in manager.prompt_for("怎么过去", "guidance")
     assert "材料流程与院内指引" not in manager.prompt_for("怎么过去", "appointment")
-    assert all(set(skill.agents) <= {"general", "guidance", "appointment", "escalation"} for skill in skills)
+    assert all(set(skill.agents) <= {"general", "guidance", "appointment", "escalation", "triage", "medication"} for skill in skills)
 
 
 def test_skill_changes_apply_only_after_explicit_reload(tmp_path):
@@ -42,19 +42,32 @@ def test_skill_changes_apply_only_after_explicit_reload(tmp_path):
     manager.reload()
     assert "新增核验标记" in manager.prompt_for("第一个", "appointment")
     assert "新增核验标记" not in manager.prompt_for("第一个", "general")
-    assert manager.summary()["count"] == 4 and manager.summary()["errors"] == []
+    assert manager.summary()["count"] == 6 and manager.summary()["errors"] == []
 
 
 class Collection:
     def __init__(self):
         self.records = {}
+        self.upserts = 0
 
-    def get(self, ids, include):
-        return {"ids": [key for key in ids if key in self.records]}
+    def get(self, ids=None, include=(), where=None):
+        keys = [key for key in (ids if ids is not None else self.records) if key in self.records]
+        if where:
+            keys = [key for key in keys if all(self.records[key][1].get(k) == v for k, v in where.items())]
+        return {"ids": keys, "documents": [self.records[key][0] for key in keys],
+                "metadatas": [self.records[key][1] for key in keys]}
 
     def add(self, ids, documents, metadatas):
         assert not set(ids) & self.records.keys()
         self.records.update(zip(ids, zip(documents, metadatas)))
+
+    def upsert(self, ids, documents, metadatas):
+        self.upserts += len(ids)
+        self.records.update(zip(ids, zip(documents, metadatas)))
+
+    def delete(self, ids):
+        for key in ids:
+            self.records.pop(key, None)
 
     def count(self):
         return len(self.records)
@@ -86,8 +99,8 @@ def test_hospital_initialization_is_idempotent_and_fills_partial_collection(fake
     collection, names = fake_chroma
     kb = KnowledgeBase()
     expected = dict(collection.records)
-    assert len({meta["doc_id"] for _, meta in expected.values()}) == 17
-    assert all(meta["source"].startswith("knowledge/") for _, meta in expected.values())
+    assert len({meta["doc_id"] for _, meta in expected.values()}) == 24
+    assert all(meta["source"].startswith(("knowledge/", "https://")) for _, meta in expected.values())
     assert not any("套餐升级" in text or meta["title"] in {"退款政策", "账户管理"} for text, meta in expected.values())
     KnowledgeBase()
     assert collection.records == expected
@@ -111,6 +124,25 @@ def test_legacy_upload_and_stable_ids(fake_chroma):
     with pytest.raises(ValueError, match="冲突"):
         kb.add_documents([{"doc_id": "same", "content": "甲"}, {"doc_id": "same", "content": "乙"}])
     assert kb.add_documents([{"title": "空白", "content": " "}]) == 0
+
+
+def test_default_knowledge_upgrade_replaces_old_chunks_preserves_uploads(fake_chroma, tmp_path):
+    collection, _ = fake_chroma
+    path = tmp_path / "guide.md"
+    header = "---\ndoc_id: guide\ntitle: 导引\nsource_id: guide-source\nsource: knowledge/guide.md\n---\n"
+    path.write_text(header + "旧内容。" * 200, encoding="utf-8")
+    kb = KnowledgeBase(knowledge_dir=str(tmp_path))
+    assert len(collection.records) > 1
+    kb.add_documents([{"title": "用户材料", "content": "保留上传内容"}])
+    upload = {k: v for k, v in collection.records.items() if k.startswith("upload-")}
+    path.write_text(header + "允许有来源的信息参考，不做诊断。", encoding="utf-8")
+    KnowledgeBase(knowledge_dir=str(tmp_path))
+    assert set(collection.records) == {"guide:0", *upload}
+    assert collection.records["guide:0"][0] == "允许有来源的信息参考，不做诊断。"
+    assert all(collection.records[key] == record for key, record in upload.items())
+    upserts = collection.upserts
+    KnowledgeBase(knowledge_dir=str(tmp_path))
+    assert collection.upserts == upserts
 
 
 def test_dynamic_questions_only_retrieve_static_process_boundary(fake_chroma):

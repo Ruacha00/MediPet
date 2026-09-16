@@ -21,7 +21,7 @@ if _ROOT not in sys.path:
 
 import uvicorn
 from dotenv import load_dotenv
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, UploadFile, File
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
@@ -33,6 +33,7 @@ from core.emergency import detect_emergency
 from hospital.service import HospitalService
 from hospital.store import HospitalStore
 from memory.visit_store import VisitStore, VisitStoreError
+from health.report_upload import MAX_FILE_BYTES, ReportUploadError, process_report_file
 
 load_dotenv()
 
@@ -460,6 +461,44 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
                                   metadata={"artifacts": [a.model_dump(mode="json") for a in result.artifacts]})
         background_tasks.add_task(_memory.update_profile, identity)
     return response
+
+
+@app.post("/reports/preprocess", tags=["报告"])
+async def preprocess_uploaded_report(
+    file: UploadFile = File(...), user_id: Identifier = Form(DEFAULT_USER_ID),
+    patient_id: Identifier | None = Form(None), conv_id: Identifier | None = Form(None),
+):
+    """Local extraction only; retain derived text/cards in the bound visit, not original bytes."""
+    try:
+        visit = await _load_visit(user_id, conv_id, patient_id)
+        identity = VisitIdentity(user_id=visit.user_id, patient_id=visit.patient_id, conv_id=visit.conv_id)
+        content = await file.read(MAX_FILE_BYTES + 1)
+        report = await process_report_file(content, file.filename or "", file.content_type)
+        artifact = Artifact(id=f"report_summary:{uuid.uuid4().hex}", type="report_summary", data=report.model_dump(mode="json"))
+        message_id, now = uuid.uuid4().hex, _visits_ready().now()
+        filename = (file.filename or "报告").replace("\\", "/").split("/")[-1][:120]
+        messages = [
+            VisitMessage(**identity.model_dump(), message_id=f"user:{message_id}", role="user",
+                         content=f"上传报告：{filename}", created_at=now),
+            VisitMessage(**identity.model_dump(), message_id=f"assistant:{message_id}", role="assistant",
+                         content=report.summary, artifacts=[artifact],
+                         metadata={"processing": "report_preprocessor", "report_input_kind": report.input_kind}, created_at=now),
+        ]
+        # Invalidate only working memory. The authoritative history and slot selection stay intact.
+        if _memory is not None:
+            await _memory.invalidate_working_memory(identity)
+        await _visits_ready().append_messages(identity.user_id, identity.conv_id, messages)
+        return {**identity.model_dump(), "visit": await _visits_ready().get_visit(identity.user_id, identity.conv_id),
+                "response": report.summary, "artifacts": [artifact], "extracted_text": report.extracted_text,
+                "input_kind": report.input_kind}
+    except ReportUploadError as exc:
+        raise HTTPException(exc.status, detail={"code": exc.code, "message": exc.message, "retryable": exc.status in {408, 503}}) from exc
+    except VisitStoreError as exc:
+        raise _business_http(exc) from exc
+    except RedisError as exc:
+        raise _business_http(VisitStoreError("storage_unavailable", "报告记录暂时无法保存，请稍后重试。", retryable=True)) from exc
+    finally:
+        await file.close()
 
 
 @app.post("/appointment-proposals/{proposal_id}/confirm", response_model=ConfirmResponse, tags=["预约"])

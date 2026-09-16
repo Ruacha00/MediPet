@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import inspect
+import uuid
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
 from pydantic import ValidationError
 from redis.exceptions import RedisError
 
-from hospital.models import SelectionState, ServiceResult, SlotList, SlotQuery, VisitIdentity
+from hospital.models import Artifact, SelectionState, ServiceResult, SlotList, SlotQuery, VisitIdentity
 from memory.visit_store import VisitStoreError
 
 if TYPE_CHECKING:
@@ -175,6 +176,85 @@ def build_hospital_tools(role: str, hospital_service: Any = None, visit_store: A
                 "appointment_id": text("实际预约记录 ID"),
             }, handler_for("prepare_cancellation", personal=True), required=["appointment_id"]),
         }
+    return {}
+
+
+def build_health_tools(role: str, visit_store: Any = None) -> Dict[str, AgentToolSpec]:
+    """健康信息只读工具；症状和报告直接取用户原文，不采用模型编造的数值。"""
+    def result(kind, model):
+        data = model.model_dump(mode="json")
+        artifact = Artifact(id=f"{kind}:{uuid.uuid4().hex}", type=kind, data=data)
+        return ServiceResult(success=True, data=data, artifacts=[artifact]).model_dump(mode="json")
+
+    def symptom_handler(req, args):
+        from health.triage import triage_symptoms
+        return result("triage_guidance", triage_symptoms(req.message))
+
+    def report_handler(req, args):
+        from health.reports import preprocess_report
+        return result("report_summary", preprocess_report(req.message))
+
+    async def read_report_handler(req, args):
+        from health.models import ReportSummary
+        if visit_store is None:
+            return _failure("storage_unavailable", "事项记录尚未就绪。", retryable=True)
+        if not req.patient_id:
+            return _failure("missing_fields", "请先选择就诊人和事项。")
+        try:
+            identity = await visit_store.require_identity(req.user_id, req.conv_id, patient_id=req.patient_id)
+            messages = await visit_store.get_messages(identity.user_id, identity.conv_id)
+            for message in reversed(messages):
+                for artifact in reversed(message.artifacts):
+                    if artifact.type == "report_summary":
+                        return result("report_summary", ReportSummary.model_validate(artifact.data))
+            return _failure("not_found", "当前事项没有已整理的报告，请上传文件或粘贴报告文字。")
+        except VisitStoreError as exc:
+            return _failure(exc.code, exc.message, retryable=exc.retryable)
+        except RedisError:
+            return _failure("storage_unavailable", "报告记录暂时不可用，请稍后重试。", retryable=True)
+
+    def medication_handler(req, args):
+        import re
+
+        from health.medications import medication_information
+        name = args.get("drug_name", "")
+        others = args.get("other_drugs", [])
+        if (not isinstance(name, str) or not name.strip() or not isinstance(others, list)
+                or any(not isinstance(item, str) or not item.strip() for item in others)):
+            return _failure("invalid_input", "请提供用户明确提及的药名及剂型。")
+        # 查询参数仅来自当前消息或同事项最近的用户原话，不能从模型回复里补出药物。
+        user_text = "\n".join([req.message, *[
+            str(item.get("content", "")) for item in (req.history or [])[-5:]
+            if item.get("role") == "user"
+        ]]).casefold()
+        if any(item.strip().casefold() not in user_text for item in [name, *others]):
+            return _failure("invalid_input", "药名必须来自用户原话；请核对实际药名、规格与剂型。")
+        # 字面子串仍可能删去限定：例如把“布洛芬缓释胶囊”截成“布洛芬”。
+        # 对紧邻药名的明确剂型/规格要求完整保留，宁可澄清也不套用普通片标签。
+        qualifier = (r"(?:缓释|控释|复方|肠溶|分散|咀嚼|泡腾|普通|包衣|薄膜衣|儿童|小儿|"
+                     r"胶囊|混悬液|混悬剂|口服液|滴剂|颗粒|糖浆|注射液|注射剂|栓剂|片剂|片|"
+                     r"extended[ -]?release|sustained[ -]?release|delayed[ -]?release|"
+                     r"tablets?|capsules?|suspension|\d+(?:\.\d+)?\s*(?:毫克|微克|克|mg|mcg|g|ml|毫升))")
+        omitted_suffix = re.compile(r"^[ \t（）()]*(?:的|是|为|[，,]?[ \t]*(?:规格|剂型)(?:为|是)?[:：]?)?[ \t（）()]*" + qualifier)
+        omitted_prefix = re.compile(r"(?:缓释|控释|复方|肠溶|分散|咀嚼|泡腾|儿童|小儿|"
+                                    r"extended[ -]?release|sustained[ -]?release|delayed[ -]?release)[ \t（）()]*$")
+        for item in [name, *others]:
+            for match in re.finditer(re.escape(item.strip().casefold()), user_text):
+                if omitted_prefix.search(user_text[:match.start()]) or omitted_suffix.search(user_text[match.end():]):
+                    return _failure("invalid_input", "药名参数省略了原文中的剂型或规格，请完整保留药盒名称后查询；不能套用普通片标签。")
+        return result("medication_info", medication_information(name.strip(), other_drugs=others))
+
+    if role == "triage":
+        return {
+            "triage_symptoms": make_tool("triage_symptoms", "根据当前用户原文提供有限的初步科室建议与待补信息，不作诊断。", {}, symptom_handler),
+            "preprocess_report": make_tool("preprocess_report", "整理当前用户粘贴报告的项目、数值、单位和原文参考范围，不添加数值或作诊断。文件请使用页面报告上传入口。", {}, report_handler),
+            "read_current_report": make_tool("read_current_report", "读取当前患者当前事项最近一次已经整理的报告，用于上传或粘贴后的追问；不跨患者或事项查找。", {}, read_report_handler),
+        }
+    if role == "medication":
+        return {"medication_information": make_tool("medication_information", "查询已收录明确剂型的药品说明书及组合警示；未知药物或组合不代表安全。药名逐字取自用户原话，不替用户选药。", {
+            "drug_name": {"type": "string", "description": "用户明确给出的药名，可包含规格与剂型；保持原文"},
+            "other_drugs": {"type": "array", "items": {"type": "string"}, "description": "用户明确提及的其他药名；未知相互作用须咨询药师"},
+        }, medication_handler, required=["drug_name"])}
     return {}
 
 

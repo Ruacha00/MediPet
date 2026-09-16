@@ -95,9 +95,10 @@
               <article v-for="item in messages" :key="item.message_id" :class="['message', item.role, { 'operation-message': item.kind === 'operation_result' }]" :data-message-id="item.message_id">
                 <div class="message-meta"><span>{{ messageLabel(item) }}</span><small>{{ messageTime(item.created_at) }}</small></div>
                 <p>{{ item.content }}</p>
-                <BusinessArtifacts v-if="item.artifacts?.length" :artifacts="item.artifacts" :disabled="!canChat"
+                <BusinessArtifacts v-if="item.artifacts?.length" :artifacts="item.artifacts.filter(card => !healthCardTypes.includes(card.type))" :disabled="!canChat"
                   :busy="operationPending" :confirming-id="confirmingId" :proposal-states="proposalStates" :error="chatError"
                   @select-slot="selectSlot" @confirm-proposal="confirmProposal" />
+                <HealthArtifacts :artifacts="item.artifacts || []" />
                 <div v-for="record in cancellableRecords(item)" :key="record.appointment_id" class="record-actions">
                   <button class="quiet-button" :disabled="!canChat || operationPending" @click="prepareCancellation(record.appointment_id)">准备取消此预约</button>
                 </div>
@@ -134,6 +135,7 @@
             </template>
           </div>
           <form class="composer" @submit.prevent="sendMessage">
+            <ReportUpload :key="settings.conversationId" :disabled="!canChat || operationPending" :busy="reportPending" @upload="submitReport" />
             <p v-if="currentVisit?.archived" class="history-status">这件事项已归档。请在左侧查看归档并恢复后继续。</p>
             <p v-if="chatPending" class="history-status" role="status">正在处理当前事项，请稍候…</p>
             <p v-if="operationReceipt" class="operation-notice" role="status">{{ operationReceipt.operation === 'cancel' ? '取消预约' : '预约' }}已完成，回执已保存。<small>回执：{{ operationReceipt.receipt_id }}</small></p>
@@ -230,6 +232,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import BusinessArtifacts from './components/BusinessArtifacts.vue'
 import PatientVisitPanel from './components/PatientVisitPanel.vue'
+import HealthArtifacts from './components/HealthArtifacts.vue'
+import ReportUpload from './components/ReportUpload.vue'
 import {
   addKnowledge,
   backendMeta,
@@ -246,6 +250,7 @@ import {
   updateVisit,
   requestVisitMessages,
   confirmAppointmentProposal,
+  uploadReport,
   requestSkills,
   runEvaluation as requestEvaluation,
   saveSettings,
@@ -400,6 +405,8 @@ let workspaceEpoch = 0
 const patientName = computed(() => patients.value.find(item => item.patient_id === patientId.value)?.name || '就诊空间')
 const operationPending = computed(() => Boolean(pendingOperations[settings.conversationId]))
 const chatPending = computed(() => pendingOperations[settings.conversationId]?.type === 'chat')
+const reportPending = computed(() => pendingOperations[settings.conversationId]?.type === 'report')
+const healthCardTypes = ['triage_guidance', 'medication_info', 'report_summary']
 const confirmingId = computed(() => pendingOperations[settings.conversationId]?.proposalId || '')
 const canChat = computed(() => Boolean(currentVisit.value && !currentVisit.value.archived && !workspaceLoading.value && !visitBusy.value))
 const proposalStates = computed(() => {
@@ -611,6 +618,23 @@ async function sendMessage(value) {
   } finally { delete pendingOperations[snapshot.conversationId] }
 }
 function usePrompt(prompt) { draft.value = prompt }
+async function submitReport(file) {
+  if (!file || !canChat.value || operationPending.value) return
+  const snapshot = requestSettings(), epoch = workspaceEpoch
+  pendingOperations[snapshot.conversationId] = { type: 'report' }
+  chatError.value = ''
+  try {
+    const result = await uploadReport(snapshot.backend, snapshot, file)
+    if (!isCurrent(epoch)) return
+    checkIdentity(result, snapshot)
+    await readHistory(snapshot, epoch)
+  } catch (error) {
+    if (isCurrent(epoch)) {
+      chatError.value = readableError(error)
+      try { await readHistory(snapshot, epoch) } catch { /* Keep the original upload error. */ }
+    }
+  } finally { delete pendingOperations[snapshot.conversationId] }
+}
 function selectSlot({ slotId }) { return sendMessage(`请为当前就诊人准备预约，号源编号：${slotId}`) }
 function prepareCancellation(id) { return sendMessage(`请准备取消预约，预约编号：${id}`) }
 async function confirmProposal(id) {
@@ -642,9 +666,10 @@ function cancellableRecords(message) {
 }
 function agentLabel(type) {
   const role = typeof type === 'string' ? type.replace(/_\d+$/, '') : type
-  return { general: '医院信息', guidance: '就诊指引', appointment: '预约事务', escalation: '导诊联系' }[role] || type || '就诊助手'
+  return { general: '医院信息', guidance: '就诊指引', appointment: '预约事务', escalation: '导诊联系', triage: '症状分诊', medication: '用药信息' }[role] || type || '就诊助手'
 }
 function messageLabel(item) {
+  if (item.metadata?.processing === 'report_preprocessor') return '报告整理'
   if (item.kind === 'operation_result') return '业务办理回执'
   if (item.kind === 'confirmation_event') return '你的确认'
   return item.role === 'user' ? '你' : agentLabel(item.metadata?.primary_agent || item.metadata?.agent_type)

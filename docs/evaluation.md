@@ -2,14 +2,16 @@
 
 MediPet 分别检查“程序是否正确改变业务状态”和“模型是否理解并回答得好”。库存、患者归属、预约与回执由确定性断言验证；LLM Judge 只评回答质量，不能凭一段流畅文字判定预约已经发生。
 
-截至 2026-09-16，两份完整真实模型候选已保存，另有确定性 API、真实存储、浏览器和容器证据。**首份因业务失败及评测机制缺口不接受为最终基线；修正后的容器报告已完成，等待人工复核接受。** 各层测试数量不相加成模型质量率，也没有可声称的优化提升幅度。
+截至 2026-09-16，医疗扩展前的两份完整真实模型候选已保存，另有确定性 API、真实存储、浏览器和容器证据。首份因业务失败及评测机制缺口未接受；第二份旧版容器报告仍为候选。U001 已扩展下面的输入，医疗能力的实际验证另见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。各层测试数量不相加成模型质量率，也没有可声称的优化提升幅度。
 
 ## 数据与执行路径
 
+U001 当前证据：[完整候选](../evaluation/reports/live-20260916-u001/notes.md)单次66/15/12输入，66/66意图、30/30质量项、26/27业务组，合计57/58结果项；新医疗场景通过，唯一失败为旧无障碍路线续问未查询。Guidance提示定点修复后的[原样两轮复测](../evaluation/reports/live-20260916-u001-route-fix/notes.md)3/3通过；没有把局部复测改写成完整58/58。后端684 passed/21 skipped、前端35/35、真实OCR与浏览器证据见[验收汇总](internal/updates/U001-health-consultation/evidence/acceptance.md)。
+
 | 数据 | 规模 | 检查内容 |
 | --- | --- | --- |
-| [intents.json](../evaluation/cases/intents.json) | 54 条 | 12 个主要医院意图及通用、模糊表达，独立于提示示例 |
-| [dialogs.json](../evaluation/cases/dialogs.json) | 12 组多轮 | 日期补充、选择、改选、确认/取消、材料、指引、患者切换与恢复 |
+| [intents.json](../evaluation/cases/intents.json) | 66 条 | 原54条加症状、用药、报告各4条，独立于提示示例 |
+| [dialogs.json](../evaluation/cases/dialogs.json) | 15 组多轮 | 原12组加分诊、药品组合、报告原文比较各1组 |
 | [boundaries.json](../evaluation/cases/boundaries.json) | 12 组 | 重复确认、过期、旧方案、身份冲突、末号竞争、检索失败与急症等 |
 
 [evaluation/evaluator.py](../evaluation/evaluator.py) 的 `EndToEndEvaluator.run` 使用 `case_runtime_factory(case, run_id)` 为每个业务场景取得依赖，固定业务时钟并建立独立事项。`_turn` 实际构造带患者身份的 `Request`，调用编排器并写入历史；这是直接编排与服务评测，不是 HTTP 测试。HTTP 确认契约另由 [test_chat_api.py](../tests/test_chat_api.py) 和 [test_demo_workflow.py](../tests/test_demo_workflow.py) 覆盖。
@@ -30,7 +32,7 @@ MediPet 分别检查“程序是否正确改变业务状态”和“模型是否
 
 未知断言记为未验证，缺少隔离、时钟或故障夹具的场景标为 skipped，都不算通过。Judge 给高分不能覆盖业务失败；报告单列 `business_failures`，有失败或跳过时不会显示“所有已测指标均达标”。
 
-报告 `total/passed/pass_rate` 统计的是生成的结果项，可能包含意图汇总、各轮质量及业务断言结果；**它不是 78 个输入样本的模型准确率**。读取结果时应同时看 `case_counts`、有效质量样本数、各失败列表、具体断言及 trace。
+报告 `total/passed/pass_rate` 统计的是生成的结果项，可能包含意图汇总、各轮质量及业务断言结果；它不是当前93个输入场景的统一模型准确率（旧版为78个输入）。读取结果时应同时看 `case_counts`、有效质量样本数、各失败列表、具体断言及 trace。
 
 ## 候选报告与接受基线
 
@@ -73,14 +75,14 @@ MediPet 分别检查“程序是否正确改变业务状态”和“模型是否
 
 报告保持candidate，等待人工复核。两次实现与Judge背景存在差异，不把分数或耗时变化写成同条件优化提升。
 
-## 已取得的证据
+## 医疗扩展前的证据
 
 | 层次 | 实际结果 | 能证明什么、不能替代什么 |
 | --- | --- | --- |
 | 确定性 API 闭环 | **24 passed**，[I04 记录](internal/rebuild/specs/S06-api/issues/I04.md) | 真实 API/工具/服务，模型与存储替身；证明契约和状态链路，不证明真实模型表现或网络服务运行 |
 | 评测与 API 机制 | 修正后 **34 passed**，[V02 记录](internal/rebuild/specs/S08-delivery/issues/V02.md) | 替身分类器/Judge/工具计划消费全部 78 个输入样本；证明失败计分、真实来源计数、Judge 背景、隔离、断言与基线保护 |
 | 真实 Redis/Chroma | **18 项真实检查通过**，[存储证据](internal/rebuild/evidence/storage.md) | 实际事务竞争、过滤、TTL、来源与重新初始化；摘要/画像模型仍用替身 |
-| 最终后端回归 | **389 passed，21 skipped**，[JUnit原始结果](internal/rebuild/evidence/final-tests.xml) | 已包含本轮修正；21 项需显式真实环境，跳过不算通过。真实组件由独立证据说明 |
+| 最终后端回归 | **389 passed，21 skipped**，[JUnit原始结果](internal/rebuild/evidence/final-tests.xml) | 仅对应c712e87旧基准；21 项需显式真实环境，跳过不算通过。真实组件由独立证据说明 |
 | 前端逻辑与构建 | **32/32 通过**，生产构建通过，[U05 记录](internal/rebuild/specs/S07-ui/issues/U05.md) | Vue 挂载与受控 HTTP 验证展示、错误和隔离，不当作真实模型质量 |
 | 实际浏览器 | 业务六组、公开信息/导诊/急症三组断言通过；管理交互通过，[业务证据](internal/rebuild/evidence/browser.md)、[管理证据](internal/rebuild/evidence/management.md) | 使用真实模型、Redis、Chroma；预约取消、刷新/归档、来源与 Skill 重载已运行。零样本真实报告和受控失败报告仅证明接线/展示 |
 | 容器与重置 | 四服务重建持久化、同源代理、初始化幂等和精确重置通过；重置另 **4 项替身测试通过**，[容器证据](internal/rebuild/evidence/runtime.md) | 独立 `medipet-validation` 项目，保留外来键/集合及评测文件；该验收不调用模型，不包含完整评测长请求 |

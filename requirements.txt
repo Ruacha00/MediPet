@@ -23,3 +23,6 @@ httpx==0.28.1              # monitor/performance_monitor.py webhook 告警
 # ── 工具 ──────────────────────────────────────────────────────────────────────
 python-dotenv==1.0.1
 tzdata==2026.4             # Windows 的 ZoneInfo 需要 IANA 时区数据
+pypdf==6.18.1              # 本地提取文字 PDF；扫描页交给 PDFium/Tesseract
+pypdfium2==5.13.0
+Pillow==12.3.0

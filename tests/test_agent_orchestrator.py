@@ -1174,7 +1174,7 @@ def test_pool_and_model_overrides_use_the_four_hospital_role_names(monkeypatch):
     with patch("agents.agent_orchestrator.AsyncAnthropic", return_value=FakeClient()), \
             patch("agents.agent_orchestrator.IntentRecognizer"):
         orchestrator = AgentOrchestrator(api_key="fake-key", model="default-test-model")
-    assert set(orchestrator._pool) == {
+    assert set(orchestrator._pool) >= {
         AgentType.GENERAL, AgentType.GUIDANCE, AgentType.APPOINTMENT, AgentType.ESCALATION,
     }
     assert orchestrator._pool[AgentType.GUIDANCE][0]._model == "guidance-test-model"

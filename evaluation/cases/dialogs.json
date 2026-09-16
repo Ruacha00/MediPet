@@ -250,6 +250,57 @@
           }
         ]
       }
+    },
+    {
+      "id": "adult-triage-followup",
+      "title": "成人症状与资料补充",
+      "patient_id": "patient_self",
+      "turns": [
+        "我今年36岁，这两天鼻塞和咳嗽，想先知道到明和医院找哪个科咨询。",
+        "仍是我本人36岁、鼻塞咳嗽两天。请再说明科室建议依据，以及还需要我补哪些情况。"
+      ],
+      "preconditions": [
+        "独立本人事项；年龄由用户明示，不能从账号或患者关系推断",
+        "症状属于有限规则覆盖，不含当前急症信号"
+      ],
+      "assertions": [
+        "agents.include=triage",
+        "has_artifact=triage_guidance"
+      ]
+    },
+    {
+      "id": "medication-label-followup",
+      "title": "明确剂型与合用标签核对",
+      "patient_id": "patient_self",
+      "turns": [
+        "请查询布洛芬200mg普通片的公开标签，我想了解用法、不能使用的情况和资料来源。",
+        "我还在用华法林；请核对与刚才那种布洛芬200mg普通片合用的标签警示，不用替我开处方。"
+      ],
+      "preconditions": [
+        "独立本人事项；布洛芬200mg普通片属于已收录明确剂型",
+        "华法林由用户明确提供，不能把未知组合视为安全"
+      ],
+      "assertions": [
+        "agents.include=medication",
+        "has_artifact=medication_info"
+      ]
+    },
+    {
+      "id": "report-text-followup",
+      "title": "粘贴多行报告与缺失范围",
+      "patient_id": "patient_self",
+      "turns": [
+        "以下是我复制的检验单原文，请逐行整理：\n血红蛋白 118 g/L 参考范围 115-150\n血小板 420 10^9/L 参考范围 150-400",
+        "这是报告补充的一行，原件没给参考范围，请保持待核对：\nC反应蛋白 8 mg/L"
+      ],
+      "preconditions": [
+        "独立本人事项；仅使用合成报告文字，不含真实患者资料",
+        "有范围的行只比较同一行原文；没有范围的行不得补造区间或疾病结论"
+      ],
+      "assertions": [
+        "agents.include=triage",
+        "has_artifact=report_summary"
+      ]
     }
   ]
 }

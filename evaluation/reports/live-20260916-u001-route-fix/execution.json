@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "elapsed_seconds": 7.125,
+  "code_sha256_before": "1497c2ea69e48f51f1a895656f39930c677dd992c2241e3bce5a763efa6b700f",
+  "code_sha256_after": "1497c2ea69e48f51f1a895656f39930c677dd992c2241e3bce5a763efa6b700f",
+  "source_unchanged": true,
+  "run_id": "d31b791e74224995887fbd2bba3199c4",
+  "total": 3,
+  "passed": 3,
+  "scope": "original accessible-route two-turn case only; not a full-suite rerun",
+  "retries": 0
+}

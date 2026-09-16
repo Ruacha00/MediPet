@@ -2,6 +2,10 @@
 
 日期：2026-09-16
 
+当前更新入口：[U001 医疗健康咨询能力补齐](docs/internal/updates/U001-health-consultation/intent.md)。2026-09-16 用户已授权补齐场景一，报告同时支持 PDF 和图片上传。下文保留首次重构记录；U001 的意图、计划与契约覆盖其中关于四类角色、症状分诊、用药信息、报告预处理及固定急症范围的旧限制。其他架构和预约约束继续有效。
+
+主分支已更新为本地及远程 `main`，基准提交 `c712e87`；本次更新在 `codex/u001-health-consultation` 实施。接续 U001 时先读其 [执行检查点](docs/internal/updates/U001-health-consultation/EXECUTION.md)。
+
 状态：准备及 P1—P5 业务能力已验收；37/40 个 issue 完成，正在收束 P6 实际模型报告与交付复核，详见内部执行检查点
 
 工作目录：`D:/Projects/Agent Learn/Project/MediPet-Rebuild`

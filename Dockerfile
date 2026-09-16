@@ -9,6 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN python -c "from chromadb.utils.embedding_functions.onnx_mini_lm_l6_v2 import ONNXMiniLM_L6_V2; ONNXMiniLM_L6_V2()(['MediPet'])"
 
 FROM base AS production
+RUN apt-get update && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-chi-sim \
+    && rm -rf /var/lib/apt/lists/*
 RUN useradd -m -u 1000 medipet
 COPY --from=dependencies /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=dependencies /usr/local/bin /usr/local/bin

@@ -50,6 +50,9 @@ class IntentCategory(Enum):
     VISIT_PROCESS = "visit_process"
     WAYFINDING = "wayfinding"
     HUMAN_HANDOFF = "human_handoff"
+    SYMPTOM_QUERY = "symptom_query"
+    MEDICATION_QUERY = "medication_query"
+    REPORT_QUERY = "report_query"
     EMERGENCY = "emergency"
     OTHER      = "other"
 
@@ -93,6 +96,9 @@ _TEMPLATES: Dict[IntentCategory, List[str]] = {
     IntentCategory.VISIT_PROCESS: ["到院后先在哪里报到？", "说明门诊就诊流程", "报到后怎么办理？"],
     IntentCategory.WAYFINDING: ["从门诊大厅怎么去药房？", "从收费处到检验科怎么走？", "有去儿科诊区的无障碍路线吗？"],
     IntentCategory.HUMAN_HANDOFF: ["我想联系人工导诊。", "导诊联系电话是什么？", "请帮我找人工"],
+    IntentCategory.SYMPTOM_QUERY: ["我咳嗽流鼻涕，该挂哪个科？", "孩子肚子不舒服，需要看哪个科室？", "眼睛发红发痒应该去哪里看？"],
+    IntentCategory.MEDICATION_QUERY: ["布洛芬200mg普通片的说明书怎么服用？", "对乙酰氨基酚有哪些禁忌？", "布洛芬和华法林有没有相互作用？"],
+    IntentCategory.REPORT_QUERY: ["帮我整理检查报告里的项目和参考区间", "血红蛋白 120 g/L 参考范围 115-150，请整理", "可以上传化验单图片吗？"],
     IntentCategory.EMERGENCY: ["现在呼吸困难", "有人突然失去意识", "现在剧烈胸痛"],
 }
 
@@ -110,6 +116,9 @@ _SPECIFIC_INTENTS = {
     IntentCategory.VISIT_PROCESS,
     IntentCategory.WAYFINDING,
     IntentCategory.HUMAN_HANDOFF,
+    IntentCategory.SYMPTOM_QUERY,
+    IntentCategory.MEDICATION_QUERY,
+    IntentCategory.REPORT_QUERY,
     IntentCategory.EMERGENCY,
 }
 
@@ -132,6 +141,9 @@ _INTENT_GROUPS: Dict[IntentCategory, IntentCategory] = {
     IntentCategory.VISIT_PROCESS: IntentCategory.GUIDANCE,
     IntentCategory.WAYFINDING: IntentCategory.GUIDANCE,
     IntentCategory.HUMAN_HANDOFF: IntentCategory.ESCALATION,
+    IntentCategory.SYMPTOM_QUERY: IntentCategory.QUERY,
+    IntentCategory.MEDICATION_QUERY: IntentCategory.QUERY,
+    IntentCategory.REPORT_QUERY: IntentCategory.QUERY,
     IntentCategory.EMERGENCY: IntentCategory.ESCALATION,
 }
 
@@ -279,6 +291,8 @@ class IntentRecognizer:
         prompt = f"""你是 MediPet 门诊就诊助手的意图分析器。根据示例判断用户意图，返回 JSON。
 如果用户问题能匹配细粒度业务意图，请优先返回细粒度意图，而不是宽泛大类。
 例如查号源优先返回 slot_query，就诊材料优先返回 visit_preparation，取消预约优先返回 appointment_cancel。
+按症状询问科室或描述身体不适返回 symptom_query；药物说明书、剂量信息、禁忌和相互作用返回 medication_query；报告数值、参考范围、化验单整理或报告上传返回 report_query。
+取药地点/流程属于就诊指引；药房不等于用药咨询，材料里的既往报告不等于报告预处理。
 结合最近对话理解“明天呢”“第一个”“还是下午吧”；不猜测号源 ID，不改变当前患者身份。
 一般急症知识咨询和明确否定不是当前急症；本分类器不提供诊断或用药建议。
 
@@ -335,14 +349,18 @@ class IntentRecognizer:
 
     def _pattern_recognize(self, message: str) -> Dict[str, Any]:
         """策略 3：关键词模式匹配（同步，零延迟兜底）。"""
+        if detect_emergency(message):
+            return {"intent": IntentCategory.EMERGENCY, "confidence": 1.0}
         msg = message.lower()
         specific_patterns = {
-            IntentCategory.EMERGENCY: list(EMERGENCY_SIGNALS) if detect_emergency(message) else [],
             IntentCategory.HUMAN_HANDOFF: ["转人工", "人工导诊", "找人工", "导诊联系电话", "联系导诊"],
             IntentCategory.APPOINTMENT_CANCEL: ["取消预约", "取消这条预约", "准备取消", "取消这次预约", "取消我的预约"],
             IntentCategory.APPOINTMENT_STATUS: ["预约记录", "我的预约", "预约状态", "预约是什么状态"],
             IntentCategory.APPOINTMENT_CREATE: ["帮我预约", "选择这个号", "就选第", "准备预约", "预约这个", "确认预约"],
             IntentCategory.SLOT_QUERY: ["号源", "还有号", "有号吗", "可选的号", "查号", "余号"],
+            IntentCategory.REPORT_QUERY: ["解读报告", "检查报告", "化验单", "检验报告", "报告解读", "报告数值", "参考范围", "参考区间", "上传报告", "报告图片", "血红蛋白", "白细胞", "血小板"],
+            IntentCategory.MEDICATION_QUERY: ["用药", "药物", "药品", "说明书", "禁忌", "相互作用", "同服", "布洛芬", "对乙酰氨基酚", "华法林", "阿司匹林"],
+            IntentCategory.SYMPTOM_QUERY: ["挂哪个科", "看哪个科", "什么科室", "症状", "咳嗽", "流鼻涕", "鼻塞", "咽痛", "肚子疼", "腹痛", "眼睛发红", "眼睛痒", "眼睛发痒", "头痛", "发烧", "发热"],
             IntentCategory.VISIT_PREPARATION: ["带什么", "材料清单", "准备材料", "就诊材料", "就诊准备", "准备什么"],
             IntentCategory.VISIT_PROCESS: ["报到", "取号", "就诊流程", "到院后", "办理流程"],
             IntentCategory.HOSPITAL_INFO: ["医院几点", "门诊时间", "医院地址", "医院信息", "介绍一下医院", "医院介绍"],

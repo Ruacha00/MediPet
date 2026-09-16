@@ -1,0 +1,325 @@
+{
+  "reviewed_at_utc": "2026-09-16T10:11:25.931050+00:00",
+  "base_commit": "c712e87",
+  "scope": "本轮 git ls-files --modified --others --exclude-standard；不包含本报告自身；并行工作快照，最终状态由 root 收束",
+  "exclusions": [
+    "文档+简历/**",
+    "docs/internal/rebuild/evidence/document-source-manifest.json",
+    ".env 及 .env.*（未读取）",
+    "ignored dependencies/cache/runtime data"
+  ],
+  "file_counts": {
+    "candidates": 121,
+    "text_scanned": 108,
+    "markdown": 59,
+    "excluded_files": 19
+  },
+  "specs_and_issues": {
+    "spec_count": 4,
+    "issue_count": 14,
+    "issues": {
+      "U001-01": {
+        "status": "done",
+        "depends_on": []
+      },
+      "U001-02": {
+        "status": "done",
+        "depends_on": [
+          "U001-01"
+        ]
+      },
+      "U001-03": {
+        "status": "in_progress",
+        "depends_on": [
+          "U001-02",
+          "U001-05",
+          "U001-06",
+          "U001-08"
+        ]
+      },
+      "U001-04": {
+        "status": "done",
+        "depends_on": [
+          "U001-01"
+        ]
+      },
+      "U001-05": {
+        "status": "done",
+        "depends_on": [
+          "U001-01"
+        ]
+      },
+      "U001-06": {
+        "status": "done",
+        "depends_on": [
+          "U001-01"
+        ]
+      },
+      "U001-07": {
+        "status": "done",
+        "depends_on": [
+          "U001-05",
+          "U001-06"
+        ]
+      },
+      "U001-08": {
+        "status": "done",
+        "depends_on": [
+          "U001-01"
+        ]
+      },
+      "U001-09": {
+        "status": "done",
+        "depends_on": [
+          "U001-08"
+        ]
+      },
+      "U001-10": {
+        "status": "done",
+        "depends_on": [
+          "U001-09"
+        ]
+      },
+      "U001-11": {
+        "status": "done",
+        "depends_on": [
+          "U001-03",
+          "U001-10"
+        ]
+      },
+      "U001-12": {
+        "status": "in_progress",
+        "depends_on": [
+          "U001-03",
+          "U001-04",
+          "U001-07",
+          "U001-11"
+        ]
+      },
+      "U001-13": {
+        "status": "todo",
+        "depends_on": [
+          "U001-12"
+        ]
+      },
+      "U001-14": {
+        "status": "todo",
+        "depends_on": [
+          "U001-13"
+        ]
+      }
+    },
+    "cycles": [],
+    "missing_dependencies": [],
+    "expected_unfinished": [
+      "U001-03",
+      "U001-12",
+      "U001-13",
+      "U001-14"
+    ]
+  },
+  "markdown_links": {
+    "checked_local_paths": 306,
+    "broken": [],
+    "local_anchor_links": [],
+    "external_urls": "未重复联网核对；本轮任务只核对本地链接"
+  },
+  "counts_checked": {
+    "knowledge_documents": 24,
+    "skills": 6,
+    "intents": 66,
+    "dialogs": 15,
+    "boundaries": 12
+  },
+  "sensitive_style_scan": {
+    "hits_file_line_type_only": [
+      {
+        "file": "README.md",
+        "line": 37,
+        "type": "documentation_placeholder"
+      },
+      {
+        "file": "tests/test_agent_orchestrator.py",
+        "line": 197,
+        "type": "preexisting_test_literal"
+      },
+      {
+        "file": "tests/test_agent_orchestrator.py",
+        "line": 1176,
+        "type": "preexisting_test_literal"
+      },
+      {
+        "file": "tests/test_chat_api.py",
+        "line": 132,
+        "type": "preexisting_test_literal"
+      },
+      {
+        "file": "tests/test_evaluation.py",
+        "line": 180,
+        "type": "preexisting_test_literal"
+      }
+    ],
+    "new_secret_shaped_findings": [],
+    "limitations": "样式扫描与测试字面量来源核对，不是密钥有效性检验；不输出或保存值"
+  },
+  "public_naming": {
+    "legacy_name_hits": [],
+    "scope": "README 与本轮 docs/internal 之外修改/新增 Markdown"
+  },
+  "document_followups": [
+    {
+      "file": "docs/tools-rag.md",
+      "line": 64,
+      "issue": "初始化仍被写为只补缺失且不覆盖更新",
+      "status": "root 已修改并只读确认，区分内置知识同步与用户上传去重"
+    },
+    {
+      "file": "README.md",
+      "line": 74,
+      "issue": "默认初始化需要区分医院事务补缺与知识同步更新",
+      "status": "root 已修改并只读确认"
+    },
+    {
+      "file": "docs/internal/rebuild/contracts.md",
+      "line": 71,
+      "issue": "历史七类卡片说明与新增十类JSON样例不一致",
+      "status": "root 已添加 U001 注记并将样例标题/说明调整为原七类加三类，已确认"
+    },
+    {
+      "file": "docs/evaluation.md",
+      "line": 83,
+      "issue": "389项旧基准回归仍称已包含本轮修正，应明确 c712e87 而非 U001",
+      "status": "已报告 root；末次读取仍待文案收束"
+    },
+    {
+      "file": "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+      "line": 12,
+      "issue": "急症修补已交回，活动任务仍写正在修复；最终验证/进程/部署状态需 root 同步",
+      "status": "预期的最终检查点收束，不自动修改"
+    }
+  ],
+  "actions": "仅写本 delivery-review.json；未改源文档/代码、未跑模型/服务/索引/测试、未提交或推送",
+  "scanned_files": [
+    "docs/health-consultation.md",
+    "docs/internal/updates/U001-health-consultation/EXECUTION.md",
+    "docs/internal/updates/U001-health-consultation/contracts.md",
+    "docs/internal/updates/U001-health-consultation/evidence/backend-tests.xml",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-1440.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-390.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business-768.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-appointment/business.json",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/failure.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-image.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-scan.pdf",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/fixtures/synthetic-text.pdf",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health-final/health.json",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/failure.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-image.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-scan.pdf",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/fixtures/synthetic-text.pdf",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/health-self.png",
+    "docs/internal/updates/U001-health-consultation/evidence/browser-health/health.json",
+    "docs/internal/updates/U001-health-consultation/evidence/emergency.md",
+    "docs/internal/updates/U001-health-consultation/evidence/evaluation-inputs.md",
+    "docs/internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md",
+    "docs/internal/updates/U001-health-consultation/evidence/medical-sources.md",
+    "docs/internal/updates/U001-health-consultation/evidence/reports.md",
+    "docs/internal/updates/U001-health-consultation/evidence/review.md",
+    "docs/internal/updates/U001-health-consultation/evidence/root-impact.json",
+    "docs/internal/updates/U001-health-consultation/evidence/storage.json",
+    "docs/internal/updates/U001-health-consultation/intent.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-01.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-02.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-03.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-04.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-05.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-06.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-07.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-08.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-09.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-10.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-11.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-12.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-13.md",
+    "docs/internal/updates/U001-health-consultation/issues/U001-14.md",
+    "docs/internal/updates/U001-health-consultation/plan.md",
+    "docs/internal/updates/U001-health-consultation/specs/S01-routing.md",
+    "docs/internal/updates/U001-health-consultation/specs/S02-information.md",
+    "docs/internal/updates/U001-health-consultation/specs/S03-reports.md",
+    "docs/internal/updates/U001-health-consultation/specs/S04-validation.md",
+    "evaluation/reports/live-20260916-u001/before.png",
+    "evaluation/reports/live-20260916-u001/execution.json",
+    "evaluation/reports/live-20260916-u001/inputs.json",
+    "evaluation/reports/live-20260916-u001/model-parameters.json",
+    "evaluation/reports/live-20260916-u001/source-manifest-before.json",
+    "frontend/src/components/HealthArtifacts.vue",
+    "frontend/src/components/ReportUpload.vue",
+    "health/__init__.py",
+    "health/data/medications.json",
+    "health/data/sources.json",
+    "health/medications.py",
+    "health/models.py",
+    "health/report_upload.py",
+    "health/reports.py",
+    "health/triage.py",
+    "knowledge/health-abdominal-symptoms.md",
+    "knowledge/health-acetaminophen-label.md",
+    "knowledge/health-child-fever.md",
+    "knowledge/health-common-cold.md",
+    "knowledge/health-ibuprofen-label.md",
+    "knowledge/health-red-eye.md",
+    "knowledge/health-report-terms.md",
+    "skills/health_triage/SKILL.md",
+    "skills/medication_information/SKILL.md",
+    "tests/browser/check_health.py",
+    "tests/test_health_emergency.py",
+    "tests/test_health_information.py",
+    "tests/test_health_routing.py",
+    "tests/test_report_preprocessing.py",
+    "tests/test_report_upload_api.py",
+    "Dockerfile",
+    "IMPLEMENTATION_PLAN.md",
+    "README.md",
+    "agents/agent_orchestrator.py",
+    "agents/tools.py",
+    "api/main.py",
+    "core/emergency.py",
+    "core/intent_recognizer.py",
+    "docs/architecture.md",
+    "docs/demo-script.md",
+    "docs/evaluation.md",
+    "docs/intent-routing.md",
+    "docs/internal/rebuild/EXECUTION.md",
+    "docs/internal/rebuild/README.md",
+    "docs/internal/rebuild/contracts.md",
+    "docs/interview-notes.md",
+    "docs/memory-skills.md",
+    "docs/tools-rag.md",
+    "evaluation/cases/README.md",
+    "evaluation/cases/dialogs.json",
+    "evaluation/cases/intents.json",
+    "frontend/nginx.conf",
+    "frontend/src/App.vue",
+    "frontend/src/lib/backends.js",
+    "frontend/tests/app-integration.test.mjs",
+    "frontend/tests/business-components.test.mjs",
+    "frontend/tests/python-backend.test.mjs",
+    "hospital/models.py",
+    "knowledge/department-internal.md",
+    "knowledge/department-ophthalmology.md",
+    "knowledge/lab-process.md",
+    "knowledge/medicine-pickup.md",
+    "mcp/knowledge_base.py",
+    "requirements.txt",
+    "skills/README.md",
+    "skills/general_visit/SKILL.md",
+    "skills/service_boundaries/SKILL.md",
+    "skills/visit_guidance/SKILL.md",
+    "tests/browser/run_evaluation.py",
+    "tests/test_agent_orchestrator.py",
+    "tests/test_chat_api.py",
+    "tests/test_evaluation.py",
+    "tests/test_evaluation_api.py",
+    "tests/test_knowledge_skills.py"
+  ]
+}

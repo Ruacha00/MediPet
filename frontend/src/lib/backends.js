@@ -78,6 +78,15 @@ export async function requestPatients(type, settings) {
   return requestJson(backendMeta(type, settings).baseUrl, `/patients?${params}`)
 }
 
+export async function uploadReport(type, settings, file) {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('user_id', settings.userId || 'anonymous')
+  if (settings.patientId) form.append('patient_id', settings.patientId)
+  if (settings.conversationId) form.append('conv_id', settings.conversationId)
+  return requestJson(backendMeta(type, settings).baseUrl, '/reports/preprocess', { method: 'POST', body: form })
+}
+
 export async function requestVisits(type, settings, patientId, archived = false) {
   const params = new URLSearchParams({
     user_id: settings.userId || 'anonymous',

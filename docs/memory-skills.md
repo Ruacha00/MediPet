@@ -7,6 +7,7 @@
 | 数据 | 保存内容 | 生命周期与入口 |
 | --- | --- | --- |
 | 完整事项历史 | 用户与助手消息、卡片、运行 metadata、确认事件和操作回执 | `VisitStore.append_messages/get_messages`，Redis 持久记录，不随压缩删除 |
+| 报告派生记录 | 上传文件名、提取文字、数值及参考范围卡片 | 保存在同一事项完整历史；原始 PDF/图片不保留 |
 | 最近选择 | 本事项最近号源列表、查询条件、状态、当前方案 ID | `VisitStore.get_selection/save_selection`，用于序号选择，不能由摘要替代 |
 | 工作窗口与摘要 | 最近对话与较早内容的压缩摘要 | `MemoryManager.add_message/get_context`，Redis 24 小时 TTL |
 | 情景记忆 | 压缩片段的摘要及身份 metadata | Chroma `medipet_episodic`，按当前事项优先召回 |
@@ -15,6 +16,8 @@
 源码入口分别为 [memory/visit_store.py](../memory/visit_store.py) 和 [memory/conversation_memory.py](../memory/conversation_memory.py)。`VisitIdentity` 包含 `user_id / patient_id / conv_id`；读取上下文前仍用 `require_identity` 校验当前事项。一个事项固定属于一位患者，切换患者应切换或新建事项。
 
 `MemoryContext.to_prompt_text` 将摘要、最近消息、情景片段、资料和选择状态组合成背景文本。它可以帮助理解“第一个”，但最后选哪条号源由真实 `SelectionState` 校验；剩余库存和预约状态必须重新查服务，不能以历史回答为事实。
+
+报告追问也有独立事实入口：Triage 的 `read_current_report` 重新校验当前身份，只读取当前事项最新 `report_summary`。即使同一患者的其他事项曾有报告，此工具也不回退查找；无报告时提示上传或粘贴。普通情景记忆可能回退到同患者其他事项，因此不能把记忆摘要当作当前报告数值。见[健康咨询](health-consultation.md)。
 
 ## 压缩、过期和恢复
 
@@ -32,6 +35,8 @@
 
 急症路径跳过普通 `get_context`，固定响应仍写完整历史和窗口，但两次 `add_message` 都使用 `compress=False`，也不安排画像更新。因此即使窗口正好到压缩阈值，急症响应也不必等待模型。这里保证的是预设明确急症演示路径，不是医疗诊断。
 
+报告上传预处理不请求模型，也不安排画像更新。成功报告以用户上传消息和助手卡片写入所选患者、事项，工作窗口失效后由普通聊天恢复；上传接口不更改最近号源选择或执行预约。原文件不保留并不等于报告内容不保存，提取文字与卡片会随完整历史持久保存。
+
 `update_profile` 只看最近用户原句，要求模型分别返回 `patient_facts` 与 `preferences`。程序再次检查建议值确实是用户原句的子串；患者资料按参与者与患者保存，表达偏好按参与者保存。此约束减少无依据的合成信息，但不是语义正确性证明，历史陈述也不能代替当前医院记录。
 
 ## Skills 如何影响下一次请求
@@ -43,11 +48,17 @@
 | [general_visit](../skills/general_visit/SKILL.md) | General，医院相关关键词 | 公开事实查询与澄清 |
 | [appointment_assistance](../skills/appointment_assistance/SKILL.md) | Appointment 常驻 | 使用真实列表，准备与确认分开 |
 | [visit_guidance](../skills/visit_guidance/SKILL.md) | Guidance 常驻 | 材料、流程和预置文字指引 |
-| [service_boundaries](../skills/service_boundaries/SKILL.md) | 四角色常驻 | 服务范围、固定急症与联系信息边界 |
+| [health_triage](../skills/health_triage/SKILL.md) | Triage 常驻 | 有限科室建议、缺信息澄清、报告原文与范围边界 |
+| [medication_information](../skills/medication_information/SKILL.md) | Medication 常驻 | 指定标签、未知药/组合、个人用药与处方边界 |
+| [service_boundaries](../skills/service_boundaries/SKILL.md) | 六角色常驻 | 不替代医生诊断、不开处方、不评论其他医院或医生方案；急症、身份与确认边界 |
+
+当前共 **6 组 Skills**。报告由 Triage 处理，不新增 ReportAgent；两个医疗 Skill 与全局边界共同约束输出，个体剂量、儿童、孕哺期和肝肾异常交医师或药师核对。症状建议与药品资料只覆盖[已收录范围](health-consultation.md)，提示词不是医学有效性或模型遵守保证。
 
 文件修改不会自动进入已加载对象。`GET /skills` 查看已加载内容摘要和解析错误，`POST /skills/reload` 重新扫描并更新编排器，后续请求使用新内容。单个文件解析失败会记录错误，其他文件仍可加载。Skill 是提示规则，不改变工具白名单、身份权限或预约事务校验。
 
 ## 证据与取舍
+
+下面的存储/API 数量属于 `c712e87` 旧基准。U001 的真实加载器与角色 prompt 捕获已检查 6 组 Skill 注入、修改前后显式重载和 24 份知识加载，见[97 项局部确定性记录](internal/updates/U001-health-consultation/evidence/medical-sources.md)；新增报告隔离、真实组件及模型验收以 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)为准，最终汇总见验收记录。
 
 [真实存储记录](internal/rebuild/evidence/storage.md)中的 4 项真实记忆检查使用 Redis 和 Chroma，验证真实 TTL、压缩、患者过滤、画像范围及恢复；摘要/画像模型使用替身。另有 2 项事项与完整历史真实检查，见 [test_visit_memory.py](../tests/test_visit_memory.py) 和 [test_conversation_memory.py](../tests/test_conversation_memory.py)。
 

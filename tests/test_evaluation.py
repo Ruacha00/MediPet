@@ -2,6 +2,7 @@
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from datetime import datetime, timedelta
+import inspect
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -10,7 +11,7 @@ from uuid import uuid4
 import pytest
 
 from agents.agent_orchestrator import AgentType, OrchestratorResult
-from agents.tools import build_hospital_tools
+from agents.tools import build_health_tools, build_hospital_tools
 from core.emergency import detect_emergency
 from core.intent_recognizer import IntentCategory
 from evaluation.evaluator import (
@@ -70,12 +71,13 @@ class Chat:
 
 
 class ScenarioChat:
-    """固定工具计划替代模型决策，业务读取/准备仍调用真实工具与医院服务。"""
+    """固定工具计划替代模型决策，仍调用真实医院/健康工具；不是模型能力证据。"""
     def __init__(self, case, service, visits):
         self.case, self.service, self.visits = case, service, visits
         self.calls = []
         self.tools = {**build_hospital_tools("appointment", service, visits),
-                      **build_hospital_tools("guidance", service, visits)}
+                      **build_hospital_tools("guidance", service, visits),
+                      **build_health_tools("triage", visits), **build_health_tools("medication", visits)}
         self.model_calls = 0
 
     async def run(self, req):
@@ -89,7 +91,9 @@ class ScenarioChat:
         results, traces, names = [], [], []
 
         async def call(name, **kwargs):
-            result = await self.tools[name].handler(req, kwargs)
+            result = self.tools[name].handler(req, kwargs)
+            if inspect.isawaitable(result):
+                result = await result
             results.extend(Artifact.model_validate(value) for value in result.get("artifacts", []))
             traces.append({"kind": "tool_call", "tool_name": name, "success": result["success"],
                            "error_code": result.get("error_code"), "latency_ms": 1})
@@ -143,7 +147,17 @@ class ScenarioChat:
         elif case_id == "retrieval-failure":
             traces.append({"tool_name": "search_knowledge_base", "success": False,
                            "error_code": "retrieval_failed", "result_summary": {"result_count": 0}})
+        elif case_id == "adult-triage-followup":
+            await call("triage_symptoms")
+        elif case_id == "medication-label-followup":
+            await call("medication_information", drug_name="布洛芬200mg普通片", other_drugs=["华法林"] if turn else [])
+        elif case_id == "report-text-followup":
+            await call("preprocess_report")
         agents = [AgentType.APPOINTMENT, AgentType.GUIDANCE] if case_id == "collaboration" else [AgentType.GUIDANCE]
+        if case_id in {"adult-triage-followup", "report-text-followup"}:
+            agents = [AgentType.TRIAGE]
+        elif case_id == "medication-label-followup":
+            agents = [AgentType.MEDICATION]
         return OrchestratorResult(req.request_id, "来自实际工具的就诊资料。", agents[0], IntentCategory.QUERY,
                                   agent_types=agents, primary_agent=agents[0], tools_used=names,
                                   tool_traces=traces, artifacts=results, latency_ms=5)
@@ -183,7 +197,7 @@ def evaluator(*, judge=None, factory=None, **kwargs):
 
 
 def test_defaults_load_all_dataset_cases_with_identity_and_clock():
-    assert (len(DEFAULT_INTENT_CASES), len(DEFAULT_DIALOG_CASES), len(DEFAULT_BOUNDARY_CASES)) == (54, 12, 12)
+    assert (len(DEFAULT_INTENT_CASES), len(DEFAULT_DIALOG_CASES), len(DEFAULT_BOUNDARY_CASES)) == (66, 15, 12)
     assert all(case.patient_id and case.context["clock"] for case in DEFAULT_INTENT_CASES)
     assert all(case["user_id"] == "anonymous" and case["patient_id"] for case in DEFAULT_DIALOG_CASES + DEFAULT_BOUNDARY_CASES)
     assert all(case.expected_intent in {intent.value for intent in IntentCategory} for case in DEFAULT_INTENT_CASES)
@@ -423,12 +437,12 @@ async def test_all_fixed_scenarios_run_real_business_assertions_without_judge_fo
     report = await engine.run(intent_cases=DEFAULT_INTENT_CASES, dialog_cases=DEFAULT_DIALOG_CASES, boundary_cases=DEFAULT_BOUNDARY_CASES)
     failed = [(result.test_id, result.detail, result.metadata.get("assertions")) for result in report.results if not result.passed]
     assert not failed, failed
-    assert len(factory.records) == len(factory.closed) == 24
-    assert len({runtime.visit_store.prefix for runtime in factory.records}) == 24
-    assert len(judge.calls) == 24  # 12 个两轮聊天，12 个边界不用 Judge。
+    assert len(factory.records) == len(factory.closed) == 27
+    assert len({runtime.visit_store.prefix for runtime in factory.records}) == 27
+    assert len(judge.calls) == 30  # 15 个两轮聊天，12 个边界不用 Judge。
     business = [result for result in report.results if result.metadata.get("kind") == "business"]
-    assert len(business) == 24 and all(result.scores == {} for result in business)
-    assert report.metadata["case_counts"] == {"intent": 54, "dialog": 12, "boundary": 12}
+    assert len(business) == 27 and all(result.scores == {} for result in business)
+    assert report.metadata["case_counts"] == {"intent": 66, "dialog": 15, "boundary": 12}
     race = next(result for result in business if result.test_id == "last-slot-race:business")
     assert race.metadata["facts"]["parallel_confirm.executions"] == 1
     assert len(race.metadata["facts"]["parallel_confirm.results"]) == 2
@@ -456,6 +470,67 @@ async def test_patient_switch_and_new_cases_never_inherit_another_visit_history(
     self_identity = VisitIdentity(user_id=new.user_id, patient_id=new.patient_id, conv_id=new.conv_id)
     assert len((await switched.hospital_service.get_appointments(child_identity)).data["items"]) == 1
     assert (await switched.hospital_service.get_appointments(self_identity)).data["items"] == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("case_id,tool_name,artifact_type", [
+    ("adult-triage-followup", "triage_symptoms", "triage_guidance"),
+    ("medication-label-followup", "medication_information", "medication_info"),
+    ("report-text-followup", "preprocess_report", "report_summary"),
+])
+async def test_health_dialogs_feed_real_tool_artifacts_to_judge(case_id, tool_name, artifact_type):
+    case = next(case for case in DEFAULT_DIALOG_CASES if case["id"] == case_id)
+    factory, judge = RuntimeFactory(), Judge()
+    report = await evaluator(factory=factory, judge=judge).run(dialog_cases=[case])
+
+    assert not report.call_failures and not report.skipped
+    assert len(judge.calls) == 2 and report.results[-1].passed
+    turns = report.results[-1].metadata["turns"]
+    for turn, sent in zip(turns, judge.calls):
+        assert turn["tools_used"] == [tool_name]
+        assert turn["tool_traces"][0]["success"] is True
+        artifact = turn["artifacts"][0]
+        assert artifact["type"] == artifact_type and artifact["data"]
+        background = json.loads(sent[2])
+        assert background["current_turn"]["artifacts"] == turn["artifacts"]
+        assert all(assertion not in sent[2] for assertion in case["assertions"])
+    runtime = factory.records[0]
+    first, second = runtime.orchestrator.calls
+    assert second.history[0]["content"] == first.message
+    assert first.conv_id == second.conv_id and first.patient_id == second.patient_id == "patient_self"
+    assert len(await runtime.visit_store.get_messages(first.user_id, first.conv_id)) == 4
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("case_id", ["adult-triage-followup", "medication-label-followup", "report-text-followup"])
+@pytest.mark.parametrize("missing", ["artifact", "role"])
+async def test_health_business_assertions_fail_when_real_output_is_removed(case_id, missing):
+    case = next(case for case in DEFAULT_DIALOG_CASES if case["id"] == case_id)
+    factory = RuntimeFactory()
+
+    @asynccontextmanager
+    async def incomplete_runtime(case, run_id):
+        async with factory(case, run_id) as runtime:
+            original = runtime.orchestrator.run
+
+            async def incomplete(req):
+                response = await original(req)
+                if missing == "artifact":
+                    response.artifacts = []
+                else:
+                    response.agent_types = [AgentType.GENERAL]
+                return response
+
+            runtime.orchestrator.run = incomplete
+            yield runtime
+
+    report = await evaluator(factory=incomplete_runtime, judge=Judge([1, 1])).run(dialog_cases=[case])
+    assert not report.call_failures and all(result.passed for result in report.results[:-1])
+    business = report.results[-1]
+    assert not business.passed and business.metadata["status"] == "failed"
+    expected_key = "has_artifact=" if missing == "artifact" else "agents.include="
+    assert any(check["assertion"].startswith(expected_key) and check["status"] == "failed"
+               for check in business.metadata["assertions"])
 
 
 @pytest.mark.asyncio

@@ -1,0 +1,343 @@
+{
+  "base_url": "http://127.0.0.1:18088",
+  "synthetic_data_only": true,
+  "responses": [
+    {
+      "label": "new_patient_self",
+      "url": "http://127.0.0.1:18088/api/python/visits",
+      "status": 201,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-31fd66f517124baca833dee9a108474e",
+        "title": "新的就诊事项",
+        "archived": false,
+        "created_at": "2026-09-16T18:08:27.881283+08:00",
+        "updated_at": "2026-09-16T18:08:27.881283+08:00"
+      }
+    },
+    {
+      "label": "adult_triage",
+      "url": "http://127.0.0.1:18088/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-31fd66f517124baca833dee9a108474e",
+        "patient_id": "patient_self",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_self",
+          "conv_id": "visit-31fd66f517124baca833dee9a108474e",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T18:08:27.881283+08:00",
+          "updated_at": "2026-09-16T18:08:31.605688+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "triage_guidance:6586ed639ddc49c7932b5e059495bce5",
+            "type": "triage_guidance",
+            "data": {
+              "title": "初步就诊科室建议",
+              "summary": "以下只是在明和虚构医院现有科室内的初步就诊方向，不是诊断，不替代医生。资料不足或症状变化时应由现场导诊确认；未命中急症规则不代表安全。",
+              "recommended_departments": [
+                {
+                  "department_id": "dep_internal",
+                  "name": "内科",
+                  "reason": "针对成人的一般呼吸道或腹部不适，可先向演示医院内科咨询；最终科室由现场导诊或医生确认。"
+                }
+              ],
+              "missing_information": [
+                "请补充症状持续时间、严重程度及是否伴随呼吸困难、意识异常或突然加重。"
+              ],
+              "sources": [
+                {
+                  "source_id": "nhs-common-cold",
+                  "title": "NHS: Common cold",
+                  "url": "https://www.nhs.uk/conditions/common-cold/",
+                  "reviewed_at": "2026-09-16"
+                }
+              ]
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "triage",
+            "tool_name": "triage_symptoms",
+            "tool_use_id": "call_00_wtUn3AUQi01ATYHgeddB2523",
+            "input": {},
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 2.3,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "title",
+                "summary",
+                "recommended_departments",
+                "missing_information",
+                "sources"
+              ],
+              "artifact_ids": [
+                "triage_guidance:6586ed639ddc49c7932b5e059495bce5"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "5c4d2600",
+        "response": "**初步就诊方向（非诊断）**\n\n根据本轮分诊工具结果，在明和虚构医院现有科室范围内，可先考虑：\n\n- **内科**（dep_internal）——针对成人的一般呼吸道不适，可先向内科咨询；最终科室由现场导诊或医生确认。\n\n**需要补充的信息**\n\n工具提示还需补充：\n- 症状持续时间（你已提到咳嗽两天，可再确认是否还有其他症状）\n- 严重程度（你描述为\"较轻\"）\n- 是否伴随呼吸困难、意识异常或突然加重\n\n**需要提醒你的**\n\n- 以上只是初步就诊方向，不是诊断，不替代医生判断。\n- 未命中急症规则不代表安全。如果出现胸痛、呼吸困难、意识丧失或高烧超过 39.5℃，请立即就医或拨打 120，不要等待普通挂号。\n- 你背景信息中提到正在服用华法林，这一点建议在就诊时主动告知医生，用药相关的问题请由医生或药师评估。\n\n如果你愿意补充上面缺的信息，我可以再帮你梳理一次。",
+        "intent": "symptom_query",
+        "intent_group": "query",
+        "agent_type": "triage",
+        "agent_types": [
+          "triage"
+        ],
+        "primary_agent": "triage",
+        "supporting_agents": [],
+        "tools_used": [
+          "triage_symptoms"
+        ],
+        "routing_reason": "intent=symptom_query, group=query, primary=triage, supporting=none, scores=[triage=1.11, general=0.22, guidance=0.00, appointment=0.00, medication=0.00]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 2437.4,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.74,
+        "intent_source_scores": {
+          "llm": 0.95,
+          "embedding": 0.2372321010475645,
+          "pattern": 0.75
+        }
+      }
+    },
+    {
+      "label": "medication_interaction",
+      "url": "http://127.0.0.1:18088/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-31fd66f517124baca833dee9a108474e",
+        "patient_id": "patient_self",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_self",
+          "conv_id": "visit-31fd66f517124baca833dee9a108474e",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T18:08:27.881283+08:00",
+          "updated_at": "2026-09-16T18:08:37.249004+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "medication_info:b3f5cfc1b69848408d00266949068c27",
+            "type": "medication_info",
+            "data": {
+              "title": "布洛芬指定标签资料",
+              "summary": "以下是有来源的美国具体产品标签摘录，不是给您的处方或用药建议；不能替代手中产品说明书或医师、药师判断。",
+              "drug_name": "布洛芬",
+              "formulation": "200 mg 普通包衣口服片（美国标签 NDC 75907-428；非缓释、非复方、非儿童混悬液）",
+              "sections": [
+                {
+                  "heading": "标签用途",
+                  "items": [
+                    "该非甾体抗炎药（NSAID）产品标签用于暂时缓解轻度疼痛及退热；不据此判断您的病因或是否适用。"
+                  ]
+                },
+                {
+                  "heading": "说明书用法用量（资料摘录）",
+                  "items": [
+                    "此美国标签的成人和12岁及以上儿童用法：症状持续时每4至6小时1片；1片不能缓解时标签允许2片。未经医生指导，24小时不得超过6片；每片200 mg。",
+                    "这里只复述指定产品标签，不计算或推荐个人剂量。儿童、孕哺期、肝肾异常、胃溃疡或复杂用药者先咨询医师或药师；不将普通片剂量用于缓释胶囊、复方或混悬液。"
+                  ]
+                },
+                {
+                  "heading": "禁忌与警示",
+                  "items": [
+                    "曾对布洛芬或其他解热镇痛药过敏，以及心脏手术前后，不应使用。NSAID可能造成胃肠出血，并增加心血管风险。",
+                    "胃溃疡/出血史、肝肾疾病、哮喘、心血管病或正在使用其他药物时先咨询。孕期20周及以后，除非医生明确指导，不应使用布洛芬；孕哺期均先询问专业人员。",
+                    "呕血、黑便、胸痛、呼吸困难等应立即就医。疼痛加重或超过10天、发热加重或超过3天时停用并咨询医生。"
+                  ]
+                },
+                {
+                  "heading": "标签已收录的相互作用提示",
+                  "items": [
+                    "与阿司匹林、萘普生等NSAID、抗凝药或类固醇合用会增加胃肠出血风险。布洛芬可能降低用于心脑血管预防的阿司匹林作用；需由医师或药师核对，不能自行搭配。"
+                  ]
+                },
+                {
+                  "heading": "本次合并用药核对",
+                  "items": [
+                    "华法林：标签提示抗凝药或类固醇合用会增加胃肠出血风险；请由医师或药师核对具体药物，不自行搭配。"
+                  ]
+                }
+              ],
+              "sources": [
+                {
+                  "source_id": "dailymed-ibuprofen-200",
+                  "title": "DailyMed: Ibuprofen Tablets USP 200 mg, Dr. Reddy's, NDC 75907-428",
+                  "url": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display",
+                  "reviewed_at": "2026-09-16"
+                }
+              ]
+            }
+          },
+          {
+            "id": "medication_info:a7dd4919478547f4b16bcafedb0cdf1d",
+            "type": "medication_info",
+            "data": {
+              "title": "药品资料未收录",
+              "summary": "未收录该药名、规格或剂型，不能推断其用途、用量或相互作用。",
+              "drug_name": "华法林",
+              "formulation": "未核实",
+              "sections": [
+                {
+                  "heading": "需要补充",
+                  "items": [
+                    "请提供药盒上的通用名、成分、剂型和规格，或向药师核对。当前目录仅含对乙酰氨基酚500 mg普通片与布洛芬200 mg普通包衣片的指定美国标签。",
+                    "不能把同名的缓释剂型、复方制剂或儿童液体按本目录替换；未知药物或组合不等于安全。"
+                  ]
+                }
+              ],
+              "sources": []
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "medication",
+            "tool_name": "medication_information",
+            "tool_use_id": "call_00_1zdxO3qtLDdgQ47fNY4j4703",
+            "input": {
+              "drug_name": "布洛芬片",
+              "other_drugs": [
+                "华法林"
+              ]
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 1.5,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "title",
+                "summary",
+                "drug_name",
+                "formulation",
+                "sections",
+                "sources"
+              ],
+              "artifact_ids": [
+                "medication_info:b3f5cfc1b69848408d00266949068c27"
+              ],
+              "result_count": 0
+            }
+          },
+          {
+            "agent_type": "medication",
+            "tool_name": "medication_information",
+            "tool_use_id": "call_01_2uVEJyZysc4Cq9KlSwlH6808",
+            "input": {
+              "drug_name": "华法林",
+              "other_drugs": [
+                "布洛芬片"
+              ]
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.2,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "title",
+                "summary",
+                "drug_name",
+                "formulation",
+                "sections",
+                "sources"
+              ],
+              "artifact_ids": [
+                "medication_info:a7dd4919478547f4b16bcafedb0cdf1d"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "f8342137",
+        "response": "# 布洛芬 + 华法林 用药资料核对\n\n## 一、布洛芬（已收录，美国指定标签）\n\n**核对到的剂型**：200 mg 普通包衣口服片（美国标签 NDC 75907-428；**非缓释、非复方、非儿童混悬液**）。如果你手上是缓释胶囊、复方制剂或其他规格，这份资料不适用。\n\n**标签用途**：该 NSAID 产品标签用于暂时缓解轻度疼痛及退热。这不代表它适合你的情况。\n\n**说明书用法用量（资料摘录，非给你的服药指令）**：\n- 该美国标签的成人和 12 岁及以上用法：症状持续时每 4 至 6 小时 1 片；1 片不能缓解时标签允许 2 片。\n- 未经医生指导，24 小时不得超过 6 片；每片 200 mg。\n- 以上仅为该产品标签原文摘录，**不计算、不推荐你的个人剂量**。\n\n**禁忌与警示**：\n- 对布洛芬或其他解热镇痛药过敏者、心脏手术前后，不应使用。\n- NSAID 可能造成胃肠出血，并增加心血管风险。\n- 胃溃疡/出血史、肝肾疾病、哮喘、心血管病或正在使用其他药物时，先咨询医师或药师。\n- 孕期 20 周及以后，除非医生明确指导，不应使用；孕哺期均先询问专业人员。\n- 呕血、黑便、胸痛、呼吸困难等应立即就医。\n\n## 二、华法林（未收录）\n\n工具返回：**未收录该药名、规格或剂型**，因此**无法提供华法林的说明书内容、禁忌或相互作用判断**。未收录不等于安全，也不能推断。\n\n## 三、关于\"能否一起用\"\n\n这是你问题的核心，我必须如实说明：\n\n- 布洛芬标签中**已收录的相互作用提示**明确写着：与**抗凝药**或类固醇合用会**增加胃肠出血风险**；并提示\"请由医师或药师核对具体药物，**不自行搭配**\"。\n- 华法林属于抗凝药，但**本目录未收录华法林**，所以我**无法判断**你这两者合用的具体情况，也**不能说\"可以同服\"或\"安全\"**。\n- 你正在服用华法林，属于需要专业评估的复杂用药情形，**请务必由你的处方医师或药师核对后再决定**，不要自行加用布洛芬。\n\n## 四、资料来源与覆盖范围\n\n| 项目 | 说明 |\n|---|---|\n| 布洛芬 | DailyMed: Ibuprofen Tablets USP 200 mg, Dr. Reddy's, NDC 75907-428（审阅日期 2026-09-16） |\n| 华法林 | 未收录，无来源可引用 |\n| 地区/剂型 | 仅美国指定标签、仅上述明确剂型；**不能当作所有品牌或中国手中产品的说明书** |\n\n## 五、建议\n\n- 就诊时主动告知医生你正在服用华法林，并带上药盒。\n- 若出现呕血、黑便、异常出血、胸痛、呼吸困难等，**立即就医**；中国大陆紧急情况拨打 **120**。\n- 以上为说明书参考信息，不替代你手中药品说明书和医师、药师判断。\n\n如果你能提供华法林药盒上的通用名、规格和剂型，我可以再帮你核对一次；但合用是否可行仍需医师或药师评估。",
+        "intent": "medication_query",
+        "intent_group": "query",
+        "agent_type": "medication",
+        "agent_types": [
+          "medication"
+        ],
+        "primary_agent": "medication",
+        "supporting_agents": [],
+        "tools_used": [
+          "medication_information",
+          "medication_information"
+        ],
+        "routing_reason": "intent=medication_query, group=query, primary=medication, supporting=none, scores=[medication=1.20, general=0.10, guidance=0.00, appointment=0.00, triage=0.00]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 4868.6,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.8585,
+        "intent_source_scores": {
+          "llm": 0.97,
+          "embedding": 0.3975332120800882,
+          "pattern": 1.0
+        }
+      }
+    }
+  ],
+  "checks": {
+    "adult_triage_card_and_sources": true
+  },
+  "page_errors": [],
+  "passed": false,
+  "self_conv_id": "visit-31fd66f517124baca833dee9a108474e",
+  "error": "AssertionError('Locator expected to contain text \\'华法林\\'\\nActual value: None\\nError: strict mode violation: locator(\"[data-artifact=\\\\\"medication_info\\\\\"]\") resolved to 2 elements:\\n    1) <article data-v-ed797d5c=\"\" class=\"health-card\" data-artifact=\"medication_info\">…</article> aka get_by_text(\"药品公开信息布洛芬指定标签资料以下是有来源的美国具体产品标签摘录，不是给您的处方或用药建议；不能替代手中产品说明书或医师、药师判断。布洛芬 · 200 mg\")\\n    2) <article data-v-ed797d5c=\"\" class=\"health-card\" data-artifact=\"medication_info\">…</article> aka get_by_text(\"药品公开信息药品资料未收录未收录该药名、规格或剂型，不能推断其用途、用量或相互作用。华法林 · 未核实需要补充请提供药盒上的通用名、成分、剂型和规格，或向药师核\")\\n \\nCall log:\\n  - Expect \"to_contain_text\" with timeout 5000ms\\n  - waiting for locator(\"[data-artifact=\\\\\"medication_info\\\\\"]\")\\n')",
+  "elapsed_seconds": 11.5
+}

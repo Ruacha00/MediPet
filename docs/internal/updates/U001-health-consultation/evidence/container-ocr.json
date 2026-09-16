@@ -1,0 +1,58 @@
+{
+  "synthetic_only": true,
+  "real_container_ocr": true,
+  "passed": true,
+  "results": [
+    {
+      "fixture": "chinese-image.png",
+      "status": 200,
+      "summary": {
+        "title": "报告文字整理",
+        "summary": "整理出 1 项待核对记录；不推断疾病或治疗方案。",
+        "input_kind": "image",
+        "extracted_text": "白细胞 6.2 x1049/L 4.0-10.0",
+        "observations": [
+          {
+            "item": "白细胞",
+            "value": "6.2",
+            "unit": "x1049/L",
+            "reference_range": "4.0–10.0",
+            "flag": "unassessed",
+            "raw_line": "白细胞 6.2 x1049/L 4.0-10.0"
+          }
+        ],
+        "warnings": [
+          "仅按报告原文的数值、单位和参考区间整理；超出区间不等同于疾病诊断，请结合医生解释。",
+          "文件提取可能存在识别或排版错误，请逐项对照原报告，尤其核对小数点、单位和参考区间。",
+          "部分内容缺少明确数值、单位或闭合参考区间，或排版无法可靠识别，已保留原文并标为待核对。"
+        ],
+        "sources": []
+      }
+    },
+    {
+      "fixture": "mixed.pdf",
+      "status": 200,
+      "summary": {
+        "title": "报告文字整理",
+        "summary": "整理出 1 项待核对记录；不推断疾病或治疗方案。",
+        "input_kind": "pdf",
+        "extracted_text": "【PDF 文字层原提取】\nScanned report\n\n【页面 OCR 补充，未校对】\nWBC 6.2 mg/L 4.0-10.0",
+        "observations": [
+          {
+            "item": "WBC",
+            "value": "6.2",
+            "unit": "mg/L",
+            "reference_range": "4.0–10.0",
+            "flag": "within",
+            "raw_line": "WBC 6.2 mg/L 4.0-10.0"
+          }
+        ],
+        "warnings": [
+          "仅按报告原文的数值、单位和参考区间整理；超出区间不等同于疾病诊断，请结合医生解释。",
+          "文件提取可能存在识别或排版错误，请逐项对照原报告，尤其核对小数点、单位和参考区间。"
+        ],
+        "sources": []
+      }
+    }
+  ]
+}

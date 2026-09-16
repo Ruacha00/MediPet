@@ -26,17 +26,29 @@
 
 API 的 `_load_visit` 与 `VisitStore.require_identity` 固定 `user_id / patient_id / conv_id`。已预分类请求和直接编排请求最终使用同一套实体与路由机制。低置信度 `OTHER` 的一般模糊消息通过 `_needs_clarification` 返回澄清，不直接调用业务工具。
 
-固定急症信号先经过 [core/emergency.py](../core/emergency.py) 的 `detect_emergency`。API 和编排器均复用它；一般咨询、否定或引用不能因为模型给出 `EMERGENCY` 标签而进入固定急症分支。
+急症信号先经过 [core/emergency.py](../core/emergency.py) 的 `detect_emergency`。API、直接编排和独立分诊入口均复用它；有限胸痛、呼吸困难、意识异常表达及超过 39.5℃ 的演示条件优先提示立即就医，中国大陆拨打 120。一般咨询、否定、过去经历或引用不能仅因模型给出 `EMERGENCY` 标签而进入此分支；规则不代表完整医学判断。
+
+## 医疗扩展的三个意图
+
+U001 在既有医院和预约类别上新增三项，继续使用原三路投票、降级和缓存机制：
+
+| 意图 | 主领域 | 工具事实与限制 |
+| --- | --- | --- |
+| `SYMPTOM_QUERY` | TriageAgent | 按当前用户原文提供有限科室方向；缺年龄等信息先澄清，不生成诊断 |
+| `MEDICATION_QUERY` | MedicationAgent | 只查已收录明确剂型；药名来自用户原话，未收录药或组合不推断安全 |
+| `REPORT_QUERY` | TriageAgent | 粘贴文字用 `preprocess_report`；已有报告追问用 `read_current_report` 读取同一患者同一事项的最新卡片 |
+
+共六角色：General、Guidance、Appointment、Escalation、Triage、Medication。没有独立 ReportAgent。报告文件上传走独立预处理 API，不依靠意图模型完成 OCR；上传后的自然语言追问再进入上述路由。范围见[健康咨询](health-consultation.md)。
 
 ## 领域分工与并行
 
 [agents/agent_orchestrator.py](../agents/agent_orchestrator.py) 中，`_domain_scores` 从 General 0.1、其余领域 0 开始计分：
 
 - 意图映射到 General 加 0.55，映射到专属领域加 0.75。
-- Guidance、Appointment 每命中一个领域关键词加 0.18，最多加 0.45；General 每个加 0.12，最多加 0.35。
+- Guidance、Appointment、Triage、Medication 每命中一个领域关键词加 0.18，最多加 0.45；General 每个加 0.12，最多加 0.35。
 - 地点或无障碍实体为 Guidance 加 0.2；号源、预约或选择序号为 Appointment 加 0.15，日期或时段再加 0.1；科室或医生为 General 加 0.1。
 
-`_route_decision` 取最高分可用领域为主角色，先采用 `_collaboration_targets` 检出的预约/指引复合需求作为辅助角色。没有显式协作目标时，才考虑分数至少 0.45 且达到主角色分数 55% 的其他专属领域。人工联系和急症优先进入 Escalation。
+`_route_decision` 取最高分可用领域为主角色，先采用 `_collaboration_targets` 检出的预约、指引、分诊或药品复合需求作为辅助角色。没有显式协作目标时，才考虑分数至少 0.45 且达到主角色分数 55% 的其他专属领域。人工联系和急症优先进入 Escalation。
 
 `run_parallel` 以 `asyncio.gather(..., return_exceptions=True)` 同时进入主辅角色；每个角色有自己的本轮输出容器。`ResponseComposer.compose` 对成功文字去重整合；模型整合失败时按主次拼接已有文字。卡片与工具轨迹独立汇总，失败分支和卡片冲突保留证据。并行分工并不保证每次都更快，尚无相同条件的性能对照。
 
@@ -53,4 +65,4 @@ API 的 `_load_visit` 与 `VisitStore.require_identity` 固定 `user_id / patien
 
 [test_intent_recognizer.py](../tests/test_intent_recognizer.py) 覆盖两套权重、失败优先级、阈值、实体、跨日缓存、字符向量及急症反例。[test_agent_orchestrator.py](../tests/test_agent_orchestrator.py) 覆盖领域分数、主辅选择、并行进入、同类性能路由和失败结果保留；[API 闭环](../tests/test_demo_workflow.py) 验证真实工具链中的号源与材料协作。这些使用模型替身，证明机制按约定执行。
 
-三路线索与显式领域规则便于解释，但不能解决所有自然语言歧义；字符哈希也不等同于训练过的语义模型。[评测集](../evaluation/cases/intents.json)有 54 条意图样本，完整真实模型测量仍待执行，本文不提供未经测量的准确率或提升幅度。
+新增角色、医疗意图及工具接线检查见 [test_health_routing.py](../tests/test_health_routing.py)，当前用例见[评测集](../evaluation/cases/intents.json)。旧基准 `c712e87` 的 54 条意图真实测量已经保存，不能代表新增医疗意图的表现；U001真实模型66/66意图已通过，完整业务候选与定点修复结果已记录，见[执行检查点](internal/updates/U001-health-consultation/EXECUTION.md)。三路线索仍不能解决所有自然语言歧义，字符哈希也不等同于训练过的语义模型。

@@ -381,6 +381,90 @@
       "expected_intent": "other",
       "expected_agent": "general",
       "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-symptom_query-1",
+      "message": "我35岁，近两天不停咳嗽，去明和医院先找哪一个门诊？",
+      "expected_intent": "symptom_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-symptom_query-2",
+      "message": "成年人这两天眼睛干涩还老流泪，请给一个初步就诊方向。",
+      "expected_intent": "symptom_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-symptom_query-3",
+      "message": "这名7岁孩子腹泻一天，医院里哪个科更适合先评估？",
+      "expected_intent": "symptom_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-symptom_query-4",
+      "message": "我40岁最近鼻塞、喉咙痛，想了解该向哪个科室咨询。",
+      "expected_intent": "symptom_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-medication_query-1",
+      "message": "我手里的药盒写布洛芬200mg普通片，可否列出这份标签的用法和限制？",
+      "expected_intent": "medication_query",
+      "expected_agent": "medication",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-medication_query-2",
+      "message": "对乙酰氨基酚500mg普通片的说明书有哪些不能用的情况？",
+      "expected_intent": "medication_query",
+      "expected_agent": "medication",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-medication_query-3",
+      "message": "正在使用华法林，想核对布洛芬200mg普通片标签里有关合用的警示。",
+      "expected_intent": "medication_query",
+      "expected_agent": "medication",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-medication_query-4",
+      "message": "同是布洛芬，缓释胶囊的说明书是不是也收录了？",
+      "expected_intent": "medication_query",
+      "expected_agent": "medication",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-report_query-1",
+      "message": "请按我化验单上的原文整理：\n血小板 420 10^9/L 参考范围 150-400",
+      "expected_intent": "report_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-report_query-2",
+      "message": "这张检查单有些项目没写参考区间，请帮我标出哪些需要核对。",
+      "expected_intent": "report_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-report_query-3",
+      "message": "我有一份扫描版检验报告，能否上传PDF来整理文字？",
+      "expected_intent": "report_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
+    },
+    {
+      "id": "intent-report_query-4",
+      "message": "化验结果写着血红蛋白118g/L，参考区间115-150，帮我对照原单解读。",
+      "expected_intent": "report_query",
+      "expected_agent": "triage",
+      "patient_id": "patient_self"
     }
   ]
 }

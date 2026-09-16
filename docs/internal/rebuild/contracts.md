@@ -68,7 +68,7 @@
 
 ## Artifact 与本轮结果
 
-固定包装 `Artifact{id,type,data}`，七类 data 对应下表；模型按 type 检查 data 并生成可 JSON 序列化的字典。旧 RAG 的 `results/reranked` 等字段保持其接口，不强行塞入业务卡片。
+固定包装 `Artifact{id,type,data}`，首次重构的七类 data 对应下表；U001 另新增 triage_guidance、medication_info、report_summary，总计十类，见[更新契约](../updates/U001-health-consultation/contracts.md)。模型按 type 检查 data 并生成可 JSON 序列化的字典。旧 RAG 的 `results/reranked` 等字段保持其接口，不强行塞入业务卡片。
 
 | type | data 模型 |
 | --- | --- |
@@ -116,9 +116,9 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
 
 工具查询失败通过 ServiceResult 留在聊天/trace 中，普通聊天仍返回自身成功完成的响应；不是每个工具空结果都把 `/chat` 变成非 2xx。业务失败不得生成成功预约卡。一个独立工具结果只含该工具的数据；已有其他成功工具卡片由 A04 保留。
 
-## 七类卡片完整样例
+## 十类卡片完整样例（含 U001 扩展）
 
-以下为契约测试夹具，不是已生成预约或最终医院数据。H02 统一发布演示内容；ID 和名称可以替换，字段不可各自更名。测试会读取此 JSON 并验证七个 Artifact 以及嵌套模型。
+以下为契约测试夹具，不是已生成预约或最终医院数据。H02 统一发布演示内容；ID 和名称可以替换，字段不可各自更名。测试会读取此 JSON 并验证原七类及 U001 新增三类 Artifact 以及嵌套模型。
 
 <!-- artifact-examples -->
 ```json
@@ -128,7 +128,19 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
     "type": "catalog",
     "data": {
       "category": "hospital",
-      "items": [{"hospital_id":"minghe","name":"明和虚构医院","description":"单医院门诊演示数据","address":"演示市明和路1号（虚构）","outpatient_hours":"08:00—17:00","source":{"source_id":"hospital-public","title":"明和虚构医院公开说明"}}]
+      "items": [
+        {
+          "hospital_id": "minghe",
+          "name": "明和虚构医院",
+          "description": "单医院门诊演示数据",
+          "address": "演示市明和路1号（虚构）",
+          "outpatient_hours": "08:00—17:00",
+          "source": {
+            "source_id": "hospital-public",
+            "title": "明和虚构医院公开说明"
+          }
+        }
+      ]
     }
   },
   {
@@ -136,8 +148,31 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
     "type": "slot_list",
     "data": {
       "list_id": "list-example",
-      "query": {"department_id":"dep_pediatrics","doctor_id":null,"date":"2026-09-17","period":"morning"},
-      "slots": [{"slot_id":"slot-example","hospital_name":"明和虚构医院","department_id":"dep_pediatrics","department_name":"儿科","doctor_id":"doctor_xu","doctor_name":"许知宁","date":"2026-09-17","period":"morning","start_time":"09:00","end_time":"11:00","fee_fen":2000,"location_id":"pediatrics-room","location_name":"门诊楼二层儿科","capacity":5,"remaining":3}],
+      "query": {
+        "department_id": "dep_pediatrics",
+        "doctor_id": null,
+        "date": "2026-09-17",
+        "period": "morning"
+      },
+      "slots": [
+        {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科",
+          "capacity": 5,
+          "remaining": 3
+        }
+      ],
       "queried_at": "2026-09-16T10:00:00+08:00"
     }
   },
@@ -145,36 +180,159 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
     "id": "proposal:proposal-example:pending",
     "type": "appointment_proposal",
     "data": {
-      "user_id":"anonymous","patient_id":"patient_child","conv_id":"visit-example",
-      "proposal_id":"proposal-example","operation":"create","target_id":"slot-example",
-      "snapshot":{"patient_name":"林小满","slot":{"slot_id":"slot-example","hospital_name":"明和虚构医院","department_id":"dep_pediatrics","department_name":"儿科","doctor_id":"doctor_xu","doctor_name":"许知宁","date":"2026-09-17","period":"morning","start_time":"09:00","end_time":"11:00","fee_fen":2000,"location_id":"pediatrics-room","location_name":"门诊楼二层儿科"}},
-      "status":"pending","created_at":"2026-09-16T10:01:00+08:00","expires_at":"2026-09-16T10:16:00+08:00","result":null
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "proposal_id": "proposal-example",
+      "operation": "create",
+      "target_id": "slot-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "pending",
+      "created_at": "2026-09-16T10:01:00+08:00",
+      "expires_at": "2026-09-16T10:16:00+08:00",
+      "result": null
     }
   },
   {
     "id": "appointment:appointment-example:receipt:proposal-example",
     "type": "appointment_record",
     "data": {
-      "user_id":"anonymous","patient_id":"patient_child","conv_id":"visit-example",
-      "appointment_id":"appointment-example",
-      "snapshot":{"patient_name":"林小满","slot":{"slot_id":"slot-example","hospital_name":"明和虚构医院","department_id":"dep_pediatrics","department_name":"儿科","doctor_id":"doctor_xu","doctor_name":"许知宁","date":"2026-09-17","period":"morning","start_time":"09:00","end_time":"11:00","fee_fen":2000,"location_id":"pediatrics-room","location_name":"门诊楼二层儿科"}},
-      "status":"active","created_at":"2026-09-16T10:02:00+08:00","cancelled_at":null
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "appointment_id": "appointment-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "active",
+      "created_at": "2026-09-16T10:02:00+08:00",
+      "cancelled_at": null
     }
   },
   {
     "id": "visit_checklist:example",
     "type": "visit_checklist",
-    "data":{"checklist_id":"child-first","department_id":"dep_pediatrics","visit_type":"child","title":"儿童就诊材料","items":["就诊人身份证明","既往就诊资料"],"source":{"source_id":"child-materials","title":"儿童就诊准备说明"}}
+    "data": {
+      "checklist_id": "child-first",
+      "department_id": "dep_pediatrics",
+      "visit_type": "child",
+      "title": "儿童就诊材料",
+      "items": [
+        "就诊人身份证明",
+        "既往就诊资料"
+      ],
+      "source": {
+        "source_id": "child-materials",
+        "title": "儿童就诊准备说明"
+      }
+    }
   },
   {
     "id": "wayfinding:example",
     "type": "wayfinding",
-    "data":{"route_id":"hall-pharmacy-accessible","origin_id":"hall","destination_id":"pharmacy","mode":"accessible","steps":["从门诊大厅沿无障碍标识前行。","在一层药房窗口办理。"],"source":{"source_id":"hospital-wayfinding","title":"明和虚构医院文字指引"}}
+    "data": {
+      "route_id": "hall-pharmacy-accessible",
+      "origin_id": "hall",
+      "destination_id": "pharmacy",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿无障碍标识前行。",
+        "在一层药房窗口办理。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    }
   },
   {
     "id": "contact_info:example",
     "type": "contact_info",
-    "data":{"contact_id":"guide-desk","label":"人工导诊联系信息","phone":"010-00000000（演示号码）","hours":"08:00—17:00","location":"门诊大厅导诊台","source":{"source_id":"hospital-contact","title":"明和虚构医院导诊说明"},"summary":"我希望了解儿童门诊报到流程。","delivery":"contact_only"}
+    "data": {
+      "contact_id": "guide-desk",
+      "label": "人工导诊联系信息",
+      "phone": "010-00000000（演示号码）",
+      "hours": "08:00—17:00",
+      "location": "门诊大厅导诊台",
+      "source": {
+        "source_id": "hospital-contact",
+        "title": "明和虚构医院导诊说明"
+      },
+      "summary": "我希望了解儿童门诊报到流程。",
+      "delivery": "contact_only"
+    }
+  },
+  {
+    "id": "triage_guidance:example",
+    "type": "triage_guidance",
+    "data": {
+      "title": "需要补充症状信息",
+      "summary": "请补充年龄和症状持续时间；此信息不替代医生诊断。",
+      "recommended_departments": [],
+      "missing_information": [
+        "就诊人年龄"
+      ],
+      "sources": []
+    }
+  },
+  {
+    "id": "medication_info:example",
+    "type": "medication_info",
+    "data": {
+      "title": "药品资料未收录",
+      "summary": "请核对药名和剂型后咨询药师。",
+      "drug_name": "未提供药名",
+      "formulation": "未核实",
+      "sections": [],
+      "sources": []
+    }
+  },
+  {
+    "id": "report_summary:example",
+    "type": "report_summary",
+    "data": {
+      "title": "报告文字整理",
+      "summary": "缺少明确参考区间，保留原文供核对。",
+      "input_kind": "text",
+      "extracted_text": "WBC 6.2",
+      "observations": [],
+      "warnings": [
+        "缺少单位和参考区间，不能判断是否超出区间。"
+      ],
+      "sources": []
+    }
   }
 ]
 ```

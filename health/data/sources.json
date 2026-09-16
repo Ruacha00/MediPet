@@ -1,0 +1,9 @@
+{
+  "nhs-common-cold": {"source_id": "nhs-common-cold", "title": "NHS: Common cold", "url": "https://www.nhs.uk/conditions/common-cold/", "reviewed_at": "2026-09-16"},
+  "nhs-conjunctivitis": {"source_id": "nhs-conjunctivitis", "title": "NHS: Conjunctivitis", "url": "https://www.nhs.uk/conditions/conjunctivitis/", "reviewed_at": "2026-09-16"},
+  "nhs-child-fever": {"source_id": "nhs-child-fever", "title": "NHS: High temperature (fever) in children", "url": "https://www.nhs.uk/symptoms/fever-in-children/", "reviewed_at": "2026-09-16"},
+  "nhs-stomach-ache": {"source_id": "nhs-stomach-ache", "title": "NHS: Stomach ache", "url": "https://www.nhs.uk/symptoms/stomach-ache/", "reviewed_at": "2026-09-16"},
+  "dailymed-acetaminophen-500": {"source_id": "dailymed-acetaminophen-500", "title": "DailyMed: Acetaminophen Tablets 500 mg, Preferred Pharmaceuticals, NDC 68788-4132", "url": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=983debdf-4a61-4dde-ba34-567fdd17720e&type=display", "reviewed_at": "2026-09-16"},
+  "dailymed-ibuprofen-200": {"source_id": "dailymed-ibuprofen-200", "title": "DailyMed: Ibuprofen Tablets USP 200 mg, Dr. Reddy's, NDC 75907-428", "url": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display", "reviewed_at": "2026-09-16"},
+  "medlineplus-lab-results": {"source_id": "medlineplus-lab-results", "title": "MedlinePlus: How to Understand Your Lab Results", "url": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/", "reviewed_at": "2026-09-16"}
+}

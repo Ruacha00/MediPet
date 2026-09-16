@@ -1,5 +1,7 @@
 # MediPet 重构工作索引
 
+首次重构之后的当前工作为 [U001 医疗健康咨询能力补齐](../updates/U001-health-consultation/intent.md)。接续新功能先读该更新的计划、契约与执行检查点；下面 40 个 issue 保留首次重构的验收状态。
+
 这是 [IMPLEMENTATION_PLAN.md](../../../IMPLEMENTATION_PLAN.md) 的执行拆分：**8 份 spec、40 个原子 issue**。产品范围、源码基线和最终完成定义以总计划及用户最新要求为准。这里保存内部任务资料，纳入版本控制；不放入被忽略的 `.scratch/`。
 
 当前准备提交为 `d0d2bdb`，用户已授权开始实施。实际 issue 状态见各文件，当前活动任务、交接点和环境事实见[执行检查点](EXECUTION.md)。

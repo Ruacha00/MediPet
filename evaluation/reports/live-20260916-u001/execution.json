@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-09-16T10:10:51.707323+00:00",
+  "base_url": "http://127.0.0.1:18088",
+  "expected_case_counts": {
+    "intent": 66,
+    "dialog": 15,
+    "boundary": 12
+  },
+  "expected_api": "http://127.0.0.1:18000",
+  "request_method": "POST",
+  "request_body": null,
+  "page_errors": [],
+  "evaluation_requests": [
+    {
+      "url": "http://127.0.0.1:18088/api/python/eval/run",
+      "method": "POST",
+      "body": null,
+      "at": "2026-09-16T10:10:53.785495+00:00"
+    }
+  ],
+  "timeout_seconds": 1200,
+  "head": "c712e87a7ea38769c46f591e6636c68e092792e9",
+  "branch": "codex/u001-health-consultation",
+  "baseline_before_sha256": null,
+  "formal_request_completed": true,
+  "baseline_check_scope": "host worktree data/eval/baseline.json only; container volume needs separate coordinator evidence",
+  "baseline_policy": "candidate only; no acceptance call",
+  "retries": 0,
+  "clicked_at": "2026-09-16T10:10:53.744744+00:00",
+  "http_status": 200,
+  "response_url": "http://127.0.0.1:18088/api/python/eval/run",
+  "response_elapsed_seconds": 188.562,
+  "response_sha256": "27592949289f45b51ff5063fea8a3dd3cfd68c6bcc25379ecf770266d0ddbb81",
+  "page_report_verified": true,
+  "finished_at": "2026-09-16T10:14:03.086205+00:00",
+  "elapsed_seconds": 189.343,
+  "changed_source_paths": [],
+  "baseline_after_sha256": null,
+  "accepted_baseline_unchanged": true
+}
