@@ -1,0 +1,95 @@
+name: medipet-rebuild
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${MEDIPET_REDIS_PASSWORD:-medipet-demo}"]
+    ports:
+      - "127.0.0.1:${MEDIPET_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${MEDIPET_REDIS_PASSWORD:-medipet-demo}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+    ports:
+      - "127.0.0.1:${MEDIPET_CHROMA_PORT:-8001}:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/heartbeat',timeout=3).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      target: production
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL:-https://api.deepseek.com/anthropic}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-deepseek-flash}
+      REDIS_URL: redis://:${MEDIPET_REDIS_PASSWORD:-medipet-demo}@redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: "8000"
+      CHROMA_PERSIST_DIRECTORY: /app/data/chroma
+      EVAL_BASELINE_PATH: /app/data/eval/baseline.json
+      MEDIPET_SKILLS_DIR: /app/skills
+      PROMETHEUS_PORT: "0"
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+    ports:
+      - "127.0.0.1:${MEDIPET_API_PORT:-8000}:8000"
+    volumes:
+      - api-data:/app/data
+      - ./skills:/app/skills:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "127.0.0.1:${MEDIPET_WEB_PORT:-8088}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["monitoring"]
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  redis-data:
+  chroma-data:
+  api-data:
+  prometheus-data:
+

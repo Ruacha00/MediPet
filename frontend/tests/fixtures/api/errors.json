@@ -1,0 +1,132 @@
+[
+  {
+    "status": 404,
+    "body": {
+      "detail": {
+        "code": "not_found",
+        "message": "事项不存在",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 422,
+    "body": {
+      "detail": {
+        "code": "missing_fields",
+        "message": "请补充患者信息",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 422,
+    "body": {
+      "detail": {
+        "code": "invalid_input",
+        "message": "无法解释所选日期",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 403,
+    "body": {
+      "detail": {
+        "code": "identity_conflict",
+        "message": "患者与事项不匹配",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "visit_archived",
+        "message": "请先恢复事项",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "selection_unavailable",
+        "message": "请重新查询号源",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "no_slots",
+        "message": "没有可用号源",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "target_unavailable",
+        "message": "目标当前不可执行",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 410,
+    "body": {
+      "detail": {
+        "code": "proposal_expired",
+        "message": "方案已过期",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "proposal_superseded",
+        "message": "方案已被改选",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "status": 409,
+    "body": {
+      "detail": {
+        "code": "conflict",
+        "message": "号源发生变化，请重试",
+        "retryable": true
+      }
+    }
+  },
+  {
+    "status": 503,
+    "body": {
+      "detail": {
+        "code": "storage_unavailable",
+        "message": "存储暂时不可用",
+        "retryable": true
+      }
+    }
+  },
+  {
+    "status": 500,
+    "body": {
+      "detail": {
+        "code": "artifact_conflict",
+        "message": "卡片数据冲突",
+        "retryable": false
+      }
+    }
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "user_id": "anonymous",
+      "patient_id": "patient_self",
+      "name": "演示本人",
+      "relationship": "self"
+    },
+    {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "name": "林小满",
+      "relationship": "family"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "run_id": "a13acc91e787406bb909067a456be4a3",
+  "baseline_status": "candidate",
+  "accepted_by": null,
+  "model": "deepseek-flash",
+  "case_counts": {
+    "intent": 54,
+    "dialog": 12,
+    "boundary": 12
+  },
+  "input_sha256": "9ea00961639b03fb3fd0b0a26c91df2537575d404c6bbb7bacc5cf3e3821d378",
+  "result_total": 49,
+  "result_passed": 49,
+  "result_pass_rate": 1.0,
+  "avg_scores": {
+    "relevance": 0.9917,
+    "accuracy": 1.0,
+    "completeness": 0.9583,
+    "helpfulness": 0.9604,
+    "intent_accuracy": 1.0
+  },
+  "intent_scores": {
+    "accuracy": 1.0,
+    "macro_f1": 1.0
+  },
+  "intent_mismatches": [],
+  "valid_quality_count": 24,
+  "business_failures": [],
+  "judge_failures": [],
+  "call_failures": [],
+  "skipped": [],
+  "failed_results": [],
+  "candidate_path": "/app/data/eval/candidates/a13acc91e787406bb909067a456be4a3.json"
+}

@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-09-16T08:34:46.542269+00:00",
+  "base_url": "http://127.0.0.1:18088",
+  "expected_case_counts": {
+    "intent": 54,
+    "dialog": 12,
+    "boundary": 12
+  },
+  "expected_api": "http://127.0.0.1:18000",
+  "request_method": "POST",
+  "request_body": null,
+  "page_errors": [],
+  "evaluation_requests": [
+    {
+      "url": "http://127.0.0.1:18088/api/python/eval/run",
+      "method": "POST",
+      "body": null,
+      "at": "2026-09-16T08:34:48.518036+00:00"
+    }
+  ],
+  "timeout_seconds": 1800,
+  "head": "d0d2bdb2a30673035ff1d7dd7db8f0aa9f50a79e",
+  "branch": "refactor/medipet-scenario",
+  "baseline_before_sha256": null,
+  "formal_request_completed": true,
+  "baseline_check_scope": "host worktree data/eval/baseline.json only; container volume needs separate coordinator evidence",
+  "baseline_policy": "candidate only; no acceptance call",
+  "retries": 0,
+  "clicked_at": "2026-09-16T08:34:48.475475+00:00",
+  "http_status": 200,
+  "response_url": "http://127.0.0.1:18088/api/python/eval/run",
+  "response_elapsed_seconds": 170.344,
+  "response_sha256": "3a3bd50e41a6ff8543ebada02737302c2b8f8ee849906cd656cf988732e1dfa2",
+  "page_report_verified": true,
+  "finished_at": "2026-09-16T08:37:39.321723+00:00",
+  "elapsed_seconds": 170.844,
+  "changed_source_paths": [],
+  "baseline_after_sha256": null,
+  "accepted_baseline_unchanged": true
+}

@@ -1,0 +1,1139 @@
+{
+  "base_url": "http://127.0.0.1:5173",
+  "responses": [
+    {
+      "path": "http://127.0.0.1:5173/api/python/visits",
+      "status": 201,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "title": "新的就诊事项",
+        "archived": false,
+        "created_at": "2026-09-16T16:10:36.778497+08:00",
+        "updated_at": "2026-09-16T16:10:36.778497+08:00"
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "patient_id": "patient_child",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T16:10:36.778497+08:00",
+          "updated_at": "2026-09-16T16:10:45.650670+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "slots:list-351304b32ac045febcb2a0455b08e892",
+            "type": "slot_list",
+            "data": {
+              "list_id": "list-351304b32ac045febcb2a0455b08e892",
+              "query": {
+                "department_id": "dep_pediatrics",
+                "doctor_id": null,
+                "date": "2026-09-17",
+                "period": null
+              },
+              "slots": [
+                {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区",
+                  "capacity": 5,
+                  "remaining": 5
+                },
+                {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_afternoon",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "afternoon",
+                  "start_time": "14:00",
+                  "end_time": "16:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区",
+                  "capacity": 5,
+                  "remaining": 5
+                }
+              ],
+              "queried_at": "2026-09-16T16:10:40.325313+08:00"
+            }
+          },
+          {
+            "id": "visit_checklist:16809daaf82a401cafeb23bbcf2629bc",
+            "type": "visit_checklist",
+            "data": {
+              "checklist_id": "general-materials",
+              "department_id": null,
+              "visit_type": "general",
+              "title": "门诊就诊准备",
+              "items": [
+                "就诊人的身份证明",
+                "本次预约信息或就诊凭证",
+                "已有的相关就诊资料"
+              ],
+              "source": {
+                "source_id": "visit-materials",
+                "title": "明和虚构医院门诊材料说明"
+              }
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "appointment",
+            "tool_name": "search_slots",
+            "tool_use_id": "call_00_TLAAeYkKlhWpXU1T6pyG8764",
+            "input": {
+              "department": "儿科",
+              "date": "明天"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 15.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "list_id",
+                "query",
+                "slots",
+                "queried_at"
+              ],
+              "artifact_ids": [
+                "slots:list-351304b32ac045febcb2a0455b08e892"
+              ],
+              "result_count": 0
+            }
+          },
+          {
+            "agent_type": "appointment",
+            "tool_name": "search_knowledge_base",
+            "tool_use_id": "call_01_Fl7oAeqHMG0bB6ZIl1xY6362",
+            "input": {
+              "query": "儿科就诊需要携带的材料 准备物品",
+              "top_k": 3
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 2235.0,
+            "cached": false,
+            "reranked": true,
+            "error": "",
+            "error_code": null,
+            "sources": [
+              {
+                "title": "儿童就诊材料",
+                "source": "knowledge/child-visit-materials.md",
+                "source_id": "child-materials",
+                "doc_id": "child-visit-materials",
+                "chunk_id": "child-visit-materials:0"
+              },
+              {
+                "title": "首次就诊材料",
+                "source": "knowledge/first-visit-materials.md",
+                "source_id": "first-materials",
+                "doc_id": "first-visit-materials",
+                "chunk_id": "first-visit-materials:0"
+              },
+              {
+                "title": "门诊就诊材料",
+                "source": "knowledge/general-preparation.md",
+                "source_id": "visit-materials",
+                "doc_id": "general-preparation",
+                "chunk_id": "general-preparation:0"
+              }
+            ],
+            "result_summary": {
+              "success": true,
+              "data_keys": [],
+              "artifact_ids": [],
+              "result_count": 3
+            },
+            "rewrite_error": null,
+            "rerank_error": null,
+            "recall_errors": [],
+            "partial": false,
+            "fallback_used": false
+          },
+          {
+            "agent_type": "guidance",
+            "tool_name": "get_visit_checklist",
+            "tool_use_id": "call_00_cca1oe7T1lrH1jJGPJcq5095",
+            "input": {
+              "department": "儿科",
+              "visit_type": "general"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "checklist_id",
+                "department_id",
+                "visit_type",
+                "title",
+                "items",
+                "source"
+              ],
+              "artifact_ids": [
+                "visit_checklist:16809daaf82a401cafeb23bbcf2629bc"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "5a171ae6",
+        "response": "明天（2026-09-17）儿科号源如下（明和虚构医院，均为许知宁医生）：\n\n| 序号 | 时段 | 时间 | 费用 | 地点 | 余量 |\n|---|---|---|---|---|---|\n| 1 | 上午 | 09:00–11:00 | 20 元 | 门诊楼二层儿科诊区 | 5 |\n| 2 | 下午 | 14:00–16:00 | 20 元 | 门诊楼二层儿科诊区 | 5 |\n\n**就诊需携带材料**\n1. 儿童就诊人的身份证明\n2. 陪同监护人的身份证明\n3. 本次预约信息及已有的儿童就诊资料\n\n就诊时需由监护人陪同。\n\n**需要说明的两点**\n- 上述号源为预约查询结果，公开排班不等于最终可约，实际以预约确认回执为准。\n- 如果孩子是首次在该院就诊，或属于儿童就诊专项，材料清单可能不同，需要时可再帮你核对对应清单。\n\n如需预约，请告诉我选哪个时段（如“第一个”或“上午”），我会准备待确认方案，届时需在页面卡片上点击确认才会生效。",
+        "intent": "slot_query",
+        "intent_group": "appointment",
+        "agent_type": "appointment",
+        "agent_types": [
+          "appointment",
+          "guidance"
+        ],
+        "primary_agent": "appointment",
+        "supporting_agents": [
+          "guidance"
+        ],
+        "tools_used": [
+          "search_slots",
+          "search_knowledge_base",
+          "get_visit_checklist"
+        ],
+        "routing_reason": "intent=slot_query, group=appointment, primary=appointment, supporting=guidance, scores=[appointment=1.03, general=0.20, guidance=0.18]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 6453.0,
+        "knowledge_used": true,
+        "entities": {
+          "department": [
+            "儿科"
+          ],
+          "doctor": [],
+          "date": [
+            "2026-09-17"
+          ],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.63,
+        "intent_source_scores": {
+          "llm": 0.9,
+          "embedding": 0.3009419175453115,
+          "pattern": 0.5
+        }
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "patient_id": "patient_child",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T16:10:36.778497+08:00",
+          "updated_at": "2026-09-16T16:10:50.167633+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "proposal:proposal-0f8b0f7b600e4ab8b606aedfaf387317:pending",
+            "type": "appointment_proposal",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "proposal_id": "proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+              "operation": "create",
+              "target_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "pending",
+              "created_at": "2026-09-16T16:10:48.501374+08:00",
+              "expires_at": "2026-09-16T16:25:48.501374+08:00",
+              "result": null
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "appointment",
+            "tool_name": "prepare_appointment",
+            "tool_use_id": "call_00_Ny5wPK9YDB8cH8FRXog03525",
+            "input": {
+              "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 15.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "user_id",
+                "patient_id",
+                "conv_id",
+                "proposal_id",
+                "operation",
+                "target_id",
+                "snapshot",
+                "status",
+                "created_at",
+                "expires_at",
+                "result"
+              ],
+              "artifact_ids": [
+                "proposal:proposal-0f8b0f7b600e4ab8b606aedfaf387317:pending"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "263e4bf8",
+        "response": "已为你准备好待确认的预约方案（**尚未预约成功**，需在页面卡片点击确认后才会生效）：\n\n| 项目 | 内容 |\n|---|---|\n| 就诊人 | 林小满 |\n| 医院 | 明和虚构医院 |\n| 科室 | 儿科 |\n| 医生 | 许知宁 |\n| 日期 | 2026-09-17（明天） |\n| 时段 | 上午 09:00–11:00 |\n| 费用 | 20 元 |\n| 地点 | 门诊楼二层儿科诊区 |\n\n**下一步**：请在页面上的方案卡片点击「确认」以完成预约。方案有效期至 2026-09-16 16:25（约 15 分钟），过期需重新查询号源。\n\n**就诊需携带**：儿童就诊人身份证明、陪同监护人身份证明、本次预约信息及已有儿童就诊资料；就诊时需由监护人陪同。\n\n需要我改选下午时段，或核对首次就诊的材料清单吗？",
+        "intent": "appointment_create",
+        "intent_group": "appointment",
+        "agent_type": "appointment",
+        "agent_types": [
+          "appointment"
+        ],
+        "primary_agent": "appointment",
+        "supporting_agents": [],
+        "tools_used": [
+          "prepare_appointment"
+        ],
+        "routing_reason": "intent=appointment_create, group=appointment, primary=appointment, supporting=none, scores=[appointment=1.36, general=0.10, guidance=0.00]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 2391.0,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [
+            "2026-09-17"
+          ],
+          "period": [],
+          "slot_id": [
+            "slot:2026-09-17:schedule_doctor_xu_morning"
+          ],
+          "appointment_id": [],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.729,
+        "intent_source_scores": {
+          "llm": 0.97,
+          "embedding": 0.13987572123604708,
+          "pattern": 0.5
+        }
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/appointment-proposals/proposal-0f8b0f7b600e4ab8b606aedfaf387317/confirm",
+      "status": 200,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "receipt": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "receipt_id": "receipt:proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+          "proposal_id": "proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+          "operation": "create",
+          "status": "executed",
+          "appointment": {
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+            "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+            "snapshot": {
+              "patient_name": "林小满",
+              "slot": {
+                "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                "hospital_name": "明和虚构医院",
+                "department_id": "dep_pediatrics",
+                "department_name": "儿科",
+                "doctor_id": "doctor_xu",
+                "doctor_name": "许知宁",
+                "date": "2026-09-17",
+                "period": "morning",
+                "start_time": "09:00",
+                "end_time": "11:00",
+                "fee_fen": 2000,
+                "location_id": "pediatrics-room",
+                "location_name": "门诊楼二层儿科诊区"
+              }
+            },
+            "status": "active",
+            "created_at": "2026-09-16T16:10:51.325023+08:00",
+            "cancelled_at": null
+          },
+          "executed_at": "2026-09-16T16:10:51.325023+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "proposal:proposal-0f8b0f7b600e4ab8b606aedfaf387317:executed",
+            "type": "appointment_proposal",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "proposal_id": "proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+              "operation": "create",
+              "target_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "executed",
+              "created_at": "2026-09-16T16:10:48.501374+08:00",
+              "expires_at": "2026-09-16T16:25:48.501374+08:00",
+              "result": {
+                "user_id": "anonymous",
+                "patient_id": "patient_child",
+                "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+                "receipt_id": "receipt:proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+                "proposal_id": "proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+                "operation": "create",
+                "status": "executed",
+                "appointment": {
+                  "user_id": "anonymous",
+                  "patient_id": "patient_child",
+                  "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+                  "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+                  "snapshot": {
+                    "patient_name": "林小满",
+                    "slot": {
+                      "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                      "hospital_name": "明和虚构医院",
+                      "department_id": "dep_pediatrics",
+                      "department_name": "儿科",
+                      "doctor_id": "doctor_xu",
+                      "doctor_name": "许知宁",
+                      "date": "2026-09-17",
+                      "period": "morning",
+                      "start_time": "09:00",
+                      "end_time": "11:00",
+                      "fee_fen": 2000,
+                      "location_id": "pediatrics-room",
+                      "location_name": "门诊楼二层儿科诊区"
+                    }
+                  },
+                  "status": "active",
+                  "created_at": "2026-09-16T16:10:51.325023+08:00",
+                  "cancelled_at": null
+                },
+                "executed_at": "2026-09-16T16:10:51.325023+08:00"
+              }
+            }
+          },
+          {
+            "id": "appointment:appointment-661077ff36d241658a82e0f0046cb372:receipt:proposal-0f8b0f7b600e4ab8b606aedfaf387317",
+            "type": "appointment_record",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "active",
+              "created_at": "2026-09-16T16:10:51.325023+08:00",
+              "cancelled_at": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "patient_id": "patient_child",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T16:10:36.778497+08:00",
+          "updated_at": "2026-09-16T16:10:55.208070+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "appointment:appointment-661077ff36d241658a82e0f0046cb372:active",
+            "type": "appointment_record",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "active",
+              "created_at": "2026-09-16T16:10:51.325023+08:00",
+              "cancelled_at": null
+            }
+          },
+          {
+            "id": "appointment:appointment-7ccdb370d45e462199a9e0b978615142:cancelled",
+            "type": "appointment_record",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-80a6955e1d2b4adabbdaaad795573485",
+              "appointment_id": "appointment-7ccdb370d45e462199a9e0b978615142",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "cancelled",
+              "created_at": "2026-09-16T15:53:31.133022+08:00",
+              "cancelled_at": "2026-09-16T15:54:21.661087+08:00"
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "appointment",
+            "tool_name": "list_appointments",
+            "tool_use_id": "call_00_XyQFzAp8nSRgatUXT3cQ4083",
+            "input": {},
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "items"
+              ],
+              "artifact_ids": [
+                "appointment:appointment-661077ff36d241658a82e0f0046cb372:active",
+                "appointment:appointment-7ccdb370d45e462199a9e0b978615142:cancelled"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "a87d874a",
+        "response": "当前就诊人（林小满）的预约记录如下：\n\n**有效预约（1 条）**\n\n| 项目 | 内容 |\n|---|---|\n| 预约编号 | appointment-661077ff36d241658a82e0f0046cb372 |\n| 状态 | 有效（active） |\n| 就诊人 | 林小满 |\n| 医院 | 明和虚构医院 |\n| 科室 | 儿科 |\n| 医生 | 许知宁 |\n| 日期 | 2026-09-17 |\n| 时段 | 上午 09:00–11:00 |\n| 费用 | 20 元 |\n| 地点 | 门诊楼二层儿科诊区 |\n| 创建时间 | 2026-09-16 16:10 |\n\n**已取消预约（1 条）**\n\n| 项目 | 内容 |\n|---|---|\n| 预约编号 | appointment-7ccdb370d45e462199a9e0b978615142 |\n| 状态 | 已取消（cancelled） |\n| 就诊人 | 林小满 |\n| 科室/医生 | 儿科 · 许知宁 |\n| 日期时段 | 2026-09-17 上午 09:00–11:00 |\n| 创建时间 | 2026-09-16 15:53 |\n| 取消时间 | 2026-09-16 15:54 |\n\n如需取消上面那条有效预约，或改约其他时段，告诉我即可，我会先准备待确认方案，再由你在页面卡片上确认。",
+        "intent": "appointment_status",
+        "intent_group": "appointment",
+        "agent_type": "appointment",
+        "agent_types": [
+          "appointment"
+        ],
+        "primary_agent": "appointment",
+        "supporting_agents": [],
+        "tools_used": [
+          "list_appointments"
+        ],
+        "routing_reason": "intent=appointment_status, group=appointment, primary=appointment, supporting=none, scores=[appointment=0.93, general=0.10, guidance=0.00]",
+        "routing_confidence": 0.93,
+        "escalated": false,
+        "latency_ms": 2265.0,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.8321,
+        "intent_source_scores": {
+          "llm": 0.97,
+          "embedding": 0.5153882032022076,
+          "pattern": 0.5
+        }
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "patient_id": "patient_child",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T16:10:36.778497+08:00",
+          "updated_at": "2026-09-16T16:10:58.325666+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "wayfinding:d9774e9be65b48c2a61baafb712ca563",
+            "type": "wayfinding",
+            "data": {
+              "route_id": "hall-pharmacy-accessible",
+              "origin_id": "hall",
+              "destination_id": "pharmacy",
+              "mode": "accessible",
+              "steps": [
+                "从门诊大厅沿左侧无台阶通道前行。",
+                "经过取药等候区，到一层药房无障碍服务窗口。"
+              ],
+              "source": {
+                "source_id": "hospital-wayfinding",
+                "title": "明和虚构医院文字指引"
+              }
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "guidance",
+            "tool_name": "get_wayfinding",
+            "tool_use_id": "call_00_Ji8F2zqxVniPu5dD3Vvm5314",
+            "input": {
+              "origin": "门诊大厅",
+              "destination": "药房",
+              "mode": "accessible"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "route_id",
+                "origin_id",
+                "destination_id",
+                "mode",
+                "steps",
+                "source"
+              ],
+              "artifact_ids": [
+                "wayfinding:d9774e9be65b48c2a61baafb712ca563"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "46caed43",
+        "response": "**门诊大厅 → 药房（无障碍路线）**\n\n1. 从门诊大厅沿左侧无台阶通道前行。\n2. 经过取药等候区，到一层药房无障碍服务窗口。\n\n来源：明和虚构医院文字指引（route_id: hall-pharmacy-accessible）\n\n如需其他起点或目的地的指引，告诉我即可。",
+        "intent": "wayfinding",
+        "intent_group": "guidance",
+        "agent_type": "guidance",
+        "agent_types": [
+          "guidance"
+        ],
+        "primary_agent": "guidance",
+        "supporting_agents": [],
+        "tools_used": [
+          "get_wayfinding"
+        ],
+        "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=1.31, general=0.10, appointment=0.00]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 1906.0,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [],
+          "origin": [
+            "门诊大厅"
+          ],
+          "destination": [
+            "药房"
+          ],
+          "accessibility": [
+            "accessible"
+          ],
+          "selection_index": []
+        },
+        "intent_confidence": 0.8323,
+        "intent_source_scores": {
+          "llm": 0.97,
+          "embedding": 0.516671222870379,
+          "pattern": 0.5
+        }
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/chat",
+      "status": 200,
+      "data": {
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "patient_id": "patient_child",
+        "visit": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "title": "新的就诊事项",
+          "archived": false,
+          "created_at": "2026-09-16T16:10:36.778497+08:00",
+          "updated_at": "2026-09-16T16:11:01.546542+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "proposal:proposal-0af3e68fc7fa43d59215688ac53a7439:pending",
+            "type": "appointment_proposal",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "proposal_id": "proposal-0af3e68fc7fa43d59215688ac53a7439",
+              "operation": "cancel",
+              "target_id": "appointment-661077ff36d241658a82e0f0046cb372",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "pending",
+              "created_at": "2026-09-16T16:11:00.479366+08:00",
+              "expires_at": "2026-09-16T16:26:00.479366+08:00",
+              "result": null
+            }
+          }
+        ],
+        "tool_traces": [
+          {
+            "agent_type": "appointment",
+            "tool_name": "prepare_cancellation",
+            "tool_use_id": "call_00_Sbgf7d96hUUyAjZ4zsAK1050",
+            "input": {
+              "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372"
+            },
+            "kind": "tool_call",
+            "success": true,
+            "call_success": true,
+            "result_success": true,
+            "latency_ms": 16.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "error_code": null,
+            "result_summary": {
+              "success": true,
+              "data_keys": [
+                "user_id",
+                "patient_id",
+                "conv_id",
+                "proposal_id",
+                "operation",
+                "target_id",
+                "snapshot",
+                "status",
+                "created_at",
+                "expires_at",
+                "result"
+              ],
+              "artifact_ids": [
+                "proposal:proposal-0af3e68fc7fa43d59215688ac53a7439:pending"
+              ],
+              "result_count": 0
+            }
+          }
+        ],
+        "request_id": "650e16c0",
+        "response": "已为你准备好**取消预约**的待确认方案（**尚未取消**，需在页面卡片点击确认后才会生效）：\n\n| 项目 | 内容 |\n|---|---|\n| 就诊人 | 林小满 |\n| 医院 | 明和虚构医院 |\n| 科室 | 儿科 |\n| 医生 | 许知宁 |\n| 日期 | 2026-09-17 |\n| 时段 | 上午 09:00–11:00 |\n| 费用 | 20 元 |\n| 地点 | 门诊楼二层儿科诊区 |\n| 预约编号 | appointment-661077ff36d241658a82e0f0046cb372 |\n\n**下一步**：请在页面上的方案卡片点击「确认」以完成取消。方案有效期至 2026-09-16 16:26（约 15 分钟），过期需重新准备。\n\n如需改为取消其他预约或改约时段，告诉我即可。",
+        "intent": "appointment_cancel",
+        "intent_group": "appointment",
+        "agent_type": "appointment",
+        "agent_types": [
+          "appointment"
+        ],
+        "primary_agent": "appointment",
+        "supporting_agents": [],
+        "tools_used": [
+          "prepare_cancellation"
+        ],
+        "routing_reason": "intent=appointment_cancel, group=appointment, primary=appointment, supporting=none, scores=[appointment=1.26, general=0.10, guidance=0.00]",
+        "routing_confidence": 1.0,
+        "escalated": false,
+        "latency_ms": 1782.0,
+        "knowledge_used": false,
+        "entities": {
+          "department": [],
+          "doctor": [],
+          "date": [],
+          "period": [],
+          "slot_id": [],
+          "appointment_id": [
+            "appointment-661077ff36d241658a82e0f0046cb372"
+          ],
+          "origin": [],
+          "destination": [],
+          "accessibility": [],
+          "selection_index": []
+        },
+        "intent_confidence": 0.8128,
+        "intent_source_scores": {
+          "llm": 0.98,
+          "embedding": 0.2588516353981612,
+          "pattern": 0.75
+        }
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/appointment-proposals/proposal-0af3e68fc7fa43d59215688ac53a7439/confirm",
+      "status": 200,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "receipt": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+          "receipt_id": "receipt:proposal-0af3e68fc7fa43d59215688ac53a7439",
+          "proposal_id": "proposal-0af3e68fc7fa43d59215688ac53a7439",
+          "operation": "cancel",
+          "status": "executed",
+          "appointment": {
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+            "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+            "snapshot": {
+              "patient_name": "林小满",
+              "slot": {
+                "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                "hospital_name": "明和虚构医院",
+                "department_id": "dep_pediatrics",
+                "department_name": "儿科",
+                "doctor_id": "doctor_xu",
+                "doctor_name": "许知宁",
+                "date": "2026-09-17",
+                "period": "morning",
+                "start_time": "09:00",
+                "end_time": "11:00",
+                "fee_fen": 2000,
+                "location_id": "pediatrics-room",
+                "location_name": "门诊楼二层儿科诊区"
+              }
+            },
+            "status": "cancelled",
+            "created_at": "2026-09-16T16:10:51.325023+08:00",
+            "cancelled_at": "2026-09-16T16:11:02.574737+08:00"
+          },
+          "executed_at": "2026-09-16T16:11:02.574737+08:00"
+        },
+        "artifacts": [
+          {
+            "id": "proposal:proposal-0af3e68fc7fa43d59215688ac53a7439:executed",
+            "type": "appointment_proposal",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "proposal_id": "proposal-0af3e68fc7fa43d59215688ac53a7439",
+              "operation": "cancel",
+              "target_id": "appointment-661077ff36d241658a82e0f0046cb372",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "executed",
+              "created_at": "2026-09-16T16:11:00.479366+08:00",
+              "expires_at": "2026-09-16T16:26:00.479366+08:00",
+              "result": {
+                "user_id": "anonymous",
+                "patient_id": "patient_child",
+                "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+                "receipt_id": "receipt:proposal-0af3e68fc7fa43d59215688ac53a7439",
+                "proposal_id": "proposal-0af3e68fc7fa43d59215688ac53a7439",
+                "operation": "cancel",
+                "status": "executed",
+                "appointment": {
+                  "user_id": "anonymous",
+                  "patient_id": "patient_child",
+                  "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+                  "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+                  "snapshot": {
+                    "patient_name": "林小满",
+                    "slot": {
+                      "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                      "hospital_name": "明和虚构医院",
+                      "department_id": "dep_pediatrics",
+                      "department_name": "儿科",
+                      "doctor_id": "doctor_xu",
+                      "doctor_name": "许知宁",
+                      "date": "2026-09-17",
+                      "period": "morning",
+                      "start_time": "09:00",
+                      "end_time": "11:00",
+                      "fee_fen": 2000,
+                      "location_id": "pediatrics-room",
+                      "location_name": "门诊楼二层儿科诊区"
+                    }
+                  },
+                  "status": "cancelled",
+                  "created_at": "2026-09-16T16:10:51.325023+08:00",
+                  "cancelled_at": "2026-09-16T16:11:02.574737+08:00"
+                },
+                "executed_at": "2026-09-16T16:11:02.574737+08:00"
+              }
+            }
+          },
+          {
+            "id": "appointment:appointment-661077ff36d241658a82e0f0046cb372:receipt:proposal-0af3e68fc7fa43d59215688ac53a7439",
+            "type": "appointment_record",
+            "data": {
+              "user_id": "anonymous",
+              "patient_id": "patient_child",
+              "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+              "appointment_id": "appointment-661077ff36d241658a82e0f0046cb372",
+              "snapshot": {
+                "patient_name": "林小满",
+                "slot": {
+                  "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "hospital_name": "明和虚构医院",
+                  "department_id": "dep_pediatrics",
+                  "department_name": "儿科",
+                  "doctor_id": "doctor_xu",
+                  "doctor_name": "许知宁",
+                  "date": "2026-09-17",
+                  "period": "morning",
+                  "start_time": "09:00",
+                  "end_time": "11:00",
+                  "fee_fen": 2000,
+                  "location_id": "pediatrics-room",
+                  "location_name": "门诊楼二层儿科诊区"
+                }
+              },
+              "status": "cancelled",
+              "created_at": "2026-09-16T16:10:51.325023+08:00",
+              "cancelled_at": "2026-09-16T16:11:02.574737+08:00"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/visits/visit-5b450d27b60e4e849e1b37e36250d7ed",
+      "status": 200,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "title": "儿童预约验收 50d7ed",
+        "archived": false,
+        "created_at": "2026-09-16T16:10:36.778497+08:00",
+        "updated_at": "2026-09-16T16:11:02.883050+08:00"
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/visits/visit-5b450d27b60e4e849e1b37e36250d7ed",
+      "status": 200,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "title": "儿童预约验收 50d7ed",
+        "archived": true,
+        "created_at": "2026-09-16T16:10:36.778497+08:00",
+        "updated_at": "2026-09-16T16:11:03.044271+08:00"
+      }
+    },
+    {
+      "path": "http://127.0.0.1:5173/api/python/visits/visit-5b450d27b60e4e849e1b37e36250d7ed",
+      "status": 200,
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+        "title": "儿童预约验收 50d7ed",
+        "archived": false,
+        "created_at": "2026-09-16T16:10:36.778497+08:00",
+        "updated_at": "2026-09-16T16:11:03.194892+08:00"
+      }
+    }
+  ],
+  "checks": {
+    "pending_has_no_execution": true,
+    "double_click_single_receipt": true,
+    "accessible_wayfinding": true,
+    "create_query_cancel": true,
+    "rename_archive_restore_switch_refresh": true,
+    "responsive": true
+  },
+  "page_errors": [],
+  "conv_id": "visit-5b450d27b60e4e849e1b37e36250d7ed",
+  "passed": true
+}

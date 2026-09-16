@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "clock": "2026-09-16T10:00:00+08:00",
+  "user_id": "anonymous",
+  "description": "评测专用措辞；业务事实断言独立于质量评分。",
+  "cases": [
+    {
+      "id": "intent-hospital_info-1",
+      "message": "请告诉我明和医院门诊每天营业到几点。",
+      "expected_intent": "hospital_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-hospital_info-2",
+      "message": "明和医院的门诊从早上哪个时间开始？",
+      "expected_intent": "hospital_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-hospital_info-3",
+      "message": "这家演示医院坐落在什么地方？",
+      "expected_intent": "hospital_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-hospital_info-4",
+      "message": "能概括明和虚构医院的基本信息吗？",
+      "expected_intent": "hospital_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-department_info-1",
+      "message": "列一份明和医院现有科室的名单。",
+      "expected_intent": "department_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-department_info-2",
+      "message": "我想读一读眼科的公开科室说明。",
+      "expected_intent": "department_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-department_info-3",
+      "message": "给我看看内科的科室简介。",
+      "expected_intent": "department_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-department_info-4",
+      "message": "明和医院儿科的介绍资料在哪里？",
+      "expected_intent": "department_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-doctor_info-1",
+      "message": "许知宁医生的公开介绍能查到吗？",
+      "expected_intent": "doctor_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-doctor_info-2",
+      "message": "帮我查林知远医生担任什么职称。",
+      "expected_intent": "doctor_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-doctor_info-3",
+      "message": "顾清禾是哪一个科室的医生？",
+      "expected_intent": "doctor_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-doctor_info-4",
+      "message": "9月17日儿科医生如何安排出诊？",
+      "expected_intent": "doctor_info",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-slot_query-1",
+      "message": "把明天上午儿科剩余的挂号名额列出来。",
+      "expected_intent": "slot_query",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-slot_query-2",
+      "message": "9月18日的眼科还可以选哪些门诊号？",
+      "expected_intent": "slot_query",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-slot_query-3",
+      "message": "请查林知远明日下午可预约的时段。",
+      "expected_intent": "slot_query",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-slot_query-4",
+      "message": "今天内科门诊有哪些尚未约满的号源？",
+      "expected_intent": "slot_query",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_create-1",
+      "message": "为列表中的第二项生成预约确认资料。",
+      "expected_intent": "appointment_create",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_create-2",
+      "message": "我决定预约这个儿科号，请先给我核对信息。",
+      "expected_intent": "appointment_create",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_create-3",
+      "message": "请按刚才那个上午号准备预约方案。",
+      "expected_intent": "appointment_create",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_create-4",
+      "message": "把第一个可选号源做成待确认的预约。",
+      "expected_intent": "appointment_create",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_status-1",
+      "message": "列出这个就诊人目前有效的预约记录。",
+      "expected_intent": "appointment_status",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_status-2",
+      "message": "帮我核对孩子刚才预约的办理状态。",
+      "expected_intent": "appointment_status",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_status-3",
+      "message": "我要查看本人过去已取消的门诊预约。",
+      "expected_intent": "appointment_status",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_status-4",
+      "message": "当前患者名下登记了哪些就诊预约？",
+      "expected_intent": "appointment_status",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_cancel-1",
+      "message": "替我准备撤销刚才预约的确认资料。",
+      "expected_intent": "appointment_cancel",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_cancel-2",
+      "message": "我不去这次门诊了，要取消那条预约。",
+      "expected_intent": "appointment_cancel",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_cancel-3",
+      "message": "请为选中的预约生成取消方案。",
+      "expected_intent": "appointment_cancel",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-appointment_cancel-4",
+      "message": "这次挂号安排不要了，帮我办理取消预约。",
+      "expected_intent": "appointment_cancel",
+      "expected_agent": "appointment",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_preparation-1",
+      "message": "带孩子第一次去儿科要带齐哪些材料？",
+      "expected_intent": "visit_preparation",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_preparation-2",
+      "message": "明天门诊前我该整理哪些就诊资料？",
+      "expected_intent": "visit_preparation",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_preparation-3",
+      "message": "首次到这家医院就诊的材料清单发我一份。",
+      "expected_intent": "visit_preparation",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_preparation-4",
+      "message": "能列出儿童初诊随身携带的资料吗？",
+      "expected_intent": "visit_preparation",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_process-1",
+      "message": "我到门诊之后，报到和候诊分别怎么安排？",
+      "expected_intent": "visit_process",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_process-2",
+      "message": "医生开了检验单后应该先办理什么手续？",
+      "expected_intent": "visit_process",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_process-3",
+      "message": "想了解缴费之后领取药品的流程。",
+      "expected_intent": "visit_process",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-visit_process-4",
+      "message": "门诊报到完成后下一步该做什么？",
+      "expected_intent": "visit_process",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-wayfinding-1",
+      "message": "请给出门诊大厅到检验科的文字路线。",
+      "expected_intent": "wayfinding",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-wayfinding-2",
+      "message": "从门诊大厅走到眼科诊区的说明发我一下。",
+      "expected_intent": "wayfinding",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-wayfinding-3",
+      "message": "需要从大厅坐电梯去儿科的无障碍指引。",
+      "expected_intent": "wayfinding",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-wayfinding-4",
+      "message": "我在门诊大厅，要去收费处应如何走？",
+      "expected_intent": "wayfinding",
+      "expected_agent": "guidance",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-human_handoff-1",
+      "message": "可以提供人工导诊台的联系办法吗？",
+      "expected_intent": "human_handoff",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-human_handoff-2",
+      "message": "请给我导诊工作人员的演示联系电话。",
+      "expected_intent": "human_handoff",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-human_handoff-3",
+      "message": "我希望找人工导诊咨询到院安排。",
+      "expected_intent": "human_handoff",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-human_handoff-4",
+      "message": "将我的问题整理好，并展示人工导诊联系方式。",
+      "expected_intent": "human_handoff",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-emergency-1",
+      "message": "我现在呼吸困难，刚刚开始的。",
+      "expected_intent": "emergency",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-emergency-2",
+      "message": "旁边的人突然失去意识了，请告诉我怎么办。",
+      "expected_intent": "emergency",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-emergency-3",
+      "message": "家人现在剧烈胸痛，需要立即处理。",
+      "expected_intent": "emergency",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-emergency-4",
+      "message": "孩子突然失去意识，现场需要帮助。",
+      "expected_intent": "emergency",
+      "expected_agent": "escalation",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-greeting-1",
+      "message": "下午好，我刚打开这个助手。",
+      "expected_intent": "greeting",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-greeting-2",
+      "message": "哈喽，先打个招呼。",
+      "expected_intent": "greeting",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-feedback-1",
+      "message": "刚才的说明很有帮助，感谢。",
+      "expected_intent": "feedback",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-feedback-2",
+      "message": "今天的引导体验挺不错的。",
+      "expected_intent": "feedback",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-other-1",
+      "message": "蓝色的三角形在跳舞。",
+      "expected_intent": "other",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    },
+    {
+      "id": "intent-other-2",
+      "message": "随便看看，暂时没有具体事项。",
+      "expected_intent": "other",
+      "expected_agent": "general",
+      "patient_id": "patient_child"
+    }
+  ]
+}

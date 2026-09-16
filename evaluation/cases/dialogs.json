@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "clock": "2026-09-16T10:00:00+08:00",
+  "user_id": "anonymous",
+  "description": "评测专用措辞；业务事实断言独立于质量评分。",
+  "cases": [
+    {
+      "id": "date-followup",
+      "title": "补充日期",
+      "patient_id": "patient_child",
+      "turns": [
+        "列出儿科今天尚可选择的号源。",
+        "明天呢？"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "query.department_id=dep_pediatrics",
+        "query.date=2026-09-17"
+      ]
+    },
+    {
+      "id": "period-followup",
+      "title": "修改时段",
+      "patient_id": "patient_child",
+      "turns": [
+        "查明天儿科上午能约的号。",
+        "还是下午吧。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "query.date=2026-09-17",
+        "query.period=afternoon"
+      ]
+    },
+    {
+      "id": "list-selection",
+      "title": "按实际序号选号",
+      "patient_id": "patient_child",
+      "turns": [
+        "看一下明天儿科可选号源。",
+        "我选第一项，请展示确认资料。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "proposal.target_id=last_slot_list.slots[0].slot_id",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "create-confirm",
+      "title": "创建预约闭环",
+      "patient_id": "patient_child",
+      "turns": [
+        "查明天儿科的号源。",
+        "把第一项做成待确认方案。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "before_confirmation.appointments.count=0",
+        "after_confirmation.appointments.count=1",
+        "after_confirmation.slot_delta=-1"
+      ],
+      "after_turns": [
+        {
+          "action": "confirm_current"
+        }
+      ]
+    },
+    {
+      "id": "cancel-confirm",
+      "title": "取消预约闭环",
+      "patient_id": "patient_child",
+      "turns": [
+        "列出我当前的有效预约。",
+        "准备取消列表中的第一条预约。"
+      ],
+      "preconditions": [
+        "当前患者已有一条有效预约"
+      ],
+      "assertions": [
+        "before_confirmation.appointment.status=active",
+        "after_confirmation.appointment.status=cancelled",
+        "after_confirmation.slot_delta=1"
+      ],
+      "setup": [
+        {
+          "action": "create_existing_appointment",
+          "department": "儿科",
+          "date": "明天"
+        }
+      ],
+      "after_turns": [
+        {
+          "action": "confirm_current"
+        }
+      ]
+    },
+    {
+      "id": "preparation-followup",
+      "title": "材料追问",
+      "patient_id": "patient_child",
+      "turns": [
+        "请查儿童首次到院要带的材料。",
+        "到院报到要怎样办理？"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "has_artifact=visit_checklist",
+        "knowledge_sources.nonempty=true"
+      ]
+    },
+    {
+      "id": "collaboration",
+      "title": "号源与材料协作",
+      "patient_id": "patient_child",
+      "turns": [
+        "给我查明天儿科门诊号，并说明第一次带孩子来需要的资料。",
+        "把号源里的第一项列为预约方案。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "agents.include=appointment,guidance",
+        "has_artifacts=slot_list,visit_checklist",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "accessible-route",
+      "title": "普通与无障碍路线",
+      "patient_id": "patient_self",
+      "turns": [
+        "从门诊大厅去眼科诊区如何走？",
+        "改用无障碍的文字指引。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "wayfinding.destination_id=ophthalmology-room",
+        "wayfinding.mode=accessible"
+      ]
+    },
+    {
+      "id": "patient-switch",
+      "title": "本人家属隔离",
+      "patient_id": "patient_child",
+      "turns": [
+        "查孩子明天儿科号源并生成第一项方案。",
+        "查看当前就诊人的预约记录。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化",
+        "孩子已有一条有效预约，本人没有预约"
+      ],
+      "assertions": [
+        "self.appointments.count=0",
+        "self.selection.slots.count=0"
+      ],
+      "between_turns": {
+        "1": [
+          {
+            "action": "switch_patient",
+            "patient_id": "patient_self"
+          }
+        ]
+      },
+      "setup": [
+        {
+          "action": "create_existing_appointment",
+          "department": "儿科",
+          "date": "明天"
+        }
+      ]
+    },
+    {
+      "id": "history-restore",
+      "title": "刷新与工作记忆到期",
+      "patient_id": "patient_child",
+      "turns": [
+        "查明天儿科号源。",
+        "请为刚才列表中的第一项生成确认资料。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "complete_history.count.unchanged=true",
+        "proposal.target_id=saved_slot_list.slots[0].slot_id"
+      ],
+      "between_turns": {
+        "1": [
+          {
+            "action": "expire_working_memory"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reselection",
+      "title": "改选淘汰旧方案",
+      "patient_id": "patient_child",
+      "turns": [
+        "查询明天儿科号源，准备第一项。",
+        "改为第二项，重新给我确认资料。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "old_proposal.status=superseded",
+        "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "archive-restore",
+      "title": "事项归档恢复",
+      "patient_id": "patient_self",
+      "turns": [
+        "提供大厅到药房的文字说明。",
+        "继续查看这次门诊需要准备的材料。"
+      ],
+      "preconditions": [
+        "独立事项，预置患者与七天号源已初始化"
+      ],
+      "assertions": [
+        "archive.messages.unchanged=true",
+        "restored.patient_id=patient_self",
+        "restored.archived=false"
+      ],
+      "between_turns": {
+        "1": [
+          {
+            "action": "archive_visit"
+          },
+          {
+            "action": "restore_visit"
+          }
+        ]
+      }
+    }
+  ]
+}

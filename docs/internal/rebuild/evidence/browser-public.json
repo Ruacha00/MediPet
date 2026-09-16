@@ -1,0 +1,341 @@
+{
+  "base_url": "http://127.0.0.1:5173",
+  "responses": [
+    {
+      "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+      "patient_id": "patient_self",
+      "visit": {
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+        "title": "新的就诊事项",
+        "archived": false,
+        "created_at": "2026-09-16T16:14:18.070781+08:00",
+        "updated_at": "2026-09-16T16:14:21.983740+08:00"
+      },
+      "artifacts": [
+        {
+          "id": "catalog:77ddf00c83d548c5a8233e0bfa9796be",
+          "type": "catalog",
+          "data": {
+            "category": "hospital",
+            "items": [
+              {
+                "hospital_id": "minghe",
+                "name": "明和虚构医院",
+                "description": "用于 MediPet 门诊就诊助手的单医院演示数据。医院、医生、患者、排班、费用、地址和联系号码均为虚构内容，不接入真实医院服务。",
+                "address": "演示市明和路1号（虚构）",
+                "outpatient_hours": "08:00—17:00",
+                "source": {
+                  "source_id": "hospital-public",
+                  "title": "明和虚构医院公开说明"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "catalog:44ef7fc865b34a2882e251356dfa9c7c",
+          "type": "catalog",
+          "data": {
+            "category": "location",
+            "items": [
+              {
+                "location_id": "cashier",
+                "name": "收费处",
+                "building": "门诊楼",
+                "floor": "一层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "hall",
+                "name": "门诊大厅",
+                "building": "门诊楼",
+                "floor": "一层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "internal-room",
+                "name": "内科诊区",
+                "building": "门诊楼",
+                "floor": "二层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "laboratory",
+                "name": "检验科",
+                "building": "门诊楼",
+                "floor": "一层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "ophthalmology-room",
+                "name": "眼科诊区",
+                "building": "门诊楼",
+                "floor": "三层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "pediatrics-room",
+                "name": "儿科诊区",
+                "building": "门诊楼",
+                "floor": "二层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              },
+              {
+                "location_id": "pharmacy",
+                "name": "药房",
+                "building": "门诊楼",
+                "floor": "一层",
+                "source": {
+                  "source_id": "hospital-wayfinding",
+                  "title": "明和虚构医院文字指引"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "tool_traces": [
+        {
+          "agent_type": "general",
+          "tool_name": "query_hospital_catalog",
+          "tool_use_id": "call_00_dZU0JUFdSRKjQB39pugP3758",
+          "input": {
+            "category": "hospital"
+          },
+          "kind": "tool_call",
+          "success": true,
+          "call_success": true,
+          "result_success": true,
+          "latency_ms": 0.0,
+          "cached": false,
+          "reranked": false,
+          "error": "",
+          "error_code": null,
+          "result_summary": {
+            "success": true,
+            "data_keys": [
+              "category",
+              "items"
+            ],
+            "artifact_ids": [
+              "catalog:77ddf00c83d548c5a8233e0bfa9796be"
+            ],
+            "result_count": 0
+          }
+        },
+        {
+          "agent_type": "general",
+          "tool_name": "query_hospital_catalog",
+          "tool_use_id": "call_01_bIhvD2C721hnLw3aGUae6802",
+          "input": {
+            "category": "location"
+          },
+          "kind": "tool_call",
+          "success": true,
+          "call_success": true,
+          "result_success": true,
+          "latency_ms": 0.0,
+          "cached": false,
+          "reranked": false,
+          "error": "",
+          "error_code": null,
+          "result_summary": {
+            "success": true,
+            "data_keys": [
+              "category",
+              "items"
+            ],
+            "artifact_ids": [
+              "catalog:44ef7fc865b34a2882e251356dfa9c7c"
+            ],
+            "result_count": 0
+          }
+        }
+      ],
+      "request_id": "807ee049",
+      "response": "**明和虚构医院（演示数据）**\n\n- **地址**：演示市明和路1号（虚构）\n- **门诊开放时间**：08:00—17:00\n\n**门诊楼内主要地点（文字指引）**\n- 门诊大厅：门诊楼 一层\n- 收费处：门诊楼 一层\n- 药房：门诊楼 一层\n- 检验科：门诊楼 一层\n- 内科诊区：门诊楼 二层\n- 儿科诊区：门诊楼 二层\n- 眼科诊区：门诊楼 三层\n\n说明：以上均为演示用虚构信息，不接入真实医院服务，地址与时间仅供参考。\n\n需要我继续帮您查某个科室或医生的公开排班吗？",
+      "intent": "hospital_info",
+      "intent_group": "query",
+      "agent_type": "general",
+      "agent_types": [
+        "general"
+      ],
+      "primary_agent": "general",
+      "supporting_agents": [],
+      "tools_used": [
+        "query_hospital_catalog",
+        "query_hospital_catalog"
+      ],
+      "routing_reason": "intent=hospital_info, group=query, primary=general, supporting=none, scores=[general=0.89, guidance=0.00, appointment=0.00]",
+      "routing_confidence": 0.89,
+      "escalated": false,
+      "latency_ms": 2719.0,
+      "knowledge_used": false,
+      "entities": {
+        "department": [],
+        "doctor": [],
+        "date": [],
+        "period": [],
+        "slot_id": [],
+        "appointment_id": [],
+        "origin": [],
+        "destination": [],
+        "accessibility": [],
+        "selection_index": []
+      },
+      "intent_confidence": 0.7858,
+      "intent_source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3539961627023943,
+        "pattern": 0.5
+      }
+    },
+    {
+      "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+      "patient_id": "patient_self",
+      "visit": {
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+        "title": "新的就诊事项",
+        "archived": false,
+        "created_at": "2026-09-16T16:14:18.070781+08:00",
+        "updated_at": "2026-09-16T16:14:23.302928+08:00"
+      },
+      "artifacts": [
+        {
+          "id": "contact_info:7a33711f517f491088c182504c536b66",
+          "type": "contact_info",
+          "data": {
+            "contact_id": "guide-desk",
+            "label": "人工导诊联系信息",
+            "phone": "010-00000000（演示号码）",
+            "hours": "08:00—17:00",
+            "location": "门诊大厅导诊台",
+            "source": {
+              "source_id": "hospital-contact",
+              "title": "明和虚构医院导诊说明"
+            },
+            "summary": "我想联系人工导诊，请给我联系电话和地点。",
+            "delivery": "contact_only"
+          }
+        }
+      ],
+      "tool_traces": [],
+      "request_id": "a7341cf7",
+      "response": "您可以联系医院人工导诊，并复制以下问题摘要。\n\n人工导诊联系信息：010-00000000（演示号码）\n服务时间：08:00—17:00\n位置：门诊大厅导诊台\n问题摘要：我想联系人工导诊，请给我联系电话和地点。\n联系原因：意图=human_handoff，紧急度=HIGH\n已提供信息：{\"department\": [], \"doctor\": [], \"date\": [], \"period\": [], \"slot_id\": [], \"appointment_id\": [], \"origin\": [], \"destination\": [], \"accessibility\": [], \"selection_index\": []}\n此处仅整理摘要，尚未向工作人员提交请求。",
+      "intent": "human_handoff",
+      "intent_group": "escalation",
+      "agent_type": "escalation",
+      "agent_types": [
+        "escalation"
+      ],
+      "primary_agent": "escalation",
+      "supporting_agents": [],
+      "tools_used": [],
+      "routing_reason": "意图为 human_handoff，触发升级路由",
+      "routing_confidence": 0.8262844084049104,
+      "escalated": true,
+      "latency_ms": 0.0,
+      "knowledge_used": false,
+      "entities": {
+        "department": [],
+        "doctor": [],
+        "date": [],
+        "period": [],
+        "slot_id": [],
+        "appointment_id": [],
+        "origin": [],
+        "destination": [],
+        "accessibility": [],
+        "selection_index": []
+      },
+      "intent_confidence": 0.8263,
+      "intent_source_scores": {
+        "llm": 0.95,
+        "embedding": 0.5564220420245516,
+        "pattern": 0.5
+      }
+    },
+    {
+      "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+      "patient_id": "patient_self",
+      "visit": {
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+        "title": "新的就诊事项",
+        "archived": false,
+        "created_at": "2026-09-16T16:14:18.070781+08:00",
+        "updated_at": "2026-09-16T16:14:23.510096+08:00"
+      },
+      "artifacts": [
+        {
+          "id": "contact_info:2f7f4064db4c411a9c7610766d7e6b68",
+          "type": "contact_info",
+          "data": {
+            "contact_id": "guide-desk",
+            "label": "人工导诊联系信息",
+            "phone": "010-00000000（演示号码）",
+            "hours": "08:00—17:00",
+            "location": "门诊大厅导诊台",
+            "source": {
+              "source_id": "hospital-contact",
+              "title": "明和虚构医院导诊说明"
+            },
+            "summary": "现在呼吸困难",
+            "delivery": "contact_only"
+          }
+        }
+      ],
+      "tool_traces": [],
+      "request_id": "f0495f83",
+      "response": "当前消息命中预设的急症演示信号。请立即联系现场医护人员或当地急救服务，不要等待在线聊天回复。MediPet 不提供急症诊断，也不会在此时办理预约。\n\n您可以联系医院人工导诊，并复制以下问题摘要。\n\n人工导诊联系信息：010-00000000（演示号码）\n服务时间：08:00—17:00\n位置：门诊大厅导诊台\n问题摘要：现在呼吸困难\n联系原因：意图=emergency，紧急度=CRITICAL\n已提供信息：{}\n此处仅整理摘要，尚未向工作人员提交请求。",
+      "intent": "emergency",
+      "intent_group": "escalation",
+      "agent_type": "escalation",
+      "agent_types": [
+        "escalation"
+      ],
+      "primary_agent": "escalation",
+      "supporting_agents": [],
+      "tools_used": [],
+      "routing_reason": "预设急症信号：跳过意图识别、普通角色与预约工具",
+      "routing_confidence": 1.0,
+      "escalated": true,
+      "latency_ms": 0.0,
+      "knowledge_used": false,
+      "entities": {},
+      "intent_confidence": 1.0,
+      "intent_source_scores": {}
+    }
+  ],
+  "checks": {
+    "hospital_public_information": true,
+    "contact_only": true,
+    "fixed_emergency_interrupt": true
+  },
+  "page_errors": [],
+  "conv_id": "visit-0d318fbb15f64e81a5d2af843a482e0f",
+  "passed": true
+}

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "clock": "2026-09-16T10:00:00+08:00",
+  "user_id": "anonymous",
+  "description": "评测专用措辞；业务事实断言独立于质量评分。",
+  "cases": [
+    {
+      "id": "no-confirmation",
+      "title": "未确认不执行",
+      "patient_id": "patient_child",
+      "turns": [
+        "查明天儿科并选择第一个号。",
+        "好的。"
+      ],
+      "assertions": [
+        "proposal.status=pending",
+        "appointments.count=0",
+        "slot_delta=0"
+      ]
+    },
+    {
+      "id": "duplicate-confirm",
+      "title": "重复确认",
+      "patient_id": "patient_child",
+      "turns": [],
+      "assertions": [
+        "confirm_twice.receipt_id.equal=true",
+        "appointments.count=1",
+        "slot_delta=-1"
+      ]
+    },
+    {
+      "id": "superseded-confirm",
+      "title": "旧方案拒绝",
+      "patient_id": "patient_child",
+      "turns": [],
+      "assertions": [
+        "old_proposal.confirm.error_code=proposal_superseded",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "wrong-patient",
+      "title": "跨患者确认拒绝",
+      "patient_id": "patient_self",
+      "turns": [],
+      "assertions": [
+        "foreign_proposal.confirm.error_code=identity_conflict",
+        "slot_delta=0"
+      ]
+    },
+    {
+      "id": "no-slots",
+      "title": "无可选号源",
+      "patient_id": "patient_child",
+      "turns": [
+        "查2026-10-01儿科的号源。"
+      ],
+      "assertions": [
+        "tool.error_code=no_slots",
+        "selection.status=empty",
+        "selection.slots.count=0"
+      ]
+    },
+    {
+      "id": "retrieval-failure",
+      "title": "检索故障",
+      "patient_id": "patient_child",
+      "turns": [
+        "解释门诊报到流程。"
+      ],
+      "assertions": [
+        "fault=knowledge_backend_unavailable",
+        "knowledge.sources.count=0",
+        "trace.retrieval_failed=true"
+      ]
+    },
+    {
+      "id": "negated-emergency",
+      "title": "否定急症信号",
+      "patient_id": "patient_child",
+      "turns": [
+        "我没有呼吸困难，只想问门诊地址。"
+      ],
+      "assertions": [
+        "emergency.interrupted=false",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "general-emergency-question",
+      "title": "一般急症咨询反例",
+      "patient_id": "patient_self",
+      "turns": [
+        "如果发生呼吸困难应该怎么办？我现在没有不舒服。"
+      ],
+      "assertions": [
+        "emergency.interrupted=false",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "emergency-before-model",
+      "title": "模型故障下急症中断",
+      "patient_id": "patient_child",
+      "turns": [
+        "家人现在呼吸困难，请立即帮助。"
+      ],
+      "assertions": [
+        "model.calls=0",
+        "memory.recall_calls=0",
+        "emergency.interrupted=true"
+      ]
+    },
+    {
+      "id": "expired-proposal",
+      "title": "恰好到期拒绝",
+      "patient_id": "patient_child",
+      "turns": [],
+      "assertions": [
+        "clock.advance_seconds=900",
+        "confirm.error_code=proposal_expired",
+        "appointments.count=0"
+      ]
+    },
+    {
+      "id": "last-slot-race",
+      "title": "最后一号竞争",
+      "patient_id": "patient_child",
+      "turns": [],
+      "assertions": [
+        "initial.remaining=1",
+        "parallel_confirm.executions=1",
+        "final.remaining=0"
+      ]
+    },
+    {
+      "id": "duplicate-cancel",
+      "title": "重复取消不多释放",
+      "patient_id": "patient_child",
+      "turns": [],
+      "assertions": [
+        "cancel_twice.receipt_id.equal=true",
+        "final.remaining=initial.capacity"
+      ]
+    }
+  ]
+}

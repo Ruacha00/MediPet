@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-09-16T15:51:35.489629+08:00",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com/anthropic",
+  "method": "MCPToolManager.rewrite_query",
+  "query": "查一下明天儿科的号，顺便告诉我要带什么。",
+  "prompt": "将以下用户查询改写为 3 个不同角度的搜索子查询，用于检索知识库。\n要求：每个子查询角度不同，覆盖医院就诊问题的不同方面。知识库仅包含静态医院流程与说明，不能编造实时号源或个人预约。\n原始查询: \"查一下明天儿科的号，顺便告诉我要带什么。\"\n返回 JSON 数组，例如: [\"子查询1\", \"子查询2\", \"子查询3\"]",
+  "max_tokens": 256,
+  "temperature": 0.3,
+  "prompt_sha256": "3d0f69935e6f67de093a27813008591702c6397ea8b74c25b442d9789116a481",
+  "sdk_max_retries": 0,
+  "responses": [
+    {
+      "mode": "default",
+      "text": "",
+      "block_types": [
+        "thinking"
+      ],
+      "stop_reason": "max_tokens",
+      "tokens": {
+        "input_tokens": 126,
+        "output_tokens": 256,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      }
+    },
+    {
+      "mode": "disabled",
+      "text": "[\"儿科门诊就诊需要携带哪些证件和材料\", \"儿科挂号预约的流程和渠道有哪些\", \"儿科就诊当天的报到和候诊流程是怎样的\"]",
+      "block_types": [
+        "text"
+      ],
+      "stop_reason": "end_turn",
+      "tokens": {
+        "input_tokens": 100,
+        "output_tokens": 33,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      }
+    }
+  ]
+}

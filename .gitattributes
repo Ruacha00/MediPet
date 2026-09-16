@@ -1,1 +1,4 @@
 *.bat text eol=crlf
+
+# Preserve captured report bytes and their recorded fingerprints on every OS.
+evaluation/reports/live-*/** -text

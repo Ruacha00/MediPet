@@ -1,0 +1,208 @@
+[
+  {
+    "id": "proposal:proposal-example:pending",
+    "type": "appointment_proposal",
+    "data": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "proposal_id": "proposal-example",
+      "operation": "create",
+      "target_id": "slot-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "pending",
+      "created_at": "2026-09-16T10:01:00+08:00",
+      "expires_at": "2026-09-16T10:16:00+08:00",
+      "result": null
+    }
+  },
+  {
+    "id": "proposal:proposal-example:executed",
+    "type": "appointment_proposal",
+    "data": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "proposal_id": "proposal-example",
+      "operation": "create",
+      "target_id": "slot-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "executed",
+      "created_at": "2026-09-16T10:01:00+08:00",
+      "expires_at": "2026-09-16T10:16:00+08:00",
+      "result": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-example",
+        "receipt_id": "receipt:proposal-example",
+        "proposal_id": "proposal-example",
+        "operation": "create",
+        "status": "executed",
+        "appointment": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-example",
+          "appointment_id": "appointment-example",
+          "snapshot": {
+            "patient_name": "林小满",
+            "slot": {
+              "slot_id": "slot-example",
+              "hospital_name": "明和虚构医院",
+              "department_id": "dep_pediatrics",
+              "department_name": "儿科",
+              "doctor_id": "doctor_xu",
+              "doctor_name": "许知宁",
+              "date": "2026-09-17",
+              "period": "morning",
+              "start_time": "09:00",
+              "end_time": "11:00",
+              "fee_fen": 2000,
+              "location_id": "pediatrics-room",
+              "location_name": "门诊楼二层儿科"
+            }
+          },
+          "status": "active",
+          "created_at": "2026-09-16T10:02:00+08:00",
+          "cancelled_at": null
+        },
+        "executed_at": "2026-09-16T10:02:00+08:00"
+      }
+    }
+  },
+  {
+    "id": "proposal:proposal-example:expired",
+    "type": "appointment_proposal",
+    "data": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "proposal_id": "proposal-example",
+      "operation": "create",
+      "target_id": "slot-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "expired",
+      "created_at": "2026-09-16T10:01:00+08:00",
+      "expires_at": "2026-09-16T10:16:00+08:00",
+      "result": null
+    }
+  },
+  {
+    "id": "proposal:proposal-example:superseded",
+    "type": "appointment_proposal",
+    "data": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "proposal_id": "proposal-example",
+      "operation": "create",
+      "target_id": "slot-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "superseded",
+      "created_at": "2026-09-16T10:01:00+08:00",
+      "expires_at": "2026-09-16T10:16:00+08:00",
+      "result": null
+    }
+  },
+  {
+    "id": "proposal:proposal-cancel-example:pending",
+    "type": "appointment_proposal",
+    "data": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-followup",
+      "proposal_id": "proposal-cancel-example",
+      "operation": "cancel",
+      "target_id": "appointment-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "pending",
+      "created_at": "2026-09-16T10:09:00+08:00",
+      "expires_at": "2026-09-16T10:24:00+08:00",
+      "result": null
+    }
+  }
+]

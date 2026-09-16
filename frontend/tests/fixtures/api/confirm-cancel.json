@@ -1,0 +1,75 @@
+{
+  "user_id": "anonymous",
+  "patient_id": "patient_child",
+  "conv_id": "visit-followup",
+  "receipt": {
+    "user_id": "anonymous",
+    "patient_id": "patient_child",
+    "conv_id": "visit-followup",
+    "receipt_id": "receipt:proposal-cancel-example",
+    "proposal_id": "proposal-cancel-example",
+    "operation": "cancel",
+    "status": "executed",
+    "executed_at": "2026-09-16T10:10:00+08:00",
+    "appointment": {
+      "user_id": "anonymous",
+      "patient_id": "patient_child",
+      "conv_id": "visit-example",
+      "appointment_id": "appointment-example",
+      "snapshot": {
+        "patient_name": "林小满",
+        "slot": {
+          "slot_id": "slot-example",
+          "hospital_name": "明和虚构医院",
+          "department_id": "dep_pediatrics",
+          "department_name": "儿科",
+          "doctor_id": "doctor_xu",
+          "doctor_name": "许知宁",
+          "date": "2026-09-17",
+          "period": "morning",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "fee_fen": 2000,
+          "location_id": "pediatrics-room",
+          "location_name": "门诊楼二层儿科"
+        }
+      },
+      "status": "cancelled",
+      "created_at": "2026-09-16T10:02:00+08:00",
+      "cancelled_at": "2026-09-16T10:10:00+08:00"
+    }
+  },
+  "artifacts": [
+    {
+      "id": "appointment:appointment-example:receipt:proposal-cancel-example",
+      "type": "appointment_record",
+      "data": {
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-example",
+        "appointment_id": "appointment-example",
+        "snapshot": {
+          "patient_name": "林小满",
+          "slot": {
+            "slot_id": "slot-example",
+            "hospital_name": "明和虚构医院",
+            "department_id": "dep_pediatrics",
+            "department_name": "儿科",
+            "doctor_id": "doctor_xu",
+            "doctor_name": "许知宁",
+            "date": "2026-09-17",
+            "period": "morning",
+            "start_time": "09:00",
+            "end_time": "11:00",
+            "fee_fen": 2000,
+            "location_id": "pediatrics-room",
+            "location_name": "门诊楼二层儿科"
+          }
+        },
+        "status": "cancelled",
+        "created_at": "2026-09-16T10:02:00+08:00",
+        "cancelled_at": "2026-09-16T10:10:00+08:00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,540 @@
+{
+  "hospital": {
+    "hospital_id": "minghe",
+    "name": "明和虚构医院",
+    "description": "用于 MediPet 门诊就诊助手的单医院演示数据。医院、医生、患者、排班、费用、地址和联系号码均为虚构内容，不接入真实医院服务。",
+    "address": "演示市明和路1号（虚构）",
+    "outpatient_hours": "08:00—17:00",
+    "source": {
+      "source_id": "hospital-public",
+      "title": "明和虚构医院公开说明"
+    }
+  },
+  "departments": [
+    {
+      "department_id": "dep_internal",
+      "name": "内科",
+      "description": "内科普通门诊，公开排班与预约信息以演示号源查询为准。",
+      "location_id": "internal-room",
+      "source": {
+        "source_id": "hospital-public",
+        "title": "明和虚构医院公开说明"
+      }
+    },
+    {
+      "department_id": "dep_pediatrics",
+      "name": "儿科",
+      "description": "儿童普通门诊，就诊时由监护人陪同，报到前准备就诊人和监护人的身份证明。",
+      "location_id": "pediatrics-room",
+      "source": {
+        "source_id": "hospital-public",
+        "title": "明和虚构医院公开说明"
+      }
+    },
+    {
+      "department_id": "dep_ophthalmology",
+      "name": "眼科",
+      "description": "眼科普通门诊，按预约时段到门诊楼三层眼科诊区报到。",
+      "location_id": "ophthalmology-room",
+      "source": {
+        "source_id": "hospital-public",
+        "title": "明和虚构医院公开说明"
+      }
+    }
+  ],
+  "doctors": [
+    {
+      "doctor_id": "doctor_lin",
+      "department_id": "dep_internal",
+      "name": "林知远",
+      "title": "演示主治医师",
+      "introduction": "林知远为明和虚构医院演示医生，承担内科普通门诊排班。",
+      "source": {
+        "source_id": "doctor-directory",
+        "title": "明和虚构医院医生公开资料"
+      }
+    },
+    {
+      "doctor_id": "doctor_xu",
+      "department_id": "dep_pediatrics",
+      "name": "许知宁",
+      "title": "演示主治医师",
+      "introduction": "许知宁为明和虚构医院演示医生，承担儿科普通门诊排班。",
+      "source": {
+        "source_id": "doctor-directory",
+        "title": "明和虚构医院医生公开资料"
+      }
+    },
+    {
+      "doctor_id": "doctor_gu",
+      "department_id": "dep_ophthalmology",
+      "name": "顾清禾",
+      "title": "演示主治医师",
+      "introduction": "顾清禾为明和虚构医院演示医生，承担眼科普通门诊排班。",
+      "source": {
+        "source_id": "doctor-directory",
+        "title": "明和虚构医院医生公开资料"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "hall",
+      "name": "门诊大厅",
+      "building": "门诊楼",
+      "floor": "一层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "cashier",
+      "name": "收费处",
+      "building": "门诊楼",
+      "floor": "一层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "pharmacy",
+      "name": "药房",
+      "building": "门诊楼",
+      "floor": "一层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "laboratory",
+      "name": "检验科",
+      "building": "门诊楼",
+      "floor": "一层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "internal-room",
+      "name": "内科诊区",
+      "building": "门诊楼",
+      "floor": "二层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "pediatrics-room",
+      "name": "儿科诊区",
+      "building": "门诊楼",
+      "floor": "二层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "location_id": "ophthalmology-room",
+      "name": "眼科诊区",
+      "building": "门诊楼",
+      "floor": "三层",
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    }
+  ],
+  "schedules": [
+    {
+      "schedule_id": "schedule_doctor_lin_morning",
+      "doctor_id": "doctor_lin",
+      "department_id": "dep_internal",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "morning",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "capacity": 5,
+      "fee_fen": 1500
+    },
+    {
+      "schedule_id": "schedule_doctor_lin_afternoon",
+      "doctor_id": "doctor_lin",
+      "department_id": "dep_internal",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "afternoon",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "capacity": 5,
+      "fee_fen": 1500
+    },
+    {
+      "schedule_id": "schedule_doctor_xu_morning",
+      "doctor_id": "doctor_xu",
+      "department_id": "dep_pediatrics",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "morning",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "capacity": 5,
+      "fee_fen": 2000
+    },
+    {
+      "schedule_id": "schedule_doctor_xu_afternoon",
+      "doctor_id": "doctor_xu",
+      "department_id": "dep_pediatrics",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "afternoon",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "capacity": 5,
+      "fee_fen": 2000
+    },
+    {
+      "schedule_id": "schedule_doctor_gu_morning",
+      "doctor_id": "doctor_gu",
+      "department_id": "dep_ophthalmology",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "morning",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "capacity": 5,
+      "fee_fen": 2000
+    },
+    {
+      "schedule_id": "schedule_doctor_gu_afternoon",
+      "doctor_id": "doctor_gu",
+      "department_id": "dep_ophthalmology",
+      "weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "period": "afternoon",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "capacity": 5,
+      "fee_fen": 2000
+    }
+  ],
+  "checklists": [
+    {
+      "checklist_id": "general-materials",
+      "department_id": null,
+      "visit_type": "general",
+      "title": "门诊就诊准备",
+      "items": [
+        "就诊人的身份证明",
+        "本次预约信息或就诊凭证",
+        "已有的相关就诊资料"
+      ],
+      "source": {
+        "source_id": "visit-materials",
+        "title": "明和虚构医院门诊材料说明"
+      }
+    },
+    {
+      "checklist_id": "first-materials",
+      "department_id": null,
+      "visit_type": "first",
+      "title": "首次就诊材料",
+      "items": [
+        "就诊人的身份证明",
+        "本次预约信息",
+        "已有的相关就诊资料；到院后先到门诊大厅导诊台了解报到位置"
+      ],
+      "source": {
+        "source_id": "first-materials",
+        "title": "明和虚构医院首次就诊说明"
+      }
+    },
+    {
+      "checklist_id": "child-first",
+      "department_id": "dep_pediatrics",
+      "visit_type": "child",
+      "title": "儿童就诊材料",
+      "items": [
+        "儿童就诊人的身份证明",
+        "陪同监护人的身份证明",
+        "本次预约信息和已有的儿童就诊资料"
+      ],
+      "source": {
+        "source_id": "child-materials",
+        "title": "明和虚构医院儿童就诊准备说明"
+      }
+    }
+  ],
+  "wayfinding": [
+    {
+      "route_id": "hall-cashier-normal",
+      "origin_id": "hall",
+      "destination_id": "cashier",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅导诊台面向正门，沿右侧通道前行。",
+        "在一层收费处窗口办理。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-cashier-accessible",
+      "origin_id": "hall",
+      "destination_id": "cashier",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅导诊台沿右侧无台阶通道前行。",
+        "到达一层收费处，窗口旁设低位服务台。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-pharmacy-normal",
+      "origin_id": "hall",
+      "destination_id": "pharmacy",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅沿左侧走廊前行。",
+        "经过取药等候区，到一层药房窗口。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-pharmacy-accessible",
+      "origin_id": "hall",
+      "destination_id": "pharmacy",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿左侧无台阶通道前行。",
+        "经过取药等候区，到一层药房无障碍服务窗口。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-laboratory-normal",
+      "origin_id": "hall",
+      "destination_id": "laboratory",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅导诊台沿正前方走廊前行。",
+        "在走廊尽头右转，到一层检验科接待处。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-laboratory-accessible",
+      "origin_id": "hall",
+      "destination_id": "laboratory",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿正前方无台阶走廊前行。",
+        "走廊尽头右转，到一层检验科无障碍接待处。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-pediatrics-room-normal",
+      "origin_id": "hall",
+      "destination_id": "pediatrics-room",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅沿右侧走廊到楼梯。",
+        "上至二层后左转，按儿科标识进入儿科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-pediatrics-room-accessible",
+      "origin_id": "hall",
+      "destination_id": "pediatrics-room",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿无台阶通道到无障碍电梯。",
+        "乘电梯至二层，出电梯左转进入儿科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-internal-room-normal",
+      "origin_id": "hall",
+      "destination_id": "internal-room",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅沿右侧走廊到楼梯。",
+        "上至二层后右转，按内科标识进入内科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-internal-room-accessible",
+      "origin_id": "hall",
+      "destination_id": "internal-room",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿无台阶通道到无障碍电梯。",
+        "乘电梯至二层，出电梯右转进入内科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-ophthalmology-room-normal",
+      "origin_id": "hall",
+      "destination_id": "ophthalmology-room",
+      "mode": "normal",
+      "steps": [
+        "从门诊大厅沿右侧走廊到楼梯。",
+        "上至三层，按眼科标识进入眼科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "hall-ophthalmology-room-accessible",
+      "origin_id": "hall",
+      "destination_id": "ophthalmology-room",
+      "mode": "accessible",
+      "steps": [
+        "从门诊大厅沿无台阶通道到无障碍电梯。",
+        "乘电梯至三层，出电梯沿眼科标识进入眼科诊区。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "pediatrics-room-laboratory-normal",
+      "origin_id": "pediatrics-room",
+      "destination_id": "laboratory",
+      "mode": "normal",
+      "steps": [
+        "从儿科诊区返回二层楼梯口，下至一层。",
+        "沿检验科标识到走廊尽头右转，进入检验科接待处。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    },
+    {
+      "route_id": "pediatrics-room-laboratory-accessible",
+      "origin_id": "pediatrics-room",
+      "destination_id": "laboratory",
+      "mode": "accessible",
+      "steps": [
+        "从儿科诊区沿无台阶走廊到无障碍电梯，乘至一层。",
+        "沿检验科标识前行，在走廊尽头右转到检验科无障碍接待处。"
+      ],
+      "source": {
+        "source_id": "hospital-wayfinding",
+        "title": "明和虚构医院文字指引"
+      }
+    }
+  ],
+  "contact_info": {
+    "contact_id": "guide-desk",
+    "label": "人工导诊联系信息",
+    "phone": "010-00000000（演示号码）",
+    "hours": "08:00—17:00",
+    "location": "门诊大厅导诊台",
+    "source": {
+      "source_id": "hospital-contact",
+      "title": "明和虚构医院导诊说明"
+    },
+    "summary": "",
+    "delivery": "contact_only"
+  },
+  "patients": [
+    {
+      "patient_id": "patient_self",
+      "user_id": "anonymous",
+      "name": "林晓",
+      "relationship": "self"
+    },
+    {
+      "patient_id": "patient_child",
+      "user_id": "anonymous",
+      "name": "林小满",
+      "relationship": "family"
+    }
+  ]
+}

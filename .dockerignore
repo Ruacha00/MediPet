@@ -1,0 +1,15 @@
+.git
+.gitnexus
+.venv
+.scratch
+.env
+.env.*
+__pycache__
+*.pyc
+.pytest_cache
+data
+logs
+frontend
+docs/internal
+tests
+
