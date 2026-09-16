@@ -1,1 +1,0 @@
-"""MediPet backend package."""

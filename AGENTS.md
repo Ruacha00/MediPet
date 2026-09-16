@@ -1,59 +1,24 @@
-## Agent skills
+# MediPet 工作约定
 
-### Issue tracker
+## 实施入口
 
-Issues are tracked as local Markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+开始代码实施、调整功能范围或判断完成条件前，阅读 `IMPLEMENTATION_PLAN.md`。源码基线、产品范围、命名要求、实施阶段和验收标准以该内部计划及用户最新要求为准。
 
-### Triage labels
+当前工作树已完成旧实现清理，运行代码尚未导入。获得实施指令后从计划 P1 开始；旧目录不作为新实现模板。
 
-Use the five default canonical triage labels. See `docs/agents/triage-labels.md`.
+## 工作区
 
-### Domain docs
+- 只在当前重构工作树中完成本项目修改。保留根目录 `.git` 关联文件和现有仓库历史。
+- 源码输入目录用于读取；原项目工作区、已有 stash 和外部备份保持原状。
+- 环境、依赖目录、缓存和运行数据使用 `.gitignore` 中的约定，不纳入提交。
 
-This repository uses a single-context domain layout. See `docs/agents/domain.md`.
+## 代码分析
 
-<!-- gitnexus:start -->
-# GitNexus — Code Intelligence
+- 基准源码导入后，使用 GitNexus 对当前工作树建立或更新索引。原项目索引不能代表本工作树的新代码。
+- 修改函数、类、接口或模块前执行上游影响分析，检查直接调用方和相关流程。对 HIGH/CRITICAL 风险先说明影响；UNKNOWN 或不完整结果必须结合当前源码核实。
+- 重命名符号使用 GitNexus 的重命名分析，并检查引用，不用全局文本替换代替符号重命名。
+- 提交前执行 GitNexus 变更分析，明确指向当前工作树。partial/truncated 结果不算完成检查；范围外改动保留，不替其他工作清理。
 
-This project is indexed by GitNexus as **MediPet** (2801 symbols, 5423 relationships, 139 execution flows).
+## 验证与交付
 
-> Index stale? Run `node .gitnexus/run.cjs analyze --index-only` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? Bootstrap with `npx`, `bunx`, or `pnpm dlx` — e.g. `bunx gitnexus@latest analyze` (npm 11 npx crash; #1939).
-
-## Always Do
-
-- **MUST run impact analysis before editing.** Use `impact({target: "symbolName", direction: "upstream"})` (MCP) or `node .gitnexus/run.cjs impact "symbolName" --direction upstream --repo .` (CLI fallback); report callers, processes, and risk. Never substitute grep for graph analysis.
-- **MUST analyze graph changes before committing.** Use `detect_changes({scope: "all"})` (MCP) or `node .gitnexus/run.cjs detect-changes --scope all --repo .` (CLI fallback). `partial: true` or `truncated: true` is not a clean check — a zero means unseen, not unaffected; re-run it. For regression review: `detect_changes({scope: "compare", base_ref: "main"})` or `node .gitnexus/run.cjs detect-changes --scope compare --base-ref "main" --repo .`.
-- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
-- **MUST treat `risk: UNKNOWN` as unresolved, not as low.** An empty caller set is not evidence the symbol is unused — it can also mean the callers are not resolvable by the index (plain-object property access, dynamic dispatch, cross-language calls). `impact` pairs `UNKNOWN` with a `riskNote` saying so. Confirm with a text search before treating the symbol as safe to change or delete; do not proceed on the strength of a zero.
-- When exploring unfamiliar code, use `query({search_query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `context({name: "symbolName"})`.
-- For security review, `explain({target: "fileOrSymbol"})` lists taint findings (source→sink flows; needs `analyze --pdg`).
-
-## Never Do
-
-- NEVER edit a function, class, or method before MCP/CLI impact analysis.
-- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis, and never read `UNKNOWN` as an all-clear — it means the walk could not answer, which is the one verdict that requires confirming by other means.
-- NEVER rename symbols with find-and-replace — use `rename` which understands the call graph.
-- NEVER commit before MCP/CLI graph change analysis.
-
-## Resources
-
-| Resource | Use for |
-| --- | --- |
-| `gitnexus://repo/MediPet/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/MediPet/clusters` | All functional areas |
-| `gitnexus://repo/MediPet/processes` | All execution flows |
-| `gitnexus://repo/MediPet/process/{name}` | Step-by-step execution trace |
-
-## CLI
-
-| Task | Read this skill file |
-| --- | --- |
-| Understand architecture / "How does X work?" | `.claude/skills/gitnexus-exploring/SKILL.md` |
-| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus-impact-analysis/SKILL.md` |
-| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus-debugging/SKILL.md` |
-| Rename / extract / split / refactor | `.claude/skills/gitnexus-refactoring/SKILL.md` |
-| Tools, resources, schema reference | `.claude/skills/gitnexus-guide/SKILL.md` |
-| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus-cli/SKILL.md` |
-
-<!-- gitnexus:end -->
+按计划执行与当前改动对应的测试和验收。区分源码核对、假模型测试、真实存储验证和实际模型演示，报告真实结果。

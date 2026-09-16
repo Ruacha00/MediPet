@@ -1,35 +1,39 @@
+# Python environments and caches
 .venv/
+venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
 .pyright/
-.next/
+.coverage
+htmlcov/
+
+# Frontend dependencies and generated files
 node_modules/
+dist/
+.vite/
 coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
+
+# Local configuration
 .env
-.env.local
+.env.*
+!.env.example
+!.env.*.example
+
+# Runtime data and logs
+/data/
+/logs/
 *.log
 
-# Local evaluation experiments (2026-09-14)
-/.scratch/p4-20260914/
-/evals/loading_efficiency/
-/evals/p4-dev-cases.jsonl
-/evals/p4-holdout-cases.jsonl
-/evals/p4_compare.py
-/evals/p4_efficiency.py
-/evals/p4_run.py
-/evals/reliability_evidence/
-/evals/reports/p4-20260914/
-/evals/reports/transactions-20260914/
-/evals/test_p4_efficiency.py
-/evals/test_p4_run.py
-/evals/test_transaction_run.py
-/evals/transaction-cases.json
-/evals/transaction_governance.py
-/evals/transaction_report.py
-/evals/transaction_run.py
-/evals/transaction_score.py
+# Local analysis and scratch work
+.gitnexus/
+.scratch/
+repomix-output.*
+*.tmp
+.DS_Store
+Thumbs.db
