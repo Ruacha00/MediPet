@@ -1,0 +1,3480 @@
+{
+  "commit": "7a4e22a23d33a0bfa910f19662f2a8e40e429d54",
+  "source_sha256": "49fd9d823990f22cde5f737ae6fc2998f4a50bb0ae4632310d8ef573914c0a02",
+  "raw_llm_sha256": "072917c5b6192261705235f77497088b0a0f06a2256020357079671900504124",
+  "rows": [
+    {
+      "id": "holdout:hospital_info:attendance_calendar:1",
+      "input_sha256": "8bb735a5908785f7f680611f58a3da3a645fa430a8bff0181d651b1f2f870de9",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.17251638983558856,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:hospital_info:attendance_calendar:2",
+      "input_sha256": "54a7cb12971deba0c4d0ab7916f2f71cd6b5913d33e00f9aac1e3173e83024ac",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.86,
+        "embedding": 0.1563858105428061,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:hospital_info:geographical_landmark:1",
+      "input_sha256": "d30c288dc57cd918d56b78c77ac624f3ff4c586b54eba03996828af470850755",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.18344984642633572,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:hospital_info:geographical_landmark:2",
+      "input_sha256": "11474849ec527df827eaeecc049e5fdec537ba535233f596d4d49000add4b810",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.18731716231633883,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:hospital_info:opening_closing_notice:1",
+      "input_sha256": "d07e38c2ef1dcdd2546fdd9c64fa9cb843797f5cd6fc149988587a862f5021fa",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.12830005981991685,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:hospital_info:opening_closing_notice:2",
+      "input_sha256": "efc7c1d2bd5a69c56b6c3b1eab856189dc9d4136c8723713faf04f255f4aebcd",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.1910789265895446,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:hospital_info:overview_for_newcomer:1",
+      "input_sha256": "88701613583b5bbbaef39fd8ae33675c148038af29189d0b4a4addfdabea8eea",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19094065395649334,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:hospital_info:overview_for_newcomer:2",
+      "input_sha256": "1090480a937a6b51f737542a5bd3da85eebca48744e67b813f6613094433fee8",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.1931080406738859,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:hospital_info:public_contact_directory:1",
+      "input_sha256": "7a849984320df0cd3e90176c4cb619c64620af3483861887132ebc75424dee3d",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.17507524381296344,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:hospital_info:public_contact_directory:2",
+      "input_sha256": "05f908a42426467fd33a1e2830df949aa1447504839a380feef870ad1d5d7d7d",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "hospital_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.23845524161913295,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:internal_department_scope:1",
+      "input_sha256": "3cb8f3d2299945c0fdccd78a03a201da3a4487c81173f5b9ad883292b9735caa",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2734817064582437,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:internal_department_scope:2",
+      "input_sha256": "79a5e2b58effba8bd6ebb48fdfc74b7d08e46eebf237a3fc51908823e06904ac",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.21125007409920996,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:institution_units:1",
+      "input_sha256": "3519493c36e3617cb498484f1021ad1ed0340853af2178b9917ef2d49212d5ae",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2867696673382022,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:department_info:institution_units:2",
+      "input_sha256": "954f1aa0ba13c6f38f8ed47f1ab7d2a506e29f6f53fb20f7b219c014f6a7ae65",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.20851441405707477,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:specialty_comparison:1",
+      "input_sha256": "54624fe90b61fd15fc173a03f357916534ed02e21128800ecf5b4becb0549602",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1594482010358202,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:specialty_comparison:2",
+      "input_sha256": "676bf98618e024d54b7f0d78a6e89bacb30cc8271173c9c1a700e70252b21aa6",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.22779791898059973,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:department_info:department_description_request:1",
+      "input_sha256": "8bbfdb96db3ac271210f40b4e04189d61e9abb4cd3c5169ba43638561984e68d",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.13355763199075443,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:department_info:department_description_request:2",
+      "input_sha256": "6dc39a4c0f65a92ae5e8e9c0335773c47061320da5ce62ddde6960feecd5c34d",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.22019275302527214,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:department_availability:1",
+      "input_sha256": "fef8d80a1dfea4f1cc71009a0eec8a75d253213c395cc6060c0099fc4ce40592",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1813690625275029,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:department_info:department_availability:2",
+      "input_sha256": "9729b0fec90410020100f069e1072aea7673704fdd064c1eb0816b5f23a8e822",
+      "expected_intent": "department_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "department_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.24397501823713327,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:specialist_background:1",
+      "input_sha256": "f4908cb04c64daa806e981d148836b246c0c9264c22091513ec683000ddc956b",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.22645540682891918,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:specialist_background:2",
+      "input_sha256": "120fd974e8facbd5b873fedae8357aa2882784f51409376f485100b22618739a",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.23094010767585027,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:doctor_department_affiliation:1",
+      "input_sha256": "43c1d99dead6cb54076bf87ab1f4ab0e9adefe1ccce50503a1dee9551167ba0e",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.3072549338995135,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:doctor_department_affiliation:2",
+      "input_sha256": "71904f468ebe8876e660c89dbcab0585e9b2a1dc591fa08d2808013788645ae7",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.17149858514250885,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:time_office_roster:1",
+      "input_sha256": "578a5aa78c2b25cade6603d6ae1905c9a8c7f0a90a87b66d41478d8c96905d11",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3333333333333333,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:time_office_roster:2",
+      "input_sha256": "9307665514311279f627ab99d7390366681c1d4aad37a4e004274585ca685cb3",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.23394386020951632,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:named_practitioner_schedule:1",
+      "input_sha256": "43e133f9d413618ff7778537dd22c7faad3a3a497d4b2e7d1f3b2d6f425b201e",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.25476233268253407,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:named_practitioner_schedule:2",
+      "input_sha256": "88f3152d48d80bf31d0d3e7b997c84b537af4a3ffce79d487495629928c2b862",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.20225236112205355,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:personnel_directory:1",
+      "input_sha256": "f8f8ea2dfe4a4defbf93092cebed65a348513540196064d385da0b57da691435",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19802950859533489,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:doctor_info:personnel_directory:2",
+      "input_sha256": "96a5ab9172f8f2000b0ff31d5cd5a5da25df88d049f1815245242c0240a2bd0d",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "doctor_info",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.14153462926807447,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:vacancy_language:1",
+      "input_sha256": "31b5c4c047eb6d6c528f1996e4688c14c3f9414eab6efc814fab546733907e4b",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.32135120416342206,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:vacancy_language:2",
+      "input_sha256": "57eab5d8941a1b63e7cde4e8d361b7d4dac65aae68f09227a93286382b424a45",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.24326681639992057,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:appointment_opportunities:1",
+      "input_sha256": "8ad229599ee92acf566a5df8ca396d849bb79b182f2bf8db8cf7cc68cce6f8f1",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.14638501094227999,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:appointment_opportunities:2",
+      "input_sha256": "510061af5da0fa8879a8f60ba5873a01921a2c962ac3737f8188aa1330fc1e24",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1767766952966369,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:slot_query:sold_out_comparison:1",
+      "input_sha256": "7eba4f0ff9a1380546197a8aee0b31fc75de9c98e91ac43595a2121d9312ab75",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.29417420270727607,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:sold_out_comparison:2",
+      "input_sha256": "ef1c7b0b4a2848fed9de5bac133e3e5e25050aeb2b868d6c4517773e50c4d1ca",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.20837290442824927,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:slot_query:named_doctor_capacity:1",
+      "input_sha256": "05995b944e836799e5d74ffb83a3441ec8737706ae7c37c65da1fb5c75dd428d",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.23939494881986925,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:named_doctor_capacity:2",
+      "input_sha256": "794beb1ff3ce309aeff2e6fb7e68f07317aa502921af1b50ee6963538791e79a",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.25923792368260634,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:slot_query:listing_not_execution:1",
+      "input_sha256": "8ea5510550700b48180b2341163e28ee49316307554e80425527bafe60197715",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1543033499620919,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:slot_query:listing_not_execution:2",
+      "input_sha256": "861ff247799280657c64263d6a988422a6cdbfee776e24d871359e4dcd5435c6",
+      "expected_intent": "slot_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "slot_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.20225995873897262,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:new_booking_not_previous_record:1",
+      "input_sha256": "2113d7ce8a765361510a923a63bd85ca9e7fbaa6afbad01eb9bf82b9ce0ecd6c",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2383015619096991,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:new_booking_not_previous_record:2",
+      "input_sha256": "21a5eb7426566cb52a91ec0c3542ae7c1079d9c5440cfbc5e68bc1656a644cd2",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2520504151250418,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:reservation_preview:1",
+      "input_sha256": "7f40dc3528a529d16aa9273da46f0f2d198da92dea75b7e18a56d4a706df92ae",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.2571385202167014,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:reservation_preview:2",
+      "input_sha256": "5c336c5930d764664ad1a120dadca8a4bed4ca6af63d4ae4440d512ad82f9676",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.31544014893825584,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:deferred_authorization:1",
+      "input_sha256": "5b1bef3a872d3a3ded32e223c59966c9d479877e5bb2ef943551d96037e147cb",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.21688321172034594,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:deferred_authorization:2",
+      "input_sha256": "013b135d3c03d195557c8dc7a61466ed16a66d1a526ebed537f4dc1b2f12f66e",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2526993478596345,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:form_from_selection:1",
+      "input_sha256": "3a57a8514e5ef089470c300e5d8d8212308ab3f67bd7e2c0c2edea51b38d0094",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1898315991504998,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:form_from_selection:2",
+      "input_sha256": "5650f836ace2722767a5acf41598049266ceb704aac223a251843ce4b5bc030f",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.2090833493957267,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:create_not_materials:1",
+      "input_sha256": "782d2189004f0e26da2a4f826742e9700da1f6af4a9970068e6ad70207197b8f",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.86,
+        "embedding": 0.30313257448209446,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_create:create_not_materials:2",
+      "input_sha256": "9fa42bf249fc9726ffe039a33045d4a22a0e4d474c85878798013d37667e53da",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.23505561374387857,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_status:receipt_retrieval:1",
+      "input_sha256": "a2ed85c5bba85ad564840951633b6634db7693ea5df07d23e8c937f6aa7f86b1",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.22156468376279892,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_status:receipt_retrieval:2",
+      "input_sha256": "b8e06a71024f2f31a957878a2d889443f6942ceec48ae16780ed304af421af70",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.14852213144650112,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:appointment_status:verify_existing_time:1",
+      "input_sha256": "bc3a80d66d597f736b9929e46b17068a793b28d1846667f138a21d0262766962",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2037778784088537,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:appointment_status:verify_existing_time:2",
+      "input_sha256": "a11584f9693a9e8f45821b05b22dc15d69272e364d0c32c2d4b473c0c067da31",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3089987475519934,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:appointment_status:patient_registration_list:1",
+      "input_sha256": "def9d4f82ddb2de0cc034af3e263053aa0bd5d9629df65d194ce380837d99dcc",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.21213203435596426,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:appointment_status:patient_registration_list:2",
+      "input_sha256": "732ade8197b8731127c2c3cd7bfd3b13e3582289ac218962d1e5447de8bfb298",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3086066999241839,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_status:active_inactive_review:1",
+      "input_sha256": "05fa093fa145556e8f3b343a561cfdc0ad6b2510d13252efbfa3ee97a4be140c",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1933288618331376,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_status:active_inactive_review:2",
+      "input_sha256": "828952e6da1cbca1c44bf92f77aba0ad6262adc8dd3f384c33cabfedc1b91431",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2513123449750173,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_status:read_only_record:1",
+      "input_sha256": "1768a8f3a754b297775ad533cc52f85b4ab18f59000adec8509bc740b4f29bc8",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19261736493723072,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:appointment_status:read_only_record:2",
+      "input_sha256": "15b904efa9436aea9411a7e31d2504a27344ea9fca50f3872ce4d3195f5bf6e5",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_status",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1700460603795407,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:release_booking:1",
+      "input_sha256": "78f4770ed499f770f0b8e89f11013de32a6743b72d66e6d03476a93c847950e7",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.17822655773580137,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:release_booking:2",
+      "input_sha256": "20453f1752c519eb2812c2a4ad131c15fb0e737eceff68e9cfe8a315301be424",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19781414201873612,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:undo_registration:1",
+      "input_sha256": "2d290dc8302a6ae7ec52f51697e0c0e1755bdae2f0aecac5ed8c168286f30921",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.3721889173040144,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:undo_registration:2",
+      "input_sha256": "1da0c08443730fc2739a1e2ef4da2b28373724322f2e595411c135fa59896a95",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.2327672700503423,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_without_rebooking:1",
+      "input_sha256": "07ae3a6a8070f43dea14d5c1cdb2071c6d5ea82c8327c3e99bd96c9002e41a0d",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.26892643710023856,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_without_rebooking:2",
+      "input_sha256": "7f21decdf6401b4be34d8e88886b63ceb9a6e42d7ef14470168a6f706b88305f",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.22831482556870478,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:confirmation_for_removal:1",
+      "input_sha256": "b0d18dda7cdef305e7f7e3738a8973bb248deed0598f79b36d3d77b495c2493f",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2440467650459882,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:confirmation_for_removal:2",
+      "input_sha256": "33663555f1b341311c8ed40f076a2ec8aab4c789a093a6ce0c72e7ec970ed9a8",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.37953605763829484,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_not_query:1",
+      "input_sha256": "5e62a57a98bea782f29e21680719adc269ecc5090d66156e0dcefe20eab06750",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.3554093266554554,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_not_query:2",
+      "input_sha256": "91fd9071279d35866fbf8f04c976e36e11dd9191a13f31118c5325df3f3c1297",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.30692490702242564,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:avoid_missing_items:1",
+      "input_sha256": "636ffec535d74e67b8ae30b05240b687a67996df5d6a102615f24fced15c83cf",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16378532712978422,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:avoid_missing_items:2",
+      "input_sha256": "ad3d9713b89395e7f650b1d341907df889b240c82f992130e66a9a1c8b0697b7",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.314970394174356,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:guardian_papers:1",
+      "input_sha256": "56e4dd781d6c7d0d37552daac752e256bdc3ad006404b1d102eeec64c745005c",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.15655607277128736,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:guardian_papers:2",
+      "input_sha256": "0d36e1ed7d905744720530133166b3e0b93887716ccd1b16baa1388a410dc4de",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.17010345435994295,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:departure_checklist:1",
+      "input_sha256": "ef10a70b41c916d51cc6de9c679a0b13f847821a8af2ebfaf1715235373a03d6",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.27386127875258304,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:departure_checklist:2",
+      "input_sha256": "7ed91e2d999383628fb38e5551ba0e806b97ee14b3979d340b8ad578fd783d80",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.17251638983558856,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:prior_visit_documents:1",
+      "input_sha256": "cd6d5c8a67f6eca301ac884818517eccb8cb8a73fa37f8107fc173e9c762ef19",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19826289642953607,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:prior_visit_documents:2",
+      "input_sha256": "57baccc60be9ab36adc3cb48a8e9344884d44b3b67e259d68b802c8642542983",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.28573153847150773,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:materials_not_reservation:1",
+      "input_sha256": "420e252858583b9f3fc3859e03f5b2b032028d2ad528a8276b9fc4f8f6591f69",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.33276788197906987,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:materials_not_reservation:2",
+      "input_sha256": "063510818c07ae849529e1abc8b299baa6118fa22fa07c104303ef8e1f37a6c7",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_preparation",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19720265943665385,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:journey_stages:1",
+      "input_sha256": "bf30588528acee58d456cd54cd3b5268fd8fe84e62454e1043cd40df0cba162f",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19826289642953607,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:journey_stages:2",
+      "input_sha256": "213620ef07694ae36d418fe922f64b2586142d339f459bbef39e1b55bb4da0ec",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2286647801900118,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:visit_process:queue_after_registration:1",
+      "input_sha256": "466f14f8eab751976ce90bb7464e1324517f6e0c506cbaed4904ccb25bd0c7c9",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3649794388034841,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:queue_after_registration:2",
+      "input_sha256": "2f1dd225936da02e48ced26ca8d95dab0fadf86276f8cdf189be58240da08341",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.29129492773280685,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:tests_and_return:1",
+      "input_sha256": "1edc86e8bbc91a3145a7da3ef7e498b08fb23b3269f00db1526ece116e6bc6e6",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.27824333745610097,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:tests_and_return:2",
+      "input_sha256": "ef1c039feaee2246145502e8348aaeed1bad4b6ed08c98d78f89674e3a46b24b",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.219942959691286,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:prescription_workflow:1",
+      "input_sha256": "6a2a85b1ad4726177a759d7a0c4f5257cecb3117ae81d203eea29b5ef88d2238",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.2073221072156823,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:prescription_workflow:2",
+      "input_sha256": "5c9489ab478a160699b331d22ffe56c4e631b27f0ec12fdf4be8d48dc25c34cf",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2002453486917181,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:procedural_not_spatial:1",
+      "input_sha256": "457926ad78ee5ab65c8eeb32aba604b8c6f3599e56401c4d639fb54b01e652e6",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.28887415229138963,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:visit_process:procedural_not_spatial:2",
+      "input_sha256": "5f286624f200d815838af473764d889ddfacc651009eca52e32b25cc21b04306",
+      "expected_intent": "visit_process",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "visit_process",
+      "source_scores": {
+        "llm": 0.86,
+        "embedding": 0.18700983288487377,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:navigation_instructions:1",
+      "input_sha256": "ce4dc88f184825a7f9d48db263f9cc1136f0f5be511bcd53f3c9f8ac59778992",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.2706373072178176,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:navigation_instructions:2",
+      "input_sha256": "9adb8dd9ffb5af4d1fb00dffd0421e6f4b92c2d8319495f40e2cb5fc4ac53e38",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.23338001400466832,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:step_free_travel:1",
+      "input_sha256": "a2e4938cfd967f2eee35d7e061684750c9ac8d32cc1b3ae1f6f33bf7ca15b51f",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.26913678240975397,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:step_free_travel:2",
+      "input_sha256": "a8673dcd10d2df2b637e8d5be6466e22f5dc83cae51fccd15637c07f5e608796",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.27602622373694163,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:wayfinding:lost_inside:1",
+      "input_sha256": "1a704636150d001069c7656e82e6aca273e9e6f1346f0a344f061069269fba6a",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.16312947805723715,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:wayfinding:lost_inside:2",
+      "input_sha256": "12c6e3142c4953f68a76a9fb7636545f929246adc8dff0947d0ab7eadb22293b",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.17248787237282068,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:floor_and_turns:1",
+      "input_sha256": "3cb97d5526b024fba636f9ce973a8ae33f62f97d9e5d0a9a1099e32e99d1f682",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.19682713252204917,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:wayfinding:floor_and_turns:2",
+      "input_sha256": "4f7f30e1914de70e5b39ee7bc2b10e7feb60141bf767a9ca1225af51422c00a0",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.25197631533948484,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:wayfinding:route_not_process:1",
+      "input_sha256": "c924c3196fe353112658bc5caa89fc6dd08a31d631e766e29a50440924e9bcec",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.25588315785957944,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:wayfinding:route_not_process:2",
+      "input_sha256": "8ab44cc723476ab904192ba1c2e6ddbd150fd6044328f2dcd9c19020a8752007",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.17734043940858907,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:nonbot_assistance:1",
+      "input_sha256": "a01474d7d3076d27f8469068c025055a584ebdc676d09d6d038b9a61b6779dca",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.13130643285972257,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:nonbot_assistance:2",
+      "input_sha256": "29e5af53fb7ea96bcb95f7dbb7376edda88643a88d1877c0069d5c1c0a183948",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.26444294267397256,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:staff_consultation:1",
+      "input_sha256": "c1641f26c42b172273644d5ec25ce67f73fa79f1b21f07cd6ba5ec2486070511",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.22700174153566632,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:staff_consultation:2",
+      "input_sha256": "5d2e78228b6ae90b61f3a30858d8e7027e01486b9951914e8bd1110feb22d5e8",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19462473604038077,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:human_handoff:human_channel_only:1",
+      "input_sha256": "9b79e7ec8091cffd753cd668564ec51e4340809888c8def040cbae00e99cbbca",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.18731716231633883,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:human_channel_only:2",
+      "input_sha256": "e408b962201ff12f30398edda17e416c356184dd47ae97ad916e296a4dd1476d",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.20123585110162412,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:human_handoff:service_desk_reach:1",
+      "input_sha256": "8b63d99f77e8f69c88a7ba95ce35655f7ad3de56ed7d5fed1cbe3fb149ff7607",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16641005886756874,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:human_handoff:service_desk_reach:2",
+      "input_sha256": "7b41d8c8e48976c5fa0b4482fcc557bfd0f84d8ada25225be407d4864e785ab4",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.3214121732666125,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:handoff_not_emergency:1",
+      "input_sha256": "a8a2a790ff6cec79caf6196be9e3aee9b9adf03c3a6e150be447992beac564ad",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2239570043823417,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:human_handoff:handoff_not_emergency:2",
+      "input_sha256": "45d5b1e65f8425417f0e463fa63cde9eaa392b0b8904262cf4992cc3a1438f25",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "human_handoff",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.22019275302527208,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:candidate_specialty_comparison:1",
+      "input_sha256": "cddeb5d0479d51f8b886ba87471bf84ca0fcf3f232c2640709cfd5a9e923a57e",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.17616606585441105,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:candidate_specialty_comparison:2",
+      "input_sha256": "7959228332acc8995670869691ad5767c07aa9b4e452f9dbb36b0abb7b7a4029",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2805658588748473,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:check_self_selected_specialty:1",
+      "input_sha256": "f00783cc6b679b12b53553df3f9c7a17aa1cc4c4382a43ccfa90db4aeb69e3ff",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.14301938838683884,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:symptom_query:check_self_selected_specialty:2",
+      "input_sha256": "7205ac86bd61d41a9e911b592eacda10461fb19ff93a8b33f09633aae103cc4f",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.22951012421969874,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:triage_missing_information:1",
+      "input_sha256": "d4989fcec39ad577d7acd228a397745981884ac3457f73a1b69551241ab2cb95",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.31257183082499185,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:symptom_query:triage_missing_information:2",
+      "input_sha256": "55c2f0156d73e9862cfdde513be48e3c13002263eceb82365d24a6eda94429a6",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.32558277102259187,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_not_diagnosis:1",
+      "input_sha256": "850e8d71e786c431caa69a1f3baf1ddbc2f8895e7ff30653ae7b7fffcf36acac",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.20701966780270628,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_not_diagnosis:2",
+      "input_sha256": "16c0993507aff8a9940f488ac8255220a2f69db5f337d411f1a54c5743ae2365",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1539600717839002,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_vs_department_info:1",
+      "input_sha256": "8cca5d2f2b1848d04a7e2f5dc001a3f3e8e677233975a8d2680187374066a453",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.25112360116696136,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_vs_department_info:2",
+      "input_sha256": "38656532d1fe117eef6cc6eee3818afd25ad4a04d9ef105e1d67b18081e412ba",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "symptom_query",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.18869127060994528,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:package_insert_request:1",
+      "input_sha256": "9f6b5b1c9cbbd2cd7cfe20385d146521984ceb0b308e56d94764146ee6edbc15",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.5620973839546028,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:package_insert_request:2",
+      "input_sha256": "a45790570dbc735aaca6d3bb1a5450582f2a51f45521aadad740b2254746dbc5",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.3663375065235981,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:formulation_boundary:1",
+      "input_sha256": "55e65599b934155211589de5055cd8481e4152396ef48f3459d5d6e3068a3a0f",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.28835491804079716,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:formulation_boundary:2",
+      "input_sha256": "2f31c6a7c351af75a94a5708c9d3aada837beae568c7ff360282473100866799",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3051441424284631,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:medication_query:safety_information:1",
+      "input_sha256": "c98cf46424cdb87ab369c96da4e7344b609adb5d6ca2c326f1a70f6421485dc9",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.4776973164738615,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:safety_information:2",
+      "input_sha256": "2006876638dff32d90a74b9b8197311a5a4db32c192a6d54d203be3626ef426d",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.31948922553234865,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:unlisted_drug_lookup:1",
+      "input_sha256": "b90d9349959d45e341a9891d3149d06a9fbd8a434645aacf4b23c0bec3e8d2b2",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.21081851067789195,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:medication_query:unlisted_drug_lookup:2",
+      "input_sha256": "a776b0598349e746645c2db6d83f685e9aae816396f2351e8e6a06c3ea8d3015",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.1935735673983309,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:medication_query:drug_not_symptom:1",
+      "input_sha256": "55abade78bfcc2e8b6c7256835619ac33c225b705e90248e1c32c905eb9e2ddf",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.5318326041272249,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:medication_query:drug_not_symptom:2",
+      "input_sha256": "16dd70950cfab46a4d7d7bbdd672802687644170d74b00f7434e99760b8d5a71",
+      "expected_intent": "medication_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.34671763758586066,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:report_query:document_transcription:1",
+      "input_sha256": "b51396f173430a99c9f5db1dcc766eab172845c6a5a7a580b20e978db447461b",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.15425801329298872,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:report_query:document_transcription:2",
+      "input_sha256": "c3348eb2cf62241069663fc1376d34d937d57748d5ab74d026abcfb0ef7aa810",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19529164171612673,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:report_query:range_comparison:1",
+      "input_sha256": "d136f702eee8c540e71ba74786bdcceebcf34275469089c37ee51f6053e3c310",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.12529400275814703,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:range_comparison:2",
+      "input_sha256": "7b6f8bf2e3eb114b48a3001912f1ba1bf73490536ad53d1f9286d51847b71de7",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1387863006177675,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:report_followup_explicit:1",
+      "input_sha256": "9891d226b4ad87e337b800f7836e8b06fceee014edf9664210410b5ae1c35a80",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.15221477058564112,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:report_followup_explicit:2",
+      "input_sha256": "26fb659c4ff015716225bb230d9db755a52499f90f7aa46af1c1e2d0c07815e5",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.17417542493614133,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:unclear_scan:1",
+      "input_sha256": "3368942e7032d051615fff093bd23c41f5287ec3276a13b028db0ec3acb8841d",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16695677422593644,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:unclear_scan:2",
+      "input_sha256": "6ea2cbcf5878801135a105c90fee580a093f3bedcb26d66e88fc084ac7df9090",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.11785113019775792,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:report_query:report_not_diagnosis:1",
+      "input_sha256": "f7b11e36f1e978bb7ba984774d66fe8421c31979470e77aa5dad85f27b94bfb9",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.23981604843963608,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:report_query:report_not_diagnosis:2",
+      "input_sha256": "778288b9f2246f7c05dec8f4371ecb0948bc9c7d560923955abbfab3025c3eff",
+      "expected_intent": "report_query",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": true,
+      "prediction": "report_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1956559480312316,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:emergency:high_fever_numeric:1",
+      "input_sha256": "7e86de145be9279d0ede7f8459fe5fc3094e3d92e12ad7751d97d31fc50e94b6",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:high_fever_numeric:2",
+      "input_sha256": "ad2d1ea04e4b33c3748c28ce9a95d9ea624e482a1046bd0ed7f33319dab05b6c",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:1",
+      "input_sha256": "239758fd938cfc8ed6236cec247fa222fb108f78dbf8971a9fc42f95b8f7ed44",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:2",
+      "input_sha256": "5fc517e928b392a864d383457cb66adc354e8ca92c2cc044848e37c6a0d142d2",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:1",
+      "input_sha256": "173f2fb0eed7888b017156a2081dc8a024674dc79a10cd2f29c680a1a00784ce",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:2",
+      "input_sha256": "6b7d7b47a5823ddcfb6d64b5cbd103e7e3c20a9807328fc93c62698839b8c080",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:third_party_now:1",
+      "input_sha256": "2e1696fec55fe950a2b95c8c45de3b943b4cc3184f6f5cc69eeab9308a53cc61",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:third_party_now:2",
+      "input_sha256": "565c36404fa3e846f4df4aaf471d565e9f83797830d84db8b03b97b8da709997",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:present_after_past:1",
+      "input_sha256": "d7f9e1166ba013a52f07788a719eb63bb61a0a797a5a299b52158bdb30a31122",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:emergency:present_after_past:2",
+      "input_sha256": "e7852d488c215a45cf4a3ceaccb3ab7d973d2bd8e8ba79dd3fa73a067c72708d",
+      "expected_intent": "emergency",
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "fixed_rule_bypass": true
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:1",
+      "input_sha256": "a8d52c66537fa19df516ced68ff38ccf8f7988ac782d66561e50ae780f369c01",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.21081851067789195,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:2",
+      "input_sha256": "13873a39d0b409052bc590a274e91334beb16c81f73791c151d8a2f226650e2b",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.2222222222222222,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:1",
+      "input_sha256": "730d49ae9c926b9402055d3e943dc335493a121c8b9cc045578319f399ea55c2",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.21629522817435007,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:2",
+      "input_sha256": "3259c79c3b992671e5ddfa3e1093bb1413dfddcfb0db992e18a5f6d156bc3a7c",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.14085904245475275,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:1",
+      "input_sha256": "9c19e5688164cfc172a1bae014cc7d02a42b2186342ad9c681a680c9948eb7bf",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.3535533905932738,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:2",
+      "input_sha256": "fc1de7272f4f4c5bd54af80b556e4db38a8bdea037b841fe084b41552908e62e",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16666666666666666,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:1",
+      "input_sha256": "af4043f323c8a5058bd2475df3007ebb04a9f06e0b6c4ec61b4acfc3c1440a4b",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.17213259316477408,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:2",
+      "input_sha256": "ba6d5eae8e8af27933981d755f433af33eeee380383407af680f5903fd58cecb",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16951587590520262,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:1",
+      "input_sha256": "6831cbb0a13f88116f59dcf174702d1f2427d448faec506fae6ff57ebb12e283",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.16666666666666666,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:2",
+      "input_sha256": "5086c3fbb053da6310e306c0a79c9563742a9f8fd130266d3b3f079b8c92f159",
+      "expected_intent": "greeting",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19687480773953944,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:acknowledge_help:1",
+      "input_sha256": "38f745cf55a9dc894b223c7d081279edfd14f981a8111c6d891118275a741b74",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.18009006755629928,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:acknowledge_help:2",
+      "input_sha256": "658d369574e22fb9db48d5eebb2ebf63adc32ec808d7c3b5de2ad919618c9fcf",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2864165750631024,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:feedback:appreciate_patience:1",
+      "input_sha256": "3c2a93bded6bc812c03e5393a9cf02cd1d9bf651310acd67bfad5e1a2bfe5e71",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1781741612749496,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:feedback:appreciate_patience:2",
+      "input_sha256": "7868adad40eb652695928660265b894b59edc93124a94e7627529256ec05ebc1",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.19034674690672024,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:satisfaction_comment:1",
+      "input_sha256": "c9d19031e5510b5ca41ae3d99fa0c060bc1ae462eb280a037ef83ceb92b590f5",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.20412414523193148,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:satisfaction_comment:2",
+      "input_sha256": "887986f4f2249069f42a4f2f204fe08369e39c23bba2bd9c5c8fa333596a7e25",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.20016019225635892,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:feedback:helpfulness_comment:1",
+      "input_sha256": "ddeb6ce6a043eeb4e9118f0947f444a815f61eb7118207d5e2c4a3082a1ecb15",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1770844008302866,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:helpfulness_comment:2",
+      "input_sha256": "c9b55d1b6754756edbc9f0170214a913a6d9b4e99061a24a67169e63613c8e03",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.13273296830047474,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:feedback:completion_gratitude:1",
+      "input_sha256": "7e42cdb0e3f6dfafca8963d573b03d29725c5bf40ea648dafc23cb6c9b1524a9",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.85,
+        "embedding": 0.18136906252750293,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:feedback:completion_gratitude:2",
+      "input_sha256": "fc9468ffbf2bb688c1840734c8bef181063997747984dcfdc9e8842b66dc7bf8",
+      "expected_intent": "feedback",
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.13483997249264842,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_programming:1",
+      "input_sha256": "a2114d82f5ab438afd4a20f9953c451595b0f82fde10ec9d6a14922e4ed3df8b",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.15715463927342802,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_programming:2",
+      "input_sha256": "d33a10bb5ce49454e2af25d0197d1281d8faa83916641e8dbf4905136eede187",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.23904572186687875,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_finance:1",
+      "input_sha256": "5cbc2281a7648720bd32d097a34960e82f0924823eb77083ff362bc211dbe583",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.99,
+        "embedding": 0.1724137931034483,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_finance:2",
+      "input_sha256": "76025a89f5dfa33088a92525e397b59b14946738e8b79b667dc41e204addb947",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1333333333333333,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_travel:1",
+      "input_sha256": "4fb31d9fb612a001bfb1675b18ed5a87f8ab5cc17be53957fbe7b6cd4ed7a8b6",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.1212678125181665,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_travel:2",
+      "input_sha256": "21b5f3da394f6ad4562de358635840a68758d4be2710214bda1904a93bccc89d",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.10559273546969092,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_math:1",
+      "input_sha256": "5f8780d33fc8489ccd48562924a87c8db6c8de2d2a426dbae6e994a6b16895fd",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.99,
+        "embedding": 0.15749984619163154,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_math:2",
+      "input_sha256": "24fdc373a433c04e29e264ae06c1677393e6ae38649549d0b4080203853c1d6a",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.99,
+        "embedding": 0.18257418583505539,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_food:1",
+      "input_sha256": "45947a10142442dffacd229066d79d803efc5b58143c582de121038235f1376a",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.99,
+        "embedding": 0.22473328748774737,
+        "pattern": 0.75
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_food:2",
+      "input_sha256": "0003ddc69b0bab20ceef5fb1877dc69a16000628627bec150eee8a444950c22b",
+      "expected_intent": "other",
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.99,
+        "embedding": 0.20464687117164013,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:supplement:selection_ellipsis",
+      "input_sha256": "5a33626303295898f0e000d604bdeee478fb52a8b40e573c69887b3ea8606f1e",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "appointment_create",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.19611613513818404,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:supplement:cancellation_ellipsis",
+      "input_sha256": "47f70f3077574c6811e7f07f9d13712cb830dc6f3ea2c3a070ff8f2bc8141a82",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.19920476822239894,
+        "pattern": 0.0
+      }
+    },
+    {
+      "id": "holdout:supplement:route_ellipsis",
+      "input_sha256": "6b77de740469905be3bc55da7eb5ac34aa7c66d0120e7ade4e7d09ecf325ebf6",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "wayfinding",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.21081851067789195,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:supplement:medicine_ellipsis",
+      "input_sha256": "b23c407f37a17b431c33c7af6cfe6094ebd2f7c17fbfc6bb8d9dcc19b438c7fb",
+      "expected_intent": "medication_query",
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.2204155075111935,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:supplement:unresolved_object",
+      "input_sha256": "ab7c824ed50213e942a41bfab774980c998c2b914250cd30a74c0cce0bfa5e3f",
+      "expected_intent": "other",
+      "evaluation_group": "ambiguous",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.5,
+        "embedding": 0.23717082451262844,
+        "pattern": 0.5
+      }
+    },
+    {
+      "id": "holdout:supplement:conflicting_wish",
+      "input_sha256": "8350f0c73c0a97b07311f32aec2a222a8098aa6d850af51800e1eba7a08e5508",
+      "expected_intent": "other",
+      "evaluation_group": "ambiguous",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.5125692857821981,
+        "pattern": 0.5
+      }
+    }
+  ],
+  "metrics": {
+    "all": {
+      "count": 186,
+      "correct": 185,
+      "accuracy": 0.9946236559139785,
+      "macro_f1": 0.9946605644546148,
+      "other_count": 12,
+      "other_rate": 0.06451612903225806,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 11,
+          "predicted": 11,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 11,
+          "predicted": 11,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "emergency": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 10,
+          "predicted": 9,
+          "f1": 0.9473684210526315
+        },
+        "human_handoff": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 11,
+          "predicted": 11,
+          "f1": 1.0
+        },
+        "other": {
+          "support": 12,
+          "predicted": 12,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 11,
+          "predicted": 12,
+          "f1": 0.9565217391304348
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 11
+        },
+        "appointment_create": {
+          "appointment_create": 11
+        },
+        "appointment_status": {
+          "appointment_status": 10
+        },
+        "department_info": {
+          "department_info": 10
+        },
+        "doctor_info": {
+          "doctor_info": 10
+        },
+        "emergency": {
+          "emergency": 10
+        },
+        "feedback": {
+          "feedback": 10
+        },
+        "greeting": {
+          "greeting": 10
+        },
+        "hospital_info": {
+          "hospital_info": 9,
+          "wayfinding": 1
+        },
+        "human_handoff": {
+          "human_handoff": 10
+        },
+        "medication_query": {
+          "medication_query": 11
+        },
+        "other": {
+          "other": 12
+        },
+        "report_query": {
+          "report_query": 10
+        },
+        "slot_query": {
+          "slot_query": 10
+        },
+        "symptom_query": {
+          "symptom_query": 10
+        },
+        "visit_preparation": {
+          "visit_preparation": 10
+        },
+        "visit_process": {
+          "visit_process": 10
+        },
+        "wayfinding": {
+          "wayfinding": 11
+        }
+      }
+    },
+    "primary": {
+      "count": 160,
+      "correct": 159,
+      "accuracy": 0.99375,
+      "macro_f1": 0.993734335839599,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 10,
+          "predicted": 9,
+          "f1": 0.9473684210526315
+        },
+        "human_handoff": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 10,
+          "predicted": 11,
+          "f1": 0.9523809523809523
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 10
+        },
+        "appointment_create": {
+          "appointment_create": 10
+        },
+        "appointment_status": {
+          "appointment_status": 10
+        },
+        "department_info": {
+          "department_info": 10
+        },
+        "doctor_info": {
+          "doctor_info": 10
+        },
+        "feedback": {
+          "feedback": 10
+        },
+        "greeting": {
+          "greeting": 10
+        },
+        "hospital_info": {
+          "hospital_info": 9,
+          "wayfinding": 1
+        },
+        "human_handoff": {
+          "human_handoff": 10
+        },
+        "medication_query": {
+          "medication_query": 10
+        },
+        "report_query": {
+          "report_query": 10
+        },
+        "slot_query": {
+          "slot_query": 10
+        },
+        "symptom_query": {
+          "symptom_query": 10
+        },
+        "visit_preparation": {
+          "visit_preparation": 10
+        },
+        "visit_process": {
+          "visit_process": 10
+        },
+        "wayfinding": {
+          "wayfinding": 10
+        }
+      }
+    },
+    "low_literal_overlap": {
+      "count": 132,
+      "correct": 131,
+      "accuracy": 0.9924242424242424,
+      "macro_f1": 0.9928392409595417,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 9,
+          "predicted": 9,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 10,
+          "predicted": 9,
+          "f1": 0.9473684210526315
+        },
+        "human_handoff": {
+          "support": 9,
+          "predicted": 9,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 10,
+          "predicted": 11,
+          "f1": 0.9523809523809523
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 9
+        },
+        "appointment_create": {
+          "appointment_create": 10
+        },
+        "appointment_status": {
+          "appointment_status": 10
+        },
+        "department_info": {
+          "department_info": 10
+        },
+        "doctor_info": {
+          "doctor_info": 10
+        },
+        "hospital_info": {
+          "hospital_info": 9,
+          "wayfinding": 1
+        },
+        "human_handoff": {
+          "human_handoff": 9
+        },
+        "medication_query": {
+          "medication_query": 4
+        },
+        "report_query": {
+          "report_query": 10
+        },
+        "slot_query": {
+          "slot_query": 10
+        },
+        "symptom_query": {
+          "symptom_query": 10
+        },
+        "visit_preparation": {
+          "visit_preparation": 10
+        },
+        "visit_process": {
+          "visit_process": 10
+        },
+        "wayfinding": {
+          "wayfinding": 10
+        }
+      }
+    },
+    "ambiguous": {
+      "count": 2,
+      "correct": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 2,
+      "other_rate": 1.0,
+      "per_class": {
+        "other": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "other": {
+          "other": 2
+        }
+      }
+    },
+    "context_required": {
+      "count": 4,
+      "correct": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 1,
+          "predicted": 1,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 1,
+          "predicted": 1,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 1,
+          "predicted": 1,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 1,
+          "predicted": 1,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 1
+        },
+        "appointment_create": {
+          "appointment_create": 1
+        },
+        "medication_query": {
+          "medication_query": 1
+        },
+        "wayfinding": {
+          "wayfinding": 1
+        }
+      }
+    },
+    "emergency": {
+      "count": 10,
+      "correct": 10,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "emergency": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "emergency": {
+          "emergency": 10
+        }
+      }
+    },
+    "other": {
+      "count": 10,
+      "correct": 10,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 10,
+      "other_rate": 1.0,
+      "per_class": {
+        "other": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "other": {
+          "other": 10
+        }
+      }
+    },
+    "single_turn": {
+      "count": 160,
+      "correct": 159,
+      "accuracy": 0.99375,
+      "macro_f1": 0.993734335839599,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 10,
+          "predicted": 9,
+          "f1": 0.9473684210526315
+        },
+        "human_handoff": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 10,
+          "predicted": 10,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 10,
+          "predicted": 11,
+          "f1": 0.9523809523809523
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 10
+        },
+        "appointment_create": {
+          "appointment_create": 10
+        },
+        "appointment_status": {
+          "appointment_status": 10
+        },
+        "department_info": {
+          "department_info": 10
+        },
+        "doctor_info": {
+          "doctor_info": 10
+        },
+        "feedback": {
+          "feedback": 10
+        },
+        "greeting": {
+          "greeting": 10
+        },
+        "hospital_info": {
+          "hospital_info": 9,
+          "wayfinding": 1
+        },
+        "human_handoff": {
+          "human_handoff": 10
+        },
+        "medication_query": {
+          "medication_query": 10
+        },
+        "report_query": {
+          "report_query": 10
+        },
+        "slot_query": {
+          "slot_query": 10
+        },
+        "symptom_query": {
+          "symptom_query": 10
+        },
+        "visit_preparation": {
+          "visit_preparation": 10
+        },
+        "visit_process": {
+          "visit_process": 10
+        },
+        "wayfinding": {
+          "wayfinding": 10
+        }
+      }
+    }
+  },
+  "errors": [
+    "holdout:hospital_info:geographical_landmark:2"
+  ]
+}

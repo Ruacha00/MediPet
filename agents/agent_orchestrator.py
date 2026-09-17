@@ -777,13 +777,15 @@ class AgentOrchestrator:
         rag_tool_manager: Optional[Any] = None,
         hospital_service: Optional[Any] = None,
         visit_store: Optional[Any] = None,
+        intent_embedding_provider: Optional[Any] = None,
     ):
         kwargs: Dict[str, Any] = {"api_key": api_key}
         if base_url:
             kwargs["base_url"] = base_url
         client = AsyncAnthropic(**kwargs)
 
-        self._intent_recognizer = IntentRecognizer(api_key=api_key, base_url=base_url, model=model)
+        self._intent_recognizer = IntentRecognizer(api_key=api_key, base_url=base_url, model=model,
+                                                  embedding_provider=intent_embedding_provider)
         self._skill_manager = skill_manager
         self._composer = ResponseComposer(client, model, skill_manager)
         self._shared_tools: Dict[str, AgentToolSpec] = {}

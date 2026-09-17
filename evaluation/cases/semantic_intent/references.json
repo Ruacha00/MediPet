@@ -1,0 +1,818 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "7a4e22a23d33a0bfa910f19662f2a8e40e429d54",
+  "learn_samples": [],
+  "learn_policy": "Fresh recognizers only. No runtime learn samples are permitted in this experiment.",
+  "cases": [
+    {
+      "id": "template:query:1",
+      "message": "我想了解一些信息",
+      "expected_intent": "query",
+      "kind": "template"
+    },
+    {
+      "id": "template:query:2",
+      "message": "这是什么意思？",
+      "expected_intent": "query",
+      "kind": "template"
+    },
+    {
+      "id": "template:query:3",
+      "message": "能介绍一下吗？",
+      "expected_intent": "query",
+      "kind": "template"
+    },
+    {
+      "id": "template:complaint:1",
+      "message": "等了好几个小时！",
+      "expected_intent": "complaint",
+      "kind": "template"
+    },
+    {
+      "id": "template:complaint:2",
+      "message": "服务太差了！",
+      "expected_intent": "complaint",
+      "kind": "template"
+    },
+    {
+      "id": "template:complaint:3",
+      "message": "一直没人处理！",
+      "expected_intent": "complaint",
+      "kind": "template"
+    },
+    {
+      "id": "template:request:1",
+      "message": "请帮我处理一下",
+      "expected_intent": "request",
+      "kind": "template"
+    },
+    {
+      "id": "template:request:2",
+      "message": "我需要帮助",
+      "expected_intent": "request",
+      "kind": "template"
+    },
+    {
+      "id": "template:request:3",
+      "message": "请协助办理",
+      "expected_intent": "request",
+      "kind": "template"
+    },
+    {
+      "id": "template:greeting:1",
+      "message": "你好",
+      "expected_intent": "greeting",
+      "kind": "template"
+    },
+    {
+      "id": "template:greeting:2",
+      "message": "嗨，有人吗",
+      "expected_intent": "greeting",
+      "kind": "template"
+    },
+    {
+      "id": "template:greeting:3",
+      "message": "早上好",
+      "expected_intent": "greeting",
+      "kind": "template"
+    },
+    {
+      "id": "template:escalation:1",
+      "message": "请升级处理这个问题",
+      "expected_intent": "escalation",
+      "kind": "template"
+    },
+    {
+      "id": "template:escalation:2",
+      "message": "需要进一步协助",
+      "expected_intent": "escalation",
+      "kind": "template"
+    },
+    {
+      "id": "template:escalation:3",
+      "message": "这个问题还没解决",
+      "expected_intent": "escalation",
+      "kind": "template"
+    },
+    {
+      "id": "template:feedback:1",
+      "message": "服务很棒！",
+      "expected_intent": "feedback",
+      "kind": "template"
+    },
+    {
+      "id": "template:feedback:2",
+      "message": "非常满意",
+      "expected_intent": "feedback",
+      "kind": "template"
+    },
+    {
+      "id": "template:feedback:3",
+      "message": "给个好评",
+      "expected_intent": "feedback",
+      "kind": "template"
+    },
+    {
+      "id": "template:guidance:1",
+      "message": "我需要就诊指引",
+      "expected_intent": "guidance",
+      "kind": "template"
+    },
+    {
+      "id": "template:guidance:2",
+      "message": "请说明就医安排",
+      "expected_intent": "guidance",
+      "kind": "template"
+    },
+    {
+      "id": "template:guidance:3",
+      "message": "给我一些到院指引",
+      "expected_intent": "guidance",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment:1",
+      "message": "我想咨询预约事务",
+      "expected_intent": "appointment",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment:2",
+      "message": "处理一下挂号相关事项",
+      "expected_intent": "appointment",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment:3",
+      "message": "预约方面需要帮助",
+      "expected_intent": "appointment",
+      "kind": "template"
+    },
+    {
+      "id": "template:hospital_info:1",
+      "message": "医院几点开始门诊？",
+      "expected_intent": "hospital_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:hospital_info:2",
+      "message": "医院地址是什么？",
+      "expected_intent": "hospital_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:hospital_info:3",
+      "message": "介绍一下医院",
+      "expected_intent": "hospital_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:department_info:1",
+      "message": "儿科的介绍是什么？",
+      "expected_intent": "department_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:department_info:2",
+      "message": "医院有哪些科室？",
+      "expected_intent": "department_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:department_info:3",
+      "message": "想了解科室说明",
+      "expected_intent": "department_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:doctor_info:1",
+      "message": "明天有哪些儿科医生出诊？",
+      "expected_intent": "doctor_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:doctor_info:2",
+      "message": "介绍一下许知宁医生",
+      "expected_intent": "doctor_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:doctor_info:3",
+      "message": "查看医生排班",
+      "expected_intent": "doctor_info",
+      "kind": "template"
+    },
+    {
+      "id": "template:slot_query:1",
+      "message": "明天儿科还有号吗？",
+      "expected_intent": "slot_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:slot_query:2",
+      "message": "查询后天下午的号源",
+      "expected_intent": "slot_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:slot_query:3",
+      "message": "看看眼科可选的号",
+      "expected_intent": "slot_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_create:1",
+      "message": "选择这个号，帮我预约。",
+      "expected_intent": "appointment_create",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_create:2",
+      "message": "就选第一个号源",
+      "expected_intent": "appointment_create",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_create:3",
+      "message": "为这个号准备预约资料",
+      "expected_intent": "appointment_create",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_status:1",
+      "message": "看一下孩子的预约记录。",
+      "expected_intent": "appointment_status",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_status:2",
+      "message": "查看我的预约",
+      "expected_intent": "appointment_status",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_status:3",
+      "message": "这条预约是什么状态？",
+      "expected_intent": "appointment_status",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_cancel:1",
+      "message": "取消这条预约。",
+      "expected_intent": "appointment_cancel",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_cancel:2",
+      "message": "我想取消预约",
+      "expected_intent": "appointment_cancel",
+      "kind": "template"
+    },
+    {
+      "id": "template:appointment_cancel:3",
+      "message": "准备取消这条记录",
+      "expected_intent": "appointment_cancel",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_preparation:1",
+      "message": "第一次就诊需要带什么？",
+      "expected_intent": "visit_preparation",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_preparation:2",
+      "message": "查看儿科就诊材料清单",
+      "expected_intent": "visit_preparation",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_preparation:3",
+      "message": "到院前需要准备什么？",
+      "expected_intent": "visit_preparation",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_process:1",
+      "message": "到院后先在哪里报到？",
+      "expected_intent": "visit_process",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_process:2",
+      "message": "说明门诊就诊流程",
+      "expected_intent": "visit_process",
+      "kind": "template"
+    },
+    {
+      "id": "template:visit_process:3",
+      "message": "报到后怎么办理？",
+      "expected_intent": "visit_process",
+      "kind": "template"
+    },
+    {
+      "id": "template:wayfinding:1",
+      "message": "从门诊大厅怎么去药房？",
+      "expected_intent": "wayfinding",
+      "kind": "template"
+    },
+    {
+      "id": "template:wayfinding:2",
+      "message": "从收费处到检验科怎么走？",
+      "expected_intent": "wayfinding",
+      "kind": "template"
+    },
+    {
+      "id": "template:wayfinding:3",
+      "message": "有去儿科诊区的无障碍路线吗？",
+      "expected_intent": "wayfinding",
+      "kind": "template"
+    },
+    {
+      "id": "template:human_handoff:1",
+      "message": "我想联系人工导诊。",
+      "expected_intent": "human_handoff",
+      "kind": "template"
+    },
+    {
+      "id": "template:human_handoff:2",
+      "message": "导诊联系电话是什么？",
+      "expected_intent": "human_handoff",
+      "kind": "template"
+    },
+    {
+      "id": "template:human_handoff:3",
+      "message": "请帮我找人工",
+      "expected_intent": "human_handoff",
+      "kind": "template"
+    },
+    {
+      "id": "template:symptom_query:1",
+      "message": "我咳嗽流鼻涕，该挂哪个科？",
+      "expected_intent": "symptom_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:symptom_query:2",
+      "message": "孩子肚子不舒服，需要看哪个科室？",
+      "expected_intent": "symptom_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:symptom_query:3",
+      "message": "眼睛发红发痒应该去哪里看？",
+      "expected_intent": "symptom_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:medication_query:1",
+      "message": "布洛芬200mg普通片的说明书怎么服用？",
+      "expected_intent": "medication_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:medication_query:2",
+      "message": "对乙酰氨基酚有哪些禁忌？",
+      "expected_intent": "medication_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:medication_query:3",
+      "message": "布洛芬和华法林有没有相互作用？",
+      "expected_intent": "medication_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:report_query:1",
+      "message": "帮我整理检查报告里的项目和参考区间",
+      "expected_intent": "report_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:report_query:2",
+      "message": "血红蛋白 120 g/L 参考范围 115-150，请整理",
+      "expected_intent": "report_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:report_query:3",
+      "message": "可以上传化验单图片吗？",
+      "expected_intent": "report_query",
+      "kind": "template"
+    },
+    {
+      "id": "template:emergency:1",
+      "message": "现在呼吸困难",
+      "expected_intent": "emergency",
+      "kind": "template"
+    },
+    {
+      "id": "template:emergency:2",
+      "message": "有人突然失去意识",
+      "expected_intent": "emergency",
+      "kind": "template"
+    },
+    {
+      "id": "template:emergency:3",
+      "message": "现在剧烈胸痛",
+      "expected_intent": "emergency",
+      "kind": "template"
+    },
+    {
+      "id": "regression:intent-hospital_info-1",
+      "message": "请告诉我明和医院门诊每天营业到几点。",
+      "expected_intent": "hospital_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-hospital_info-2",
+      "message": "明和医院的门诊从早上哪个时间开始？",
+      "expected_intent": "hospital_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-hospital_info-3",
+      "message": "这家演示医院坐落在什么地方？",
+      "expected_intent": "hospital_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-hospital_info-4",
+      "message": "能概括明和虚构医院的基本信息吗？",
+      "expected_intent": "hospital_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-department_info-1",
+      "message": "列一份明和医院现有科室的名单。",
+      "expected_intent": "department_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-department_info-2",
+      "message": "我想读一读眼科的公开科室说明。",
+      "expected_intent": "department_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-department_info-3",
+      "message": "给我看看内科的科室简介。",
+      "expected_intent": "department_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-department_info-4",
+      "message": "明和医院儿科的介绍资料在哪里？",
+      "expected_intent": "department_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-doctor_info-1",
+      "message": "许知宁医生的公开介绍能查到吗？",
+      "expected_intent": "doctor_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-doctor_info-2",
+      "message": "帮我查林知远医生担任什么职称。",
+      "expected_intent": "doctor_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-doctor_info-3",
+      "message": "顾清禾是哪一个科室的医生？",
+      "expected_intent": "doctor_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-doctor_info-4",
+      "message": "9月17日儿科医生如何安排出诊？",
+      "expected_intent": "doctor_info",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-slot_query-1",
+      "message": "把明天上午儿科剩余的挂号名额列出来。",
+      "expected_intent": "slot_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-slot_query-2",
+      "message": "9月18日的眼科还可以选哪些门诊号？",
+      "expected_intent": "slot_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-slot_query-3",
+      "message": "请查林知远明日下午可预约的时段。",
+      "expected_intent": "slot_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-slot_query-4",
+      "message": "今天内科门诊有哪些尚未约满的号源？",
+      "expected_intent": "slot_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_create-1",
+      "message": "为列表中的第二项生成预约确认资料。",
+      "expected_intent": "appointment_create",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_create-2",
+      "message": "我决定预约这个儿科号，请先给我核对信息。",
+      "expected_intent": "appointment_create",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_create-3",
+      "message": "请按刚才那个上午号准备预约方案。",
+      "expected_intent": "appointment_create",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_create-4",
+      "message": "把第一个可选号源做成待确认的预约。",
+      "expected_intent": "appointment_create",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_status-1",
+      "message": "列出这个就诊人目前有效的预约记录。",
+      "expected_intent": "appointment_status",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_status-2",
+      "message": "帮我核对孩子刚才预约的办理状态。",
+      "expected_intent": "appointment_status",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_status-3",
+      "message": "我要查看本人过去已取消的门诊预约。",
+      "expected_intent": "appointment_status",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_status-4",
+      "message": "当前患者名下登记了哪些就诊预约？",
+      "expected_intent": "appointment_status",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_cancel-1",
+      "message": "替我准备撤销刚才预约的确认资料。",
+      "expected_intent": "appointment_cancel",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_cancel-2",
+      "message": "我不去这次门诊了，要取消那条预约。",
+      "expected_intent": "appointment_cancel",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_cancel-3",
+      "message": "请为选中的预约生成取消方案。",
+      "expected_intent": "appointment_cancel",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-appointment_cancel-4",
+      "message": "这次挂号安排不要了，帮我办理取消预约。",
+      "expected_intent": "appointment_cancel",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_preparation-1",
+      "message": "带孩子第一次去儿科要带齐哪些材料？",
+      "expected_intent": "visit_preparation",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_preparation-2",
+      "message": "明天门诊前我该整理哪些就诊资料？",
+      "expected_intent": "visit_preparation",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_preparation-3",
+      "message": "首次到这家医院就诊的材料清单发我一份。",
+      "expected_intent": "visit_preparation",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_preparation-4",
+      "message": "能列出儿童初诊随身携带的资料吗？",
+      "expected_intent": "visit_preparation",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_process-1",
+      "message": "我到门诊之后，报到和候诊分别怎么安排？",
+      "expected_intent": "visit_process",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_process-2",
+      "message": "医生开了检验单后应该先办理什么手续？",
+      "expected_intent": "visit_process",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_process-3",
+      "message": "想了解缴费之后领取药品的流程。",
+      "expected_intent": "visit_process",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-visit_process-4",
+      "message": "门诊报到完成后下一步该做什么？",
+      "expected_intent": "visit_process",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-wayfinding-1",
+      "message": "请给出门诊大厅到检验科的文字路线。",
+      "expected_intent": "wayfinding",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-wayfinding-2",
+      "message": "从门诊大厅走到眼科诊区的说明发我一下。",
+      "expected_intent": "wayfinding",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-wayfinding-3",
+      "message": "需要从大厅坐电梯去儿科的无障碍指引。",
+      "expected_intent": "wayfinding",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-wayfinding-4",
+      "message": "我在门诊大厅，要去收费处应如何走？",
+      "expected_intent": "wayfinding",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-human_handoff-1",
+      "message": "可以提供人工导诊台的联系办法吗？",
+      "expected_intent": "human_handoff",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-human_handoff-2",
+      "message": "请给我导诊工作人员的演示联系电话。",
+      "expected_intent": "human_handoff",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-human_handoff-3",
+      "message": "我希望找人工导诊咨询到院安排。",
+      "expected_intent": "human_handoff",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-human_handoff-4",
+      "message": "将我的问题整理好，并展示人工导诊联系方式。",
+      "expected_intent": "human_handoff",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-emergency-1",
+      "message": "我现在呼吸困难，刚刚开始的。",
+      "expected_intent": "emergency",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-emergency-2",
+      "message": "旁边的人突然失去意识了，请告诉我怎么办。",
+      "expected_intent": "emergency",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-emergency-3",
+      "message": "家人现在剧烈胸痛，需要立即处理。",
+      "expected_intent": "emergency",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-emergency-4",
+      "message": "孩子突然失去意识，现场需要帮助。",
+      "expected_intent": "emergency",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-greeting-1",
+      "message": "下午好，我刚打开这个助手。",
+      "expected_intent": "greeting",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-greeting-2",
+      "message": "哈喽，先打个招呼。",
+      "expected_intent": "greeting",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-feedback-1",
+      "message": "刚才的说明很有帮助，感谢。",
+      "expected_intent": "feedback",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-feedback-2",
+      "message": "今天的引导体验挺不错的。",
+      "expected_intent": "feedback",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-other-1",
+      "message": "蓝色的三角形在跳舞。",
+      "expected_intent": "other",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-other-2",
+      "message": "随便看看，暂时没有具体事项。",
+      "expected_intent": "other",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-symptom_query-1",
+      "message": "我35岁，近两天不停咳嗽，去明和医院先找哪一个门诊？",
+      "expected_intent": "symptom_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-symptom_query-2",
+      "message": "成年人这两天眼睛干涩还老流泪，请给一个初步就诊方向。",
+      "expected_intent": "symptom_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-symptom_query-3",
+      "message": "这名7岁孩子腹泻一天，医院里哪个科更适合先评估？",
+      "expected_intent": "symptom_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-symptom_query-4",
+      "message": "我40岁最近鼻塞、喉咙痛，想了解该向哪个科室咨询。",
+      "expected_intent": "symptom_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-medication_query-1",
+      "message": "我手里的药盒写布洛芬200mg普通片，可否列出这份标签的用法和限制？",
+      "expected_intent": "medication_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-medication_query-2",
+      "message": "对乙酰氨基酚500mg普通片的说明书有哪些不能用的情况？",
+      "expected_intent": "medication_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-medication_query-3",
+      "message": "正在使用华法林，想核对布洛芬200mg普通片标签里有关合用的警示。",
+      "expected_intent": "medication_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-medication_query-4",
+      "message": "同是布洛芬，缓释胶囊的说明书是不是也收录了？",
+      "expected_intent": "medication_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-report_query-1",
+      "message": "请按我化验单上的原文整理：\n血小板 420 10^9/L 参考范围 150-400",
+      "expected_intent": "report_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-report_query-2",
+      "message": "这张检查单有些项目没写参考区间，请帮我标出哪些需要核对。",
+      "expected_intent": "report_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-report_query-3",
+      "message": "我有一份扫描版检验报告，能否上传PDF来整理文字？",
+      "expected_intent": "report_query",
+      "kind": "legacy_regression"
+    },
+    {
+      "id": "regression:intent-report_query-4",
+      "message": "化验结果写着血红蛋白118g/L，参考区间115-150，帮我对照原单解读。",
+      "expected_intent": "report_query",
+      "kind": "legacy_regression"
+    }
+  ]
+}

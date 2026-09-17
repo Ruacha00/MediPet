@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "model_id": "BAAI/bge-small-zh-v1.5",
+  "revision": "7999e1d3359715c523056ef9478215996d62a620",
+  "source_url": "https://huggingface.co/BAAI/bge-small-zh-v1.5/tree/7999e1d3359715c523056ef9478215996d62a620",
+  "license": "MIT",
+  "dimension": 512,
+  "dtype": "float32",
+  "pooling": "cls",
+  "normalization": "l2",
+  "max_tokens": 512,
+  "prefix": "",
+  "truncation": "longest_first_right",
+  "opset": 17,
+  "export_versions": {
+    "torch": "2.5.1+cpu",
+    "transformers": "4.46.3",
+    "tokenizers": "0.20.3",
+    "huggingface-hub": "0.36.2",
+    "safetensors": "0.5.3",
+    "onnx": "1.17.0",
+    "onnxruntime": "1.30.0",
+    "numpy": "2.5.3"
+  },
+  "files": {
+    "config.json": {
+      "sha256": "3853a7979202c348751b753e36f579c41d8da7d36af617d3d907e1fc9b441f2a",
+      "role": "source"
+    },
+    "model.safetensors": {
+      "sha256": "354763b9b1357bc9c44f62c6be2276321081ed2567773608c0d0785b61d5a026",
+      "role": "source"
+    },
+    "tokenizer.json": {
+      "sha256": "48cea5d44424912a6fd1ea647bf4fe50b55ab8b1e5879c3275f80e339e8fae26",
+      "role": "source_and_runtime"
+    },
+    "tokenizer_config.json": {
+      "sha256": "e6f3b96db926a37d4039995fbf5ad17de158dfb8f6343d607e4dbaad18d75f5a",
+      "role": "source"
+    },
+    "special_tokens_map.json": {
+      "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "role": "source"
+    },
+    "vocab.txt": {
+      "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+      "role": "source"
+    },
+    "1_Pooling/config.json": {
+      "sha256": "aaa8861589f80c961a03cc86c7eeaef7605c1676b9ab55329d33a304738769c6",
+      "role": "source"
+    },
+    "sentence_bert_config.json": {
+      "sha256": "84e39fda68ccbff05bfa723ae9c0e70e23e2ec373b76e0f8c6e71af72a693cbf",
+      "role": "source"
+    },
+    "config_sentence_transformers.json": {
+      "sha256": "940d5f50db195fa6e5e6a4f122c095f77880de259d74b14a65779ed48bdd7c56",
+      "role": "source"
+    },
+    "modules.json": {
+      "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "role": "source"
+    },
+    "README.md": {
+      "sha256": "c48a4eeea77f6b1d38b48ec1c5b8d4f86d5550cc43fa345a0db1b2ca1d082369",
+      "role": "source"
+    },
+    "model.onnx": {
+      "sha256": "d5b6b098c76f31f7ac21fa9f10c9816fca63de6a4965a3e32ac0ae456c584618",
+      "role": "runtime"
+    }
+  },
+  "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3"
+}

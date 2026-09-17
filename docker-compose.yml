@@ -48,6 +48,12 @@ services:
       CHROMA_PERSIST_DIRECTORY: /app/data/chroma
       EVAL_BASELINE_PATH: /app/data/eval/baseline.json
       MEDIPET_SKILLS_DIR: /app/skills
+      MEDIPET_INTENT_EMBEDDING_BACKEND: ${MEDIPET_INTENT_EMBEDDING_BACKEND:-semantic}
+      # Always use the bundled location; the host .env path belongs to host Python.
+      MEDIPET_INTENT_EMBEDDING_MODEL_DIR: /opt/medipet/models/intent/bge-small-zh-v1.5
+      MEDIPET_INTENT_EMBEDDING_FALLBACK: ${MEDIPET_INTENT_EMBEDDING_FALLBACK:-hash}
+      MEDIPET_INTENT_EMBEDDING_TIMEOUT_MS: ${MEDIPET_INTENT_EMBEDDING_TIMEOUT_MS:-2000}
+      MEDIPET_INTENT_EMBEDDING_THREADS: ${MEDIPET_INTENT_EMBEDDING_THREADS:-2}
       PROMETHEUS_PORT: "0"
       ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
     ports:

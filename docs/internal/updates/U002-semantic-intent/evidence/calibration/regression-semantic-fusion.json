@@ -1,0 +1,4030 @@
+{
+  "schema_version": 1,
+  "kind": "intent_fusion_replay",
+  "status": "candidate",
+  "identity": {
+    "dataset_sha256": "792d8c65ecaeb35353848fa8546db793df8baad4d8b84a54093f618c0544be89",
+    "manifest_sha256": "e92eadfdd938360646448692e918c857e8a3e45c96cc9f6d504d97ca0003830d",
+    "dataset_id": "intents",
+    "split": "regression",
+    "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+    "pattern_fingerprint": "276ded034a05a7c88195b05df6799fe6f24e9133d4588b4491c73dff6f0d4b59",
+    "source_sha256": {
+      "core/intent_recognizer.py": "485daaff37d78c4c4be6171c447cf034fef51a4bfc7162f8ba0bce585b988764",
+      "core/intent_embeddings.py": "076ebca39c64e4ef843eba372642c7dfed8bc52605dd554a38f95e8ec55f163d",
+      "core/emergency.py": "d602baa545e827bc31098afbef232950bddd3ad9ead4ae7297f620e65b90da59",
+      "core/llm_utils.py": "7eef1921b75ed5661a5c5fb5261c726a5070be6b4dbd1d69f1222104b0172855"
+    }
+  },
+  "backend": "semantic",
+  "calibration": {
+    "schema_version": 1,
+    "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+    "pattern": {
+      "rule_fingerprint": "276ded034a05a7c88195b05df6799fe6f24e9133d4588b4491c73dff6f0d4b59",
+      "min_score": 0.75
+    },
+    "backends": {
+      "semantic": {
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "min_score": 0.55,
+        "min_margin": 0.04
+      },
+      "hash": {
+        "space_id": "hash:md5-char-ngram-1-2-3-set-signed-v1:256",
+        "min_score": 0.15,
+        "min_margin": 0.03
+      }
+    }
+  },
+  "calibration_sha256": "e0aaca775dd6b6d060d5df3e586e542f0a53d4ac83f7baee0de4d5f20778f42d",
+  "llm_provenance": "live_sdk",
+  "raw_llm_sha256": "b05e28b310939479389d81450a837ebea66a08bb8764337c7f36f2077aabe4f0",
+  "ranking_sha256": "cd3d8edd3c1dc944f6c3e1deec1e6a22a3258bb0bbd15439f9cbb3043a838ae0",
+  "rows": [
+    {
+      "id": "intent-hospital_info-1",
+      "input_sha256": "ae69edef63d87821396ebe191ec25ed060b7b9578c0a73a72910959e2f35547b",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "hospital_info",
+      "confidence": 0.8168248847249482,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7591244236247413,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7591244236247413,
+        "runner_up": 0.6868395970730194,
+        "margin": 0.07228482655172186,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "hospital_info",
+      "failure_confidence": 0.7591244236247413,
+      "llm_failed": false,
+      "raw_response_sha256": "796ba0e49311e06fdbd6d51c77abd5e785aa795dcaf066003a4e902bcdc9a302",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-hospital_info-2",
+      "input_sha256": "ee733d92bb13d51ed5cbd5407cee94bab0da893b28d95cb4acd7c01f9fc59ea5",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "hospital_info",
+      "confidence": 0.822983447312365,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7899172365618251,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7899172365618251,
+        "runner_up": 0.6579385085156371,
+        "margin": 0.13197872804618804,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "hospital_info",
+      "failure_confidence": 0.7899172365618251,
+      "llm_failed": false,
+      "raw_response_sha256": "929f4cd79ef4989d6db8c4d105aa09a376838cf4513356c90b584a27d46f5394",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-hospital_info-3",
+      "input_sha256": "ec6d2129758d8588f9a68bf2cacce866d0f22f66b631646a32d7eb975df079d1",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "hospital_info",
+      "confidence": 0.8049405716432669,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.6997028582163349,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6997028582163349,
+        "runner_up": 0.6432477380551517,
+        "margin": 0.05645512016118326,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "hospital_info",
+      "failure_confidence": 0.6997028582163349,
+      "llm_failed": false,
+      "raw_response_sha256": "75bb3f87985892961e554904e3ff213464643d5d435ca42cb81a51103c0b4884",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-hospital_info-4",
+      "input_sha256": "ae3b046dca0e532c5738a99c8d707b157964bd14dfd5113f73d8be8a17e5d09b",
+      "expected_intent": "hospital_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "hospital_info",
+      "confidence": 0.63,
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6107034449927518,
+        "runner_up": 0.5962788909079871,
+        "margin": 0.014424554084764618,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "f8dccaa7a3742781e7a46284b36bc2fbfe1e9d3e1a8239f8966615a6531b4b46",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-department_info-1",
+      "input_sha256": "a89590fb02c10e104ec75d7b2cbedde06a38b6b2c9d4a1ca1acaa4b083494683",
+      "expected_intent": "department_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "department_info",
+      "confidence": 0.8110393166150041,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7301965830750206,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7301965830750206,
+        "runner_up": 0.6665040739718442,
+        "margin": 0.06369250910317636,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "department_info",
+      "failure_confidence": 0.7301965830750206,
+      "llm_failed": false,
+      "raw_response_sha256": "3b18efb3cda724f944dfa91d08740560e238ae1bea1aeee20463d05a7ad0ec92",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-department_info-2",
+      "input_sha256": "547ad2d2381510cede451fd5903053ef9c18a0d346b462003eabea5c91e6eef9",
+      "expected_intent": "department_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "department_info",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7208008805892816,
+        "runner_up": 0.7207641853415189,
+        "margin": 3.6695247762730254e-05,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "b5eebb788d7f0954a6e91e630368c6734fcf5b214baff945d8aa0f3147eb12cb",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-department_info-3",
+      "input_sha256": "ead44f8f2e32ad35216549512bc15e247f9bd5058b2d1219fa8a8b91a80e3e06",
+      "expected_intent": "department_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "department_info",
+      "confidence": 0.8315696277837106,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7278481389185532,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7278481389185532,
+        "runner_up": 0.6390219414328958,
+        "margin": 0.08882619748565734,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "department_info",
+      "failure_confidence": 0.7278481389185532,
+      "llm_failed": false,
+      "raw_response_sha256": "e10630e34894683098ddaa809bcb6b71e3106b6b4762b49f09d5247e760088e9",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-department_info-4",
+      "input_sha256": "69057f17c0382e34d258102c223f0dde2b01765423de43b3b2c9a85fd93c078a",
+      "expected_intent": "department_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "department_info",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7148378906590133,
+        "runner_up": 0.7047517647546921,
+        "margin": 0.01008612590432112,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "1a5fc1fdb98d449512e1f960de713d405a78a1298003cc6b99aabb0bc8674aed",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-doctor_info-1",
+      "input_sha256": "61cebb68c6d1062d39132333620f02cc11b827d3f2fb0262bfc12338c6e2b3ec",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "doctor_info",
+      "confidence": 0.8781523546940855,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.8157617734704276,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8157617734704276,
+        "runner_up": 0.5860724719363202,
+        "margin": 0.22968930153410738,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "doctor_info",
+      "failure_confidence": 0.8157617734704276,
+      "llm_failed": false,
+      "raw_response_sha256": "20bf553d8f618c2c2572e1857873ee886cf7407fadc172e7b085b358b11d4a2a",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-doctor_info-2",
+      "input_sha256": "0e9271262d067d2e951dfba757ebd0a4b92c4cef2bd5ce44ab8fbe93fe24319d",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "doctor_info",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6379397167007551,
+        "runner_up": 0.6012286613129241,
+        "margin": 0.03671105538783104,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "7efa98be6411981d3d6595a6149354720fed3f0ed8854106e750a67585ae8241",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-doctor_info-3",
+      "input_sha256": "cde457e11b75b1a2c08e7ce20def146f79b66c573f427994694009125fbac3f3",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "doctor_info",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.5851709247766903,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5851709247766903,
+        "runner_up": 0.5408098732297049,
+        "margin": 0.04436105154698544,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "department_info",
+      "failure_confidence": 0.5851709247766903,
+      "llm_failed": false,
+      "raw_response_sha256": "08aaeb1cc85006e3ea5b61ef5a72b1e043545afc2996846240a343973632dfc7",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-doctor_info-4",
+      "input_sha256": "c23c89ef46d071c5cb9d51cf59557b2de394cf0d89e8e4794391126fbca4fc36",
+      "expected_intent": "doctor_info",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "doctor_info",
+      "confidence": 0.8975032292732197,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7875161463660982,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7875161463660982,
+        "runner_up": 0.6782007211769349,
+        "margin": 0.10931542518916337,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "doctor_info",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "f548960f6840b50eefa36400502f8822cef0c42a4e6eb19383fecd26f9e5f0e0",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-slot_query-1",
+      "input_sha256": "dcfc4bec63ee3b569a720e7af6d172508ea7545467c723c45df543368d134d4d",
+      "expected_intent": "slot_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "slot_query",
+      "confidence": 0.8285904996256493,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7129524981282469,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7129524981282469,
+        "runner_up": 0.6211694340173401,
+        "margin": 0.09178306411090675,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "slot_query",
+      "failure_confidence": 0.7129524981282469,
+      "llm_failed": false,
+      "raw_response_sha256": "6640fdc2f14eb9112298565eea8a46b8fb8e099896107594622ec32a71e995d7",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-slot_query-2",
+      "input_sha256": "8c8752843a971265c9f439879b4ae10023aae7666e13badc33b92b982a45a514",
+      "expected_intent": "slot_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "slot_query",
+      "confidence": 0.841084973515665,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.8104248675783254,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8104248675783254,
+        "runner_up": 0.6276788424614478,
+        "margin": 0.18274602511687765,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "slot_query",
+      "failure_confidence": 0.8104248675783254,
+      "llm_failed": false,
+      "raw_response_sha256": "61922768aa35c02e978f667b6786a1f8b379595cf813a7a1321ba1c73c027eb8",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-slot_query-3",
+      "input_sha256": "2aae78b78e4d76531857a27609da425eae134182510d8d1d323aa95b051814f1",
+      "expected_intent": "slot_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "slot_query",
+      "confidence": 0.6789999999999999,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6724315023065026,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6724315023065026,
+        "runner_up": 0.6288656282066711,
+        "margin": 0.04356587409983148,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_status",
+      "failure_confidence": 0.6724315023065026,
+      "llm_failed": false,
+      "raw_response_sha256": "da3d9c6a981fac7c062e34188cd2667eaa5a35b9bd3a154a609334a1d1ad61af",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-slot_query-4",
+      "input_sha256": "4688074a544429fd1403aff6d780140da3f9602c22cf328876fa62354af34378",
+      "expected_intent": "slot_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "slot_query",
+      "confidence": 0.736,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6401017691274669,
+        "runner_up": 0.6359014866669258,
+        "margin": 0.004200282460541049,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "a00eb09602a42034e19f493b1875383255012af27936728385db80bda13b665f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_create-1",
+      "input_sha256": "476d8e3924dc59af41f7fb923e3e635cca19004361426ed6d50c31a7cc43e14a",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_create",
+      "confidence": 0.602,
+      "source_scores": {
+        "llm": 0.86,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6467472711439769,
+        "runner_up": 0.6407842179234315,
+        "margin": 0.005963053220545356,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "e81d9dbe29cfbfc63c3282bee113e07c2cbd9fc4f11c72a7c35e5365dcf9bbba",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_create-2",
+      "input_sha256": "48c4a6002ae3f9b48125343879d6f74ede303d0340607634781144e29e19f193",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_create",
+      "confidence": 0.8685354135335153,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7676770676675764,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7676770676675764,
+        "runner_up": 0.7086655498752339,
+        "margin": 0.05901151779234248,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_create",
+      "failure_confidence": 0.7676770676675764,
+      "llm_failed": false,
+      "raw_response_sha256": "bdacc01b9de144e64b363000bff8d3aa42be810461520964a074562d1807f78b",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_create-3",
+      "input_sha256": "e900c20c02e394165ddad0ad0ccc94862cf9aaee7c7342a16a58b40cb8f758c6",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_create",
+      "confidence": 0.8369071622968437,
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.784535811484218,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.784535811484218,
+        "runner_up": 0.7420511976921335,
+        "margin": 0.04248461379208457,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_create",
+      "failure_confidence": 0.784535811484218,
+      "llm_failed": false,
+      "raw_response_sha256": "20e5f486df681ec467216e13a1efe2d7a384f22e5c16402013c253db9611e19f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_create-4",
+      "input_sha256": "b1386c57a33ab7067f9fc1bb962f190a99ff28c9bbee55c1ee6c441cca235e6c",
+      "expected_intent": "appointment_create",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_create",
+      "confidence": 0.8207725020264428,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7788625101322145,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7788625101322145,
+        "runner_up": 0.6861868825247456,
+        "margin": 0.09267562760746895,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_create",
+      "failure_confidence": 0.7788625101322145,
+      "llm_failed": false,
+      "raw_response_sha256": "8a0ed422d693d4194950ea85466c0235f536041cfff3b0c689d4c845dc4b4db8",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_status-1",
+      "input_sha256": "7ead8a8c39e0e44686ed42e5874a4c175647b5ba87ddb81677baa54b751daba0",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_status",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7386018580984339,
+        "runner_up": 0.7024099009215065,
+        "margin": 0.03619195717692747,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "30ae42a27be44432a86c138482ec9b088c02f5fc7b399bc902c2e883d41bf39e",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_status-2",
+      "input_sha256": "5397eac897655935aec61b66bb600bb76737e44f145699921b0cc44f8d4467be",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_status",
+      "confidence": 0.8180349881320408,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7651749406602043,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7651749406602043,
+        "runner_up": 0.7078267134517248,
+        "margin": 0.05734822720847954,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_status",
+      "failure_confidence": 0.7651749406602043,
+      "llm_failed": false,
+      "raw_response_sha256": "4580e45e9d57a38868ee9635e4141eb6f6dbce95f0daa870f7523cccafd66c65",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_status-3",
+      "input_sha256": "d28e7156bd9f55da0c2e88ddb2ec5e3c3a10dfecfa170eccb469193bd7712fa6",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_status",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7636189958744484,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7636189958744484,
+        "runner_up": 0.7122272970944573,
+        "margin": 0.05139169877999106,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_cancel",
+      "failure_confidence": 0.7636189958744484,
+      "llm_failed": false,
+      "raw_response_sha256": "14c9184324e61723e73e0c31f6242254645197b322df3aeb5a2fddfa27f58e2f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_status-4",
+      "input_sha256": "6c3a00d0eb84d6614217e4a4c002151f3ebecd129d931a460e27cc648894ffa5",
+      "expected_intent": "appointment_status",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_status",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6452723364957219,
+        "runner_up": 0.628388245764414,
+        "margin": 0.01688409073130792,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "b180335bec9ba5858a71d4341733fc6d4641c251f00809bc40d6263753b901cc",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_cancel-1",
+      "input_sha256": "1317dd649e7e11c42882d6211f2d6afe50debd8e3f07cbca52dbe5b42073b6b3",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "confidence": 0.815494593935874,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.75247296967937,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.75247296967937,
+        "runner_up": 0.6856797676637224,
+        "margin": 0.06679320201564765,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_cancel",
+      "failure_confidence": 0.75247296967937,
+      "llm_failed": false,
+      "raw_response_sha256": "d035bf12e192d0fb790347801f08ff97b13016a47951c0da0eb018ee67a781a3",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_cancel-2",
+      "input_sha256": "644f26d1e4bc6909548c3a18959e5239c298c7962186a8ad865f2b250035e076",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "confidence": 0.846465772278661,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.8023288613933052,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8023288613933052,
+        "runner_up": 0.6614313183505877,
+        "margin": 0.1408975430427175,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_cancel",
+      "failure_confidence": 0.8023288613933052,
+      "llm_failed": false,
+      "raw_response_sha256": "807f98ee8bb4302886f054eae5b10478c07288ff3ba7d4e749efcf364aacf2db",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_cancel-3",
+      "input_sha256": "0f4b2630dbbbc94e6356debed2a75f1332c6544aad1905d0f7253d50d55f089e",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "confidence": 0.8390339039087278,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.8701695195436393,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8701695195436393,
+        "runner_up": 0.6889890950528701,
+        "margin": 0.1811804244907692,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_cancel",
+      "failure_confidence": 0.8701695195436393,
+      "llm_failed": false,
+      "raw_response_sha256": "a2b95f500a0d04717057d0f97a53f7691e20ccbda17851092fa4632269866b34",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-appointment_cancel-4",
+      "input_sha256": "b2babf2728302994ef8ebe36a99dfaf4e0a3497f2a5da6e6c6ac9d81c87d0ad4",
+      "expected_intent": "appointment_cancel",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "appointment_cancel",
+      "confidence": 0.8992311384750664,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.8161556923753319,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8161556923753319,
+        "runner_up": 0.7059367649331243,
+        "margin": 0.11021892744220763,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "appointment_cancel",
+      "failure_confidence": 0.8161556923753319,
+      "llm_failed": false,
+      "raw_response_sha256": "74750990515a880b69e4d7e43f7bf102b38449c98b55f5c4eba7d8161f882cf1",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_preparation-1",
+      "input_sha256": "2f2fcba3eaf298c502541bdaf3f8988b4b16281653dc8969c8ca74f58f06c4f4",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_preparation",
+      "confidence": 0.8189825041617386,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6999125208086932,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6999125208086932,
+        "runner_up": 0.6236274527187766,
+        "margin": 0.07628506808991653,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_preparation",
+      "failure_confidence": 0.6999125208086932,
+      "llm_failed": false,
+      "raw_response_sha256": "e3f5c3101c889b39dfea126310fae1bb712f68304612084b9c0d67f0a0e042a3",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_preparation-2",
+      "input_sha256": "86e6ad262b2a1ce23d2d018e27d1d6f08b0a9c069196e6bdba644afc26d5db46",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_preparation",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7829775811914591,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7829775811914591,
+        "runner_up": 0.7080940560215826,
+        "margin": 0.07488352516987651,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_process",
+      "failure_confidence": 0.7829775811914591,
+      "llm_failed": false,
+      "raw_response_sha256": "eecb5b6c4cc4c3eb908c2c83be5ec5db5810fa89547dda8089bb39b2ae8a977f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_preparation-3",
+      "input_sha256": "814285c515a2fbad52f95b5445e8267a35837a6e8eb29e411d381fbc50cbbce7",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_preparation",
+      "confidence": 0.8696531724562515,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.7032658622812573,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7032658622812573,
+        "runner_up": 0.6487673413757998,
+        "margin": 0.05449852090545748,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_preparation",
+      "failure_confidence": 0.7032658622812573,
+      "llm_failed": false,
+      "raw_response_sha256": "4ea1b21b2124e3524ad709ac2f32c16bc561c93aa196dfeaf09a05c32916e501",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_preparation-4",
+      "input_sha256": "e7a0b13476b854344583c48f741cb60e47e4753c81672bb49d3a2313eee24740",
+      "expected_intent": "visit_preparation",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_preparation",
+      "confidence": 0.7990539154257128,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.6702695771285646,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6702695771285646,
+        "runner_up": 0.6078152518920142,
+        "margin": 0.06245432523655037,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_preparation",
+      "failure_confidence": 0.6702695771285646,
+      "llm_failed": false,
+      "raw_response_sha256": "1b89c4815ed7b44652df2ef8f6e92f2efe946fbb6283601b7ce8d25bfb928a63",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_process-1",
+      "input_sha256": "bb2a0dd9cf178fa1581ead52263dff5b62bd7a2c553776e49a8df1402d96b66f",
+      "expected_intent": "visit_process",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_process",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7470496385805628,
+        "runner_up": 0.7395850982152499,
+        "margin": 0.007464540365312966,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "572c863d0e83c9cad65275aee608224748e0f7810cdb55af481ab243286e1f56",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_process-2",
+      "input_sha256": "acd763050577680ca6e52292e41f7062874ae84edca06a6c6bbb03d941cd4901",
+      "expected_intent": "visit_process",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_process",
+      "confidence": 0.63,
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6270747045347692,
+        "runner_up": 0.6217986169797844,
+        "margin": 0.005276087554984765,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "a115125d078883f118582f91a3e3ed08e544afe6301cd19938875978394fc999",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_process-3",
+      "input_sha256": "18085656cdbf9a5ba6a2f9b7ab84d56538779b832cc2396e59860739c94813c8",
+      "expected_intent": "visit_process",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_process",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.59695516059901,
+        "runner_up": 0.5950833527083532,
+        "margin": 0.0018718078906567737,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "7d990c61703dc2a1b533d036aa6043ac7df5e94b8343156f53a993af5a8419a1",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-visit_process-4",
+      "input_sha256": "48a577359dd60df41c10c46e480c3d2035af7d6c94b82d30849135ee93965350",
+      "expected_intent": "visit_process",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "visit_process",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.753487784922087,
+        "runner_up": 0.7438668830667927,
+        "margin": 0.009620901855294295,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "ab873cf2d5a0aac4471839cdfd87971826c7fe48113be27f7730c243e020e7dd",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-wayfinding-1",
+      "input_sha256": "9ce851386230417883236b28e2adc87c87bd42edf6cc48019fb74e2204ddace5",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "wayfinding",
+      "confidence": 0.6859999999999999,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7140199860972152,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7140199860972152,
+        "runner_up": 0.6449361074979455,
+        "margin": 0.06908387859926968,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_process",
+      "failure_confidence": 0.7140199860972152,
+      "llm_failed": false,
+      "raw_response_sha256": "3e1e42b3aa3cc40e6bc645fabc9907e882bb8546f8e530a691183c4fe5dd5405",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-wayfinding-2",
+      "input_sha256": "11121cd8f5d4029e0ca4723c421f8f4e9592b39c326d12be28f88b869b70d42a",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "wayfinding",
+      "confidence": 0.6859999999999999,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7172031710936873,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7172031710936873,
+        "runner_up": 0.6673094305442834,
+        "margin": 0.049893740549403875,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "visit_process",
+      "failure_confidence": 0.7172031710936873,
+      "llm_failed": false,
+      "raw_response_sha256": "bfaf8dc5e03ef57c094294414e85e2213e068fb648d56244ef84b0231a846948",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-wayfinding-3",
+      "input_sha256": "6142417ff97f06a3fa6c1889b9fa7dd905e72a4ce49088d2885f2e7c9f719341",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "wayfinding",
+      "confidence": 0.8380720658693622,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7603603293468115,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7603603293468115,
+        "runner_up": 0.6219425411762871,
+        "margin": 0.13841778817052441,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "wayfinding",
+      "failure_confidence": 0.7603603293468115,
+      "llm_failed": false,
+      "raw_response_sha256": "35203fd6a5ed9ddeecfe9bc6b71ec40a9f14d66ac5393b9c7b837f6a497f7121",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-wayfinding-4",
+      "input_sha256": "7bdc20e2cbcc0fe69c18aac42ee907d558c9b899fe03f73b36761f65a9ccaa87",
+      "expected_intent": "wayfinding",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "wayfinding",
+      "confidence": 0.8359503728450659,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7497518642253297,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7497518642253297,
+        "runner_up": 0.6327292720698217,
+        "margin": 0.11702259215550803,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "wayfinding",
+      "failure_confidence": 0.7497518642253297,
+      "llm_failed": false,
+      "raw_response_sha256": "980b1a654e50e60647ac557f5fe86f3c295b555bd62cb2f7205c501a578e8e06",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-human_handoff-1",
+      "input_sha256": "6686fbf25b4fd7d62e44a2e32f270a7f711d6f10ee7eef840fa313a4241d2e19",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "human_handoff",
+      "confidence": 0.8962955408643265,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.8014777043216326,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8014777043216326,
+        "runner_up": 0.6035936486785065,
+        "margin": 0.19788405564312606,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "human_handoff",
+      "failure_confidence": 0.8014777043216326,
+      "llm_failed": false,
+      "raw_response_sha256": "f08c06e84f80daa16893001569ae4f5a61f929702213dc86ebe1cd8a4297bc01",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-human_handoff-2",
+      "input_sha256": "633e9d3ce34097942c44404ecf31e512f0d8aeb0cd314f0c5498b71f107cdaac",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "human_handoff",
+      "confidence": 0.803399257999929,
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.8669962899996444,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8669962899996444,
+        "runner_up": 0.6583259005701655,
+        "margin": 0.2086703894294789,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "human_handoff",
+      "failure_confidence": 0.8669962899996444,
+      "llm_failed": false,
+      "raw_response_sha256": "5e662f123d93c688860f996fee815e0b5e76a16e2fa3ea287adf1880db169c21",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-human_handoff-3",
+      "input_sha256": "7d30a876b8115b2951940689f2422cd8f316b0666676db5b6d23265b1f505068",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "human_handoff",
+      "confidence": 0.9144643262072041,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.872321631036021,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.872321631036021,
+        "runner_up": 0.7063397029861791,
+        "margin": 0.1659819280498419,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "human_handoff",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "2398b5ef2585cff41da14f34234f388660001d6691d64e70fd76ff0682a5e5b8",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-human_handoff-4",
+      "input_sha256": "bdbf838788a16f1687041a75864d02081b95b025451fa0d2257ae9f84eaad015",
+      "expected_intent": "human_handoff",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "human_handoff",
+      "confidence": 0.8913155687219938,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.8815778436099689,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8815778436099689,
+        "runner_up": 0.6965007167834416,
+        "margin": 0.18507712682652733,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "human_handoff",
+      "failure_confidence": 0.8815778436099689,
+      "llm_failed": false,
+      "raw_response_sha256": "504d3bd974727e30e79e97ae3b515a1c13e4d6262cfa82665104fc011857068b",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-emergency-1",
+      "input_sha256": "c64a94a92216af9e0b282de16ae2b16a1ab2a98f95e9600b8df21092b98b2ce8",
+      "expected_intent": "emergency",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "confidence": 1.0,
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "embedding_info": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      },
+      "failure_prediction": "emergency",
+      "failure_confidence": 1.0,
+      "llm_failed": false,
+      "raw_response_sha256": null,
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-emergency-2",
+      "input_sha256": "9d4d7ba393064729f3dc004c8c5eff1df55567c37a98dd70122c221a08eab5db",
+      "expected_intent": "emergency",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "confidence": 1.0,
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "embedding_info": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      },
+      "failure_prediction": "emergency",
+      "failure_confidence": 1.0,
+      "llm_failed": false,
+      "raw_response_sha256": null,
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-emergency-3",
+      "input_sha256": "6f5558edff54f8e28a10cafa22e1b23b8583036b5ddc5a2776004e3f954e7850",
+      "expected_intent": "emergency",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "confidence": 1.0,
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "embedding_info": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      },
+      "failure_prediction": "emergency",
+      "failure_confidence": 1.0,
+      "llm_failed": false,
+      "raw_response_sha256": null,
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-emergency-4",
+      "input_sha256": "17de745789d1475d39948b6cd2bdacce271283c154b871309491e60ce23a681d",
+      "expected_intent": "emergency",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "emergency",
+      "confidence": 1.0,
+      "source_scores": {
+        "llm": 0.0,
+        "embedding": 0.0,
+        "pattern": 1.0
+      },
+      "embedding_info": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      },
+      "failure_prediction": "emergency",
+      "failure_confidence": 1.0,
+      "llm_failed": false,
+      "raw_response_sha256": null,
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-greeting-1",
+      "input_sha256": "6719f0535b04112ba42e109140eccb38aa29c08479d058cd6e35ca12149ea4e6",
+      "expected_intent": "greeting",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6220864835807258,
+        "runner_up": 0.614968186976414,
+        "margin": 0.007118296604311847,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "e8efc5e23450045405be42ecb4dc92bb1001d75f2466e86315b56226c2507dd3",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-greeting-2",
+      "input_sha256": "f0b65d047dfbbfd63fd7834787d4ad4528c4fa5d5c3f0ef2f0ae7cb81f8c1dde",
+      "expected_intent": "greeting",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "greeting",
+      "confidence": 0.6859999999999999,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5634008944755219,
+        "runner_up": 0.5409138876938131,
+        "margin": 0.022487006781708785,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "6945eeefd423de9915b56a8cf3ae6c249bef60fe14cc5e8b6775bce715d9bbbc",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-feedback-1",
+      "input_sha256": "293813199af52c7cde72b34b1de1db887fad42d769be1073e6e62ea1d5428eb3",
+      "expected_intent": "feedback",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7199819114126914,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7199819114126914,
+        "runner_up": 0.6623137066723855,
+        "margin": 0.05766820474030587,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "request",
+      "failure_confidence": 0.7199819114126914,
+      "llm_failed": false,
+      "raw_response_sha256": "698822765c4d73dcd3e4ead08bc5e76e71e773f38f7757c7664f7cdcef1f2b42",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-feedback-2",
+      "input_sha256": "abb283e1fa7855e48e313bc817468b01db18a80da480cb5824a3a38bb3cbda55",
+      "expected_intent": "feedback",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "feedback",
+      "confidence": 0.6859999999999999,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6487650336671694,
+        "runner_up": 0.6432020620121761,
+        "margin": 0.0055629716549933095,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "644a1d34dead1185c021038a55272e219fd6193c8eab647173c54efa9499173e",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-other-1",
+      "input_sha256": "9625344e146baf889aaa2e0268c6bc2fab75e8c968d5abd0ffa434b0bf8f9b01",
+      "expected_intent": "other",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.38025642881320926,
+        "runner_up": 0.3464884002641077,
+        "margin": 0.03376802854910155,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "cd6cdc8dcf2be082b926e963a9e501c263051317ce368c2b9ae2d66ce46562a1",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-other-2",
+      "input_sha256": "4bf522f85bce2459198e19c32da88871c84084c0ff2710515628f0eb6a6fde3a",
+      "expected_intent": "other",
+      "evaluation_group": "regression",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "low_literal_overlap": false,
+      "prediction": "other",
+      "confidence": 0.42,
+      "source_scores": {
+        "llm": 0.6,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.63700132353673,
+        "runner_up": 0.6097107278802453,
+        "margin": 0.02729059565648473,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "548e74eb56d8606833fbcfdff2c2044af69018abbbbc037ed819fddd562741bc",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-symptom_query-1",
+      "input_sha256": "00156796bc7898ac11521137dcea0c580475d195949dd67d4d6ce1c030965ca9",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "symptom_query",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6445814802884902,
+        "runner_up": 0.6362642293830173,
+        "margin": 0.008317250905472862,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "cb8319f0f7118e947638112c7b221f54fea1d8da5023a3f5e36edd1c47aff634",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-symptom_query-2",
+      "input_sha256": "0347c85fba5b08b502b03c045a8665cc7c9aa5d10108f85a13cf59c408e9408e",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "symptom_query",
+      "confidence": 0.6649999999999999,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5939021925360851,
+        "runner_up": 0.5686948492374206,
+        "margin": 0.025207343298664475,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "537bf301bf773faf06e0c9b6a88e0e93804af41d4f91c0d2fabc77796153e99a",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-symptom_query-3",
+      "input_sha256": "cd6377f4e22196004bce05bd2fe4673c197d176147c8f1ea7c6a852ee98c7c34",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "symptom_query",
+      "confidence": 0.8207877270071755,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7789386350358779,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7789386350358779,
+        "runner_up": 0.6157582784468748,
+        "margin": 0.1631803565890031,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "symptom_query",
+      "failure_confidence": 0.7789386350358779,
+      "llm_failed": false,
+      "raw_response_sha256": "5f8e741e560473572c1a2ea2a5b40400350735a2682b22a93750d4a54b2a0b77",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-symptom_query-4",
+      "input_sha256": "d541f54985ebe60e3b6ec07265d732030a4cd0483ea800e6ed4e090ac8f4eda2",
+      "expected_intent": "symptom_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "symptom_query",
+      "confidence": 0.715,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6031998625156368,
+        "runner_up": 0.5805186349405279,
+        "margin": 0.02268122757510893,
+        "accepted": false,
+        "cache_hit": false
+      },
+      "failure_prediction": "other",
+      "failure_confidence": 0.0,
+      "llm_failed": false,
+      "raw_response_sha256": "a6ea55270ff5437321fa475d09ce93e3fd8f71c05fb00300079338b5ae263f2a",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-medication_query-1",
+      "input_sha256": "939f592b3cbe598ee63f9ccc3bb5ba35a1ea3de3337f23fc1abbd238876d2a6b",
+      "expected_intent": "medication_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "confidence": 0.8825975055511621,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.7679875277558108,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7679875277558108,
+        "runner_up": 0.5005926466332893,
+        "margin": 0.2673948811225215,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "medication_query",
+      "failure_confidence": 0.7679875277558108,
+      "llm_failed": false,
+      "raw_response_sha256": "e16477faa2b22d7f6a165cd171081248544cc1472c70923db482620d3742d1f0",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-medication_query-2",
+      "input_sha256": "925a234bd80772edf8608c8eb3551e0df18ecabf624ab3ec9deb3c076df8a160",
+      "expected_intent": "medication_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "confidence": 0.9161647561121067,
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.7758237805605336,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7758237805605336,
+        "runner_up": 0.49565514070375044,
+        "margin": 0.28016863985678314,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "medication_query",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "053a75dd6478675c97e311b6950c96f334b4dbfe1f6350a45190bfb17098a84f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-medication_query-3",
+      "input_sha256": "047affa7aaccfe7f7e72f9093b0b91efadd5b9d7a2c949778874961f1a45d253",
+      "expected_intent": "medication_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "confidence": 0.8984344108850961,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.7221720544254812,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7221720544254812,
+        "runner_up": 0.43738537287797946,
+        "margin": 0.2847866815475017,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "medication_query",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "20e787bc65fa50c9569663b762ff1e856241e545153979ec070078b0a31e9a4f",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-medication_query-4",
+      "input_sha256": "021cffeb427ec5019b463db8d9ae09ececb92d4abc23000e04f7252e772e328c",
+      "expected_intent": "medication_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "medication_query",
+      "confidence": 0.8742824002780802,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.6714120013904018,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6714120013904018,
+        "runner_up": 0.4953283584664714,
+        "margin": 0.17608364292393042,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "medication_query",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "67636b9a782976806cd0dde569fdb92c55a1e38673c574d0f7cb346f0cde022b",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-report_query-1",
+      "input_sha256": "b0f5f58e822e89c92fa4905f8873a0ecddbb09c4837f06a21dc2d98ca76afd49",
+      "expected_intent": "report_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "report_query",
+      "confidence": 0.9101311327430653,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7256556637153274,
+        "pattern": 1.0
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7256556637153274,
+        "runner_up": 0.5422281465887112,
+        "margin": 0.1834275171266162,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "report_query",
+      "failure_confidence": 1.0,
+      "llm_failed": false,
+      "raw_response_sha256": "a32e89fd270163fb65582b578e7e339b4fa2fab0c44aa4e4ab6cab95b27b6975",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-report_query-2",
+      "input_sha256": "254bf7094449075ba4c07c44c57d6d89b2e2ad4b908c01bb4c8558752ebf8ad1",
+      "expected_intent": "report_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "report_query",
+      "confidence": 0.8645801104674176,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.7479005523370879,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7479005523370879,
+        "runner_up": 0.5779684179773927,
+        "margin": 0.16993213435969512,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "report_query",
+      "failure_confidence": 0.7479005523370879,
+      "llm_failed": false,
+      "raw_response_sha256": "4b70901b31af8d3b0d376123aff6a47b67b4798c0f89b81cd41d951c235d6738",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-report_query-3",
+      "input_sha256": "c00bdd7c0297c98b53bdb3e129614a3d51e5f765f84225b56df613d0a7afcb20",
+      "expected_intent": "report_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "report_query",
+      "confidence": 0.8415229918899051,
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.6326149594495254,
+        "pattern": 0.5
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6326149594495254,
+        "runner_up": 0.5438097831598934,
+        "margin": 0.08880517628963203,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "report_query",
+      "failure_confidence": 0.6326149594495254,
+      "llm_failed": false,
+      "raw_response_sha256": "7fcf90cec4b1855414215e0eac28c34cc1b87c9195cf0747bd4e7cb6f7b828c4",
+      "embedding_failed": false
+    },
+    {
+      "id": "intent-report_query-4",
+      "input_sha256": "f45905eb8b60041e2c55dce6eab2862843d7246a96a3a08c328f22fc5e16b2f2",
+      "expected_intent": "report_query",
+      "evaluation_group": "regression",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "low_literal_overlap": false,
+      "prediction": "report_query",
+      "confidence": 0.930647351295806,
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.8832367564790302,
+        "pattern": 0.75
+      },
+      "embedding_info": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": null,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8832367564790302,
+        "runner_up": 0.5437616968091692,
+        "margin": 0.339475059669861,
+        "accepted": true,
+        "cache_hit": false
+      },
+      "failure_prediction": "report_query",
+      "failure_confidence": 0.75,
+      "llm_failed": false,
+      "raw_response_sha256": "58cc406f6a790cae5bf113c29c16b04802dfe4d9dda2212aa5497d56f41d17e5",
+      "embedding_failed": false
+    }
+  ],
+  "metrics": {
+    "all": {
+      "count": 66,
+      "correct": 66,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 2,
+      "other_rate": 0.030303030303030304,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "emergency": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "human_handoff": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "other": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 4
+        },
+        "appointment_create": {
+          "appointment_create": 4
+        },
+        "appointment_status": {
+          "appointment_status": 4
+        },
+        "department_info": {
+          "department_info": 4
+        },
+        "doctor_info": {
+          "doctor_info": 4
+        },
+        "emergency": {
+          "emergency": 4
+        },
+        "feedback": {
+          "feedback": 2
+        },
+        "greeting": {
+          "greeting": 2
+        },
+        "hospital_info": {
+          "hospital_info": 4
+        },
+        "human_handoff": {
+          "human_handoff": 4
+        },
+        "medication_query": {
+          "medication_query": 4
+        },
+        "other": {
+          "other": 2
+        },
+        "report_query": {
+          "report_query": 4
+        },
+        "slot_query": {
+          "slot_query": 4
+        },
+        "symptom_query": {
+          "symptom_query": 4
+        },
+        "visit_preparation": {
+          "visit_preparation": 4
+        },
+        "visit_process": {
+          "visit_process": 4
+        },
+        "wayfinding": {
+          "wayfinding": 4
+        }
+      }
+    },
+    "primary": {
+      "count": 60,
+      "correct": 60,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 0,
+      "other_rate": 0.0,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "human_handoff": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 4
+        },
+        "appointment_create": {
+          "appointment_create": 4
+        },
+        "appointment_status": {
+          "appointment_status": 4
+        },
+        "department_info": {
+          "department_info": 4
+        },
+        "doctor_info": {
+          "doctor_info": 4
+        },
+        "feedback": {
+          "feedback": 2
+        },
+        "greeting": {
+          "greeting": 2
+        },
+        "hospital_info": {
+          "hospital_info": 4
+        },
+        "human_handoff": {
+          "human_handoff": 4
+        },
+        "medication_query": {
+          "medication_query": 4
+        },
+        "report_query": {
+          "report_query": 4
+        },
+        "slot_query": {
+          "slot_query": 4
+        },
+        "symptom_query": {
+          "symptom_query": 4
+        },
+        "visit_preparation": {
+          "visit_preparation": 4
+        },
+        "visit_process": {
+          "visit_process": 4
+        },
+        "wayfinding": {
+          "wayfinding": 4
+        }
+      }
+    },
+    "low_literal_overlap": {
+      "count": 0,
+      "correct": 0,
+      "accuracy": null,
+      "macro_f1": null,
+      "other_count": 0,
+      "other_rate": null,
+      "per_class": {},
+      "confusion": {}
+    },
+    "regression": {
+      "count": 66,
+      "correct": 66,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "other_count": 2,
+      "other_rate": 0.030303030303030304,
+      "per_class": {
+        "appointment_cancel": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_create": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "appointment_status": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "department_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "doctor_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "emergency": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "feedback": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "greeting": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "hospital_info": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "human_handoff": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "medication_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "other": {
+          "support": 2,
+          "predicted": 2,
+          "f1": 1.0
+        },
+        "report_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "slot_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "symptom_query": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_preparation": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "visit_process": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        },
+        "wayfinding": {
+          "support": 4,
+          "predicted": 4,
+          "f1": 1.0
+        }
+      },
+      "confusion": {
+        "appointment_cancel": {
+          "appointment_cancel": 4
+        },
+        "appointment_create": {
+          "appointment_create": 4
+        },
+        "appointment_status": {
+          "appointment_status": 4
+        },
+        "department_info": {
+          "department_info": 4
+        },
+        "doctor_info": {
+          "doctor_info": 4
+        },
+        "emergency": {
+          "emergency": 4
+        },
+        "feedback": {
+          "feedback": 2
+        },
+        "greeting": {
+          "greeting": 2
+        },
+        "hospital_info": {
+          "hospital_info": 4
+        },
+        "human_handoff": {
+          "human_handoff": 4
+        },
+        "medication_query": {
+          "medication_query": 4
+        },
+        "other": {
+          "other": 2
+        },
+        "report_query": {
+          "report_query": 4
+        },
+        "slot_query": {
+          "slot_query": 4
+        },
+        "symptom_query": {
+          "symptom_query": 4
+        },
+        "visit_preparation": {
+          "visit_preparation": 4
+        },
+        "visit_process": {
+          "visit_process": 4
+        },
+        "wayfinding": {
+          "wayfinding": 4
+        }
+      }
+    }
+  },
+  "llm_failure": {
+    "eligible": 60,
+    "accepted": 42,
+    "correct": 35,
+    "accuracy": 0.8333333333333334,
+    "coverage": 0.7,
+    "rejected_ids": [
+      "intent-hospital_info-4",
+      "intent-department_info-2",
+      "intent-department_info-4",
+      "intent-doctor_info-2",
+      "intent-slot_query-4",
+      "intent-appointment_create-1",
+      "intent-appointment_status-1",
+      "intent-appointment_status-4",
+      "intent-visit_process-1",
+      "intent-visit_process-2",
+      "intent-visit_process-3",
+      "intent-visit_process-4",
+      "intent-greeting-1",
+      "intent-greeting-2",
+      "intent-feedback-2",
+      "intent-symptom_query-1",
+      "intent-symptom_query-2",
+      "intent-symptom_query-4"
+    ],
+    "wrongly_accepted_ids": [
+      "intent-doctor_info-3",
+      "intent-slot_query-3",
+      "intent-appointment_status-3",
+      "intent-visit_preparation-2",
+      "intent-wayfinding-1",
+      "intent-wayfinding-2",
+      "intent-feedback-1"
+    ]
+  },
+  "quality_valid": true,
+  "fusion_quality_valid": true,
+  "metrics_by_actual_backend": {
+    "semantic": {
+      "all": {
+        "count": 62,
+        "correct": 62,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "other_count": 2,
+        "other_rate": 0.03225806451612903,
+        "per_class": {
+          "appointment_cancel": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_create": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_status": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "department_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "doctor_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "feedback": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "greeting": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "hospital_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "human_handoff": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "medication_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "other": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "report_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "slot_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "symptom_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_preparation": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_process": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "wayfinding": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "appointment_cancel": {
+            "appointment_cancel": 4
+          },
+          "appointment_create": {
+            "appointment_create": 4
+          },
+          "appointment_status": {
+            "appointment_status": 4
+          },
+          "department_info": {
+            "department_info": 4
+          },
+          "doctor_info": {
+            "doctor_info": 4
+          },
+          "feedback": {
+            "feedback": 2
+          },
+          "greeting": {
+            "greeting": 2
+          },
+          "hospital_info": {
+            "hospital_info": 4
+          },
+          "human_handoff": {
+            "human_handoff": 4
+          },
+          "medication_query": {
+            "medication_query": 4
+          },
+          "other": {
+            "other": 2
+          },
+          "report_query": {
+            "report_query": 4
+          },
+          "slot_query": {
+            "slot_query": 4
+          },
+          "symptom_query": {
+            "symptom_query": 4
+          },
+          "visit_preparation": {
+            "visit_preparation": 4
+          },
+          "visit_process": {
+            "visit_process": 4
+          },
+          "wayfinding": {
+            "wayfinding": 4
+          }
+        }
+      },
+      "primary": {
+        "count": 60,
+        "correct": 60,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "other_count": 0,
+        "other_rate": 0.0,
+        "per_class": {
+          "appointment_cancel": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_create": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_status": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "department_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "doctor_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "feedback": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "greeting": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "hospital_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "human_handoff": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "medication_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "report_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "slot_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "symptom_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_preparation": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_process": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "wayfinding": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "appointment_cancel": {
+            "appointment_cancel": 4
+          },
+          "appointment_create": {
+            "appointment_create": 4
+          },
+          "appointment_status": {
+            "appointment_status": 4
+          },
+          "department_info": {
+            "department_info": 4
+          },
+          "doctor_info": {
+            "doctor_info": 4
+          },
+          "feedback": {
+            "feedback": 2
+          },
+          "greeting": {
+            "greeting": 2
+          },
+          "hospital_info": {
+            "hospital_info": 4
+          },
+          "human_handoff": {
+            "human_handoff": 4
+          },
+          "medication_query": {
+            "medication_query": 4
+          },
+          "report_query": {
+            "report_query": 4
+          },
+          "slot_query": {
+            "slot_query": 4
+          },
+          "symptom_query": {
+            "symptom_query": 4
+          },
+          "visit_preparation": {
+            "visit_preparation": 4
+          },
+          "visit_process": {
+            "visit_process": 4
+          },
+          "wayfinding": {
+            "wayfinding": 4
+          }
+        }
+      },
+      "low_literal_overlap": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      },
+      "regression": {
+        "count": 62,
+        "correct": 62,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "other_count": 2,
+        "other_rate": 0.03225806451612903,
+        "per_class": {
+          "appointment_cancel": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_create": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "appointment_status": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "department_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "doctor_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "feedback": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "greeting": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "hospital_info": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "human_handoff": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "medication_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "other": {
+            "support": 2,
+            "predicted": 2,
+            "f1": 1.0
+          },
+          "report_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "slot_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "symptom_query": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_preparation": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "visit_process": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "wayfinding": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          }
+        },
+        "confusion": {
+          "appointment_cancel": {
+            "appointment_cancel": 4
+          },
+          "appointment_create": {
+            "appointment_create": 4
+          },
+          "appointment_status": {
+            "appointment_status": 4
+          },
+          "department_info": {
+            "department_info": 4
+          },
+          "doctor_info": {
+            "doctor_info": 4
+          },
+          "feedback": {
+            "feedback": 2
+          },
+          "greeting": {
+            "greeting": 2
+          },
+          "hospital_info": {
+            "hospital_info": 4
+          },
+          "human_handoff": {
+            "human_handoff": 4
+          },
+          "medication_query": {
+            "medication_query": 4
+          },
+          "other": {
+            "other": 2
+          },
+          "report_query": {
+            "report_query": 4
+          },
+          "slot_query": {
+            "slot_query": 4
+          },
+          "symptom_query": {
+            "symptom_query": 4
+          },
+          "visit_preparation": {
+            "visit_preparation": 4
+          },
+          "visit_process": {
+            "visit_process": 4
+          },
+          "wayfinding": {
+            "wayfinding": 4
+          }
+        }
+      }
+    },
+    "hash": {
+      "all": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      },
+      "primary": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      },
+      "low_literal_overlap": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      }
+    },
+    "disabled": {
+      "all": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      },
+      "primary": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      },
+      "low_literal_overlap": {
+        "count": 0,
+        "correct": 0,
+        "accuracy": null,
+        "macro_f1": null,
+        "other_count": 0,
+        "other_rate": null,
+        "per_class": {},
+        "confusion": {}
+      }
+    }
+  },
+  "semantic_sample_count": 62,
+  "errors": [],
+  "observed_llm_failures": 0,
+  "fallback_samples": 0,
+  "performance": {
+    "result_cache_hit": {
+      "count": 62,
+      "p50_ms": 0.035150000257999636,
+      "p95_ms": 0.05019500008529575
+    },
+    "model_inference_during_replay": false
+  },
+  "limitations": [
+    "Injected LLM failure measures mechanism on frozen inputs, not real outage frequency.",
+    "No baseline is accepted automatically; fake LLM provenance is not real fusion evidence."
+  ]
+}

@@ -15,7 +15,8 @@ from memory.visit_store import VisitStore
 from mcp.tool_manager import MCPToolManager, Tool
 
 
-def build_case_runtime_factory(*, config, redis_client, chroma_client, knowledge, skill_manager):
+def build_case_runtime_factory(*, config, redis_client, chroma_client, knowledge, skill_manager,
+                               intent_embedding_provider=None):
     @asynccontextmanager
     async def case_runtime(case, run_id):
         # 随机作用域与演示数据隔离；退出时只清理本场景的键和集合。
@@ -36,7 +37,8 @@ def build_case_runtime_factory(*, config, redis_client, chroma_client, knowledge
             memory = MemoryManager(**config, redis_client=redis_client, chroma_client=chroma_client,
                                    visit_store=visits, collection_prefix=collection_prefix)
             orchestrator = AgentOrchestrator(**config, skill_manager=skill_manager,
-                                            hospital_service=service, visit_store=visits)
+                                            hospital_service=service, visit_store=visits,
+                                            intent_embedding_provider=intent_embedding_provider)
             orchestrator._intent_recognizer._clock = now
             rag = MCPToolManager(**config)
             clients = [memory._client, orchestrator._intent_recognizer.client, orchestrator._composer._client, rag._client]
@@ -77,6 +79,8 @@ def build_case_runtime_factory(*, config, redis_client, chroma_client, knowledge
             # 不共享这些 SDK 客户端，关闭后释放连接；Redis 连接由应用生命周期管理。
             for client in model_clients.values():
                 await client.close()
+            if intent_embedding_provider is None and 'orchestrator' in locals():
+                await orchestrator._intent_recognizer._embedding_provider.aclose()
             keys = [key async for key in redis_client.scan_iter(match=f"{prefix}*")]
             if keys:
                 await redis_client.delete(*keys)

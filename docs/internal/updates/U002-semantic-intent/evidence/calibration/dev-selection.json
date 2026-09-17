@@ -1,0 +1,1186 @@
+{
+  "search_plan_sha256": "9238f287cf77ef484ea536040095eb0fd41de56fca0d2cce21769ee131ab4bf5",
+  "calibration": {
+    "schema_version": 1,
+    "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+    "pattern": {
+      "rule_fingerprint": "276ded034a05a7c88195b05df6799fe6f24e9133d4588b4491c73dff6f0d4b59",
+      "min_score": 0.75
+    },
+    "backends": {
+      "semantic": {
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "min_score": 0.55,
+        "min_margin": 0.04
+      },
+      "hash": {
+        "space_id": "hash:md5-char-ngram-1-2-3-set-signed-v1:256",
+        "min_score": 0.15,
+        "min_margin": 0.03
+      }
+    }
+  },
+  "calibration_sha256": "e0aaca775dd6b6d060d5df3e586e542f0a53d4ac83f7baee0de4d5f20778f42d",
+  "selected": {
+    "semantic": {
+      "index": 7,
+      "thresholds": {
+        "min_score": 0.55,
+        "min_margin": 0.04
+      },
+      "dev_accuracy_qualified": true,
+      "llm_failure": {
+        "eligible": 96,
+        "accepted": 60,
+        "correct": 54,
+        "accuracy": 0.9,
+        "coverage": 0.625,
+        "rejected_ids": [
+          "dev:hospital_info:campus_address:1",
+          "dev:hospital_info:institution_profile:1",
+          "dev:hospital_info:institution_profile:2",
+          "dev:department_info:specialty_catalogue:1",
+          "dev:department_info:specialty_catalogue:2",
+          "dev:department_info:pediatrics_remit:2",
+          "dev:doctor_info:professional_title:2",
+          "dev:doctor_info:duty_roster:1",
+          "dev:slot_query:bookable_sessions:1",
+          "dev:slot_query:bookable_sessions:2",
+          "dev:appointment_create:explicit_slot_selection:2",
+          "dev:appointment_create:ordinal_preparation:1",
+          "dev:appointment_create:draft_registration:1",
+          "dev:appointment_status:existing_reservations:1",
+          "dev:appointment_status:existing_reservations:2",
+          "dev:appointment_status:status_lookup:2",
+          "dev:appointment_status:cancelled_history:1",
+          "dev:appointment_cancel:abandon_visit:2",
+          "dev:visit_preparation:documents_before_departure:2",
+          "dev:visit_preparation:packing_list:1",
+          "dev:visit_preparation:packing_list:2",
+          "dev:visit_process:arrival_order:1",
+          "dev:visit_process:payment_collection_sequence:1",
+          "dev:wayfinding:point_to_point:2",
+          "dev:wayfinding:facility_direction:2",
+          "dev:symptom_query:adult_cough_direction:2",
+          "dev:symptom_query:eye_irritation_direction:2",
+          "dev:report_query:missing_reference:2",
+          "dev:greeting:opening_salutation:1",
+          "dev:greeting:daypart_salutation:1",
+          "dev:greeting:presence_check:2",
+          "dev:feedback:thanks_for_answer:1",
+          "dev:feedback:thanks_for_answer:2",
+          "dev:feedback:positive_experience:2",
+          "dev:feedback:praise_clarity:1",
+          "dev:feedback:praise_clarity:2"
+        ],
+        "wrongly_accepted_ids": [
+          "dev:hospital_info:campus_address:2",
+          "dev:department_info:eye_department_overview:1",
+          "dev:department_info:eye_department_overview:2",
+          "dev:doctor_info:duty_roster:2",
+          "dev:appointment_status:cancelled_history:2",
+          "dev:visit_process:payment_collection_sequence:2"
+        ]
+      },
+      "primary_rank": {
+        "count": 96,
+        "correct": 68,
+        "accuracy": 0.7083333333333334,
+        "macro_f1": 0.5553129410272267,
+        "other_count": 0,
+        "other_rate": 0.0,
+        "per_class": {
+          "appointment": {
+            "support": 0,
+            "predicted": 4,
+            "f1": 0.0
+          },
+          "appointment_cancel": {
+            "support": 6,
+            "predicted": 7,
+            "f1": 0.9230769230769231
+          },
+          "appointment_create": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.7272727272727273
+          },
+          "appointment_status": {
+            "support": 6,
+            "predicted": 1,
+            "f1": 0.2857142857142857
+          },
+          "department_info": {
+            "support": 6,
+            "predicted": 1,
+            "f1": 0.2857142857142857
+          },
+          "doctor_info": {
+            "support": 6,
+            "predicted": 8,
+            "f1": 0.7142857142857143
+          },
+          "escalation": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "feedback": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.6666666666666666
+          },
+          "greeting": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.8
+          },
+          "guidance": {
+            "support": 0,
+            "predicted": 2,
+            "f1": 0.0
+          },
+          "hospital_info": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.6
+          },
+          "human_handoff": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 1.0
+          },
+          "medication_query": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 1.0
+          },
+          "query": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "report_query": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.9090909090909091
+          },
+          "request": {
+            "support": 0,
+            "predicted": 2,
+            "f1": 0.0
+          },
+          "slot_query": {
+            "support": 6,
+            "predicted": 8,
+            "f1": 0.5714285714285714
+          },
+          "symptom_query": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.9090909090909091
+          },
+          "visit_preparation": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 1.0
+          },
+          "visit_process": {
+            "support": 6,
+            "predicted": 10,
+            "f1": 0.5
+          },
+          "wayfinding": {
+            "support": 6,
+            "predicted": 7,
+            "f1": 0.7692307692307693
+          }
+        },
+        "confusion": {
+          "appointment": {},
+          "appointment_cancel": {
+            "appointment_cancel": 6
+          },
+          "appointment_create": {
+            "appointment_create": 4,
+            "appointment": 1,
+            "visit_process": 1
+          },
+          "appointment_status": {
+            "visit_process": 1,
+            "appointment": 3,
+            "appointment_status": 1,
+            "appointment_cancel": 1
+          },
+          "department_info": {
+            "doctor_info": 2,
+            "guidance": 1,
+            "department_info": 1,
+            "slot_query": 2
+          },
+          "doctor_info": {
+            "doctor_info": 5,
+            "slot_query": 1
+          },
+          "escalation": {},
+          "feedback": {
+            "request": 2,
+            "feedback": 3,
+            "guidance": 1
+          },
+          "greeting": {
+            "appointment_create": 1,
+            "greeting": 4,
+            "query": 1
+          },
+          "guidance": {},
+          "hospital_info": {
+            "hospital_info": 3,
+            "visit_process": 3
+          },
+          "human_handoff": {
+            "human_handoff": 6
+          },
+          "medication_query": {
+            "medication_query": 6
+          },
+          "query": {},
+          "report_query": {
+            "report_query": 5,
+            "escalation": 1
+          },
+          "request": {},
+          "slot_query": {
+            "slot_query": 4,
+            "hospital_info": 1,
+            "doctor_info": 1
+          },
+          "symptom_query": {
+            "symptom_query": 5,
+            "slot_query": 1
+          },
+          "visit_preparation": {
+            "visit_preparation": 6
+          },
+          "visit_process": {
+            "visit_process": 4,
+            "wayfinding": 2
+          },
+          "wayfinding": {
+            "wayfinding": 5,
+            "visit_process": 1
+          }
+        },
+        "top3_correct": 85,
+        "top3_accuracy": 0.8854166666666666,
+        "fixed_rule_excluded": 0
+      },
+      "low_overlap_rank": {
+        "count": 71,
+        "correct": 48,
+        "accuracy": 0.676056338028169,
+        "macro_f1": 0.5695075757575757,
+        "other_count": 0,
+        "other_rate": 0.0,
+        "per_class": {
+          "appointment": {
+            "support": 0,
+            "predicted": 4,
+            "f1": 0.0
+          },
+          "appointment_cancel": {
+            "support": 5,
+            "predicted": 6,
+            "f1": 0.9090909090909091
+          },
+          "appointment_create": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.8
+          },
+          "appointment_status": {
+            "support": 6,
+            "predicted": 1,
+            "f1": 0.2857142857142857
+          },
+          "department_info": {
+            "support": 6,
+            "predicted": 1,
+            "f1": 0.2857142857142857
+          },
+          "doctor_info": {
+            "support": 5,
+            "predicted": 7,
+            "f1": 0.6666666666666666
+          },
+          "escalation": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "guidance": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "hospital_info": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.6
+          },
+          "human_handoff": {
+            "support": 4,
+            "predicted": 4,
+            "f1": 1.0
+          },
+          "report_query": {
+            "support": 4,
+            "predicted": 3,
+            "f1": 0.8571428571428571
+          },
+          "slot_query": {
+            "support": 6,
+            "predicted": 8,
+            "f1": 0.5714285714285714
+          },
+          "symptom_query": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.9090909090909091
+          },
+          "visit_preparation": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 1.0
+          },
+          "visit_process": {
+            "support": 6,
+            "predicted": 10,
+            "f1": 0.5
+          },
+          "wayfinding": {
+            "support": 5,
+            "predicted": 6,
+            "f1": 0.7272727272727273
+          }
+        },
+        "confusion": {
+          "appointment": {},
+          "appointment_cancel": {
+            "appointment_cancel": 5
+          },
+          "appointment_create": {
+            "appointment_create": 4,
+            "appointment": 1,
+            "visit_process": 1
+          },
+          "appointment_status": {
+            "visit_process": 1,
+            "appointment": 3,
+            "appointment_status": 1,
+            "appointment_cancel": 1
+          },
+          "department_info": {
+            "doctor_info": 2,
+            "guidance": 1,
+            "department_info": 1,
+            "slot_query": 2
+          },
+          "doctor_info": {
+            "doctor_info": 4,
+            "slot_query": 1
+          },
+          "escalation": {},
+          "guidance": {},
+          "hospital_info": {
+            "hospital_info": 3,
+            "visit_process": 3
+          },
+          "human_handoff": {
+            "human_handoff": 4
+          },
+          "report_query": {
+            "report_query": 3,
+            "escalation": 1
+          },
+          "slot_query": {
+            "slot_query": 4,
+            "hospital_info": 1,
+            "doctor_info": 1
+          },
+          "symptom_query": {
+            "symptom_query": 5,
+            "slot_query": 1
+          },
+          "visit_preparation": {
+            "visit_preparation": 6
+          },
+          "visit_process": {
+            "visit_process": 4,
+            "wayfinding": 2
+          },
+          "wayfinding": {
+            "wayfinding": 4,
+            "visit_process": 1
+          }
+        },
+        "top3_correct": 62,
+        "top3_accuracy": 0.8732394366197183,
+        "fixed_rule_excluded": 0
+      },
+      "performance": {
+        "model_initialize_ms": 1087.9302000003008,
+        "template_build_ms": 206.11530000041967,
+        "first_query_ms": 11.221200000363751,
+        "warm_queries": {
+          "count": 100,
+          "p50_ms": 8.823800000300253,
+          "p95_ms": 9.290150000106223
+        },
+        "warm_query_rows_ms": [
+          8.80810000035126,
+          8.880400000634836,
+          8.345599999302067,
+          8.755300000302668,
+          8.797299999969255,
+          8.917799999835552,
+          8.689199999935227,
+          8.337100000062492,
+          8.372199999939767,
+          8.54570000046806,
+          8.54680000065855,
+          8.60720000036963,
+          9.221299999808252,
+          9.273599999687576,
+          8.468499999253254,
+          8.986700000605197,
+          8.878099999492406,
+          8.91719999981433,
+          8.915299999898707,
+          9.163099999568658,
+          9.160399999927904,
+          8.980000000519794,
+          9.279200000491983,
+          8.93149999956222,
+          9.206700000504497,
+          9.095800000068266,
+          9.633500000745698,
+          8.72680000065884,
+          8.479900000565976,
+          8.510300000125426,
+          8.826000000226486,
+          9.077400000023772,
+          9.05849999981001,
+          8.331700000780984,
+          8.670299999721465,
+          9.069900000213238,
+          8.813000000372995,
+          8.4220999997342,
+          8.401799999774084,
+          8.515900000020338,
+          9.237999999641033,
+          8.672699999806355,
+          8.82160000037402,
+          9.043999999448715,
+          8.687300000019604,
+          8.384099999602768,
+          8.733800000300107,
+          8.692100000189384,
+          8.581200000662648,
+          8.764700000028824,
+          8.473599999888393,
+          8.70059999942896,
+          8.513499999935448,
+          9.125300000050629,
+          8.426499999586667,
+          8.39689999975235,
+          8.848499999658088,
+          8.43669999994745,
+          8.749500000703847,
+          8.905499999855238,
+          8.663200000228244,
+          8.671200000208046,
+          8.580699999583885,
+          8.35559999995894,
+          8.476199999677192,
+          8.696400000189897,
+          8.675600000060513,
+          8.989199999632547,
+          9.123900000304275,
+          8.967099999608763,
+          8.987600000182283,
+          9.03440000001865,
+          8.847699999932956,
+          9.05239999974583,
+          8.845400000609516,
+          9.66320000043197,
+          8.912799999961862,
+          8.528999999725784,
+          8.694399999512825,
+          9.461700000429119,
+          9.079599999495258,
+          9.075499999198655,
+          8.898399999452522,
+          8.860899999490357,
+          9.236899999450543,
+          8.649899999909394,
+          8.60130000000936,
+          8.463099999971746,
+          8.670500000334869,
+          8.757300000070245,
+          9.388000000399188,
+          9.206800000356452,
+          9.285000000090804,
+          9.21920000018872,
+          9.170500000436732,
+          9.415800000169838,
+          8.71610000012879,
+          9.017600000333914,
+          9.216399999786518,
+          9.082200000193552
+        ],
+        "result_cache_hit_ms": null,
+        "warm_actual_backends": {
+          "semantic": 100
+        },
+        "warm_failures": 0,
+        "peak_process_rss_bytes": 250306560,
+        "includes_llm_time": false
+      }
+    },
+    "hash": {
+      "index": 1,
+      "thresholds": {
+        "min_score": 0.15,
+        "min_margin": 0.03
+      },
+      "dev_accuracy_qualified": true,
+      "llm_failure": {
+        "eligible": 96,
+        "accepted": 15,
+        "correct": 15,
+        "accuracy": 1.0,
+        "coverage": 0.15625,
+        "rejected_ids": [
+          "dev:hospital_info:opening_boundary:1",
+          "dev:hospital_info:opening_boundary:2",
+          "dev:hospital_info:campus_address:1",
+          "dev:hospital_info:campus_address:2",
+          "dev:hospital_info:institution_profile:1",
+          "dev:hospital_info:institution_profile:2",
+          "dev:department_info:specialty_catalogue:1",
+          "dev:department_info:specialty_catalogue:2",
+          "dev:department_info:pediatrics_remit:1",
+          "dev:department_info:pediatrics_remit:2",
+          "dev:department_info:eye_department_overview:1",
+          "dev:department_info:eye_department_overview:2",
+          "dev:doctor_info:professional_title:2",
+          "dev:doctor_info:doctor_biography:1",
+          "dev:doctor_info:doctor_biography:2",
+          "dev:doctor_info:duty_roster:1",
+          "dev:doctor_info:duty_roster:2",
+          "dev:slot_query:remaining_capacity:1",
+          "dev:slot_query:remaining_capacity:2",
+          "dev:slot_query:bookable_sessions:1",
+          "dev:slot_query:bookable_sessions:2",
+          "dev:slot_query:availability_check:1",
+          "dev:slot_query:availability_check:2",
+          "dev:appointment_create:explicit_slot_selection:1",
+          "dev:appointment_create:explicit_slot_selection:2",
+          "dev:appointment_create:ordinal_preparation:1",
+          "dev:appointment_create:draft_registration:1",
+          "dev:appointment_create:draft_registration:2",
+          "dev:appointment_status:existing_reservations:1",
+          "dev:appointment_status:existing_reservations:2",
+          "dev:appointment_status:status_lookup:1",
+          "dev:appointment_status:status_lookup:2",
+          "dev:appointment_status:cancelled_history:1",
+          "dev:appointment_status:cancelled_history:2",
+          "dev:appointment_cancel:withdraw_by_id:1",
+          "dev:appointment_cancel:withdraw_by_id:2",
+          "dev:appointment_cancel:abandon_visit:2",
+          "dev:appointment_cancel:cancel_ordinal:1",
+          "dev:appointment_cancel:cancel_ordinal:2",
+          "dev:visit_preparation:documents_before_departure:1",
+          "dev:visit_preparation:documents_before_departure:2",
+          "dev:visit_preparation:packing_list:1",
+          "dev:visit_preparation:packing_list:2",
+          "dev:visit_preparation:previous_records:1",
+          "dev:visit_preparation:previous_records:2",
+          "dev:visit_process:arrival_order:1",
+          "dev:visit_process:arrival_order:2",
+          "dev:visit_process:payment_collection_sequence:1",
+          "dev:visit_process:payment_collection_sequence:2",
+          "dev:visit_process:checkin_procedure:2",
+          "dev:wayfinding:point_to_point:1",
+          "dev:wayfinding:point_to_point:2",
+          "dev:wayfinding:accessible_path:1",
+          "dev:wayfinding:accessible_path:2",
+          "dev:wayfinding:facility_direction:1",
+          "dev:wayfinding:facility_direction:2",
+          "dev:human_handoff:human_contact:1",
+          "dev:human_handoff:human_contact:2",
+          "dev:human_handoff:frontdesk_phone:1",
+          "dev:human_handoff:hand_over_question:2",
+          "dev:symptom_query:adult_cough_direction:1",
+          "dev:symptom_query:child_abdomen_direction:1",
+          "dev:symptom_query:child_abdomen_direction:2",
+          "dev:symptom_query:eye_irritation_direction:1",
+          "dev:symptom_query:eye_irritation_direction:2",
+          "dev:report_query:missing_reference:1",
+          "dev:report_query:missing_reference:2",
+          "dev:report_query:upload_format:1",
+          "dev:report_query:upload_format:2",
+          "dev:greeting:opening_salutation:1",
+          "dev:greeting:opening_salutation:2",
+          "dev:greeting:daypart_salutation:1",
+          "dev:greeting:daypart_salutation:2",
+          "dev:greeting:presence_check:1",
+          "dev:greeting:presence_check:2",
+          "dev:feedback:thanks_for_answer:1",
+          "dev:feedback:thanks_for_answer:2",
+          "dev:feedback:positive_experience:1",
+          "dev:feedback:positive_experience:2",
+          "dev:feedback:praise_clarity:1",
+          "dev:feedback:praise_clarity:2"
+        ],
+        "wrongly_accepted_ids": []
+      },
+      "primary_rank": {
+        "count": 96,
+        "correct": 48,
+        "accuracy": 0.5,
+        "macro_f1": 0.376113406795225,
+        "other_count": 0,
+        "other_rate": 0.0,
+        "per_class": {
+          "appointment": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "appointment_cancel": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.5454545454545454
+          },
+          "appointment_create": {
+            "support": 6,
+            "predicted": 10,
+            "f1": 0.625
+          },
+          "appointment_status": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.4444444444444444
+          },
+          "complaint": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "department_info": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 0.6666666666666666
+          },
+          "doctor_info": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.4444444444444444
+          },
+          "escalation": {
+            "support": 0,
+            "predicted": 2,
+            "f1": 0.0
+          },
+          "feedback": {
+            "support": 6,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "greeting": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.4
+          },
+          "guidance": {
+            "support": 0,
+            "predicted": 6,
+            "f1": 0.0
+          },
+          "hospital_info": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.36363636363636365
+          },
+          "human_handoff": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.8
+          },
+          "medication_query": {
+            "support": 6,
+            "predicted": 14,
+            "f1": 0.6
+          },
+          "query": {
+            "support": 0,
+            "predicted": 2,
+            "f1": 0.0
+          },
+          "report_query": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.9090909090909091
+          },
+          "request": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "slot_query": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 0.5
+          },
+          "symptom_query": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.6666666666666666
+          },
+          "visit_preparation": {
+            "support": 6,
+            "predicted": 4,
+            "f1": 0.4
+          },
+          "visit_process": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.18181818181818182
+          },
+          "wayfinding": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.7272727272727273
+          }
+        },
+        "confusion": {
+          "appointment": {},
+          "appointment_cancel": {
+            "medication_query": 1,
+            "appointment_create": 2,
+            "appointment_cancel": 3
+          },
+          "appointment_create": {
+            "appointment_create": 5,
+            "appointment_status": 1
+          },
+          "appointment_status": {
+            "medication_query": 2,
+            "escalation": 1,
+            "appointment_status": 2,
+            "appointment_cancel": 1
+          },
+          "complaint": {},
+          "department_info": {
+            "department_info": 4,
+            "visit_process": 1,
+            "greeting": 1
+          },
+          "doctor_info": {
+            "doctor_info": 2,
+            "department_info": 1,
+            "hospital_info": 1,
+            "visit_preparation": 1,
+            "guidance": 1
+          },
+          "escalation": {},
+          "feedback": {
+            "greeting": 1,
+            "appointment_create": 2,
+            "appointment_cancel": 1,
+            "medication_query": 2
+          },
+          "greeting": {
+            "feedback": 1,
+            "greeting": 2,
+            "slot_query": 1,
+            "visit_preparation": 1,
+            "query": 1
+          },
+          "guidance": {},
+          "hospital_info": {
+            "medication_query": 1,
+            "hospital_info": 2,
+            "appointment": 1,
+            "visit_process": 1,
+            "guidance": 1
+          },
+          "human_handoff": {
+            "query": 1,
+            "human_handoff": 4,
+            "escalation": 1
+          },
+          "medication_query": {
+            "medication_query": 6
+          },
+          "query": {},
+          "report_query": {
+            "report_query": 5,
+            "guidance": 1
+          },
+          "request": {},
+          "slot_query": {
+            "slot_query": 3,
+            "doctor_info": 1,
+            "guidance": 1,
+            "medication_query": 1
+          },
+          "symptom_query": {
+            "symptom_query": 3,
+            "department_info": 1,
+            "hospital_info": 1,
+            "appointment_create": 1
+          },
+          "visit_preparation": {
+            "visit_process": 1,
+            "slot_query": 2,
+            "guidance": 1,
+            "visit_preparation": 2
+          },
+          "visit_process": {
+            "hospital_info": 1,
+            "wayfinding": 1,
+            "request": 1,
+            "medication_query": 1,
+            "visit_process": 1,
+            "guidance": 1
+          },
+          "wayfinding": {
+            "complaint": 1,
+            "visit_process": 1,
+            "wayfinding": 4
+          }
+        },
+        "top3_correct": 62,
+        "top3_accuracy": 0.6458333333333334,
+        "fixed_rule_excluded": 0
+      },
+      "low_overlap_rank": {
+        "count": 71,
+        "correct": 34,
+        "accuracy": 0.4788732394366197,
+        "macro_f1": 0.3597041847041847,
+        "other_count": 0,
+        "other_rate": 0.0,
+        "per_class": {
+          "appointment": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "appointment_cancel": {
+            "support": 5,
+            "predicted": 3,
+            "f1": 0.5
+          },
+          "appointment_create": {
+            "support": 6,
+            "predicted": 8,
+            "f1": 0.7142857142857143
+          },
+          "appointment_status": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.4444444444444444
+          },
+          "complaint": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "department_info": {
+            "support": 6,
+            "predicted": 6,
+            "f1": 0.6666666666666666
+          },
+          "doctor_info": {
+            "support": 5,
+            "predicted": 2,
+            "f1": 0.2857142857142857
+          },
+          "escalation": {
+            "support": 0,
+            "predicted": 2,
+            "f1": 0.0
+          },
+          "greeting": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "guidance": {
+            "support": 0,
+            "predicted": 6,
+            "f1": 0.0
+          },
+          "hospital_info": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.36363636363636365
+          },
+          "human_handoff": {
+            "support": 4,
+            "predicted": 3,
+            "f1": 0.8571428571428571
+          },
+          "medication_query": {
+            "support": 0,
+            "predicted": 6,
+            "f1": 0.0
+          },
+          "report_query": {
+            "support": 4,
+            "predicted": 3,
+            "f1": 0.8571428571428571
+          },
+          "request": {
+            "support": 0,
+            "predicted": 1,
+            "f1": 0.0
+          },
+          "slot_query": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.5454545454545454
+          },
+          "symptom_query": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.6666666666666666
+          },
+          "visit_preparation": {
+            "support": 6,
+            "predicted": 3,
+            "f1": 0.4444444444444444
+          },
+          "visit_process": {
+            "support": 6,
+            "predicted": 5,
+            "f1": 0.18181818181818182
+          },
+          "wayfinding": {
+            "support": 5,
+            "predicted": 4,
+            "f1": 0.6666666666666666
+          }
+        },
+        "confusion": {
+          "appointment": {},
+          "appointment_cancel": {
+            "medication_query": 1,
+            "appointment_create": 2,
+            "appointment_cancel": 2
+          },
+          "appointment_create": {
+            "appointment_create": 5,
+            "appointment_status": 1
+          },
+          "appointment_status": {
+            "medication_query": 2,
+            "escalation": 1,
+            "appointment_status": 2,
+            "appointment_cancel": 1
+          },
+          "complaint": {},
+          "department_info": {
+            "department_info": 4,
+            "visit_process": 1,
+            "greeting": 1
+          },
+          "doctor_info": {
+            "doctor_info": 1,
+            "department_info": 1,
+            "hospital_info": 1,
+            "visit_preparation": 1,
+            "guidance": 1
+          },
+          "escalation": {},
+          "greeting": {},
+          "guidance": {},
+          "hospital_info": {
+            "medication_query": 1,
+            "hospital_info": 2,
+            "appointment": 1,
+            "visit_process": 1,
+            "guidance": 1
+          },
+          "human_handoff": {
+            "human_handoff": 3,
+            "escalation": 1
+          },
+          "medication_query": {},
+          "report_query": {
+            "guidance": 1,
+            "report_query": 3
+          },
+          "request": {},
+          "slot_query": {
+            "slot_query": 3,
+            "doctor_info": 1,
+            "guidance": 1,
+            "medication_query": 1
+          },
+          "symptom_query": {
+            "symptom_query": 3,
+            "department_info": 1,
+            "hospital_info": 1,
+            "appointment_create": 1
+          },
+          "visit_preparation": {
+            "visit_process": 1,
+            "slot_query": 2,
+            "guidance": 1,
+            "visit_preparation": 2
+          },
+          "visit_process": {
+            "hospital_info": 1,
+            "wayfinding": 1,
+            "request": 1,
+            "medication_query": 1,
+            "visit_process": 1,
+            "guidance": 1
+          },
+          "wayfinding": {
+            "complaint": 1,
+            "visit_process": 1,
+            "wayfinding": 3
+          }
+        },
+        "top3_correct": 45,
+        "top3_accuracy": 0.6338028169014085,
+        "fixed_rule_excluded": 0
+      },
+      "performance": {
+        "model_initialize_ms": 0.005599999894911889,
+        "template_build_ms": 3.6399999999048305,
+        "first_query_ms": 4.8468000004504574,
+        "warm_queries": {
+          "count": 100,
+          "p50_ms": 3.665149999960704,
+          "p95_ms": 3.9183099997444515
+        },
+        "warm_query_rows_ms": [
+          3.473899999335117,
+          3.4418999994159094,
+          3.5547999996197177,
+          3.6232999991625547,
+          3.708399999595713,
+          3.515700000207289,
+          3.382199999578006,
+          3.2891999999264954,
+          3.401500000109081,
+          3.380500000275788,
+          3.4735999997792533,
+          3.7798000003022025,
+          3.377099999852362,
+          3.384399999958987,
+          3.4497999995437567,
+          3.634300000157964,
+          3.678799999761395,
+          3.556100000423612,
+          3.3767999993870035,
+          3.5262999999758904,
+          3.6362999999255408,
+          3.55909999962023,
+          3.4118000003218185,
+          3.6874000006719143,
+          3.3815999995567836,
+          3.814300000158255,
+          3.6693000001832843,
+          3.86750000052416,
+          3.5482000002957648,
+          3.5611999992397614,
+          3.6832000005233567,
+          3.566500000488304,
+          3.709999999955471,
+          3.947600000174134,
+          4.29580000036367,
+          3.8279999998849235,
+          3.7468999998964136,
+          3.6977999998271116,
+          3.614700000071025,
+          3.4875999999712803,
+          3.6104000000705128,
+          3.8470999998025945,
+          3.4081999992849887,
+          3.4036000006381073,
+          3.402500000447617,
+          4.022600000098464,
+          3.6387999998623854,
+          3.410099999200611,
+          3.3637000005910522,
+          3.6609999997381237,
+          3.7478999993254547,
+          3.7994000003891415,
+          3.8209000003917026,
+          3.73810000019148,
+          3.713199999765493,
+          3.4491000005800743,
+          3.3751000000847853,
+          3.507299999910174,
+          3.939400000490423,
+          3.8361999995686347,
+          3.8110000004962785,
+          3.8362999994205893,
+          3.531900000780297,
+          3.711299999849871,
+          3.723599999830185,
+          3.530900000441761,
+          3.4691000000748318,
+          3.858099999888509,
+          3.72479999987263,
+          3.6927999999534222,
+          4.066200000124809,
+          3.696700000546116,
+          3.705699999954959,
+          3.7735999994765734,
+          3.646400000434369,
+          3.525900000568072,
+          3.7866000002395594,
+          3.906900000401947,
+          3.91719999970519,
+          3.8177999995241407,
+          3.7217000008240575,
+          3.6760000002686866,
+          3.5795000003417954,
+          3.44050000057905,
+          3.4617000001162523,
+          3.584199999750126,
+          3.696900000250025,
+          3.8581999997404637,
+          3.9015000002109446,
+          3.8618999997197534,
+          3.6602999998649466,
+          3.6244999992049998,
+          3.3397000006516464,
+          3.7130999999135383,
+          3.6058000005141366,
+          3.761599999961618,
+          3.6825999995926395,
+          3.78160000036587,
+          3.7536999998337706,
+          3.6798999999518855
+        ],
+        "result_cache_hit_ms": null,
+        "warm_actual_backends": {
+          "hash": 100
+        },
+        "warm_failures": 0,
+        "peak_process_rss_bytes": 250306560,
+        "includes_llm_time": false
+      }
+    }
+  }
+}

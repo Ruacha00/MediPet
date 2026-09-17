@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "phase": "predeclared_before_dev_inference",
+  "normal_weights": [
+    0.7,
+    0.2,
+    0.1
+  ],
+  "final_threshold": 0.5,
+  "pattern_min_score": 0.75,
+  "semantic_grid": [
+    {
+      "min_score": 0.45,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.02
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.04
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.08
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.02
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.04
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.08
+    },
+    {
+      "min_score": 0.65,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.65,
+      "min_margin": 0.02
+    },
+    {
+      "min_score": 0.65,
+      "min_margin": 0.04
+    },
+    {
+      "min_score": 0.65,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.65,
+      "min_margin": 0.08
+    },
+    {
+      "min_score": 0.75,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.75,
+      "min_margin": 0.02
+    },
+    {
+      "min_score": 0.75,
+      "min_margin": 0.04
+    },
+    {
+      "min_score": 0.75,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.75,
+      "min_margin": 0.08
+    },
+    {
+      "min_score": 0.85,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.85,
+      "min_margin": 0.02
+    },
+    {
+      "min_score": 0.85,
+      "min_margin": 0.04
+    },
+    {
+      "min_score": 0.85,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.85,
+      "min_margin": 0.08
+    }
+  ],
+  "hash_grid": [
+    {
+      "min_score": 0.15,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.15,
+      "min_margin": 0.03
+    },
+    {
+      "min_score": 0.15,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.15,
+      "min_margin": 0.09
+    },
+    {
+      "min_score": 0.15,
+      "min_margin": 0.12
+    },
+    {
+      "min_score": 0.25,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.25,
+      "min_margin": 0.03
+    },
+    {
+      "min_score": 0.25,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.25,
+      "min_margin": 0.09
+    },
+    {
+      "min_score": 0.25,
+      "min_margin": 0.12
+    },
+    {
+      "min_score": 0.35,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.35,
+      "min_margin": 0.03
+    },
+    {
+      "min_score": 0.35,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.35,
+      "min_margin": 0.09
+    },
+    {
+      "min_score": 0.35,
+      "min_margin": 0.12
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.03
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.09
+    },
+    {
+      "min_score": 0.45,
+      "min_margin": 0.12
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.03
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.06
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.09
+    },
+    {
+      "min_score": 0.55,
+      "min_margin": 0.12
+    }
+  ],
+  "selection": "Among dev LLM-failure selective accuracy >=0.90, maximize coverage, then accuracy, then min_score, then min_margin. If no candidate qualifies, maximize accuracy then coverage and report candidate unmet; never tune on holdout.",
+  "dev_llm": "Injected failure solely for failure-policy threshold selection; it is not evidence of real fusion quality.",
+  "holdout": "Freeze both chosen policies before exactly one ranking + frozen-response replay comparison. No templates, labels, weights, or thresholds adjusted from holdout.",
+  "live_capture": "Once per frozen non-emergency input. SDK max_retries=0, concurrency=3, timeout=60s, per-row fsync checkpoint and missing-only resume. Preserve failed rows."
+}

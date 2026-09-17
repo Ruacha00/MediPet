@@ -1,0 +1,30 @@
+{
+  "image": "medipet-u002-runtime:check",
+  "image_id": "sha256:9494e4e95f4d5994e78b262f479cdec56ab4777f27e5c9a1143323ae594ff973",
+  "build_exit": 0,
+  "pip_check_exit": 0,
+  "container_probe_exit": 0,
+  "compose_config_exit": 0,
+  "missing_model_cli_exit": 1,
+  "fully_network_disabled_build_exit": 1,
+  "offline_build_failed_instruction_exit": 100,
+  "offline_build_failure": "existing apt OCR package installation requires an available package source",
+  "local_runtime_tests": "13 passed",
+  "offline_reexport": {
+    "minimum_cosine": 0.9999999701211565,
+    "sample_count": 22,
+    "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+    "batch_single_max_abs_error": 0.0
+  },
+  "source_sha256": {
+    ".env.example": "5a37faf18e3828a34ae421a1139ab3ec121ddc5c4009999866d61733e132cf91",
+    "Dockerfile": "3be5c80546149347ce047bd68090700a46871427d1608b1a615ba7e9b794b7b9",
+    "docker-compose.yml": "fba4e1e4acc9d3f2bbd36d74d5aca76e0e725f1923b5820b3a5f2fb8d5027b25",
+    ".dockerignore": "ac68b8f632823c60acf641d3f01a6e6f3cfc61a6b4e5b57bfc27f816221fff92",
+    "scripts/prepare_intent_embedding.py": "86cb00ef10d979f50c79f20f480049bca12abb589436de0ad0cd8d196122a110",
+    "core/intent_embeddings.py": "076ebca39c64e4ef843eba372642c7dfed8bc52605dd554a38f95e8ec55f163d",
+    "config/intent_embedding_model.json": "b03ba23d616e9d01adb566cf152be327809c5a24c85a08c0b321b1e967651935",
+    "requirements.txt": "01f2696f516a5535912552b265a30438f9bff93d3cc5be64956afed90f25758c",
+    "tests/test_intent_embedding_runtime.py": "84a5885a92abc1ef1c3f8343a6d954d0ca8833e5a5a2dc5ad3cb6586d139783a"
+  }
+}

@@ -212,6 +212,7 @@ class IntentEvaluator:
                 result = await self._recognizer.recognize(case.message, history=(case.context or {}).get("history"))
                 predicted = result.intent.value
                 detail.update(predicted=predicted, confidence=result.confidence, reasoning=result.reasoning)
+                detail["intent_embedding"] = getattr(result, "embedding_info", {})
             except Exception as exc:
                 predicted = "__call_failed__"
                 detail.update(predicted=None, call_failed=True, error=str(exc))
@@ -450,6 +451,11 @@ class EndToEndEvaluator:
                     "latency_ms": response.latency_ms, "routing_reason": response.routing_reason,
                     "routing_confidence": response.routing_confidence}
         state["turns"].append(metadata)
+        recognizer = getattr(runtime.orchestrator, "_intent_recognizer", None)
+        if emergency:
+            metadata["intent_embedding"] = {"status": "bypassed_emergency"}
+        elif recognizer is not None and hasattr(recognizer, "embedding_status"):
+            metadata["intent_embedding"] = recognizer.embedding_status()
         messages = [{"role": "user", "content": question}, {"role": "assistant", "content": response.response}]
         if runtime.visit_store:
             now = runtime.hospital_service.now() if runtime.hospital_service else datetime.now().astimezone()

@@ -1,0 +1,62 @@
+{
+  "python": "3.12.14",
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+  "uid": 1000,
+  "model_directory": "/opt/medipet/models/intent/bge-small-zh-v1.5",
+  "model_readonly": true,
+  "network_connect_forbidden": true,
+  "versions": {
+    "onnxruntime": "1.30.0",
+    "tokenizers": "0.20.3",
+    "numpy": "2.5.3",
+    "chromadb": "0.5.23"
+  },
+  "production_has_torch": false,
+  "production_has_transformers": false,
+  "status": {
+    "configured_backend": "semantic",
+    "active_backend": "semantic",
+    "model": "BAAI/bge-small-zh-v1.5",
+    "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+    "dimension": 512,
+    "status": "semantic_ready",
+    "generation": 1,
+    "fallback_reason": null,
+    "failure_count": 0,
+    "inference_in_flight": false
+  },
+  "cold_initialize_ms": 334.81352799998376,
+  "sample_count": 30,
+  "p50_ms": 3.756778499990787,
+  "p95_ms": 79.09081999997625,
+  "max_ms": 79.15960700000824,
+  "peak_rss_mib": 323.1796875,
+  "chroma_embedding_dimension": 384,
+  "failure_states": {
+    "missing": {
+      "configured_backend": "semantic",
+      "active_backend": "hash",
+      "model": "character-ngram-md5",
+      "space_id": "hash:md5-char-ngram-1-2-3-set-signed-v1:256",
+      "dimension": 256,
+      "status": "hash_fallback",
+      "generation": 1,
+      "fallback_reason": "initialize:FileNotFoundError",
+      "failure_count": 1,
+      "inference_in_flight": false
+    },
+    "corrupt": {
+      "configured_backend": "semantic",
+      "active_backend": "hash",
+      "model": "character-ngram-md5",
+      "space_id": "hash:md5-char-ngram-1-2-3-set-signed-v1:256",
+      "dimension": 256,
+      "status": "hash_fallback",
+      "generation": 1,
+      "fallback_reason": "initialize:ValueError",
+      "failure_count": 1,
+      "inference_in_flight": false
+    }
+  },
+  "passed": true
+}

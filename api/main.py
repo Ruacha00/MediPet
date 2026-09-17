@@ -62,6 +62,7 @@ _skill_manager = None
 _business_redis = None
 _visit_store = None
 _hospital_service = None
+_intent_embeddings = None
 
 def _anthropic_cfg() -> Dict[str, Any]:
     key = os.getenv("ANTHROPIC_API_KEY", "")
@@ -80,12 +81,13 @@ def _anthropic_cfg() -> Dict[str, Any]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _orchestrator, _memory, _tool_manager, _monitor, _evaluator, _skill_manager
-    global _business_redis, _visit_store, _hospital_service
+    global _business_redis, _visit_store, _hospital_service, _intent_embeddings
 
     print(BANNER, flush=True)
 
     from agents.agent_orchestrator import AgentOrchestrator, Request, build_shared_rag_tools
     from core.intent_recognizer import IntentRecognizer
+    from core.intent_embeddings import IntentEmbeddingProvider
     from evaluation.evaluator import EndToEndEvaluator
     from api.evaluation_runtime import build_case_runtime_factory
     from mcp.knowledge_base import KnowledgeBase
@@ -95,6 +97,8 @@ async def lifespan(app: FastAPI):
     from core.skill_loader import SkillManager
 
     cfg = _anthropic_cfg()
+    _intent_embeddings = IntentEmbeddingProvider()
+    await _intent_embeddings.initialize()
     logger.info(f"模型: {cfg['model']}  base_url: {cfg.get('base_url', '(官方)')}")
 
     _business_redis = Redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"), decode_responses=True)
@@ -110,6 +114,7 @@ async def lifespan(app: FastAPI):
         api_key=cfg["api_key"],
         base_url=cfg.get("base_url"),
         model=cfg["model"],
+        embedding_provider=_intent_embeddings,
     )
 
     # Skills：启动时从目录加载业务能力说明，并在 Agent 调用 LLM 时动态注入。
@@ -128,6 +133,7 @@ async def lifespan(app: FastAPI):
         skill_manager=_skill_manager,
         hospital_service=_hospital_service,
         visit_store=_visit_store,
+        intent_embedding_provider=_intent_embeddings,
     )
 
     # 记忆管理器（Redis 工作记忆 + ChromaDB 情景记忆/用户画像）
@@ -198,13 +204,15 @@ async def lifespan(app: FastAPI):
         model=cfg["model"],
         baseline_path=os.getenv("EVAL_BASELINE_PATH", "/app/data/eval/baseline.json"),
         case_runtime_factory=build_case_runtime_factory(config=cfg, redis_client=_business_redis,
-                                                        chroma_client=kb._client, knowledge=kb, skill_manager=_skill_manager),
+                                                        chroma_client=kb._client, knowledge=kb, skill_manager=_skill_manager,
+                                                        intent_embedding_provider=_intent_embeddings),
     )
 
     logger.info("MediPet 已就绪")
     yield
 
     await _monitor.stop()
+    await _intent_embeddings.aclose()
     if _memory is not None:
         await _memory.close()
     if _business_redis is not None:
@@ -271,6 +279,7 @@ class ChatResponse(BaseModel):
     entities: Dict[str, List[str]] = Field(default_factory=dict)
     intent_confidence: float = 0.0
     intent_source_scores: Dict[str, float] = Field(default_factory=dict)
+    intent_embedding: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ToolTraceResponse(BaseModel):
@@ -355,7 +364,8 @@ async def visit_messages(conv_id: Identifier, user_id: Identifier = DEFAULT_USER
 async def health():
     if _orchestrator is None:
         raise HTTPException(503, "服务未就绪")
-    return {"status": "ok", "agents": _orchestrator.get_stats()}
+    return {"status": "ok", "agents": _orchestrator.get_stats(),
+            "intent_embedding": _intent_embeddings.status() if _intent_embeddings is not None else {"status": "uninitialized"}}
 
 
 @app.get("/skills", tags=["Skills"])
@@ -435,6 +445,7 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
         entities=intent_result.entities,
         intent_confidence=round(intent_result.confidence, 4),
         intent_source_scores=intent_result.source_scores,
+        intent_embedding=intent_result.embedding_info,
     )
     # 完整历史先落盘；摘要和工作窗口都不是业务记录的来源。
     metadata = response.model_dump(mode="json", exclude={"visit", "artifacts", "response", "conv_id", "patient_id"})
@@ -798,7 +809,8 @@ async def run_eval(body: Optional[EvalRunInput] = None):
         dialog_cases=dialog_cases,
         boundary_cases=[c.model_dump(exclude_none=True) for c in body.boundary_cases] if body and body.boundary_cases is not None else DEFAULT_BOUNDARY_CASES,
         metadata={"entrypoint": "api", "model": os.getenv("ANTHROPIC_MODEL", ""),
-                  "intent_vectors": "local character n-gram", "knowledge_vectors": "Chroma all-MiniLM-L6-v2",
+                  "intent_vectors": _intent_embeddings.status() if _intent_embeddings is not None else {"status": "uninitialized"},
+                  "knowledge_vectors": "Chroma all-MiniLM-L6-v2",
                   "storage": "isolated Redis keys and Chroma collections"},
     )
     return asdict(report)

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "rule": {
+    "jaccard_at_least": 0.6,
+    "sequence_ratio_at_least": 0.84,
+    "normalization": "NFKC/casefold/isalnum; SequenceMatcher autojunk=False"
+  },
+  "scope": "all new cases versus references; across distinct new expression families",
+  "flags": [
+    {
+      "left": "dev:supplement:cancel_negated",
+      "right": "template:appointment_cancel:2",
+      "jaccard": 0.5,
+      "sequence_ratio": 0.857143,
+      "left_message": "我并不想取消预约。",
+      "right_message": "我想取消预约",
+      "decision": "retain_boundary_only",
+      "reason": "仅否认取消且没有另一明确诉求，作为歧义/澄清控制；不纳入向量主指标、低重合或LLM故障可判定集合。该受控近似例外待独立审阅。"
+    }
+  ],
+  "review_status": "approved",
+  "reviewer": "/root/spec_agents_knowledge"
+}

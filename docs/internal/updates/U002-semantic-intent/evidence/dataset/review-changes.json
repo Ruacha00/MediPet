@@ -1,0 +1,66 @@
+{
+  "reviewer": "/root/spec_agents_knowledge",
+  "stage": "pre-inference",
+  "initial_verdict": "labels accepted within bounded review; family split needs changes",
+  "changes": [
+    {
+      "old_id": "holdout:symptom_query:feeling_unwell_triage:1",
+      "new_id": "holdout:symptom_query:candidate_specialty_comparison:1",
+      "old_message": "我36岁，这两天鼻子堵、嗓子疼，请建议就医的科别。",
+      "new_message": "我30岁，因咽痛流涕准备就诊，在内科与眼科之间该怎样选择第一站？",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:symptom_query:feeling_unwell_triage:2",
+      "new_id": "holdout:symptom_query:candidate_specialty_comparison:2",
+      "old_message": "成年人嗓子刺痛伴流鼻水，先向哪个临床部门求助？",
+      "new_message": "孩子6岁腹泻，儿科和内科两个选项中，哪个更适合作为初诊方向？",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:symptom_query:pediatric_choice:1",
+      "new_id": "holdout:symptom_query:check_self_selected_specialty:1",
+      "old_message": "9岁儿童总说肚子难受，门诊第一站应选什么专科？",
+      "new_message": "我30岁眼红发痒，原本打算挂内科；请先核对我选的科别方向是否合适。",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:symptom_query:pediatric_choice:2",
+      "new_id": "holdout:symptom_query:check_self_selected_specialty:2",
+      "old_message": "7岁孩子一天拉了几次肚子，挂号时该选哪个诊疗科别？",
+      "new_message": "给7岁腹部不适的孩子选了眼科但还没预约，想先校对这个挂科方向。",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:symptom_query:ocular_first_stop:1",
+      "new_id": "holdout:symptom_query:triage_missing_information:1",
+      "old_message": "我28岁，双眼发红并有痒感，要去哪一类门诊看？",
+      "new_message": "咳嗽流鼻涕想就诊，为了确定首诊科别，我还应先告诉你哪些个人情况？",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:symptom_query:ocular_first_stop:2",
+      "new_id": "holdout:symptom_query:triage_missing_information:2",
+      "old_message": "我是40岁的成年人，眼部干燥不适，想选一个初诊专科。",
+      "new_message": "眼睛发红发痒，想确定首诊方向，应先补充哪些信息供分诊使用？",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:appointment_create:chosen_session_order:1",
+      "new_id": "holdout:appointment_create:new_booking_not_previous_record:1",
+      "old_message": "我已选定号源slot_demo_003，下一步请制作预约确认卡。",
+      "new_message": "不要调出我以前的预约，请以刚选号源发起一条新预约的待确认流程。",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    },
+    {
+      "old_id": "holdout:appointment_create:chosen_session_order:2",
+      "new_id": "holdout:appointment_create:new_booking_not_previous_record:2",
+      "old_message": "请为已选中的slot_demo_004安排待确认的挂号资料。",
+      "new_message": "现有预约只作历史保留，这次要为新选的门诊时段另建预约草案。",
+      "reason": "Independent pre-inference review found the old family only changed entity/age/synonym relative to dev; replaced by a different request frame."
+    }
+  ],
+  "inference_used": false,
+  "followup_review": "approved",
+  "final_review": "独立审阅者已读8条实质替换：候选科别比较、核对自选科别、分诊前补充资料、新建草案而非读取旧记录；标签与家族通过。全量288基础及12控制此前无确定错标。仅否认取消可保留为ambiguous，继续排除vector_primary/低重合/故障可判定分母。本复核未查看模型结果或执行推理，不等同统计保证全部表达语义独立。"
+}

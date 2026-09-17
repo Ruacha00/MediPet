@@ -13,17 +13,22 @@ import asyncio
 import hashlib
 import json
 import logging
+import math
 import re
 import time
-from dataclasses import dataclass, field
+from collections import Counter
+from copy import deepcopy
+from dataclasses import dataclass, field, replace
 from datetime import date, datetime, timedelta
 from enum import Enum
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 from zoneinfo import ZoneInfo
 
 from anthropic import AsyncAnthropic
 
 from core.llm_utils import extract_text_content, llm_request_options
+from core.intent_embeddings import IntentEmbeddingProvider, hash_embedding
 from core.emergency import EMERGENCY_SIGNALS, detect_emergency, is_emergency_reference
 from hospital.models import BUSINESS_TIMEZONE
 
@@ -39,22 +44,22 @@ class IntentCategory(Enum):
     FEEDBACK   = "feedback"    # 正面反馈
     GUIDANCE   = "guidance"    # 就诊指引兜底
     APPOINTMENT = "appointment"  # 预约事务兜底
-    HOSPITAL_INFO = "hospital_info"
-    DEPARTMENT_INFO = "department_info"
-    DOCTOR_INFO = "doctor_info"
-    SLOT_QUERY = "slot_query"
-    APPOINTMENT_CREATE = "appointment_create"
-    APPOINTMENT_STATUS = "appointment_status"
-    APPOINTMENT_CANCEL = "appointment_cancel"
-    VISIT_PREPARATION = "visit_preparation"
-    VISIT_PROCESS = "visit_process"
-    WAYFINDING = "wayfinding"
-    HUMAN_HANDOFF = "human_handoff"
-    SYMPTOM_QUERY = "symptom_query"
-    MEDICATION_QUERY = "medication_query"
-    REPORT_QUERY = "report_query"
-    EMERGENCY = "emergency"
-    OTHER      = "other"
+    HOSPITAL_INFO = "hospital_info" # 医院信息
+    DEPARTMENT_INFO = "department_info" # 科室信息
+    DOCTOR_INFO = "doctor_info" # 医生信息
+    SLOT_QUERY = "slot_query" # 号源查询
+    APPOINTMENT_CREATE = "appointment_create" # 预约创建
+    APPOINTMENT_STATUS = "appointment_status" # 预约状态查询
+    APPOINTMENT_CANCEL = "appointment_cancel" # 预约取消
+    VISIT_PREPARATION = "visit_preparation" # 就诊准备
+    VISIT_PROCESS = "visit_process" # 就诊流程
+    WAYFINDING = "wayfinding" # 路线指引
+    HUMAN_HANDOFF = "human_handoff" # 人工导诊
+    SYMPTOM_QUERY = "symptom_query" # 症状查询
+    MEDICATION_QUERY = "medication_query" # 用药查询
+    REPORT_QUERY = "report_query" # 检查报告查询
+    EMERGENCY = "emergency" # 急症
+    OTHER      = "other" # 未知/不确定
 
 class UrgencyLevel(Enum):
     LOW      = 1
@@ -73,6 +78,7 @@ class IntentResult:
     reasoning:  str
     latency_ms: float
     source_scores: Dict[str, float] = field(default_factory=dict)
+    embedding_info: Dict[str, Any] = field(default_factory=dict)
 
 
 # ── Few-shot 模板（同时用于 LLM 示例和 Embedding 匹配）────────────────────────
@@ -157,17 +163,21 @@ _URGENCY_KEYWORDS = {
 
 def _cosine(a: List[float], b: List[float]) -> float:
     """纯 Python 余弦相似度，不依赖 numpy。"""
+    if not a or len(a) != len(b) or not all(math.isfinite(x) for x in (*a, *b)):
+        raise ValueError("Embedding vectors must have equal nonzero dimensions and finite values")
     dot = sum(x * y for x, y in zip(a, b))
     na  = sum(x * x for x in a) ** 0.5
     nb  = sum(x * x for x in b) ** 0.5
-    return dot / (na * nb) if na and nb else 0.0
+    if not na or not nb:
+        raise ValueError("Embedding vectors cannot have zero norm")
+    return dot / (na * nb)
 
 
 class IntentRecognizer:
     """
     端到端意图识别器。
 
-    LLM 通过 Anthropic 兼容接口调用；默认向量是本地字符 n-gram 哈希。
+    LLM 通过 Anthropic 兼容接口调用；独立本地中文向量失败时明确回退字符哈希。
     模板 Embedding 在首次请求时懒加载并缓存，后续复用。
     """
 
@@ -179,6 +189,8 @@ class IntentRecognizer:
         confidence_threshold: float = 0.5,
         *,
         clock: Optional[Callable[[], datetime]] = None,
+        embedding_provider: Optional[Any] = None,
+        calibration: Optional[Dict[str, Any]] = None,
     ):
         kwargs: Dict[str, Any] = {"api_key": api_key}
         if base_url:
@@ -188,10 +200,18 @@ class IntentRecognizer:
         self.threshold = confidence_threshold
         self._timezone = ZoneInfo(BUSINESS_TIMEZONE)
         self._clock = clock or (lambda: datetime.now(self._timezone))
-        # 本地字符 n-gram 向量始终可用；如果未来客户端暴露 embeddings 资源，
-        # _embed_text 会优先尝试远端向量，否则自动回退本地向量。
-        self._embedding_enabled = True
-
+        self._embedding_provider = embedding_provider or IntentEmbeddingProvider()
+        self._owns_embedding_provider = embedding_provider is None
+        self._embedding_enabled = self._embedding_provider.status()["configured_backend"] != "disabled"
+        self._templates = deepcopy(_TEMPLATES)
+        self._template_revision = 0
+        self._template_lock = asyncio.Lock()
+        self._tpl_identity = None
+        self._backend_counts = Counter()
+        self._calibration = self._read_calibration() if calibration is None else deepcopy(calibration)
+        self._calibration_version = self._fingerprint(self._calibration)
+        self._pattern_fingerprint = ""
+        self._pattern_recognize("")
         self._tpl_embeddings: Dict[IntentCategory, List[List[float]]] = {}
         self._cache: Dict[str, IntentResult] = {}
         self.cache_hits   = 0
@@ -209,11 +229,24 @@ class IntentRecognizer:
 
         history 格式：[{"role": "user"/"assistant", "content": "..."}]
         """
+        message = self._clean_text(message)
         today = self._today()
+        if detect_emergency(message):
+            return IntentResult(IntentCategory.EMERGENCY, 1.0, UrgencyLevel.CRITICAL,
+                                "escalation", self._extract_entities(message, today=today),
+                                "预设急症信号", 0.0, {"llm": 0.0, "embedding": 0.0, "pattern": 1.0},
+                                {"status": "bypassed_emergency", "elapsed_ms": None})
+        if self._embedding_enabled:
+            try:
+                await self._embedding_provider.initialize()
+            except Exception as exc:
+                logger.warning("Embedding initialization unavailable: %s", type(exc).__name__)
+        version = self._classification_version()
         key = self._cache_key(message, history, today=today)
         if key in self._cache:
             self.cache_hits += 1
-            return self._cache[key]
+            cached = self._cache[key]
+            return replace(cached, embedding_info={**cached.embedding_info, "cache_hit": True, "elapsed_ms": None})
         self.cache_misses += 1
 
         t0 = time.monotonic()
@@ -227,7 +260,22 @@ class IntentRecognizer:
             llm, emb = await asyncio.gather(llm_task, emb_task)
         else:
             llm = await llm_task
-            emb = {"intent": IntentCategory.OTHER, "confidence": 0.0}
+            emb = {"intent": IntentCategory.OTHER, "confidence": 0.0,
+                   "info": {**self.embedding_status(), "status": "disabled_explicit", "active_backend": "disabled",
+                            "accepted": False, "elapsed_ms": None, "cache_hit": False}}
+
+        # 向量先完成后仍可能等待LLM；期间切换空间或learn不能发布旧快照。
+        info = emb.get("info", {})
+        state = self._embedding_provider.status()
+        if emb_task and not emb.get("failed") and info.get("space_id") is not None and (
+            info.get("space_id") != state.get("space_id")
+            or info.get("generation") != state.get("generation")
+            or info.get("template_revision") != self._template_revision
+        ):
+            emb = {**emb, "intent": IntentCategory.OTHER, "confidence": 0.0,
+                   "accepted": False, "standalone": False, "failed": True,
+                   "info": {**info, "accepted": False, "stale_snapshot": True,
+                            "classification_error": "embedding_snapshot_changed"}}
 
         intent, confidence, source_scores = self._vote(llm, emb, pat)
         # 三路投票保持原机制；模型不能将否定或知识询问升级为固定急症。
@@ -245,23 +293,30 @@ class IntentRecognizer:
             reasoning=llm.get("reasoning", ""),
             latency_ms=(time.monotonic() - t0) * 1000,
             source_scores=source_scores,
+            embedding_info=emb.get("info", {}),
         )
+        self._backend_counts[result.embedding_info.get("active_backend", "unavailable")] += 1
 
         # LRU 缓存
         if len(self._cache) >= 1000:
             for k in list(self._cache)[:500]:
                 del self._cache[k]
-        self._cache[key] = result
+        state = self._embedding_provider.status()
+        if (not llm.get("failed") and not state.get("fallback_reason")
+                and not emb.get("failed") and version == self._classification_version()):
+            self._cache[key] = result
         return result
 
     def learn(self, message: str, correct: IntentCategory) -> None:
         """在线学习：将纠正样本加入模板，清除对应 Embedding 缓存。"""
         if correct not in _ACTIVE_INTENTS:
             raise ValueError("不支持的 MediPet 意图")
-        tpls = _TEMPLATES.setdefault(correct, [])
+        tpls = self._templates.setdefault(correct, [])
         if message not in tpls:
             tpls.append(message)
-            self._tpl_embeddings.pop(correct, None)  # 下次重新计算
+            self._template_revision += 1
+            self._tpl_embeddings.clear()
+            self._tpl_identity = None
             self._cache.clear()  # 模板更新后旧缓存可能对应过时结果
             logger.info(f"学习新样本 → {correct.value}: {message[:40]}")
 
@@ -277,7 +332,7 @@ class IntentRecognizer:
         # 构建 Few-shot 示例
         examples = "\n".join(
             f'  消息: "{t}" → 意图: {cat.value}'
-            for cat, tpls in _TEMPLATES.items()
+            for cat, tpls in self._templates.items()
             for t in tpls[:1]  # 每类取 1 条，控制 prompt 长度
         )
         # 最近 3 轮对话上下文
@@ -333,19 +388,57 @@ class IntentRecognizer:
     async def _embedding_recognize(self, message: str) -> Dict[str, Any]:
         """策略 2：Embedding 向量相似度匹配。"""
         try:
-            await self._load_template_embeddings()
-            msg_vec = await self._embed_text(message)
-
-            best_cat, best_score = IntentCategory.OTHER, 0.0
-            for cat, vecs in self._tpl_embeddings.items():
-                score = max(_cosine(msg_vec, v) for v in vecs)
-                if score > best_score:
-                    best_score, best_cat = score, cat
-
-            return {"intent": best_cat, "confidence": best_score}
+            # 一次故障切换允许重建整套模板；不无限追赶并发 learn 或后端变动。
+            for _ in range(2):
+                await self._load_template_embeddings()
+                templates, identity = self._tpl_embeddings, self._tpl_identity
+                batch = await self._embedding_provider.encode_batch([self._clean_text(message)])
+                state = self._embedding_provider.status()
+                expected = (batch.space_id, batch.generation, self._template_revision)
+                if (identity != expected or state["space_id"] != batch.space_id
+                        or state["generation"] != batch.generation):
+                    continue
+                ranking = sorted(((cat, max(_cosine(batch.vectors[0], v) for v in vecs))
+                                  for cat, vecs in templates.items()), key=lambda pair: pair[1], reverse=True)
+                return self._apply_embedding_calibration(
+                    message, [{"intent": cat.value, "score": score} for cat, score in ranking],
+                    {**state, "truncated": batch.truncated[0], "elapsed_ms": batch.elapsed_ms},
+                )
+            raise RuntimeError("embedding_snapshot_changed")
         except Exception as ex:
-            logger.warning(f"Embedding 识别失败: {ex}")
-            return {"intent": IntentCategory.OTHER, "confidence": 0.0}
+            logger.warning("Embedding classification unavailable: %s", type(ex).__name__)
+            return {"intent": IntentCategory.OTHER, "confidence": 0.0, "failed": True,
+                    "info": {**self.embedding_status(), "accepted": False, "cache_hit": False,
+                             "elapsed_ms": None, "classification_error": type(ex).__name__}}
+
+    def _apply_embedding_calibration(
+        self, message: str, ranking: List[Dict[str, Any]], info: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """对同一空间的类别排名应用门槛；离线回放与真实推理共用此规则。"""
+        best_cat, best_score = IntentCategory(ranking[0]["intent"]), ranking[0]["score"]
+        runner_up = ranking[1]["score"] if len(ranking) > 1 else None
+        margin = best_score - runner_up if runner_up is not None else best_score
+        backend, space_id = info["active_backend"], info["space_id"]
+        policy = self._calibration.get("backends", {}).get(backend, {})
+        calibrated = bool(policy and policy.get("space_id") == space_id)
+        changed = self._calibration.get("template_fingerprint") != self.template_fingerprint
+        context_dependent = bool(re.fullmatch(
+            r"(?:明天|后天|今天|上午|下午|那个|这个|第[一二三四五六七八九十\d]+个|还是下午)(?:呢|吧|可以吗)?[？?。！!]*",
+            message.strip()))
+        accepted = (calibrated and best_score >= policy["min_score"]
+                    and margin >= policy["min_margin"] and best_cat != IntentCategory.OTHER)
+        details = {**info, "template_revision": self._template_revision,
+                   "template_fingerprint": self.template_fingerprint,
+                   "calibration_version": self._calibration_version,
+                   "calibration_status": "calibrated" if calibrated else "uncalibrated",
+                   "template_changed_since_calibration": changed,
+                   "requires_context": context_dependent,
+                   "top1": best_score, "runner_up": runner_up, "margin": margin,
+                   "accepted": accepted, "cache_hit": False}
+        return {"intent": best_cat, "confidence": max(0.0, best_score) if accepted else 0.0,
+                "accepted": accepted,
+                "standalone": accepted and calibrated and not changed and not context_dependent,
+                "backend": backend, "info": details, "ranking": ranking}
 
     def _pattern_recognize(self, message: str) -> Dict[str, Any]:
         """策略 3：关键词模式匹配（同步，零延迟兜底）。"""
@@ -378,10 +471,19 @@ class IntentRecognizer:
             IntentCategory.GUIDANCE: ["指引", "就医安排"],
             IntentCategory.FEEDBACK: ["满意", "好评", "很棒", "谢谢"],
         }
+        self._pattern_fingerprint = self._fingerprint({
+            "specific": {cat.value: kws for cat, kws in specific_patterns.items()},
+            "generic": {cat.value: kws for cat, kws in generic_patterns.items()},
+        })
 
         best_cat, best_score = self._best_pattern_match(msg, specific_patterns)
         if best_cat != IntentCategory.OTHER:
-            return {"intent": best_cat, "confidence": best_score}
+            matches = []
+            for cat, kws in specific_patterns.items():
+                hits = sum(1 for kw in kws if kw in msg)
+                if hits:
+                    matches.append({"intent": cat.value, "confidence": min(1.0, 0.5 + 0.25 * (hits - 1))})
+            return {"intent": best_cat, "confidence": best_score, "matches": matches}
 
         best_cat, best_score = self._best_pattern_match(msg, generic_patterns)
         return {"intent": best_cat, "confidence": best_score}
@@ -396,13 +498,30 @@ class IntentRecognizer:
             "pattern": float(pat.get("confidence", 0.0) or 0.0),
         }
         if llm.get("failed"):
-            if emb.get("intent") != IntentCategory.OTHER and emb.get("confidence", 0.0) > 0:
+            policy = self._calibration.get("pattern", {})
+            minimum = (policy.get("min_score", 0.75)
+                       if policy.get("rule_fingerprint") == self.pattern_fingerprint else 0.75)
+            matches = pat.get("matches", [{"intent": pat.get("intent", IntentCategory.OTHER).value,
+                                           "confidence": source_scores["pattern"]}])
+            strong = {IntentCategory(item["intent"]) for item in matches
+                      if item["confidence"] >= minimum and IntentCategory(item["intent"]) in _SPECIFIC_INTENTS}
+            semantic = (emb.get("backend") == "semantic" and emb.get("accepted")
+                        and emb.get("standalone") and emb.get("intent") != IntentCategory.OTHER)
+            if len(strong) > 1 or (strong and semantic and emb["intent"] not in strong):
+                return IntentCategory.OTHER, 0.0, source_scores
+            if strong:
+                chosen = next(iter(strong))
+                score = max(item["confidence"] for item in matches if item["intent"] == chosen.value)
+                return chosen, score, source_scores
+            if semantic:
                 return emb["intent"], source_scores["embedding"], source_scores
-            if pat.get("intent") != IntentCategory.OTHER and pat.get("confidence", 0.0) > 0:
-                return pat["intent"], source_scores["pattern"], source_scores
+            if (emb.get("backend") == "hash" and emb.get("accepted") and source_scores["pattern"] >= 0.5
+                    and emb.get("intent") == pat.get("intent") and pat.get("intent") in _SPECIFIC_INTENTS
+                    and not emb.get("info", {}).get("requires_context")):
+                return emb["intent"], min(source_scores["embedding"], source_scores["pattern"]), source_scores
             return IntentCategory.OTHER, 0.0, source_scores
 
-        if self._embedding_enabled:
+        if self._embedding_enabled and self._embedding_provider.status()["active_backend"] != "disabled":
             weights = [(llm, 0.7), (emb, 0.2), (pat, 0.1)]
         else:
             weights = [(llm, 0.85), (pat, 0.15)]
@@ -514,55 +633,75 @@ class IntentRecognizer:
     # ── 辅助 ──────────────────────────────────────────────────────────────────
 
     async def _load_template_embeddings(self) -> None:
-        """懒加载所有模板的 Embedding（只在首次调用时执行）。"""
-        missing = [cat for cat in _TEMPLATES if cat not in self._tpl_embeddings]
-        if not missing:
-            return
-
-        all_texts = [t for cat in missing for t in _TEMPLATES[cat]]
-        vecs = [await self._embed_text(text) for text in all_texts]
-        idx = 0
-        for cat in missing:
-            n = len(_TEMPLATES[cat])
-            self._tpl_embeddings[cat] = vecs[idx: idx + n]
-            idx += n
+        """按空间和模板版本构建完整快照，成功后一次发布。"""
+        await self._embedding_provider.initialize()
+        async with self._template_lock:
+            state = self._embedding_provider.status()
+            identity = (state["space_id"], state["generation"], self._template_revision)
+            if self._tpl_identity == identity:
+                return
+            revision = self._template_revision
+            snapshot = deepcopy(self._templates)
+            texts = [text for group in snapshot.values() for text in group]
+            batch = await self._embedding_provider.encode_batch(texts)
+            state = self._embedding_provider.status()
+            if (revision != self._template_revision or batch.space_id != state["space_id"]
+                    or batch.generation != state["generation"]):
+                return
+            if len(batch.vectors) != len(texts):
+                raise ValueError("Template embedding count mismatch")
+            vectors, offset = {}, 0
+            for cat, values in snapshot.items():
+                vectors[cat] = batch.vectors[offset:offset + len(values)]
+                offset += len(values)
+            self._tpl_embeddings = vectors
+            self._tpl_identity = (batch.space_id, batch.generation, revision)
 
     async def _embed_text(self, text: str) -> List[float]:
-        """
-        生成文本向量。
-
-        如果未来接入的官方/兼容客户端提供 embeddings.create，会优先使用远端向量；
-        当前 Anthropic SDK 没有该资源时，退化为字符 n-gram 哈希向量。这样不会因为
-        Embedding 服务缺失导致三路融合中断。
-        """
-        embeddings = getattr(self.client, "embeddings", None)
-        if embeddings is not None:
-            try:
-                resp = await embeddings.create(model="voyage-3-lite", input=[text])
-                return list(resp.data[0].embedding)
-            except Exception as ex:
-                logger.warning(f"远端 Embedding 失败，使用本地向量兜底: {ex}")
-
-        return self._local_embedding(text)
+        """单句便利接口；模板匹配必须同时检查批次的空间和 generation。"""
+        batch = await self._embedding_provider.encode_batch([self._clean_text(text)])
+        return batch.vectors[0]
 
     @staticmethod
     def _local_embedding(text: str, dims: int = 256) -> List[float]:
-        """稳定的字符 n-gram 哈希向量，用于无远端 Embedding 时的语义近似匹配。"""
-        normalized = text.lower().strip()
-        vec = [0.0] * dims
-        tokens = set()
-        for n in (1, 2, 3):
-            if len(normalized) >= n:
-                tokens.update(normalized[i:i + n] for i in range(len(normalized) - n + 1))
-        if not tokens:
-            tokens.add(normalized)
+        """确定性字符片段哈希，仅用于明确降级或对照。"""
+        return hash_embedding(text, dims)
 
-        for token in tokens:
-            digest = hashlib.md5(token.encode("utf-8")).digest()
-            idx = int.from_bytes(digest[:4], "big") % dims
-            sign = 1.0 if digest[4] % 2 == 0 else -1.0
-            vec[idx] += sign
-        return vec
+    @staticmethod
+    def _fingerprint(value: Any) -> str:
+        return hashlib.sha256(json.dumps(value, ensure_ascii=True, sort_keys=True).encode()).hexdigest()
+
+    @staticmethod
+    def _read_calibration() -> Dict[str, Any]:
+        path = Path(__file__).resolve().parents[1] / "config" / "intent_embedding_calibration.json"
+        if not path.exists():
+            return {}
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for policy in data.get("backends", {}).values():
+            if not (-1 <= policy["min_score"] <= 1 and 0 <= policy["min_margin"] <= 2):
+                raise ValueError("Invalid intent embedding calibration thresholds")
+        return data
+
+    @property
+    def template_fingerprint(self) -> str:
+        return self._fingerprint({cat.value: values for cat, values in self._templates.items()})
+
+    @property
+    def pattern_fingerprint(self) -> str:
+        return self._pattern_fingerprint
+
+    def _classification_version(self) -> tuple:
+        state = self._embedding_provider.status()
+        return (state.get("space_id"), state.get("generation"), self._template_revision,
+                self._calibration_version, self._embedding_enabled)
+
+    def embedding_status(self) -> Dict[str, Any]:
+        return {**self._embedding_provider.status(), "sample_counts": dict(self._backend_counts)}
+
+    async def aclose(self) -> None:
+        if self._owns_embedding_provider:
+            await self._embedding_provider.aclose()
+        await self.client.close()
 
     def _urgency(self, message: str, intent: IntentCategory) -> UrgencyLevel:
         if is_emergency_reference(message):
@@ -588,12 +727,13 @@ class IntentRecognizer:
     def _cache_key(
         self, message: str, history: Optional[List[Dict[str, str]]] = None, *, today: Optional[date] = None,
     ) -> str:
-        payload = {"message": self._clean_text(message)[:200], "date": (today or self._today()).isoformat()}
+        payload = {"message": self._clean_text(message), "date": (today or self._today()).isoformat(),
+                   "version": self._classification_version()}
         if history:
             payload["history"] = [
                 {
-                    "role": self._clean_text(item.get("role", ""))[:20],
-                    "content": self._clean_text(item.get("content", ""))[:160],
+                    "role": self._clean_text(item.get("role", "user")),
+                    "content": self._clean_text(item.get("content", "")),
                 }
                 for item in history[-3:]
             ]

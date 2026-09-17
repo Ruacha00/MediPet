@@ -1,0 +1,4452 @@
+{
+  "schema_version": 1,
+  "dataset_id": "medipet-u002-semantic-intent-v1",
+  "split": "holdout",
+  "purpose": "held-out evaluation only; never template/learn/calibration input",
+  "cases": [
+    {
+      "id": "holdout:hospital_info:attendance_calendar:1",
+      "message": "法定节假日明和是否照常接诊，公告是怎样写的？",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:attendance_calendar",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03225806,
+        "nearest_reference_id": "regression:intent-department_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:attendance_calendar:2",
+      "message": "我只能周日来，明和对外公布的接待时段覆盖周日吗？",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:attendance_calendar",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03125,
+        "nearest_reference_id": "regression:intent-department_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:geographical_landmark:1",
+      "message": "明和院址靠近哪条路，能给出门牌信息吗？",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:geographical_landmark",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11111111,
+        "nearest_reference_id": "regression:intent-hospital_info-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:geographical_landmark:2",
+      "message": "家属在找明和所在地，请发医院的地理位置描述。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:geographical_landmark",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "regression:intent-hospital_info-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:opening_closing_notice:1",
+      "message": "请读出明和对外公布的每日开诊及闭诊时刻。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:opening_closing_notice",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03333333,
+        "nearest_reference_id": "regression:intent-department_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:opening_closing_notice:2",
+      "message": "早班结束后明和何时重新接待，想看全天营业安排。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:opening_closing_notice",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-hospital_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:overview_for_newcomer:1",
+      "message": "对明和毫无了解，先给我一份这所医疗机构的概况。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:overview_for_newcomer",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "template:guidance:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:overview_for_newcomer:2",
+      "message": "请用几句文字描述明和的整体定位，先不谈个人就诊。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:overview_for_newcomer",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03846154,
+        "nearest_reference_id": "template:guidance:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:public_contact_directory:1",
+      "message": "明和对外公开的院级联络信息有哪些？我只要机构资料。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:public_contact_directory",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07692308,
+        "nearest_reference_id": "template:department_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:hospital_info:public_contact_directory:2",
+      "message": "查询明和医院公开资料页的总联系信息，不需要接人工服务。",
+      "expected_intent": "hospital_info",
+      "expression_family": "hospital_info:public_contact_directory",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问整所医院的公开属性、地点、联络或服务时段；不是医生排班或院内两点路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12121212,
+        "nearest_reference_id": "regression:intent-department_info-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:internal_department_scope:1",
+      "message": "内科在这家医院承担哪些工作？先看官方科室资料。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:internal_department_scope",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13043478,
+        "nearest_reference_id": "template:department_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:internal_department_scope:2",
+      "message": "请说明内科门诊的业务边界，而非推荐医生。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:internal_department_scope",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10344828,
+        "nearest_reference_id": "regression:intent-slot_query-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:institution_units:1",
+      "message": "明和设有哪几种诊疗单元，想先认识医院的科室设置。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:institution_units",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:department_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:institution_units:2",
+      "message": "能把明和的临床部门目录提供给我吗？",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:institution_units",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04761905,
+        "nearest_reference_id": "template:guidance:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:specialty_comparison:1",
+      "message": "儿科与内科各自的服务对象，在科室介绍中怎样区分？",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:specialty_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07692308,
+        "nearest_reference_id": "template:department_info:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:specialty_comparison:2",
+      "message": "我在阅读医院资料，眼科和内科的公开职责有什么区别？",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:specialty_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12903226,
+        "nearest_reference_id": "regression:intent-department_info-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:department_description_request:1",
+      "message": "请把儿科简介展开讲讲，我目前没有具体不适。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:department_description_request",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11538462,
+        "nearest_reference_id": "regression:intent-other-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:department_description_request:2",
+      "message": "需要眼科的科室介绍文字，用于了解服务内容。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:department_description_request",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12,
+        "nearest_reference_id": "regression:intent-department_info-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:department_availability:1",
+      "message": "明和的科室目录里有没有眼科这一项？",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:department_availability",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08695652,
+        "nearest_reference_id": "regression:intent-department_info-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:department_info:department_availability:2",
+      "message": "这家医院是否设有儿科门诊？只核对科室设置。",
+      "expected_intent": "department_info",
+      "expression_family": "department_info:department_availability",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求科室设置或公开业务范围；没有以个人症状寻求初步分诊。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09375,
+        "nearest_reference_id": "regression:intent-visit_preparation-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:specialist_background:1",
+      "message": "顾清禾的专业背景在院方介绍中是怎样写的？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:specialist_background",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07407407,
+        "nearest_reference_id": "regression:intent-doctor_info-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:specialist_background:2",
+      "message": "林知远的医师介绍里，哪些是可以公开查询的个人信息？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:specialist_background",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06060606,
+        "nearest_reference_id": "regression:intent-doctor_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:doctor_department_affiliation:1",
+      "message": "许知宁归属哪个诊疗科室？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:doctor_department_affiliation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:doctor_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:doctor_department_affiliation:2",
+      "message": "林知远在明和隶属于哪一科？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:doctor_department_affiliation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-doctor_info-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:time_office_roster:1",
+      "message": "后天下午哪位医生负责内科接诊，不用查剩余名额。",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:time_office_roster",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12,
+        "nearest_reference_id": "template:slot_query:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:time_office_roster:2",
+      "message": "想查九月十七日儿科的坐诊人员，不涉及预约库存。",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:time_office_roster",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "template:department_info:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:named_practitioner_schedule:1",
+      "message": "许知宁本周哪几个时段在门诊坐诊？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:named_practitioner_schedule",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "template:doctor_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:named_practitioner_schedule:2",
+      "message": "顾清禾周五是否值门诊班，排班表怎么安排？",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:named_practitioner_schedule",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13793103,
+        "nearest_reference_id": "regression:intent-visit_process-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:personnel_directory:1",
+      "message": "请给出明和眼科医师名单及公开职称。",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:personnel_directory",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07692308,
+        "nearest_reference_id": "regression:intent-department_info-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:doctor_info:personnel_directory:2",
+      "message": "想浏览明和内科的医生名录，暂时不选挂号时段。",
+      "expected_intent": "doctor_info",
+      "expression_family": "doctor_info:personnel_directory",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "对象是具体医师、医师名录或坐诊安排；不查询剩余预约容量。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07407407,
+        "nearest_reference_id": "regression:intent-department_info-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:vacancy_language:1",
+      "message": "哪一班还有空位可供我挂号，范围是明天的内科？",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:vacancy_language",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08333333,
+        "nearest_reference_id": "template:slot_query:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:vacancy_language:2",
+      "message": "儿科后天有没有尚空缺的就诊名额？",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:vacancy_language",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0952381,
+        "nearest_reference_id": "template:visit_preparation:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:appointment_opportunities:1",
+      "message": "现在还能选到九月十八日眼科的哪些就诊机会？",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:appointment_opportunities",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "regression:intent-appointment_status-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:appointment_opportunities:2",
+      "message": "我打算看内科，请给出明日仍开放登记的时段。",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:appointment_opportunities",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10344828,
+        "nearest_reference_id": "regression:intent-slot_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:sold_out_comparison:1",
+      "message": "明天儿科上午和下午，哪边还有剩下的可选号？",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:sold_out_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.19047619,
+        "nearest_reference_id": "template:slot_query:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:sold_out_comparison:2",
+      "message": "想比一比后天眼科各时段有没有余量，先别替我登记。",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:sold_out_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0625,
+        "nearest_reference_id": "template:medication_query:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:named_doctor_capacity:1",
+      "message": "林知远明早还能接收新的预约吗？请查余量。",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:named_doctor_capacity",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.19230769,
+        "nearest_reference_id": "regression:intent-slot_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:named_doctor_capacity:2",
+      "message": "许知宁后天下午可供新患者挂号的数量是多少？",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:named_doctor_capacity",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:slot_query:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:listing_not_execution:1",
+      "message": "把尚能订到的儿科门诊位置展示出来，我之后再决定。",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:listing_not_execution",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05882353,
+        "nearest_reference_id": "regression:intent-slot_query-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:slot_query:listing_not_execution:2",
+      "message": "先浏览九月十七日内科未占用的号位，不生成预约方案。",
+      "expected_intent": "slot_query",
+      "expression_family": "slot_query:listing_not_execution",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求当前可以新预约的门诊容量或时段；尚未选择并准备预约方案。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09677419,
+        "nearest_reference_id": "regression:intent-appointment_cancel-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:new_booking_not_previous_record:1",
+      "message": "不要调出我以前的预约，请以刚选号源发起一条新预约的待确认流程。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:new_booking_not_previous_record",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16666667,
+        "nearest_reference_id": "regression:intent-appointment_create-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:new_booking_not_previous_record:2",
+      "message": "现有预约只作历史保留，这次要为新选的门诊时段另建预约草案。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:new_booking_not_previous_record",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08333333,
+        "nearest_reference_id": "regression:intent-appointment_cancel-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:reservation_preview:1",
+      "message": "希望预约列表里的第一班门诊，先显示预约预览。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:reservation_preview",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "regression:intent-appointment_create-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:reservation_preview:2",
+      "message": "我想把当前第二个可选时段作为预约对象，请出预览卡。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:reservation_preview",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08823529,
+        "nearest_reference_id": "regression:intent-appointment_create-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:deferred_authorization:1",
+      "message": "选当前这项号源并准备登记方案，最终提交等我点按钮。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:deferred_authorization",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05882353,
+        "nearest_reference_id": "regression:intent-appointment_create-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:deferred_authorization:2",
+      "message": "确定要屏幕上的第三个门诊号，先生成预约方案，勿代为确认。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:deferred_authorization",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14705882,
+        "nearest_reference_id": "regression:intent-appointment_create-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:form_from_selection:1",
+      "message": "将我刚选的门诊号填入预约核对单，展示后让我确认。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:form_from_selection",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-appointment_status-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:form_from_selection:2",
+      "message": "用已选中的号源制作挂号信息表，状态保持待确认。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:form_from_selection",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09375,
+        "nearest_reference_id": "regression:intent-appointment_create-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:create_not_materials:1",
+      "message": "这里的准备指办理这个号的预约方案，不是携带物品清单。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:create_not_materials",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14285714,
+        "nearest_reference_id": "template:appointment_create:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_create:create_not_materials:2",
+      "message": "我不是在问就诊材料；请给已选门诊号生成待确认预约。",
+      "expected_intent": "appointment_create",
+      "expression_family": "appointment_create:create_not_materials",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确希望为已指明或当前选中的号源准备预约方案；类别可判定不等于已具备执行身份或选择上下文。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12121212,
+        "nearest_reference_id": "regression:intent-appointment_create-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:receipt_retrieval:1",
+      "message": "刚才办理完成的预约回执在哪，帮我读出来。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:receipt_retrieval",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14814815,
+        "nearest_reference_id": "regression:intent-appointment_status-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:receipt_retrieval:2",
+      "message": "请找出孩子上一次登记成功的门诊凭据。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:receipt_retrieval",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06896552,
+        "nearest_reference_id": "regression:intent-hospital_info-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:verify_existing_time:1",
+      "message": "我已经约过门诊，想核对登记的日期和时段。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:verify_existing_time",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04444444,
+        "nearest_reference_id": "regression:intent-medication_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:verify_existing_time:2",
+      "message": "不需要重新约号，帮我看看现有预约是哪天上午。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:verify_existing_time",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:appointment_create:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:patient_registration_list:1",
+      "message": "当前就诊人已经占下的门诊安排都列一下。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:patient_registration_list",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "template:visit_process:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:patient_registration_list:2",
+      "message": "我需要这个患者名下的既有挂号明细。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:patient_registration_list",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11764706,
+        "nearest_reference_id": "template:request:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:active_inactive_review:1",
+      "message": "请分辨我的挂号记录哪些仍生效、哪些已取消。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:active_inactive_review",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "template:appointment_cancel:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:active_inactive_review:2",
+      "message": "孩子已有预约中，现在哪些还有效？",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:active_inactive_review",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "template:appointment_status:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:read_only_record:1",
+      "message": "仅查看appt_demo_003的登记详情，不做变更。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:read_only_record",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03846154,
+        "nearest_reference_id": "template:doctor_info:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_status:read_only_record:2",
+      "message": "打开预约appt_demo_004的信息给我核对，别创建新预约。",
+      "expected_intent": "appointment_status",
+      "expression_family": "appointment_status:read_only_record",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "读取当前患者已经存在的预约信息；没有提出创建或取消操作。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13157895,
+        "nearest_reference_id": "regression:intent-appointment_create-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:release_booking:1",
+      "message": "我不要appt_demo_003这次挂号了，帮我走取消流程。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:release_booking",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.20588235,
+        "nearest_reference_id": "regression:intent-appointment_cancel-4",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:release_booking:2",
+      "message": "请撤回appt_demo_004的就诊登记，先显示确认资料。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:release_booking",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08333333,
+        "nearest_reference_id": "regression:intent-appointment_cancel-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:undo_registration:1",
+      "message": "此前办好的这条预约需要作废，请给取消确认单。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:undo_registration",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.2,
+        "nearest_reference_id": "template:appointment_cancel:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:undo_registration:2",
+      "message": "我希望终止当前选中的挂号安排，准备撤销即可。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:undo_registration",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10344828,
+        "nearest_reference_id": "regression:intent-human_handoff-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_without_rebooking:1",
+      "message": "只撤销已经选中的预约，不另外预约新时段。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:cancel_without_rebooking",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16666667,
+        "nearest_reference_id": "regression:intent-appointment_cancel-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_without_rebooking:2",
+      "message": "这一条现有挂号请取消，我没有改约需求。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:cancel_without_rebooking",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "regression:intent-appointment_cancel-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:confirmation_for_removal:1",
+      "message": "要删去我当前选中的预约安排，请先给撤销预览。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:confirmation_for_removal",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14814815,
+        "nearest_reference_id": "regression:intent-appointment_cancel-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:confirmation_for_removal:2",
+      "message": "准备把已选挂号退掉，生成取消预览让我核对。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:confirmation_for_removal",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11111111,
+        "nearest_reference_id": "regression:intent-appointment_cancel-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_not_query:1",
+      "message": "不用再读预约详情，我现在的诉求是取消这次预约。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:cancel_not_query",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14285714,
+        "nearest_reference_id": "template:appointment_cancel:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:appointment_cancel:cancel_not_query:2",
+      "message": "这不是查询是否取消过；请对选中的现有预约准备取消。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "appointment_cancel:cancel_not_query",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确提出撤销既有预约并准备确认资料；标签不授权执行取消。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13793103,
+        "nearest_reference_id": "regression:intent-appointment_cancel-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:avoid_missing_items:1",
+      "message": "担心到院才发现东西没带，先提醒我应备齐什么。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:avoid_missing_items",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "template:visit_preparation:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:avoid_missing_items:2",
+      "message": "为免白跑一趟，请列出去门诊前需要装好的文件。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:avoid_missing_items",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "template:visit_preparation:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:guardian_papers:1",
+      "message": "陪小孩首次看诊，监护人需携带哪几类证明？",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:guardian_papers",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03333333,
+        "nearest_reference_id": "regression:intent-visit_preparation-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:guardian_papers:2",
+      "message": "儿童就诊时大人应随身备什么身份资料？",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:guardian_papers",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11111111,
+        "nearest_reference_id": "regression:intent-visit_preparation-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:departure_checklist:1",
+      "message": "车还没出发，帮我核对第一次就医该拿的东西。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:departure_checklist",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:visit_preparation:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:departure_checklist:2",
+      "message": "我正在家里整理去医院的包，请提供出发前材料核对项。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:departure_checklist",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05882353,
+        "nearest_reference_id": "regression:intent-hospital_info-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:prior_visit_documents:1",
+      "message": "之前在别处看过病，这回去明和要拿哪些旧资料？",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:prior_visit_documents",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "regression:intent-department_info-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:prior_visit_documents:2",
+      "message": "复诊出发前，旧病历和已有检查单的携带要求是什么？",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:prior_visit_documents",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08333333,
+        "nearest_reference_id": "template:query:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:materials_not_reservation:1",
+      "message": "我说准备是指随身文件，不是帮我生成预约。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:materials_not_reservation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10344828,
+        "nearest_reference_id": "regression:intent-appointment_create-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_preparation:materials_not_reservation:2",
+      "message": "挂号已经办好，只想确认见医生时该交哪些资料。",
+      "expected_intent": "visit_preparation",
+      "expression_family": "visit_preparation:materials_not_reservation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问赴诊前应携带或整理的证件、病历和资料；不是准备预约事务。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07407407,
+        "nearest_reference_id": "template:doctor_info:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:journey_stages:1",
+      "message": "从踏进门诊到完成就诊，一般要经过哪些办理环节？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:journey_stages",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "regression:intent-visit_process-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:journey_stages:2",
+      "message": "请按先后列出一次门诊服务的办事步骤。",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:journey_stages",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07142857,
+        "nearest_reference_id": "regression:intent-appointment_cancel-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:queue_after_registration:1",
+      "message": "完成报到后怎样进入候诊阶段？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:queue_after_registration",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.2,
+        "nearest_reference_id": "template:visit_process:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:queue_after_registration:2",
+      "message": "到院登记完毕以后应办理哪一步，不需要位置导航。",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:queue_after_registration",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08333333,
+        "nearest_reference_id": "template:escalation:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:tests_and_return:1",
+      "message": "医生安排检验后，从办理检验到回诊的流程怎么衔接？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:tests_and_return",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-visit_process-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:tests_and_return:2",
+      "message": "做完检查再返回门诊，程序上应该怎样接续？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:tests_and_return",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04347826,
+        "nearest_reference_id": "template:hospital_info:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:prescription_workflow:1",
+      "message": "已拿到处方，之后领药前有哪些手续需要完成？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:prescription_workflow",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "template:department_info:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:prescription_workflow:2",
+      "message": "看诊结束后怎样按流程缴款并取药？",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:prescription_workflow",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "regression:intent-visit_process-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:procedural_not_spatial:1",
+      "message": "不问房间方位，我想了解门诊报到的办理步骤。",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:procedural_not_spatial",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13636364,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:visit_process:procedural_not_spatial:2",
+      "message": "请说清就医事务的先后顺序，暂时不用院内路线。",
+      "expected_intent": "visit_process",
+      "expression_family": "visit_process:procedural_not_spatial",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "询问就诊事务办理的先后或手续；不是从起点到终点的行走路线。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08695652,
+        "nearest_reference_id": "template:guidance:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:navigation_instructions:1",
+      "message": "给出从儿科诊区返回门诊大厅的逐段行走说明。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:navigation_instructions",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.2,
+        "nearest_reference_id": "regression:intent-wayfinding-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:navigation_instructions:2",
+      "message": "请把收费处至药房的院内行进路径描述出来。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:navigation_instructions",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07692308,
+        "nearest_reference_id": "template:wayfinding:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:step_free_travel:1",
+      "message": "我拄拐杖，从门诊大厅去检验科想选不爬台阶的通道。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:step_free_travel",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16129032,
+        "nearest_reference_id": "regression:intent-wayfinding-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:step_free_travel:2",
+      "message": "用轮椅前往药房，从收费处出发有平缓路径吗？",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:step_free_travel",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12,
+        "nearest_reference_id": "template:wayfinding:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:lost_inside:1",
+      "message": "在大厅绕晕了，目标是内科诊区，接下来往哪边走？",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:lost_inside",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-wayfinding-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:lost_inside:2",
+      "message": "我停在药房门口，不知道去检验科该拐哪边。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:lost_inside",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "template:wayfinding:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:floor_and_turns:1",
+      "message": "由门诊大厅前往儿科要上哪层、经过哪些位置？",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:floor_and_turns",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:wayfinding:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:floor_and_turns:2",
+      "message": "从收费窗口去眼科诊区，能逐步说明楼层与转向吗？",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:floor_and_turns",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12121212,
+        "nearest_reference_id": "regression:intent-wayfinding-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:route_not_process:1",
+      "message": "手续我都知道，只要门诊大厅通向药房的走法。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:route_not_process",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.17391304,
+        "nearest_reference_id": "template:wayfinding:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:wayfinding:route_not_process:2",
+      "message": "别讲就诊流程，请描述眼科诊区至收费处的路。",
+      "expected_intent": "wayfinding",
+      "expression_family": "wayfinding:route_not_process",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "请求院内地点间的空间路径、楼层或无台阶通道；不问办理程序。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13636364,
+        "nearest_reference_id": "template:visit_process:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:nonbot_assistance:1",
+      "message": "接下来想与人交流，不再由机器人答复，如何联系导诊？",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:nonbot_assistance",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07692308,
+        "nearest_reference_id": "template:human_handoff:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:nonbot_assistance:2",
+      "message": "能否告诉我找真人导诊的办法？我希望人工协助。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:nonbot_assistance",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14285714,
+        "nearest_reference_id": "regression:intent-human_handoff-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:staff_consultation:1",
+      "message": "需要院内工作人员解答到院安排，请提供导诊联络入口。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:staff_consultation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.12903226,
+        "nearest_reference_id": "regression:intent-human_handoff-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:staff_consultation:2",
+      "message": "想由值班导诊人员来说明情况，有什么联系渠道？",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:staff_consultation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:human_handoff:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:human_channel_only:1",
+      "message": "只需要人工咨询渠道，不用替我提交工单。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:human_channel_only",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07407407,
+        "nearest_reference_id": "regression:intent-human_handoff-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:human_channel_only:2",
+      "message": "给我真人导诊的联系资料即可，我会自己拨打。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:human_channel_only",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10344828,
+        "nearest_reference_id": "regression:intent-human_handoff-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:service_desk_reach:1",
+      "message": "我要联络现场导诊服务台，请发可用的公开渠道。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:service_desk_reach",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "regression:intent-department_info-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:service_desk_reach:2",
+      "message": "怎样才能与人工导诊服务人员取得联系？",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:service_desk_reach",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.21052632,
+        "nearest_reference_id": "template:human_handoff:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:human_handoff:handoff_not_emergency:1",
+      "message": "这不是急救情况，我只是想请人工导诊接着沟通。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:handoff_not_emergency",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13043478,
+        "nearest_reference_id": "template:human_handoff:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:human_handoff:handoff_not_emergency:2",
+      "message": "没有紧急不适，需要一个真人导诊的咨询方式。",
+      "expected_intent": "human_handoff",
+      "expression_family": "human_handoff:handoff_not_emergency",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "希望获得真人导诊联络方式或人工协助；不表示已提交工单，也不作为急症。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06896552,
+        "nearest_reference_id": "regression:intent-human_handoff-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:candidate_specialty_comparison:1",
+      "message": "我30岁，因咽痛流涕准备就诊，在内科与眼科之间该怎样选择第一站？",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:candidate_specialty_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05714286,
+        "nearest_reference_id": "template:visit_preparation:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:candidate_specialty_comparison:2",
+      "message": "孩子6岁腹泻，儿科和内科两个选项中，哪个更适合作为初诊方向？",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:candidate_specialty_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11904762,
+        "nearest_reference_id": "regression:intent-symptom_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:check_self_selected_specialty:1",
+      "message": "我30岁眼红发痒，原本打算挂内科；请先核对我选的科别方向是否合适。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:check_self_selected_specialty",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05405405,
+        "nearest_reference_id": "regression:intent-department_info-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:check_self_selected_specialty:2",
+      "message": "给7岁腹部不适的孩子选了眼科但还没预约，想先校对这个挂科方向。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:check_self_selected_specialty",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06060606,
+        "nearest_reference_id": "template:escalation:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:triage_missing_information:1",
+      "message": "咳嗽流鼻涕想就诊，为了确定首诊科别，我还应先告诉你哪些个人情况？",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:triage_missing_information",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确为不适寻求分诊并询问需补充的信息，意图可独立判为症状咨询；未给年龄时应澄清，不据此要求服务直接给科室。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11764706,
+        "nearest_reference_id": "template:symptom_query:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:triage_missing_information:2",
+      "message": "眼睛发红发痒，想确定首诊方向，应先补充哪些信息供分诊使用？",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:triage_missing_information",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "pre_inference_family_revision",
+        "low_literal_overlap"
+      ],
+      "label_reason": "明确为不适寻求分诊并询问需补充的信息，意图可独立判为症状咨询；未给年龄时应澄清，不据此要求服务直接给科室。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16129032,
+        "nearest_reference_id": "template:symptom_query:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_not_diagnosis:1",
+      "message": "我30岁，咳嗽又流涕，不要判断疾病，只给初步挂科方向。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:symptom_not_diagnosis",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04761905,
+        "nearest_reference_id": "regression:intent-symptom_query-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_not_diagnosis:2",
+      "message": "35岁成人咽痛鼻塞，暂不需要病名，先告诉我该向哪科咨询。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:symptom_not_diagnosis",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09756098,
+        "nearest_reference_id": "regression:intent-symptom_query-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_vs_department_info:1",
+      "message": "不是要儿科介绍：5岁孩子腹部不适，我想知道先到哪科看。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:symptom_vs_department_info",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07317073,
+        "nearest_reference_id": "regression:intent-symptom_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:symptom_query:symptom_vs_department_info:2",
+      "message": "我33岁眼睛发痒，是在问不适该去哪科，不是查科室简介。",
+      "expected_intent": "symptom_query",
+      "expression_family": "symptom_query:symptom_vs_department_info",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "以明确不适请求初步就诊科别；不标注诊断结论。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.17241379,
+        "nearest_reference_id": "template:symptom_query:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:medication_query:package_insert_request:1",
+      "message": "药盒里那张布洛芬200mg普通片的说明纸，能帮我读重点吗？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:package_insert_request",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.41935484,
+        "nearest_reference_id": "template:medication_query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:medication_query:package_insert_request:2",
+      "message": "想看对乙酰氨基酚500mg普通片随盒说明的注意内容。",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:package_insert_request",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.38888889,
+        "nearest_reference_id": "regression:intent-medication_query-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:medication_query:formulation_boundary:1",
+      "message": "这里有没有收录布洛芬缓释剂型的官方产品资料？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:formulation_boundary",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14705882,
+        "nearest_reference_id": "regression:intent-medication_query-4",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:medication_query:formulation_boundary:2",
+      "message": "对乙酰氨基酚复方制剂的信息也在药品目录里吗？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:formulation_boundary",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.2,
+        "nearest_reference_id": "template:medication_query:2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:medication_query:safety_information:1",
+      "message": "布洛芬200mg普通片有哪些标签层面的安全提醒？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:safety_information",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.33333333,
+        "nearest_reference_id": "template:medication_query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:medication_query:safety_information:2",
+      "message": "对乙酰氨基酚500mg普通片包装资料要求哪些人先咨询专业人员？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:safety_information",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.34146341,
+        "nearest_reference_id": "regression:intent-medication_query-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:medication_query:unlisted_drug_lookup:1",
+      "message": "能查询阿莫西林这个药品的说明资料吗？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:unlisted_drug_lookup",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08695652,
+        "nearest_reference_id": "template:appointment_create:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:medication_query:unlisted_drug_lookup:2",
+      "message": "药品目录中有阿司匹林的产品标签可读吗？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:unlisted_drug_lookup",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03448276,
+        "nearest_reference_id": "regression:intent-visit_process-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:medication_query:drug_not_symptom:1",
+      "message": "不问挂什么科，我想读布洛芬200mg普通片的用药须知。",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:drug_not_symptom",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.35483871,
+        "nearest_reference_id": "template:medication_query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:medication_query:drug_not_symptom:2",
+      "message": "我的诉求是核对药品标签：对乙酰氨基酚500mg普通片有什么警示？",
+      "expected_intent": "medication_query",
+      "expression_family": "medication_query:drug_not_symptom",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "查询药品标签、用法或警示等信息；未收录药品仍属此意图，不意味着资料可用或可以安全服药。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.30952381,
+        "nearest_reference_id": "regression:intent-medication_query-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:report_query:document_transcription:1",
+      "message": "请把这张检验结果表转成清晰的项目、数值和原单范围。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:document_transcription",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06818182,
+        "nearest_reference_id": "regression:intent-report_query-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:document_transcription:2",
+      "message": "希望将检查结果纸上的栏目整理成容易核对的表格。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:document_transcription",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05714286,
+        "nearest_reference_id": "template:report_query:1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:range_comparison:1",
+      "message": "化验纸列白细胞9.8，原界限3.5至9.5，请只按这两个数字比较。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:range_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.02941176,
+        "nearest_reference_id": "template:report_query:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:range_comparison:2",
+      "message": "原报告血小板数值140，对照栏写150到400，帮我标出相对位置。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:range_comparison",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11320755,
+        "nearest_reference_id": "regression:intent-report_query-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:report_followup_explicit:1",
+      "message": "请再读当前事项最近一张报告，列出其中需要核对的项目。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:report_followup_explicit",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09090909,
+        "nearest_reference_id": "regression:intent-report_query-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:report_followup_explicit:2",
+      "message": "刚上传的检验报告有缺失单位吗？请基于本事项那张卡片回答。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:report_followup_explicit",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.09302326,
+        "nearest_reference_id": "regression:intent-report_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:unclear_scan:1",
+      "message": "检验报告照片有几处看不清，整理时能标注不确定文字吗？",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:unclear_scan",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "regression:intent-report_query-3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:unclear_scan:2",
+      "message": "扫描检查单的某个数字模糊，请保留原文疑点而非猜测。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:unclear_scan",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04444444,
+        "nearest_reference_id": "regression:intent-report_query-2",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:report_not_diagnosis:1",
+      "message": "我不需要病名，只想把化验单上原有的数值和界限排清楚。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:report_not_diagnosis",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "template:report_query:3",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:report_query:report_not_diagnosis:2",
+      "message": "不是请你诊断，请按检查结果纸自己的参考范围逐项核对。",
+      "expected_intent": "report_query",
+      "expression_family": "report_query:report_not_diagnosis",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request",
+        "low_literal_overlap"
+      ],
+      "label_reason": "整理、上传、读取或按原参考范围核对个人检查报告；不据此推断疾病。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": true,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.08,
+        "nearest_reference_id": "regression:intent-report_query-1",
+        "low_literal_overlap": true
+      }
+    },
+    {
+      "id": "holdout:emergency:high_fever_numeric:1",
+      "message": "现在测到体温39.6℃，正在发热。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:high_fever_numeric",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05882353,
+        "nearest_reference_id": "template:emergency:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:high_fever_numeric:2",
+      "message": "孩子此刻体温40.1度，请问怎么办。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:high_fever_numeric",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11111111,
+        "nearest_reference_id": "template:visit_process:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:1",
+      "message": "我没有胸痛，并且现在呼吸困难。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:affirmative_after_negation",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.41666667,
+        "nearest_reference_id": "template:emergency:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:2",
+      "message": "刚才没有不适，但现在剧烈胸痛。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:affirmative_after_negation",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.41666667,
+        "nearest_reference_id": "template:emergency:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:1",
+      "message": "我现在胸痛，应该挂哪个科？",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:symptom_in_question",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.25,
+        "nearest_reference_id": "template:symptom_query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:2",
+      "message": "正在呼吸困难，该怎样寻求帮助？",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:symptom_in_question",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.30769231,
+        "nearest_reference_id": "template:emergency:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:third_party_now:1",
+      "message": "同行者现在呼吸困难，我就在旁边。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:third_party_now",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.38461538,
+        "nearest_reference_id": "template:emergency:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:third_party_now:2",
+      "message": "有人此刻突然失去意识，现场该怎么办？",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:third_party_now",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.375,
+        "nearest_reference_id": "template:emergency:2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:present_after_past:1",
+      "message": "昨天没有胸痛，现在却胸痛。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:present_after_past",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16666667,
+        "nearest_reference_id": "template:emergency:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:emergency:present_after_past:2",
+      "message": "前几天呼吸正常，但现在呼吸困难。",
+      "expected_intent": "emergency",
+      "expression_family": "emergency:present_after_past",
+      "phenomena": [
+        "synthetic",
+        "emergency"
+      ],
+      "label_reason": "当前肯定急症表述，用于固定中断边界组；不计作语义向量主指标。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "emergency",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.41666667,
+        "nearest_reference_id": "template:emergency:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:1",
+      "message": "我来啦，先说声嗨。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:friendly_arrival",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:2",
+      "message": "刚见面，向你问个好。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:friendly_arrival",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11111111,
+        "nearest_reference_id": "template:feedback:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:1",
+      "message": "很高兴认识你，先打声招呼。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:first_meeting",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14285714,
+        "nearest_reference_id": "regression:intent-greeting-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:2",
+      "message": "初次见面，请多关照呀。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:first_meeting",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:1",
+      "message": "我又来了，你好呀。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:return_salutation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.16666667,
+        "nearest_reference_id": "template:greeting:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:2",
+      "message": "隔了一阵子又见面了，嗨！",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:return_salutation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:1",
+      "message": "Hello there，向你问好。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:english_salutation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:2",
+      "message": "Hi，初次来到这个助手。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:english_salutation",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1875,
+        "nearest_reference_id": "regression:intent-greeting-1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:1",
+      "message": "见面先问声好，暂时没有要办的事。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:social_opening",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.14285714,
+        "nearest_reference_id": "regression:intent-other-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:2",
+      "message": "先跟你打个招呼，待会儿再聊正事。",
+      "expected_intent": "greeting",
+      "expression_family": "greeting:social_opening",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "社交开场或问候，没有并列业务请求。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1875,
+        "nearest_reference_id": "regression:intent-greeting-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:acknowledge_help:1",
+      "message": "问题弄明白了，辛苦你刚才说明。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:acknowledge_help",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.1,
+        "nearest_reference_id": "regression:intent-feedback-1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:acknowledge_help:2",
+      "message": "现在知道怎么办了，感谢这次帮助。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:acknowledge_help",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.11764706,
+        "nearest_reference_id": "template:visit_process:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:appreciate_patience:1",
+      "message": "谢谢耐心解释，没有让我越听越糊涂。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:appreciate_patience",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04166667,
+        "nearest_reference_id": "regression:intent-other-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:appreciate_patience:2",
+      "message": "你讲得细致又有耐心，特意来道声谢。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:appreciate_patience",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:satisfaction_comment:1",
+      "message": "这回助手的表现符合我的期待。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:satisfaction_comment",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0625,
+        "nearest_reference_id": "template:appointment_status:2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:satisfaction_comment:2",
+      "message": "我对刚完成的咨询过程挺满意。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:satisfaction_comment",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.07142857,
+        "nearest_reference_id": "template:feedback:2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:helpfulness_comment:1",
+      "message": "这一番提示很实用，给你肯定。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:helpfulness_comment",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:helpfulness_comment:2",
+      "message": "刚收到的信息对我有用，做得不错。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:helpfulness_comment",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05263158,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:completion_gratitude:1",
+      "message": "事情已经说清楚，谢谢，先这样。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:completion_gratitude",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:feedback:completion_gratitude:2",
+      "message": "这轮咨询结束了，感谢你的协助。",
+      "expected_intent": "feedback",
+      "expression_family": "feedback:completion_gratitude",
+      "phenomena": [
+        "synthetic",
+        "explicit_current_request"
+      ],
+      "label_reason": "对已经得到的答复或服务表达感谢、肯定或满意。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "single_turn",
+      "vector_primary": true,
+      "llm_failure_eligible": true,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "template:request:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_programming:1",
+      "message": "解释一下Python列表推导式的语法。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_programming",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04761905,
+        "nearest_reference_id": "template:query:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_programming:2",
+      "message": "帮我设计一个排序算法练习题。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_programming",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0625,
+        "nearest_reference_id": "template:human_handoff:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_finance:1",
+      "message": "股票分红和拆股有哪些区别？",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_finance",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.13333333,
+        "nearest_reference_id": "template:department_info:2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_finance:2",
+      "message": "想知道债券价格为什么随利率变动。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_finance",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05555556,
+        "nearest_reference_id": "template:query:2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_travel:1",
+      "message": "规划一条沿海城市观光线路。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_travel",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_travel:2",
+      "message": "推荐秋天适合露营的自然景点。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_travel",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.03125,
+        "nearest_reference_id": "regression:intent-symptom_query-3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_math:1",
+      "message": "请证明三角形内角和的几何结论。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_math",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.10526316,
+        "nearest_reference_id": "regression:intent-other-1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_math:2",
+      "message": "怎样计算两个矩阵相乘？",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_math",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_food:1",
+      "message": "怎么用烤箱制作法式面包？",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_food",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.06666667,
+        "nearest_reference_id": "template:visit_process:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:other:unrelated_food:2",
+      "message": "想做一道不涉及医疗的家常菜。",
+      "expected_intent": "other",
+      "expression_family": "other:unrelated_food",
+      "phenomena": [
+        "synthetic",
+        "other"
+      ],
+      "label_reason": "与就诊/健康服务无关或明确没有可处理诉求，按此数据集的领域外标注约定进入OTHER控制组。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "other",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:selection_ellipsis",
+      "message": "就它了，先给我核对单。",
+      "expected_intent": "appointment_create",
+      "expression_family": "supplement:selection_ellipsis",
+      "phenomena": [
+        "synthetic",
+        "context_required",
+        "ellipsis"
+      ],
+      "label_reason": "选择代词和核对单指预约，类别依赖显式历史；不代表授权确认。",
+      "requires_context": true,
+      "history": [
+        {
+          "role": "assistant",
+          "content": "这里展示可预约号源slot_demo_005；选择后可先生成预约核对单。"
+        }
+      ],
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.19047619,
+        "nearest_reference_id": "regression:intent-appointment_create-2",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:cancellation_ellipsis",
+      "message": "对，就是这笔，先出撤销单。",
+      "expected_intent": "appointment_cancel",
+      "expression_family": "supplement:cancellation_ellipsis",
+      "phenomena": [
+        "synthetic",
+        "context_required",
+        "ellipsis"
+      ],
+      "label_reason": "撤销对象来自已提供的预约历史，不由向量猜测。",
+      "requires_context": true,
+      "history": [
+        {
+          "role": "assistant",
+          "content": "已查到现有预约appt_demo_005，您刚才要准备取消这一笔。"
+        }
+      ],
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.04545455,
+        "nearest_reference_id": "regression:intent-appointment_cancel-1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:route_ellipsis",
+      "message": "能不走楼梯吗？",
+      "expected_intent": "wayfinding",
+      "expression_family": "supplement:route_ellipsis",
+      "phenomena": [
+        "synthetic",
+        "context_required",
+        "ellipsis"
+      ],
+      "label_reason": "要求改为无障碍路线，必须结合前轮地点和任务。",
+      "requires_context": true,
+      "history": [
+        {
+          "role": "assistant",
+          "content": "当前在说明从门诊大厅到眼科诊区的步行路线。"
+        }
+      ],
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.0,
+        "nearest_reference_id": "template:query:1",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:medicine_ellipsis",
+      "message": "和我正在用的那种一起呢？",
+      "expected_intent": "medication_query",
+      "expression_family": "supplement:medicine_ellipsis",
+      "phenomena": [
+        "synthetic",
+        "context_required",
+        "ellipsis"
+      ],
+      "label_reason": "合用查询中的药名依赖历史；标注只评意图，不保证该组合安全。",
+      "requires_context": true,
+      "history": [
+        {
+          "role": "user",
+          "content": "我在用华法林，刚才问了布洛芬200mg普通片的标签。"
+        }
+      ],
+      "evaluation_group": "context_required",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.05263158,
+        "nearest_reference_id": "regression:intent-medication_query-3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:unresolved_object",
+      "message": "这里能办理吗？",
+      "expected_intent": "other",
+      "expression_family": "supplement:unresolved_object",
+      "phenomena": [
+        "synthetic",
+        "ambiguous",
+        "underspecified"
+      ],
+      "label_reason": "缺少要办理的事务，没有唯一具体类别。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "ambiguous",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.125,
+        "nearest_reference_id": "template:request:3",
+        "low_literal_overlap": false
+      }
+    },
+    {
+      "id": "holdout:supplement:conflicting_wish",
+      "message": "既想取消这条预约又想保留，我还没想清楚。",
+      "expected_intent": "other",
+      "expression_family": "supplement:conflicting_wish",
+      "phenomena": [
+        "synthetic",
+        "ambiguous",
+        "underspecified"
+      ],
+      "label_reason": "互相冲突且未决的行动愿望应澄清，不能把其中一句当作执行授权。",
+      "requires_context": false,
+      "history": [],
+      "evaluation_group": "ambiguous",
+      "vector_primary": false,
+      "llm_failure_eligible": false,
+      "business_intent": false,
+      "lexical_overlap": {
+        "rule": "nfkc_alnum_bigram_jaccard_v1",
+        "max_reference_jaccard": 0.29411765,
+        "nearest_reference_id": "template:appointment_cancel:1",
+        "low_literal_overlap": false
+      }
+    }
+  ]
+}

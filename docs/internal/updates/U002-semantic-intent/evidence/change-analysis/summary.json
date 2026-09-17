@@ -1,0 +1,18 @@
+{
+  "worktree": "D:\\Projects\\Agent Learn\\Project\\MediPet-Rebuild",
+  "files": 111,
+  "batches": 5,
+  "partial_or_truncated": false,
+  "real_index_unchanged": true,
+  "changed_during_analysis": [],
+  "secret_scan_paths": 114,
+  "secret_matches": [],
+  "unexpected_runtime_paths": [],
+  "initial_secret_scan_matches": [
+    ".env.example",
+    "docker-compose.yml"
+  ],
+  "public_example_matches_explained": [
+    "MEDIPET_REDIS_PASSWORD"
+  ]
+}

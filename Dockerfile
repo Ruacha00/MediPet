@@ -16,6 +16,13 @@ COPY --from=dependencies /usr/local/lib/python3.12/site-packages /usr/local/lib/
 COPY --from=dependencies /usr/local/bin /usr/local/bin
 COPY --from=dependencies --chown=medipet:medipet /root/.cache/chroma /home/medipet/.cache/chroma
 COPY --chown=medipet:medipet . .
+# Explicit preparation supplies these assets; image builds never export a model.
+# /app/data is a persistent volume and must not hide the bundled model.
+RUN python scripts/prepare_intent_embedding.py verify \
+    && mkdir -p /opt/medipet/models/intent \
+    && mv /app/data/models/intent/bge-small-zh-v1.5 /opt/medipet/models/intent/ \
+    && chmod -R a-w /opt/medipet/models/intent
+ENV MEDIPET_INTENT_EMBEDDING_MODEL_DIR=/opt/medipet/models/intent/bge-small-zh-v1.5
 RUN mkdir -p /app/data/chroma /app/data/eval /app/logs && chown -R medipet:medipet /app/data /app/logs
 USER medipet
 EXPOSE 8000

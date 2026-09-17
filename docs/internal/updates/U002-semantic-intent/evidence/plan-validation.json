@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-09-17",
+  "scope": "planning only",
+  "issues": 10,
+  "dependencies": 12,
+  "acyclic": true,
+  "all_reach_final": true,
+  "unordered_file_conflicts": [],
+  "markdown_files": 22,
+  "local_links_checked": 90,
+  "broken_links": [],
+  "statuses": {
+    "U002-01": "done",
+    "U002-02": "todo",
+    "U002-03": "todo",
+    "U002-04": "todo",
+    "U002-05": "todo",
+    "U002-06": "todo",
+    "U002-07": "todo",
+    "U002-08": "todo",
+    "U002-09": "todo",
+    "U002-10": "todo"
+  },
+  "tracked_changes": [
+    "IMPLEMENTATION_PLAN.md",
+    "docs/internal/rebuild/EXECUTION.md",
+    "docs/internal/rebuild/README.md"
+  ],
+  "runtime_code_changed": false,
+  "upstream_impact": [
+    {
+      "target": "_embed_text",
+      "risk": "HIGH",
+      "impacted_count": 6
+    },
+    {
+      "target": "_vote",
+      "risk": "HIGH",
+      "impacted_count": 5
+    }
+  ],
+  "model_downloaded": false,
+  "model_inference_run": false
+}

@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "dataset_id": "medipet-u002-semantic-intent-v1",
+  "created_on": "2026-09-17",
+  "author": "/root/audit_preparation_scope",
+  "inference_used_for_authoring": false,
+  "baseline_commit": "7a4e22a23d33a0bfa910f19662f2a8e40e429d54",
+  "rule_version": "nfkc_alnum_bigram_jaccard_v1",
+  "low_overlap_threshold": 0.2,
+  "near_duplicate_jaccard": 0.6,
+  "near_duplicate_sequence_ratio": 0.84,
+  "denominator": "vector_primary=true; boundaries/other/context_required/ambiguous reported separately",
+  "counts": {
+    "dev": {
+      "total": 114,
+      "groups": {
+        "single_turn": 96,
+        "emergency": 6,
+        "other": 6,
+        "context_required": 4,
+        "ambiguous": 2
+      },
+      "primary_labels": {
+        "hospital_info": 6,
+        "department_info": 6,
+        "doctor_info": 6,
+        "slot_query": 6,
+        "appointment_create": 6,
+        "appointment_status": 6,
+        "appointment_cancel": 6,
+        "visit_preparation": 6,
+        "visit_process": 6,
+        "wayfinding": 6,
+        "human_handoff": 6,
+        "symptom_query": 6,
+        "medication_query": 6,
+        "report_query": 6,
+        "greeting": 6,
+        "feedback": 6
+      },
+      "low_literal_overlap": 71,
+      "low_literal_overlap_labels": {
+        "hospital_info": 6,
+        "department_info": 6,
+        "doctor_info": 5,
+        "slot_query": 6,
+        "appointment_create": 6,
+        "appointment_status": 6,
+        "appointment_cancel": 5,
+        "visit_preparation": 6,
+        "visit_process": 6,
+        "wayfinding": 5,
+        "human_handoff": 4,
+        "symptom_query": 6,
+        "report_query": 4
+      }
+    },
+    "holdout": {
+      "total": 186,
+      "groups": {
+        "single_turn": 160,
+        "emergency": 10,
+        "other": 10,
+        "context_required": 4,
+        "ambiguous": 2
+      },
+      "primary_labels": {
+        "hospital_info": 10,
+        "department_info": 10,
+        "doctor_info": 10,
+        "slot_query": 10,
+        "appointment_create": 10,
+        "appointment_status": 10,
+        "appointment_cancel": 10,
+        "visit_preparation": 10,
+        "visit_process": 10,
+        "wayfinding": 10,
+        "human_handoff": 10,
+        "symptom_query": 10,
+        "medication_query": 10,
+        "report_query": 10,
+        "greeting": 10,
+        "feedback": 10
+      },
+      "low_literal_overlap": 132,
+      "low_literal_overlap_labels": {
+        "hospital_info": 10,
+        "department_info": 10,
+        "doctor_info": 10,
+        "slot_query": 10,
+        "appointment_create": 10,
+        "appointment_status": 10,
+        "appointment_cancel": 9,
+        "visit_preparation": 10,
+        "visit_process": 10,
+        "wayfinding": 10,
+        "human_handoff": 9,
+        "symptom_query": 10,
+        "medication_query": 4,
+        "report_query": 10
+      }
+    }
+  },
+  "review": {
+    "status": "approved",
+    "reviewer": "/root/spec_agents_knowledge",
+    "evidence": "../../../docs/internal/updates/U002-semantic-intent/evidence/dataset/review-changes.json"
+  },
+  "file_sha256": {
+    "authoring-families.json": "0d56b63c681e59a4a80c3f94e81d20983b1c0693c761a81f33c49827170adf4e",
+    "dev.json": "cc4af681bf097895a57efad7808950cdb798cc60afd144c9537b83f60734be1e",
+    "holdout.json": "fabf0c3012bc24a0189861ad4bb34cc50c2d197a6ae955db1802d4d9f6192e9e",
+    "overlap-review.json": "12610a469443853bf3e327c679c184ab727639f1780e9a15daf210f7b4e23ce4",
+    "README.md": "efaebca2bb4887bc5a29d88bc79eca1e93b00daa53851125100cbe67d36fb49d",
+    "references.json": "a77fc4e9d1aa9d1a9e5086e74a153c4964dbc25f96b91893d0e346ef0be8b469"
+  },
+  "original_regression_sha256": {
+    "evaluation/cases/intents.json": "792d8c65ecaeb35353848fa8546db793df8baad4d8b84a54093f618c0544be89",
+    "evaluation/cases/dialogs.json": "85ffbdddbe68167ec68557ba3a804807a5bdf4347ac61f45aa674d87142b9a6c",
+    "evaluation/cases/boundaries.json": "81e54c12b5b857f8d2b73858001acf911dc1e067eb5154d835fe95e2f10cd4fa"
+  }
+}

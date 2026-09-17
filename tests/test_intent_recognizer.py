@@ -8,6 +8,7 @@ import pytest
 
 from core.intent_recognizer import IntentCategory as Intent, IntentRecognizer, UrgencyLevel
 from core.intent_recognizer import detect_emergency
+from core.intent_embeddings import EmbeddingConfig, IntentEmbeddingProvider
 
 
 NOW = datetime(2026, 9, 16, 2, tzinfo=timezone.utc)
@@ -63,7 +64,8 @@ class FakeClient:
 def make_recognizer(intent="slot_query", *, clock=lambda: NOW, error=None):
     client = FakeClient(intent, error=error)
     with patch("core.intent_recognizer.AsyncAnthropic", return_value=client):
-        recognizer = IntentRecognizer(api_key="fake-key-for-tests", model="fake-model", clock=clock)
+        recognizer = IntentRecognizer(api_key="fake-key-for-tests", model="fake-model", clock=clock,
+                                      embedding_provider=IntentEmbeddingProvider(EmbeddingConfig(backend="hash")))
     return recognizer
 
 
@@ -142,12 +144,12 @@ def test_original_voting_weights_are_preserved(embedding_enabled, expected):
 
 
 @pytest.mark.parametrize("embedding_intent,embedding_conf,pattern_intent,pattern_conf,expected,score", [
-    (Intent.DOCTOR_INFO, 0.2, Intent.SLOT_QUERY, 0.9, Intent.DOCTOR_INFO, 0.2),
-    (Intent.OTHER, 0.9, Intent.SLOT_QUERY, 0.5, Intent.SLOT_QUERY, 0.5),
-    (Intent.DOCTOR_INFO, 0.0, Intent.SLOT_QUERY, 0.5, Intent.SLOT_QUERY, 0.5),
+    (Intent.DOCTOR_INFO, 0.2, Intent.SLOT_QUERY, 0.9, Intent.SLOT_QUERY, 0.9),
+    (Intent.OTHER, 0.9, Intent.SLOT_QUERY, 0.5, Intent.OTHER, 0.0),
+    (Intent.DOCTOR_INFO, 0.0, Intent.SLOT_QUERY, 0.5, Intent.OTHER, 0.0),
     (Intent.OTHER, 0.0, Intent.OTHER, 0.0, Intent.OTHER, 0.0),
 ])
-def test_llm_failure_preserves_embedding_then_pattern_fallback(
+def test_llm_failure_never_accepts_uncalibrated_positive_vector_score(
     embedding_intent, embedding_conf, pattern_intent, pattern_conf, expected, score,
 ):
     recognizer = make_recognizer()
@@ -291,7 +293,9 @@ def test_relative_date_cache_expires_across_shanghai_midnight():
     recognizer = make_recognizer(clock=lambda: current[0])
     first = asyncio.run(recognizer.recognize("明天儿科还有号吗？"))
     cached = asyncio.run(recognizer.recognize("明天儿科还有号吗？"))
-    assert cached is first
+    assert cached.intent is first.intent
+    assert cached.embedding_info["cache_hit"] is True
+    assert cached.embedding_info["elapsed_ms"] is None
     assert first.entities["date"] == ["2026-09-17"]
     assert len(recognizer.client.calls) == 1
     current[0] = datetime(2026, 9, 16, 16, 1, tzinfo=timezone.utc)
@@ -308,10 +312,246 @@ def test_cache_still_distinguishes_recent_context():
     assert len(recognizer.client.calls) == 2
 
 
-def test_default_vector_is_repeatable_local_256_dimensional_character_hash():
+def test_explicit_hash_vector_is_repeatable_local_256_dimensional_character_hash():
     recognizer = make_recognizer()
     first = asyncio.run(recognizer._embed_text("儿科号源"))
     assert len(first) == 256
     assert first == recognizer._local_embedding("儿科号源")
     assert any(first)
     assert recognizer.client.calls == []
+
+
+class MemoryEmbeddingProvider:
+    """Async test double: no threads, model downloads, or semantic claims."""
+    def __init__(self):
+        self.space = "test:a"
+        self.generation = 1
+        self.calls = []
+        self.after_batch = None
+
+    def status(self):
+        return {"configured_backend": "semantic", "active_backend": "semantic", "model": "fake",
+                "space_id": self.space, "generation": self.generation, "dimension": 256,
+                "status": "semantic_ready", "fallback_reason": None}
+
+    async def initialize(self):
+        return self.status()
+
+    async def encode_batch(self, texts):
+        from core.intent_embeddings import EmbeddingBatch, hash_embedding
+        self.calls.append(list(texts))
+        await asyncio.sleep(0)
+        if self.after_batch:
+            self.after_batch(texts)
+        return EmbeddingBatch([hash_embedding(text) for text in texts], self.space, self.generation,
+                              "semantic", "fake", 256, 1.0, [False] * len(texts))
+
+
+def wired_recognizer():
+    recognizer = make_recognizer()
+    recognizer._embedding_provider = MemoryEmbeddingProvider()
+    return recognizer
+
+
+def test_message_and_full_history_cache_fingerprints_do_not_truncate_tail():
+    r = wired_recognizer()
+    assert r._cache_key("字" * 200 + "甲") != r._cache_key("字" * 200 + "乙")
+    h1 = [{"role": "user", "content": "字" * 160 + "甲"}]
+    h2 = [{"role": "user", "content": "字" * 160 + "乙"}]
+    assert r._cache_key("明天呢", h1) != r._cache_key("明天呢", h2)
+
+
+def test_cosine_rejects_incompatible_or_invalid_vectors():
+    from core.intent_recognizer import _cosine
+    for a, b in [([1], [1, 2]), ([float("nan")], [1]), ([0], [1]), ([], [])]:
+        with pytest.raises(ValueError):
+            _cosine(a, b)
+
+
+@pytest.mark.asyncio
+async def test_concurrent_first_queries_publish_one_template_snapshot():
+    r = wired_recognizer()
+    await asyncio.gather(r._embedding_recognize("明天儿科还有号吗？"),
+                         r._embedding_recognize("医院几点开始门诊？"))
+    assert sum(len(texts) > 1 for texts in r._embedding_provider.calls) == 1
+    assert r._tpl_identity == ("test:a", 1, 0)
+
+
+@pytest.mark.asyncio
+async def test_query_space_switch_rebuilds_all_templates_even_at_same_dimension():
+    r = wired_recognizer()
+    provider = r._embedding_provider
+    def switch(texts):
+        if len(texts) == 1 and provider.space == "test:a":
+            provider.space = "test:b"
+            provider.generation += 1
+    provider.after_batch = switch
+    result = await r._embedding_recognize("明天儿科还有号吗？")
+    assert r._tpl_identity == ("test:b", 2, 0)
+    assert sum(len(texts) > 1 for texts in provider.calls) == 2
+    assert result["info"]["space_id"] == "test:b"
+
+
+@pytest.mark.asyncio
+async def test_learn_during_build_cannot_publish_old_snapshot_or_cross_instance():
+    from core.intent_recognizer import _TEMPLATES
+    r, untouched = wired_recognizer(), wired_recognizer()
+    provider = r._embedding_provider
+    def learn_once(texts):
+        provider.after_batch = None
+        r.learn("一条只在当前实例学习的新表述", Intent.SLOT_QUERY)
+    provider.after_batch = learn_once
+    result = await r._embedding_recognize("明天儿科还有号吗？")
+    assert r._tpl_identity == ("test:a", 1, 1)
+    assert result["info"]["template_revision"] == 1
+    assert "一条只在当前实例学习的新表述" not in untouched._templates[Intent.SLOT_QUERY]
+    assert "一条只在当前实例学习的新表述" not in _TEMPLATES[Intent.SLOT_QUERY]
+
+
+@pytest.mark.asyncio
+async def test_uncalibrated_vectors_return_raw_ranking_but_abstain_from_vote():
+    r = wired_recognizer()
+    r._calibration = {}
+    result = await r._embedding_recognize("明天儿科还有号吗？")
+    assert result["ranking"][0]["intent"] == "slot_query"
+    assert result["info"]["top1"] == pytest.approx(1)
+    assert result["confidence"] == 0 and not result["accepted"]
+    assert result["info"]["calibration_status"] == "uncalibrated"
+    assert len({item["intent"] for item in result["ranking"]}) == len(result["ranking"])
+
+
+@pytest.mark.asyncio
+async def test_learn_during_llm_request_does_not_repopulate_stale_result_cache():
+    r = wired_recognizer()
+    original = r._llm_recognize
+    async def learns(message, history):
+        r.learn("追加号源问法", Intent.SLOT_QUERY)
+        return await original(message, history)
+    r._llm_recognize = learns
+    await r.recognize("明天儿科还有号吗？")
+    assert r._cache == {}
+
+
+@pytest.mark.asyncio
+async def test_failed_llm_is_not_saved_in_regular_result_cache():
+    r = make_recognizer(error=RuntimeError("unavailable"))
+    await r.recognize("明天儿科还有号吗？")
+    await r.recognize("明天儿科还有号吗？")
+    assert len(r.client.calls) == 2
+    assert r._cache == {}
+
+
+@pytest.mark.asyncio
+async def test_emergency_bypasses_both_model_branches_before_initialization():
+    r = wired_recognizer()
+    result = await r.recognize("我现在呼吸困难")
+    assert result.intent is Intent.EMERGENCY
+    assert r.client.calls == [] and r._embedding_provider.calls == []
+    assert result.embedding_info["status"] == "bypassed_emergency"
+
+
+@pytest.mark.parametrize("backend,accepted,standalone,pattern,expected", [
+    ("semantic", True, True, Intent.OTHER, Intent.SLOT_QUERY),
+    ("semantic", False, False, Intent.OTHER, Intent.OTHER),
+    ("semantic", True, False, Intent.OTHER, Intent.OTHER),
+    ("hash", True, True, Intent.OTHER, Intent.OTHER),
+    ("hash", True, False, Intent.SLOT_QUERY, Intent.SLOT_QUERY),
+    ("hash", False, False, Intent.SLOT_QUERY, Intent.OTHER),
+])
+def test_failure_policy_distinguishes_semantic_hash_and_template_adaptation(backend, accepted, standalone, pattern, expected):
+    r = wired_recognizer()
+    result = r._vote({"intent": Intent.OTHER, "confidence": 0.0, "failed": True},
+                     {"intent": Intent.SLOT_QUERY, "confidence": 0.9 if accepted else 0,
+                      "backend": backend, "accepted": accepted, "standalone": standalone},
+                     {"intent": pattern, "confidence": 0.5 if pattern is not Intent.OTHER else 0})
+    assert result[0] is expected
+
+
+def test_failure_conflicting_strong_rules_or_semantic_signal_abstain():
+    r = wired_recognizer()
+    failed = {"intent": Intent.OTHER, "confidence": 0.0, "failed": True}
+    strong = {"intent": Intent.SLOT_QUERY, "confidence": 0.9}
+    semantic = {"intent": Intent.DOCTOR_INFO, "confidence": 0.95,
+                "backend": "semantic", "accepted": True, "standalone": True}
+    assert r._vote(failed, semantic, strong)[0] is Intent.OTHER
+    rules = {**strong, "matches": [{"intent": "slot_query", "confidence": 0.9},
+                                  {"intent": "doctor_info", "confidence": 0.9}]}
+    assert r._vote(failed, {"intent": Intent.OTHER, "confidence": 0}, rules)[0] is Intent.OTHER
+
+
+@pytest.mark.asyncio
+async def test_calibration_controls_margin_and_learn_retains_only_normal_fusion():
+    r = wired_recognizer()
+    r._calibration = {"template_fingerprint": r.template_fingerprint,
+                      "backends": {"semantic": {"space_id": "test:a", "min_score": 0.8, "min_margin": 0}}}
+    before = await r._embedding_recognize("明天儿科还有号吗？")
+    assert before["accepted"] and before["standalone"]
+    assert before["info"]["margin"] == pytest.approx(before["ranking"][0]["score"] - before["ranking"][1]["score"])
+    r.learn("全新查号句子", Intent.SLOT_QUERY)
+    after = await r._embedding_recognize("明天儿科还有号吗？")
+    assert after["accepted"] and not after["standalone"]
+    assert after["info"]["template_changed_since_calibration"]
+    r._calibration["backends"]["semantic"]["min_margin"] = 2
+    assert not (await r._embedding_recognize("明天儿科还有号吗？"))["accepted"]
+
+
+@pytest.mark.asyncio
+async def test_context_only_text_never_gets_standalone_vector_authority():
+    r = wired_recognizer()
+    r._calibration = {"template_fingerprint": r.template_fingerprint,
+                      "backends": {"semantic": {"space_id": "test:a", "min_score": -1, "min_margin": 0}}}
+    result = await r._embedding_recognize("明天呢")
+    assert not result["standalone"] and result["info"]["requires_context"]
+
+
+def test_disabled_fallback_uses_existing_two_branch_weights():
+    r = wired_recognizer()
+    original = r._embedding_provider.status
+    r._embedding_provider.status = lambda: {**original(), "active_backend": "disabled", "status": "disabled_fallback"}
+    result = r._vote({"intent": Intent.SLOT_QUERY, "confidence": 0.8},
+                     {"intent": Intent.OTHER, "confidence": 0},
+                     {"intent": Intent.SLOT_QUERY, "confidence": 0.4})
+    assert result[1] == pytest.approx(0.74)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("change", ["generation", "learn"])
+async def test_vector_completed_before_llm_cannot_vote_after_snapshot_changes(change):
+    r = wired_recognizer()
+    ready, resume = asyncio.Event(), asyncio.Event()
+    async def vector(message):
+        result = {"intent": Intent.SLOT_QUERY, "confidence": 0.95,
+                  "backend": "semantic", "accepted": True, "standalone": True,
+                  "info": {**r._embedding_provider.status(), "template_revision": 0, "accepted": True}}
+        ready.set()
+        return result
+    async def llm(message, history):
+        await resume.wait()
+        return {"intent": Intent.OTHER, "confidence": 0, "failed": True}
+    r._embedding_recognize, r._llm_recognize = vector, llm
+    pending = asyncio.create_task(r.recognize("另一天是否尚有余量"))
+    await ready.wait()
+    if change == "generation":
+        r._embedding_provider.generation += 1
+    else:
+        r.learn("新的表达", Intent.SLOT_QUERY)
+    resume.set()
+    result = await pending
+    assert result.intent is Intent.OTHER
+    assert result.source_scores["embedding"] == 0
+    assert result.embedding_info["stale_snapshot"]
+    assert not result.embedding_info["accepted"]
+    assert r._cache == {}
+
+
+@pytest.mark.asyncio
+async def test_explicit_disabled_result_still_caches_without_false_stale_snapshot():
+    r = make_recognizer()
+    r._embedding_provider = IntentEmbeddingProvider(EmbeddingConfig(backend="disabled"))
+    r._embedding_enabled = False
+    first = await r.recognize("另一天下午是否有空位")
+    second = await r.recognize("另一天下午是否有空位")
+    assert not first.embedding_info.get("stale_snapshot")
+    assert second.embedding_info["cache_hit"]
+    assert len(r.client.calls) == 1
+    await r._embedding_provider.aclose()

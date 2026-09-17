@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+  "pattern": {
+    "rule_fingerprint": "276ded034a05a7c88195b05df6799fe6f24e9133d4588b4491c73dff6f0d4b59",
+    "min_score": 0.75
+  },
+  "backends": {
+    "semantic": {
+      "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+      "min_score": 0.55,
+      "min_margin": 0.04
+    },
+    "hash": {
+      "space_id": "hash:md5-char-ngram-1-2-3-set-signed-v1:256",
+      "min_score": 0.15,
+      "min_margin": 0.03
+    }
+  }
+}

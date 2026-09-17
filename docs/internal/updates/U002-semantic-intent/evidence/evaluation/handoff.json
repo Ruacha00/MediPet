@@ -1,0 +1,12 @@
+{
+  "stage": "U002-07 handoff",
+  "formal_dataset_inference": false,
+  "real_llm_requests": 0,
+  "source_sha256": {
+    "evaluation/semantic_intent.py": "b3d70a2f3bd7e03e5dc25e71149928da4cc469e1fbcb6dd676f9d9ef5652d2c7",
+    "tests/test_semantic_intent_evaluation.py": "fd2e63bf7379981c60550ba52ad29ef0b262bae14ab5d59631bfd90b0c46828b",
+    "evaluation/cases/semantic_intent/manifest.json": "e92eadfdd938360646448692e918c857e8a3e45c96cc9f6d504d97ca0003830d"
+  },
+  "validation": "19 passed; after cancellation cleanup 1 passed/18 deselected",
+  "links_checked": 5
+}
