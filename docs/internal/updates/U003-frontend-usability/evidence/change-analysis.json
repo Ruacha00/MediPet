@@ -1,0 +1,61 @@
+{
+  "worktree": "D:\\Projects\\Agent Learn\\Project\\MediPet-Rebuild",
+  "head": "e81f44744aaee2d64fd6c3b99a0a8748f9a49fb6",
+  "real_index_unchanged": true,
+  "source_changes_during_run": [],
+  "finished_at": "2026-09-17T08:21:48.196Z",
+  "batches": [
+    {
+      "paths": [
+        "docs/internal/updates/U003-frontend-usability/EXECUTION.md",
+        "docs/internal/updates/U003-frontend-usability/contracts.md",
+        "docs/internal/updates/U003-frontend-usability/evidence/backend-regression.md",
+        "docs/internal/updates/U003-frontend-usability/evidence/baseline.md",
+        "docs/internal/updates/U003-frontend-usability/evidence/message-dependencies.json",
+        "docs/internal/updates/U003-frontend-usability/intent.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-01.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-02.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-03.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-04.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-05.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-06.md",
+        "docs/internal/updates/U003-frontend-usability/issues/U003-07.md",
+        "docs/internal/updates/U003-frontend-usability/plan.md",
+        "frontend/package-lock.json",
+        "frontend/package.json",
+        "frontend/src/App.vue",
+        "frontend/src/components/BusinessArtifacts.vue",
+        "frontend/src/components/HealthArtifacts.vue",
+        "frontend/src/components/MessageContent.vue",
+        "frontend/src/components/PatientVisitPanel.vue",
+        "frontend/src/components/ReportUpload.vue",
+        "frontend/src/styles.css",
+        "frontend/tests/app-integration.test.mjs"
+      ],
+      "partial": false,
+      "truncated": false,
+      "summary": {
+        "changed_count": 118,
+        "affected_count": 89,
+        "changed_files": 24,
+        "risk_level": "critical"
+      }
+    },
+    {
+      "paths": [
+        "frontend/tests/message-content.test.mjs",
+        "frontend/tests/python-backend.test.mjs",
+        "frontend/tests/u003-artifacts.test.mjs",
+        "frontend/tests/u003-workspace-components.test.mjs"
+      ],
+      "partial": false,
+      "truncated": false,
+      "summary": {
+        "changed_count": 125,
+        "affected_count": 23,
+        "changed_files": 4,
+        "risk_level": "critical"
+      }
+    }
+  ]
+}

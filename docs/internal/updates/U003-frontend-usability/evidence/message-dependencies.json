@@ -1,0 +1,51 @@
+{
+  "head": "e81f44744aaee2d64fd6c3b99a0a8748f9a49fb6",
+  "scope": "U003-03 markdown dependency addition only",
+  "added_packages": {
+    "node_modules/argparse": "3.0.2",
+    "node_modules/linkify-it": "6.1.0",
+    "node_modules/markdown-it": "15.0.2",
+    "node_modules/markdown-it/node_modules/entities": "8.1.0",
+    "node_modules/mdurl": "2.1.0",
+    "node_modules/punycode.js": "2.3.1",
+    "node_modules/uc.micro": "3.0.0"
+  },
+  "removed_packages": [],
+  "changed_existing_packages": [],
+  "unchanged_existing_package_count": 84,
+  "previous_lock_sha256": "335f93559145f7cceb54da3be3073e5895eaeb00592f0700f7b774c31435404f",
+  "current_lock_sha256": "8a0a7e84623ca39f893a9984486131016b9248287f71c9554baae174e16c6602",
+  "audit": {
+    "exit_code": 1,
+    "findings": {
+      "esbuild": {
+        "severity": "low",
+        "nodes": [
+          "node_modules/esbuild"
+        ],
+        "present_in_previous_lock": true
+      },
+      "nanoid": {
+        "severity": "high",
+        "nodes": [
+          "node_modules/nanoid"
+        ],
+        "present_in_previous_lock": true
+      },
+      "postcss": {
+        "severity": "high",
+        "nodes": [
+          "node_modules/postcss"
+        ],
+        "present_in_previous_lock": true
+      }
+    },
+    "new_dependency_findings": []
+  },
+  "component_validation": {
+    "ssr_tests": 17,
+    "passed": 17,
+    "build": "passed",
+    "browser": "root U003-07 pending"
+  }
+}

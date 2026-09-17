@@ -2,6 +2,8 @@
 
 日期：2026-09-16
 
+最新实施：[U003 前端可用性与展示精简](docs/internal/updates/U003-frontend-usability/intent.md)。2026-09-17用户要求先做计划，并确认就诊操作优先、管理与调试放到次级入口；[计划](docs/internal/updates/U003-frontend-usability/plan.md)已形成，用户已要求实施，当前在codex/u003-frontend-usability完成开发与验收。下方U002状态继续独立保留。
+
 当前更新入口：[U002 中文语义意图向量接入](docs/internal/updates/U002-semantic-intent/intent.md)。2026-09-17 用户已授权并行实施；当前分支 `codex/u002-semantic-intent`，按4份 spec、10个原子 issue执行。接续先读其[执行检查点](docs/internal/updates/U002-semantic-intent/EXECUTION.md)。U002 保留三路融合与正常权重，以中文语义模型为主、字符哈希明确降级，并单独修正 LLM 失败接受条件；它覆盖下文 §4.1/§12 的对应旧限制。
 
 此前更新：[U001 医疗健康咨询能力补齐](docs/internal/updates/U001-health-consultation/intent.md)。2026-09-16 用户已授权补齐场景一，报告同时支持 PDF 和图片上传。下文保留首次重构记录；U001 的意图、计划与契约覆盖其中关于四类角色、症状分诊、用药信息、报告预处理及固定急症范围的旧限制。其他架构和预约约束继续有效。

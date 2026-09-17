@@ -1,41 +1,30 @@
 <template>
   <main :class="['app-shell', `app-shell-${activeView}`]">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="MediPet 首页" @click.prevent="activeView = 'chat'">
+    <header class="topbar" :inert="compactLayout && drawerOpen">
+      <a class="brand" href="#" aria-label="MediPet 首页" @click.prevent="openView('chat')">
         <span class="brand-mark">M</span>
         <span class="brand-name">MediPet</span>
       </a>
-
-      <nav class="view-nav" aria-label="工作区">
-        <button :class="{ active: activeView === 'chat' }" @click="activeView = 'chat'">对话</button>
-        <button :class="{ active: activeView === 'knowledge' }" @click="activeView = 'knowledge'">知识库</button>
-        <button :class="{ active: activeView === 'evaluation' }" @click="activeView = 'evaluation'">评测</button>
-      </nav>
-
       <div class="topbar-tools">
-        <span class="environment-pill">
-          <i :class="healthOk ? 'online' : 'offline'"></i>
-          {{ currentBackend.label }}
-        </span>
-        <a class="docs-link" :href="docsUrl" target="_blank" rel="noreferrer">API 文档</a>
-        <button class="avatar-button" title="当前用户">{{ userInitial }}</button>
+        <span class="demo-disclaimer">演示医院 · 不提供诊断</span>
+        <button class="quiet-button" @click="openView(activeView === 'chat' ? 'diagnostics' : 'chat')">{{ activeView === 'chat' ? '管理与调试' : '返回就诊' }}</button>
       </div>
     </header>
 
     <div v-if="toast" class="toast" role="status">{{ toast }}</div>
 
-    <section v-if="activeView === 'chat'" class="page page-chat">
-      <div class="page-heading">
-        <div class="heading-copy">
-          <span class="kicker">就诊助手 · 明和虚构医院</span>
-          <h1>把就诊准备，一件件办好</h1>
-          <p>查门诊、备材料、预约与取消，在同一个就诊事项中继续。</p>
-        </div>
-        <span class="demo-disclaimer">演示数据 · 不提供诊断</span>
-      </div>
-
+    <nav v-if="activeView !== 'chat'" class="management-nav" aria-label="管理与调试">
+      <button :aria-current="activeView === 'knowledge' ? 'page' : undefined" @click="openView('knowledge')">知识与场景规则</button>
+      <button :aria-current="activeView === 'evaluation' ? 'page' : undefined" @click="openView('evaluation')">评测报告</button>
+      <button :aria-current="activeView === 'diagnostics' ? 'page' : undefined" @click="openView('diagnostics')">运行与请求详情</button>
+      <a :href="docsUrl" target="_blank" rel="noreferrer">API 文档 ↗</a>
+    </nav>
+    <section v-show="activeView === 'chat'" class="page page-chat">
+      <p v-if="healthLabel === '不可用'" class="connection-warning" role="status">暂时无法连接服务。<button class="link-button" @click="checkHealth">重试连接</button></p>
       <div class="chat-layout visit-workspace">
-        <aside class="chat-sidebar" ref="sidebarRef">
+        <button v-if="drawerOpen && compactLayout" class="drawer-backdrop" aria-label="关闭事项列表" @click="closeDrawer"></button>
+        <aside :class="['chat-sidebar', { 'drawer-open': drawerOpen }]" ref="sidebarRef" :role="compactLayout && drawerOpen ? 'dialog' : undefined" :aria-modal="compactLayout && drawerOpen ? 'true' : undefined" aria-label="就诊人和事项" @keydown="onDrawerKeydown">
+          <div class="drawer-heading"><strong>就诊人和事项</strong><button class="quiet-button" @click="closeDrawer">关闭</button></div>
           <div class="chat-sidebar-scroll">
             <PatientVisitPanel :patients="patients" :visits="visits" :patient-id="patientId"
               :current-visit="currentVisit" :loading="workspaceLoading" :busy="visitBusy"
@@ -44,111 +33,57 @@
               @rename-visit="renameVisit" @archive-visit="archiveVisit" @restore-visit="restoreVisit"
               @toggle-archived="toggleArchived" />
             <button v-if="workspaceError" class="quiet-button retry-workspace" @click="initializeWorkspace">重新读取就诊空间</button>
-            <details class="side-card diagnostic-panel">
-              <summary>请求与运行详情</summary>
-              <section v-if="lastResponse" class="request-detail">
-                <h2>最近一次请求</h2>
-                <dl class="detail-list">
-                  <div><dt>主要角色</dt><dd>{{ agentLabel(lastResponse.primaryAgent || lastResponse.agentType) }}</dd></div>
-                  <div><dt>协作角色</dt><dd>{{ lastResponse.supportingAgents.map(agentLabel).join('、') || '无' }}</dd></div>
-                  <div><dt>意图</dt><dd>{{ lastResponse.intent || '-' }}</dd></div>
-                  <div><dt>意图置信度</dt><dd>{{ metricPercent(lastResponse.intentConfidence) }}</dd></div>
-                  <div><dt>路由分数</dt><dd>{{ formatPercent(lastResponse.routingConfidence) }}</dd></div>
-                  <div><dt>耗时</dt><dd>{{ lastResponse.latencyMs }} ms</dd></div>
-                </dl>
-                <p class="side-empty">{{ lastResponse.routingReason }}</p>
-                <details v-if="lastTrace"><summary>全部执行记录（含失败）</summary><pre>{{ formatJson(lastTrace) }}</pre></details>
-                <p class="source-note">来源：{{ sourceNames(lastResponse.raw, lastResponse.artifacts) }}</p>
-              </section>
-              <p v-else class="side-empty">发送消息后可查看角色分工与工具执行记录。</p>
-              <section class="monitor-card">
-                <div class="card-heading"><h2>运行状态</h2><button class="link-button" :disabled="monitorLoading" @click="loadMonitor">刷新</button></div>
-                <p v-if="monitorError" class="management-error" role="alert">{{ monitorError }}</p>
-                <p v-if="monitorLoading" class="side-empty">正在读取监控…</p>
-                <div v-if="!monitorError" class="mini-stats"><div><strong>{{ totalRequests }}</strong><span>请求</span></div><div><strong>{{ agentCount }}</strong><span>角色</span></div><div><strong>{{ activeAlerts.length }}</strong><span>告警</span></div></div>
-                <p v-if="activeAlerts.length" class="alert-note">{{ activeAlerts[0].detail || activeAlerts[0].title }}</p>
-                <p v-else-if="monitorLoaded && !monitorError" class="healthy-note">当前没有活跃告警。</p>
-                <template v-if="monitorLoaded && !monitorError">
-                  <details><summary>角色与工具统计</summary>
-                    <dl class="detail-list"><div v-for="(stats, name) in monitorData.agent_stats" :key="name"><dt>{{ agentLabel(name) }}</dt><dd>{{ stats.total ?? '—' }} 次 · 成功 {{ metricPercent(stats.success_rate) }} · {{ stats.avg_ms ?? '—' }} ms</dd></div></dl>
-                    <div v-for="(stats, name) in monitorData.tool_stats" :key="name" class="monitor-tool"><strong>{{ name }}</strong><p>成功 {{ metricPercent(stats.success_rate) }} · 平均 {{ stats.avg_latency_ms ?? '—' }} ms · 连续失败 {{ stats.consecutive_fails ?? '—' }}</p></div>
-                    <details><summary>完整监控数据</summary><pre>{{ formatJson(monitorData) }}</pre></details>
-                  </details>
-                  <p v-for="(alert, index) in activeAlerts.slice(1)" :key="index" class="management-error">{{ alert.title }} {{ alert.detail }}</p>
-                  <div v-for="(suggestion, index) in monitorData.suggestions" :key="index" class="monitor-suggestion"><strong>{{ suggestion.title }}</strong><p>{{ suggestion.action }}</p></div>
-                </template>
-              </section>
-              <div class="side-actions"><button class="quiet-button" @click="checkHealth">检查连接</button><span>{{ healthLabel }}</span></div>
-              <details><summary>连接资料</summary><code>{{ currentBackend.baseUrl }}</code><pre>{{ statusText }}</pre></details>
-            </details>
           </div>
         </aside>
 
-        <section class="chat-stage" :aria-busy="workspaceLoading || chatPending">
+        <section class="chat-stage" :aria-busy="workspaceLoading || chatPending" :inert="compactLayout && drawerOpen">
           <div class="stage-bar">
-            <div class="stage-context"><span class="context-dot"></span><span>{{ patientName }}<template v-if="currentVisit"> · {{ currentVisit.title }}</template></span></div>
+            <button ref="drawerTrigger" class="quiet-button drawer-trigger" @click="openDrawer" :aria-expanded="drawerOpen">切换</button><div class="stage-context"><span>{{ patientName }}<template v-if="currentVisit"> · {{ currentVisit.title }}</template></span></div>
             <button class="link-button" :disabled="!currentVisit || workspaceLoading || operationPending || visitBusy" @click="refreshHistory">刷新记录</button>
           </div>
-          <div class="messages" ref="messageList" aria-label="事项完整记录">
+          <div class="messages" ref="messageList" aria-label="事项完整记录" @scroll="onMessageScroll" tabindex="0">
             <p v-if="workspaceLoading" class="history-status" role="status">正在读取完整记录…</p>
             <template v-else>
               <article v-for="item in messages" :key="item.message_id" :class="['message', item.role, { 'operation-message': item.kind === 'operation_result' }]" :data-message-id="item.message_id">
                 <div class="message-meta"><span>{{ messageLabel(item) }}</span><small>{{ messageTime(item.created_at) }}</small></div>
-                <p>{{ item.content }}</p>
+                <MessageContent :content="item.content" />
                 <BusinessArtifacts v-if="item.artifacts?.length" :artifacts="item.artifacts.filter(card => !healthCardTypes.includes(card.type))" :disabled="!canChat"
-                  :busy="operationPending" :confirming-id="confirmingId" :proposal-states="proposalStates" :error="chatError"
+                  :busy="operationPending" :confirming-id="confirmingId" :proposal-states="proposalStates" :error="cardError(item)"
                   @select-slot="selectSlot" @confirm-proposal="confirmProposal" />
                 <HealthArtifacts :artifacts="item.artifacts || []" />
                 <div v-for="record in cancellableRecords(item)" :key="record.appointment_id" class="record-actions">
                   <button class="quiet-button" :disabled="!canChat || operationPending" @click="prepareCancellation(record.appointment_id)">准备取消此预约</button>
                 </div>
-                <details v-if="item.kind === 'operation_result'" class="message-trace business-receipt-detail">
-                  <summary>业务办理回执详情</summary><p class="trace-note">明确确认后执行的业务操作。</p><pre>{{ formatJson(item.metadata?.receipt || { receipt_id: item.receipt_id, proposal_id: item.proposal_id }) }}</pre>
-                </details>
-                <details v-else-if="item.role === 'assistant' && (item.metadata?.request_id || item.metadata?.tool_traces?.length)" class="message-trace request-evidence">
-                  <summary>运行详情 · {{ agentLabel(item.metadata.primary_agent || item.metadata.agent_type) }}</summary>
-                  <dl class="request-facts"><div><dt>请求</dt><dd>{{ item.metadata.request_id || '未返回' }}</dd></div><div><dt>意图 / 置信度</dt><dd>{{ item.metadata.intent || '未返回' }} · {{ metricPercent(item.metadata.intent_confidence) }}</dd></div><div><dt>主要角色</dt><dd>{{ agentLabel(item.metadata.primary_agent || item.metadata.agent_type) }}</dd></div><div><dt>协作角色</dt><dd>{{ (item.metadata.supporting_agents || []).map(agentLabel).join('、') || '无' }}</dd></div><div><dt>路由分数 / 耗时</dt><dd>{{ metricPercent(item.metadata.routing_confidence) }} · {{ item.metadata.latency_ms ?? '未返回' }} ms</dd></div></dl>
-                  <p class="trace-note">{{ item.metadata.routing_reason || '本次未返回路由理由。' }}</p>
-                  <p class="source-note">知识或业务资料来源：{{ sourceNames(item.metadata, item.artifacts) }}</p>
-                  <div v-for="(trace, index) in item.metadata.tool_traces || []" :key="index" class="trace-evidence" :data-trace-status="trace.success === false ? 'failed' : trace.success === true ? 'success' : 'unknown'">
-                    <div class="trace-title"><strong>{{ trace.tool_name || trace.kind || '执行记录' }}</strong><span>{{ trace.success === false ? '失败' : trace.success === true ? '成功' : '状态未返回' }} · {{ agentLabel(trace.agent_type) }}</span></div>
-                    <p v-if="trace.error" class="management-error">{{ trace.error_code ? trace.error_code + '：' : '' }}{{ trace.error }}</p>
-                    <ul v-if="retrievalIssues(trace).length" class="management-warning"><li v-for="(problem, problemIndex) in retrievalIssues(trace)" :key="problemIndex">{{ problem }}</li></ul>
-                    <dl class="request-facts"><div><dt>输入</dt><dd><pre>{{ formatJson(trace.input ?? {}) }}</pre></dd></div><div><dt>结果摘要</dt><dd><pre>{{ formatJson(trace.result_summary ?? trace.result ?? {}) }}</pre></dd></div></dl>
-                    <p class="source-note">来源：{{ sourceNames({ tool_traces: [trace] }) }}</p>
-                    <details><summary>完整记录</summary><pre>{{ formatJson(trace) }}</pre></details>
-                  </div>
-                  <p v-if="!item.metadata.tool_traces?.length" class="trace-note">本次没有工具执行记录。</p>
-                  <details><summary>识别与路由原始字段</summary><pre>{{ formatJson(item.metadata) }}</pre></details>
-                </details>
+                <p v-if="item.role === 'assistant' && sourceNames(item.metadata, item.artifacts, true) !== '本次未返回来源'" class="source-note">资料来源：{{ sourceNames(item.metadata, item.artifacts, true) }}</p>
               </article>
               <div v-if="!messages.length" class="empty-state visit-empty">
-                <div class="empty-symbol" aria-hidden="true">＋</div>
+
                 <h2>{{ currentVisit ? '从这次就诊的需要开始' : '先选就诊人，再新建一个事项' }}</h2>
                 <p>{{ currentVisit ? '消息、预约方案和办理记录都会保存在这里。' : '本人和家属各有独立的事项与预约记录。' }}</p>
                 <div v-if="canChat" class="starter-prompts">
-                  <button @click="usePrompt('明天儿科上午还有号吗？孩子第一次就诊要带什么？')">儿科号源与材料</button>
+                  <button @click="usePrompt('第一次就诊需要准备哪些材料？')">就诊准备</button>
                   <button @click="usePrompt('从门诊大厅到药房怎么走？需要无障碍路线。')">院内路线</button>
                   <button @click="usePrompt('查询我的预约记录')">我的预约</button>
                 </div>
               </div>
             </template>
           </div>
+          <button v-if="hasNewMessages" class="new-message-button" @click="jumpToLatest">有新消息 · 查看最新</button>
           <form class="composer" @submit.prevent="sendMessage">
             <ReportUpload :key="settings.conversationId" :disabled="!canChat || operationPending" :busy="reportPending" @upload="submitReport" />
             <p v-if="currentVisit?.archived" class="history-status">这件事项已归档。请在左侧查看归档并恢复后继续。</p>
-            <p v-if="chatPending" class="history-status" role="status">正在处理当前事项，请稍候…</p>
+            <p v-if="chatPending" class="history-status" role="status">正在处理：{{ pendingOperations[settings.conversationId]?.content }}<br />结果返回后会保存到当前事项。</p>
             <p v-if="operationReceipt" class="operation-notice" role="status">{{ operationReceipt.operation === 'cancel' ? '取消预约' : '预约' }}已完成，回执已保存。<small>回执：{{ operationReceipt.receipt_id }}</small></p>
             <p v-if="chatError" class="chat-error" role="alert">{{ chatError }}</p>
             <textarea v-model="draft" rows="2" aria-label="就诊问题" :disabled="!canChat || operationPending"
-              placeholder="例如：明天儿科上午还有号吗？" @keydown.meta.enter.prevent="sendMessage" @keydown.ctrl.enter.prevent="sendMessage"></textarea>
-            <div class="composer-bottom"><span>方案仅供核对，点击卡片确认后才办理。</span><button type="submit" :disabled="!canChat || operationPending || !draft.trim()">{{ chatPending ? '处理中…' : '发送' }} <span aria-hidden="true">↑</span></button></div>
+              placeholder="描述就诊问题，或粘贴报告文字" @keydown="onComposerKeydown"></textarea>
+            <div class="composer-bottom"><span>Ctrl / ⌘ + Enter 发送 · 预约需在卡片确认</span><button type="submit" :disabled="!canChat || operationPending || !draft.trim()">{{ chatPending ? '处理中…' : '发送' }} <span aria-hidden="true">↑</span></button></div>
           </form>
         </section>
       </div>
     </section>
 
-    <section v-else-if="activeView === 'knowledge'" class="page page-knowledge">
+    <section v-if="activeView === 'knowledge'" class="page page-knowledge">
       <div class="page-heading">
         <div class="heading-copy"><span class="kicker">医院公开资料</span><h1>知识库</h1><p>查询与补充就诊说明，查看当前生效的场景能力。</p></div>
         <div class="count-display"><strong>{{ knowledgeCount }}</strong><span>文档片段</span><button class="link-button" @click="loadStats">刷新统计</button></div>
@@ -197,7 +132,7 @@
       </section>
     </section>
 
-    <section v-else class="page page-evaluation">
+    <section v-if="activeView === 'evaluation'" class="page page-evaluation">
       <div class="page-heading"><div class="heading-copy"><span class="kicker">质量与业务验证</span><h1>MediPet 评测</h1><p>运行既有场景，核对实际样本、调用失败和 Judge 评分。运行会调用模型并生成待复核的候选报告。</p></div><button @click="runEvaluation" :disabled="evalLoading">{{ evalLoading ? '评测运行中…' : '运行评测' }}</button></div>
       <p v-if="evalError" class="management-error" role="alert">{{ evalError }}</p>
       <p v-if="evalLoading" class="management-note" role="status">正在执行场景与评分，请稍候；尚无本次结论。</p>
@@ -225,10 +160,76 @@
       </div>
       <div v-else-if="!evalError && !evalLoading" class="evaluation-empty"><div class="empty-symbol">◎</div><h2>还没有评测结果</h2><p>点击右上角运行评测，结果不会自动成为已接受基线。</p></div>
     </section>
+    <section v-if="activeView === 'diagnostics'" class="page page-diagnostics">
+      <h1>管理与调试</h1><p class="management-note">查看运行状态与当前事项的处理记录。这里的统计不代表回答准确率。</p>
+            <section class="workspace-card diagnostic-panel">
+              <h2>连接与运行状态</h2>
+              <section v-if="lastResponse" class="request-detail">
+                <h2>最近一次请求</h2>
+                <dl class="detail-list">
+                  <div><dt>主要角色</dt><dd>{{ agentLabel(lastResponse.primaryAgent || lastResponse.agentType) }}</dd></div>
+                  <div><dt>协作角色</dt><dd>{{ lastResponse.supportingAgents.map(agentLabel).join('、') || '无' }}</dd></div>
+                  <div><dt>意图</dt><dd>{{ lastResponse.intent || '-' }}</dd></div>
+                  <div><dt>意图置信度</dt><dd>{{ metricPercent(lastResponse.intentConfidence) }}</dd></div>
+                  <div><dt>路由分数</dt><dd>{{ formatPercent(lastResponse.routingConfidence) }}</dd></div>
+                  <div><dt>耗时</dt><dd>{{ lastResponse.latencyMs }} ms</dd></div>
+                </dl>
+                <p class="side-empty">{{ lastResponse.routingReason }}</p>
+                <details v-if="lastTrace"><summary>全部执行记录（含失败）</summary><pre>{{ formatJson(lastTrace) }}</pre></details>
+                <p class="source-note">来源：{{ sourceNames(lastResponse.raw, lastResponse.artifacts) }}</p>
+              </section>
+              <p v-else class="side-empty">发送消息后可查看角色分工与工具执行记录。</p>
+              <section class="monitor-card">
+                <div class="card-heading"><h2>运行状态</h2><button class="link-button" :disabled="monitorLoading" @click="loadMonitor">刷新</button></div>
+                <p v-if="monitorError" class="management-error" role="alert">{{ monitorError }}</p>
+                <p v-if="monitorLoading" class="side-empty">正在读取监控…</p>
+                <div v-if="!monitorError" class="mini-stats"><div><strong>{{ totalRequests }}</strong><span>请求</span></div><div><strong>{{ agentCount }}</strong><span>角色</span></div><div><strong>{{ activeAlerts.length }}</strong><span>告警</span></div></div>
+                <p v-if="activeAlerts.length" class="alert-note">{{ activeAlerts[0].detail || activeAlerts[0].title }}</p>
+                <p v-else-if="monitorLoaded && !monitorError" class="healthy-note">当前没有活跃告警。</p>
+                <template v-if="monitorLoaded && !monitorError">
+                  <details><summary>角色与工具统计</summary>
+                    <dl class="detail-list"><div v-for="(stats, name) in monitorData.agent_stats" :key="name"><dt>{{ agentLabel(name) }}</dt><dd>{{ stats.total ?? '—' }} 次 · 成功 {{ metricPercent(stats.success_rate) }} · {{ stats.avg_ms ?? '—' }} ms</dd></div></dl>
+                    <div v-for="(stats, name) in monitorData.tool_stats" :key="name" class="monitor-tool"><strong>{{ name }}</strong><p>成功 {{ metricPercent(stats.success_rate) }} · 平均 {{ stats.avg_latency_ms ?? '—' }} ms · 连续失败 {{ stats.consecutive_fails ?? '—' }}</p></div>
+                    <details><summary>完整监控数据</summary><pre>{{ formatJson(monitorData) }}</pre></details>
+                  </details>
+                  <p v-for="(alert, index) in activeAlerts.slice(1)" :key="index" class="management-error">{{ alert.title }} {{ alert.detail }}</p>
+                  <div v-for="(suggestion, index) in monitorData.suggestions" :key="index" class="monitor-suggestion"><strong>{{ suggestion.title }}</strong><p>{{ suggestion.action }}</p></div>
+                </template>
+              </section>
+              <div class="side-actions"><button class="quiet-button" @click="checkHealth">检查连接</button><span>{{ healthLabel }}</span></div>
+              <details><summary>连接资料</summary><code>{{ currentBackend.baseUrl }}</code><pre>{{ statusText }}</pre></details>
+            </section>
+      <section class="workspace-card"><h2>当前事项的处理记录</h2>
+        <p v-if="!messages.length" class="management-note">当前没有可查看的消息记录。</p>
+        <article v-for="item in messages.filter(message => message.role === 'assistant')" :key="item.message_id" :data-debug-message-id="item.message_id">
+                <details v-if="item.kind === 'operation_result'" class="message-trace business-receipt-detail">
+                  <summary>业务办理回执详情</summary><p class="trace-note">明确确认后执行的业务操作。</p><pre>{{ formatJson(item.metadata?.receipt || { receipt_id: item.receipt_id, proposal_id: item.proposal_id }) }}</pre>
+                </details>
+                <details v-else-if="item.role === 'assistant' && (item.metadata?.request_id || item.metadata?.tool_traces?.length)" class="message-trace request-evidence">
+                  <summary>运行详情 · {{ agentLabel(item.metadata.primary_agent || item.metadata.agent_type) }}</summary>
+                  <dl class="request-facts"><div><dt>请求</dt><dd>{{ item.metadata.request_id || '未返回' }}</dd></div><div><dt>意图 / 置信度</dt><dd>{{ item.metadata.intent || '未返回' }} · {{ metricPercent(item.metadata.intent_confidence) }}</dd></div><div><dt>主要角色</dt><dd>{{ agentLabel(item.metadata.primary_agent || item.metadata.agent_type) }}</dd></div><div><dt>协作角色</dt><dd>{{ (item.metadata.supporting_agents || []).map(agentLabel).join('、') || '无' }}</dd></div><div><dt>路由分数 / 耗时</dt><dd>{{ metricPercent(item.metadata.routing_confidence) }} · {{ item.metadata.latency_ms ?? '未返回' }} ms</dd></div></dl>
+                  <p class="trace-note">{{ item.metadata.routing_reason || '本次未返回路由理由。' }}</p>
+                  <p class="source-note">知识或业务资料来源：{{ sourceNames(item.metadata, item.artifacts) }}</p>
+                  <div v-for="(trace, index) in item.metadata.tool_traces || []" :key="index" class="trace-evidence" :data-trace-status="trace.success === false ? 'failed' : trace.success === true ? 'success' : 'unknown'">
+                    <div class="trace-title"><strong>{{ trace.tool_name || trace.kind || '执行记录' }}</strong><span>{{ trace.success === false ? '失败' : trace.success === true ? '成功' : '状态未返回' }} · {{ agentLabel(trace.agent_type) }}</span></div>
+                    <p v-if="trace.error" class="management-error">{{ trace.error_code ? trace.error_code + '：' : '' }}{{ trace.error }}</p>
+                    <ul v-if="retrievalIssues(trace).length" class="management-warning"><li v-for="(problem, problemIndex) in retrievalIssues(trace)" :key="problemIndex">{{ problem }}</li></ul>
+                    <dl class="request-facts"><div><dt>输入</dt><dd><pre>{{ formatJson(trace.input ?? {}) }}</pre></dd></div><div><dt>结果摘要</dt><dd><pre>{{ formatJson(trace.result_summary ?? trace.result ?? {}) }}</pre></dd></div></dl>
+                    <p class="source-note">来源：{{ sourceNames({ tool_traces: [trace] }) }}</p>
+                    <details><summary>完整记录</summary><pre>{{ formatJson(trace) }}</pre></details>
+                  </div>
+                  <p v-if="!item.metadata.tool_traces?.length" class="trace-note">本次没有工具执行记录。</p>
+                  <details><summary>识别与路由原始字段</summary><pre>{{ formatJson(item.metadata) }}</pre></details>
+                </details>
+
+        </article>
+      </section>
+    </section>
   </main>
 </template>
 
 <script setup>
+import MessageContent from './components/MessageContent.vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import BusinessArtifacts from './components/BusinessArtifacts.vue'
 import PatientVisitPanel from './components/PatientVisitPanel.vue'
@@ -259,6 +260,59 @@ import {
 
 const settings = reactive(createInitialSettings())
 const activeView = ref('chat')
+const drawerOpen = ref(false)
+const drawerTrigger = ref(null)
+const compactLayout = ref(typeof window !== 'undefined' && window.innerWidth <= 760)
+const hasNewMessages = ref(false)
+const followLatest = ref(true)
+const draftByVisit = new Map()
+const errorProposalId = ref('')
+const uncertainProposals = reactive({})
+function onComposerKeydown(event) {
+  if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !event.isComposing) {
+    event.preventDefault()
+    sendMessage()
+  }
+}
+function onMessageScroll() {
+  const element = messageList.value
+  if (!element) return
+  followLatest.value = element.scrollHeight - element.scrollTop - element.clientHeight < 80
+  if (followLatest.value) hasNewMessages.value = false
+}
+function jumpToLatest() {
+  followLatest.value = true
+  hasNewMessages.value = false
+  messageList.value?.scrollTo?.({ top: messageList.value.scrollHeight, behavior: 'auto' })
+}
+async function openDrawer() {
+  drawerOpen.value = true
+  await nextTick()
+  sidebarRef.value?.querySelector?.('button, select, input')?.focus?.()
+}
+async function closeDrawer() {
+  const wasOpen = drawerOpen.value
+  drawerOpen.value = false
+  if (wasOpen) {
+    await nextTick()
+    if (activeView.value === 'chat' && compactLayout.value) drawerTrigger.value?.focus?.()
+  }
+}
+function onDrawerKeydown(event) {
+  if (!compactLayout.value || !drawerOpen.value) return
+  if (event.key === 'Escape') { event.preventDefault(); closeDrawer(); return }
+  if (event.key !== 'Tab') return
+  const nodes = [...(sidebarRef.value?.querySelectorAll?.('button:not(:disabled),select:not(:disabled),input:not(:disabled),[tabindex="0"]') || [])]
+  const first = nodes[0], last = nodes.at(-1)
+  if (!first) return
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+}
+function cardError(item) {
+  if (!errorProposalId.value) return ''
+  const target = messages.value.filter(message => message.artifacts?.some(card => card.data?.proposal_id === errorProposalId.value)).at(-1)
+  return target?.message_id === item.message_id ? chatError.value : ''
+}
 const messages = ref([])
 const draft = ref('')
 const healthOk = ref(false)
@@ -300,14 +354,13 @@ let sidebarObserver
 
 const currentBackend = computed(() => backendMeta(settings.backend, settings))
 const docsUrl = computed(() => `${currentBackend.value.baseUrl}/docs`)
-const userInitial = computed(() => (settings.userId || 'U').slice(0, 1).toUpperCase())
 const activeAlerts = computed(() => monitorData.value.active_alerts || [])
 const agentCount = computed(() => Object.keys(monitorData.value.agent_stats || {}).length)
 const totalRequests = computed(() => Object.values(monitorData.value.agent_stats || {}).reduce((sum, item) => sum + Number(item.total || 0), 0))
 
 watch(() => settings.conversationId, persist)
 onMounted(() => {
-  refreshConsole()
+  checkHealth()
   initializeWorkspace()
   updateSidebarHeight()
   if (typeof ResizeObserver !== 'undefined') {
@@ -327,6 +380,8 @@ onBeforeUnmount(() => {
 function persist() { saveSettings(settings) }
 
 function updateSidebarHeight() {
+  compactLayout.value = window.innerWidth <= 760
+  if (!compactLayout.value) drawerOpen.value = false
   const sidebar = sidebarRef.value
   if (!sidebar) return
   const rect = sidebar.getBoundingClientRect()
@@ -334,8 +389,11 @@ function updateSidebarHeight() {
   sidebar.style.setProperty('--sidebar-height', `${height}px`)
 }
 
-async function refreshConsole() {
-  await Promise.allSettled([checkHealth(), loadStats(), loadMonitor(), loadSkills()])
+async function openView(view) {
+  closeDrawer()
+  activeView.value = view
+  if (view === 'knowledge') await Promise.allSettled([loadStats(), loadSkills()])
+  if (view === 'diagnostics') await Promise.allSettled([checkHealth(), loadMonitor()])
 }
 
 async function checkHealth() {
@@ -393,10 +451,17 @@ const patientId = ref('')
 const currentVisit = ref(null)
 const showArchived = ref(false)
 const workspaceLoading = ref(false)
+watch(workspaceLoading, async loading => {
+  const epoch = workspaceEpoch
+  if (loading) return
+  await nextTick()
+  if (isCurrent(epoch) && followLatest.value) jumpToLatest()
+})
 const visitBusy = ref(false)
 const workspaceError = ref('')
 const workspaceNotice = ref('')
 const chatError = ref('')
+const chatErrorKind = ref('')
 const operationReceipt = ref(null)
 const rejectedProposals = ref({})
 const pendingOperations = reactive({})
@@ -418,7 +483,7 @@ const proposalStates = computed(() => {
     if (message.kind === 'operation_result' && message.proposal_id) states[message.proposal_id] = 'executed'
   }
   if (operationReceipt.value) states[operationReceipt.value.proposal_id] = 'executed'
-  return { ...states, ...rejectedProposals.value }
+  return { ...states, ...rejectedProposals.value, ...Object.fromEntries(Object.keys(uncertainProposals).filter(id => uncertainProposals[id] === settings.conversationId).map(id => [id, states[id] === 'executed' ? 'executed' : 'checking'])) }
 })
 const latestAppointments = computed(() => {
   const records = {}
@@ -433,6 +498,11 @@ function requestSettings(conversationId = settings.conversationId, selectedPatie
 }
 function isCurrent(epoch) { return workspaceEpoch === epoch }
 function beginContext(selectedPatient = patientId.value) {
+  if (settings.conversationId) draftByVisit.set(settings.conversationId, draft.value)
+  closeDrawer()
+  hasNewMessages.value = false
+  followLatest.value = true
+  errorProposalId.value = ''
   workspaceEpoch += 1
   patientId.value = selectedPatient
   settings.patientId = selectedPatient
@@ -443,6 +513,7 @@ function beginContext(selectedPatient = patientId.value) {
   lastTrace.value = null
   draft.value = ''
   chatError.value = ''
+  chatErrorKind.value = ''
   operationReceipt.value = null
   rejectedProposals.value = {}
   workspaceError.value = ''
@@ -478,14 +549,31 @@ async function readHistory(snapshot, epoch) {
   checkIdentity(data.visit, snapshot)
   for (const item of data.items) checkIdentity(item, { ...snapshot, patientId: data.visit.patient_id })
   if (!patients.value.some(item => item.patient_id === data.visit.patient_id)) throw new Error('未找到该事项绑定的就诊人。')
+  const changedVisit = currentVisit.value?.conv_id !== data.visit.conv_id
   currentVisit.value = data.visit
   patientId.value = data.visit.patient_id
   settings.patientId = data.visit.patient_id
   settings.conversationId = data.visit.conv_id
+  const previousLastId = messages.value.at(-1)?.message_id
+  const previousScroll = messageList.value?.scrollTop || 0
   messages.value = data.items
+  if (changedVisit) draft.value = draftByVisit.get(data.visit.conv_id) || draft.value
+  for (const [id, convId] of Object.entries(uncertainProposals)) {
+    if (convId === snapshot.conversationId && data.items.some(item => item.kind === 'operation_result' && item.proposal_id === id)) delete uncertainProposals[id]
+  }
+  if (chatErrorKind.value === 'history' || (chatErrorKind.value === 'confirmation_unknown' && data.items.some(item => item.kind === 'operation_result' && item.proposal_id === errorProposalId.value))) {
+    chatError.value = ''
+    chatErrorKind.value = ''
+  }
   persist()
   await nextTick()
-  if (isCurrent(epoch)) messageList.value?.scrollTo?.({ top: messageList.value.scrollHeight, behavior: 'smooth' })
+  if (isCurrent(epoch)) {
+    if (changedVisit || followLatest.value) jumpToLatest()
+    else {
+      messageList.value?.scrollTo?.({ top: previousScroll, behavior: 'auto' })
+      if (previousLastId !== data.items.at(-1)?.message_id) hasNewMessages.value = true
+    }
+  }
   return true
 }
 async function readVisits(snapshot, epoch, archived = showArchived.value) {
@@ -543,7 +631,17 @@ async function selectVisit(id) {
   catch (error) { if (isCurrent(epoch)) workspaceError.value = readableError(error) }
   finally { if (isCurrent(epoch)) workspaceLoading.value = false }
 }
-function refreshHistory() { if (currentVisit.value) return selectVisit(currentVisit.value.conv_id) }
+async function refreshHistory() {
+  if (!currentVisit.value || operationPending.value) return
+  const epoch = workspaceEpoch
+  try { await readHistory(requestSettings(), epoch); if (isCurrent(epoch)) workspaceError.value = '' }
+  catch (error) {
+    if (isCurrent(epoch) && chatErrorKind.value !== 'confirmation_unknown') {
+      chatError.value = readableError(error)
+      chatErrorKind.value = 'history'
+    }
+  }
+}
 async function newVisit(id) {
   if (!id || workspaceLoading.value || visitBusy.value) return
   const epoch = beginContext(id)
@@ -595,9 +693,12 @@ async function sendMessage(value) {
   if (!content || !canChat.value || operationPending.value) return
   const snapshot = requestSettings()
   const epoch = workspaceEpoch
-  pendingOperations[snapshot.conversationId] = { type: 'chat' }
+  pendingOperations[snapshot.conversationId] = { type: 'chat', content }
+  followLatest.value = true
+  errorProposalId.value = ''
   draft.value = ''
   chatError.value = ''
+  chatErrorKind.value = ''
   operationReceipt.value = null
   try {
     const response = await requestChat(snapshot.backend, snapshot, content)
@@ -607,11 +708,11 @@ async function sendMessage(value) {
       lastResponse.value = response
       lastTrace.value = response.raw.tool_traces || []
     }
-    await loadMonitor()
   } catch (error) {
+    if (!draftByVisit.get(snapshot.conversationId)) draftByVisit.set(snapshot.conversationId, content)
     if (isCurrent(epoch)) {
       chatError.value = readableError(error)
-      draft.value = content
+      if (!draft.value) draft.value = content
       // A failed request may still have persisted a user message; only the server can supply it.
       try { await readHistory(snapshot, epoch) } catch { /* Keep the visible error and prior authoritative history. */ }
     }
@@ -622,7 +723,9 @@ async function submitReport(file) {
   if (!file || !canChat.value || operationPending.value) return
   const snapshot = requestSettings(), epoch = workspaceEpoch
   pendingOperations[snapshot.conversationId] = { type: 'report' }
+  errorProposalId.value = ''
   chatError.value = ''
+  chatErrorKind.value = ''
   try {
     const result = await uploadReport(snapshot.backend, snapshot, file)
     if (!isCurrent(epoch)) return
@@ -642,7 +745,9 @@ async function confirmProposal(id) {
   const snapshot = requestSettings()
   const epoch = workspaceEpoch
   pendingOperations[snapshot.conversationId] = { type: 'confirm', proposalId: id }
+  errorProposalId.value = id
   chatError.value = ''
+  chatErrorKind.value = ''
   operationReceipt.value = null
   try {
     const result = await confirmAppointmentProposal(snapshot.backend, snapshot, id, snapshot.conversationId)
@@ -650,12 +755,18 @@ async function confirmProposal(id) {
     checkIdentity(result, snapshot)
     operationReceipt.value = result.receipt
     try { await readHistory(snapshot, epoch) }
-    catch { if (isCurrent(epoch)) chatError.value = '办理已完成，但完整记录暂未刷新。请点击“刷新记录”，无需重新办理。' }
+    catch { if (isCurrent(epoch)) { chatError.value = '办理已完成，但完整记录暂未刷新。请点击“刷新记录”，无需重新办理。'; chatErrorKind.value = 'history' } }
   } catch (error) {
+    if (error.kind === 'network' || error.status >= 500) uncertainProposals[id] = snapshot.conversationId
     if (isCurrent(epoch)) {
       chatError.value = readableError(error)
       if (error.code === 'proposal_expired') rejectedProposals.value[id] = 'expired'
       if (error.code === 'proposal_superseded') rejectedProposals.value[id] = 'superseded'
+      if (error.kind === 'network' || error.status >= 500) {
+        chatError.value = '暂时无法确认办理结果，已暂停重复提交。请刷新记录核对回执。'
+        chatErrorKind.value = 'confirmation_unknown'
+        try { await readHistory(snapshot, epoch) } catch { /* Unknown execution outcome remains visible. */ }
+      }
     }
   }
   finally { delete pendingOperations[snapshot.conversationId] }
@@ -691,14 +802,14 @@ function retrievalIssues(result) {
     ...(result.recall_errors || []).map(error => `召回失败：${typeof error === 'string' ? error : formatJson(error)}`),
     result.partial && '仅部分召回成功；下方只展示有效结果。', result.fallback_used && '发生了降级；降级内容不作为检索来源。'].filter(Boolean)
 }
-function sourceNames(metadata = {}, artifacts = []) {
+function sourceNames(metadata = {}, artifacts = [], compact = false) {
   const sources = [...(metadata.sources || [])]
   for (const trace of metadata.tool_traces || []) sources.push(...(trace.sources || []), ...(trace.result_summary?.sources || []))
   for (const artifact of artifacts || []) {
     if (artifact.data?.source) sources.push(artifact.data.source)
     for (const item of artifact.data?.items || []) if (item?.source) sources.push(item.source)
   }
-  const labels = sources.map(source => typeof source === 'string' ? source : [source.title, source.source, source.source_id, source.doc_id, source.chunk_id].filter(Boolean).join(' · ')).filter(Boolean)
+  const labels = sources.map(source => typeof source === 'string' ? source : compact ? (source.title || source.source || '来源详情见管理与调试') : [source.title, source.source, source.source_id, source.doc_id, source.chunk_id].filter(Boolean).join(' · ')).filter(Boolean)
   return [...new Set(labels)].join('；') || '本次未返回来源'
 }
 async function searchKnowledge() {

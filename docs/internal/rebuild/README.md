@@ -1,5 +1,7 @@
 # MediPet 重构工作索引
 
+最新实施为[U003 前端可用性与展示精简](../updates/U003-frontend-usability/intent.md)：就诊操作优先，管理与调试下移；已按[计划](../updates/U003-frontend-usability/plan.md)并行实施，验收进度见该更新检查点。后续任务按其依赖与文件所有权安排，U002未完成验收状态不变。
+
 当前更新为 [U002 中文语义意图向量接入](../updates/U002-semantic-intent/intent.md)，用户已授权并行实施。接续先读其[计划](../updates/U002-semantic-intent/plan.md)、[契约](../updates/U002-semantic-intent/contracts.md)与[执行检查点](../updates/U002-semantic-intent/EXECUTION.md)。此前 [U001 医疗健康咨询能力补齐](../updates/U001-health-consultation/intent.md)继续作为业务基线；下面 40 个 issue 保留首次重构的验收状态。
 
 这是 [IMPLEMENTATION_PLAN.md](../../../IMPLEMENTATION_PLAN.md) 的执行拆分：**8 份 spec、40 个原子 issue**。产品范围、源码基线和最终完成定义以总计划及用户最新要求为准。这里保存内部任务资料，纳入版本控制；不放入被忽略的 `.scratch/`。

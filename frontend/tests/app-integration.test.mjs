@@ -8,6 +8,9 @@ import * as api from '../src/lib/backends.js'
 
 const require = createRequire(import.meta.url)
 const Vue = require('vue')
+// Vue v-model inspects DOM root types even in this custom renderer.
+globalThis.Document ||= class Document {}
+globalThis.ShadowRoot ||= class ShadowRoot {}
 const fixture = async name => JSON.parse(await readFile(new URL(`./fixtures/api/${name}.json`, import.meta.url), 'utf8'))
 async function compile(path, imports = {}) {
   const { descriptor } = parse(await readFile(new URL(path, import.meta.url), 'utf8'), { filename: path })
@@ -27,8 +30,10 @@ const Business = await compile('../src/components/BusinessArtifacts.vue')
 const Panel = await compile('../src/components/PatientVisitPanel.vue')
 const Health = await compile('../src/components/HealthArtifacts.vue')
 const ReportUpload = await compile('../src/components/ReportUpload.vue')
+const MessageContent = await compile('../src/components/MessageContent.vue')
 const App = await compile('../src/App.vue', {
   './lib/backends': api,
+  './components/MessageContent.vue': { default: MessageContent, __esModule: true },
   './components/BusinessArtifacts.vue': { default: Business, __esModule: true },
   './components/PatientVisitPanel.vue': { default: Panel, __esModule: true },
   './components/HealthArtifacts.vue': { default: Health, __esModule: true },
@@ -94,7 +99,7 @@ function server(t, { saved = childVisit.conv_id, histories = {}, chat, confirm, 
 
 function mount(t) {
   const node = (type, text = '') => ({ type, text, props: {}, children: [], parent: null, listeners: {}, style: { setProperty() {} },
-    addEventListener(name, callback) { this.listeners[name] = callback }, getBoundingClientRect: () => ({ height: 700 }), scrollTo() {} })
+    addEventListener(name, callback) { this.listeners[name] = callback }, getBoundingClientRect: () => ({ height: 700 }), getRootNode: () => ({ activeElement: null }), scrollTo(position) { this.scrollTop = position.top } })
   const renderer = Vue.createRenderer({
     createElement: type => node(type), createText: text => node('#text', text), createComment: text => node('#comment', text),
     setText: (item, text) => { item.text = text }, setElementText: (item, text) => { item.text = text; item.children = [] },
@@ -110,7 +115,7 @@ function mount(t) {
   const root = node('root'), app = renderer.createApp(component)
   app.mount(root); t.after(() => app.unmount())
   const all = (item = root) => [item, ...item.children.flatMap(all)]
-  const text = item => item.text + item.children.map(text).join('')
+  const text = item => item.text + (item.props.innerHTML || '') + item.children.map(text).join('')
   return { state, all, text: () => text(root), button: label => all().find(item => item.type === 'button' && text(item).includes(label)) }
 }
 
@@ -275,12 +280,12 @@ test('runtime details start collapsed and retain successful and failed traces, s
     primary_agent: 'guidance', supporting_agents: ['appointment'], routing_reason: '材料与预约并行', routing_confidence: .9, latency_ms: 75, tool_traces: traces } }),
     message(childVisit, 'actual-business-receipt', '预约完成', confirmation.artifacts, { kind: 'operation_result', metadata: { receipt: confirmation.receipt } })]
   server(t, { histories: { [childVisit.conv_id]: history } })
-  const view = mount(t); await settle()
+  const view = mount(t); await settle(); await view.state.openView('diagnostics')
   assert.equal(view.all().filter(item => item.props['data-trace-status'] === 'failed').length, 2)
   assert.equal(view.all().filter(item => item.props['data-trace-status'] === 'success').length, 1)
   for (const expected of ['医院信息', '就诊指引', '预约事务', '材料与预约并行', '80.0%', 'knowledge/child.md', 'child:0', '改写服务失败', '重排索引无效', '号源读取失败', '整合失败']) assert.ok(view.text().includes(expected), expected)
   for (const details of view.all().filter(item => item.type === 'details')) assert.ok(!details.props.open)
-  const receipt = view.all().find(item => item.props['data-message-id'] === 'actual-business-receipt')
+  const receipt = view.all().find(item => item.props['data-debug-message-id'] === 'actual-business-receipt')
   assert.ok(!view.all(receipt).some(item => item.props.class === 'message-trace request-evidence'))
   assert.ok(view.all(receipt).some(item => item.props.class === 'message-trace business-receipt-detail'))
 })
@@ -289,7 +294,7 @@ test('knowledge search distinguishes partial success, empty recall, semantic fai
   let result = { success: true, results: [{ title: '儿童材料', content: '携带既往资料', score: .7, source: 'knowledge/child.md', source_id: 'child-materials', doc_id: 'child', chunk_id: 'child:0' }],
     reranked: false, partial: true, rewrite_error: '改写失败', rerank_error: '重排失败', recall_errors: ['某次召回超时'] }
   server(t, { management: path => path === '/search' ? result : undefined })
-  const view = mount(t); await settle(); view.state.activeView.value = 'knowledge'
+  const view = mount(t); await settle(); await view.state.openView('knowledge')
   await view.state.searchKnowledge(); await Vue.nextTick()
   for (const expected of ['knowledge/child.md', 'child-materials', 'child:0', '改写失败', '重排失败', '某次召回超时', '仅部分召回成功']) assert.ok(view.text().includes(expected), expected)
   result = { success: true, results: [], reranked: false }
@@ -313,7 +318,7 @@ test('knowledge import sends supplied source fields and upload failures clear pr
     if (path === '/knowledge/add') return { message: '导入完成', added_chunks: 2, total_chunks: 19 }
     if (path === '/knowledge/upload') return fail ? { httpStatus: 400, detail: 'JSON 文件应为数组' } : { message: '文件导入完成', added_chunks: 1, total_chunks: 20 }
   } })
-  const view = mount(t); await settle(); view.state.activeView.value = 'knowledge'
+  const view = mount(t); await settle(); await view.state.openView('knowledge')
   view.state.docTitle.value = '补充材料'; view.state.docContent.value = '演示医院资料'; view.state.docSource.value = '公开就诊须知'; view.state.docSourceId.value = 'visit-materials'
   await view.state.submitKnowledge()
   assert.deepEqual(backend.calls.find(item => item.path === '/knowledge/add').body.documents, [{ title: '补充材料', content: '演示医院资料', source: '公开就诊须知', source_id: 'visit-materials' }])
@@ -334,7 +339,7 @@ test('Skills reload uses the existing endpoint and exposes partial parse failure
   const initial = { count: 1, errors: [], skills: [{ name: '就诊指引', agents: ['guidance'], keywords: [], description: '材料与文字路线', path: 'skills/visit_guidance/SKILL.md', enabled: true, content_chars: 100 }] }
   let updated = { count: 1, errors: ['skills/broken/SKILL.md：格式错误'], skills: [{ ...initial.skills[0], content_chars: 160 }] }
   const backend = server(t, { management: path => path === '/skills' ? initial : path === '/skills/reload' ? updated : undefined })
-  const view = mount(t); await settle(); view.state.activeView.value = 'knowledge'
+  const view = mount(t); await settle(); await view.state.openView('knowledge')
   await view.state.reloadSkillSet(); await Vue.nextTick()
   assert.ok(view.text().includes('160 字符') && view.text().includes('持续生效'))
   assert.ok(view.text().includes('格式错误'))
@@ -355,7 +360,7 @@ test('monitor statistics show actual roles and tools while transport failure nev
     agent_stats: { general_0: { total: 7, success_rate: .5, avg_ms: 42 }, future_role_2: { total: 0, success_rate: 1, avg_ms: 0 } }, tool_stats: { knowledge_search: { success_rate: .4, avg_latency_ms: 84, consecutive_fails: 3 } },
     active_alerts: [], suggestions: [{ title: '检索失败较多', action: '检查资料集合', priority: 2 }]
   } : undefined })
-  const view = mount(t); await settle()
+  const view = mount(t); await settle(); await view.state.openView('diagnostics')
   for (const expected of ['医院信息', 'future_role_2', '50.0%', '40.0%', '连续失败 3', '检查资料集合']) assert.ok(view.text().includes(expected), expected)
   assert.ok(view.all().some(item => item.type === 'dt' && item.text === '医院信息'))
   assert.ok(view.all().some(item => item.type === 'dt' && item.text === 'future_role_2'))
@@ -374,7 +379,7 @@ test('evaluation renders failure classes and sample evidence; baseline acceptanc
       { test_id: 'call-1', passed: false, scores: {}, detail: '模型调用超时', metadata: { call_failed: true, status: 'failed' } },
       { test_id: 'skipped-1', passed: false, scores: {}, detail: '不支持的断言', metadata: { status: 'skipped' } }] }
   const backend = server(t, { management: path => path === '/eval/run' ? report : undefined })
-  const view = mount(t); await settle(); view.state.activeView.value = 'evaluation'
+  const view = mount(t); await settle(); await view.state.openView('evaluation')
   await view.state.runEvaluation(); await Vue.nextTick()
   for (const expected of ['候选报告 · 尚未接受为基线', 'Judge 失败', '调用失败', '跳过', '.data/evaluation/u05-report.json', 'Judge 返回无效 JSON', '模型调用超时', '不支持的断言', '80.0%', '25.0%']) assert.ok(view.text().includes(expected), expected)
   assert.equal(view.state.baselineAccepted.value, false)
@@ -419,4 +424,193 @@ test('report upload uses bound identity and survives a patient switch through se
   assert.ok(view.text().includes('Test 8 mg/L') && view.text().includes('高于原报告区间'))
   assert.equal(backend.calls.filter(call => call.path === '/reports/preprocess').length, 1)
   assert.equal(backend.calls.filter(call => call.path === '/chat' || call.path.includes('/confirm')).length, 0)
+})
+
+
+test('patient landing loads only health and workspace; management loads on entry and keeps the draft', async t => {
+  const backend = server(t)
+  const view = mount(t); await settle()
+  assert.ok(!backend.calls.some(call => ['/monitor', '/skills', '/knowledge/stats', '/eval/run'].includes(call.path)))
+  view.state.draft.value = '继续描述的问题'
+  await view.state.openView('knowledge'); await settle()
+  assert.ok(backend.calls.some(call => call.path === '/skills'))
+  assert.ok(backend.calls.some(call => call.path === '/knowledge/stats'))
+  await view.state.openView('diagnostics'); await settle()
+  assert.ok(backend.calls.some(call => call.path === '/monitor'))
+  await view.state.openView('chat')
+  assert.equal(view.state.draft.value, '继续描述的问题')
+  assert.ok(!backend.calls.some(call => call.path === '/eval/run'))
+})
+
+test('refresh preserves a draft and reading position; changed history offers an explicit jump', async t => {
+  const backend = server(t)
+  const view = mount(t); await settle()
+  view.state.draft.value = '未发送草稿'
+  const list = view.state.messageList.value
+  list.scrollHeight = 1500; list.clientHeight = 400; list.scrollTop = 120
+  view.state.onMessageScroll()
+  backend.records.get(childVisit.conv_id).push(message(childVisit, 'new-history', '新结果'))
+  await view.state.refreshHistory()
+  assert.equal(view.state.draft.value, '未发送草稿')
+  assert.equal(list.scrollTop, 120)
+  assert.equal(view.state.hasNewMessages.value, true)
+  view.state.jumpToLatest()
+  assert.equal(list.scrollTop, 1500)
+  assert.equal(view.state.hasNewMessages.value, false)
+  await view.state.selectPatient('patient_self')
+  view.state.draft.value = '本人草稿'
+  await view.state.selectPatient('patient_child')
+  assert.equal(view.state.draft.value, '未发送草稿')
+})
+
+test('unknown confirmation stays blocked across patient switches until an authoritative receipt arrives', async t => {
+  const hold = deferred()
+  const backend = server(t, {
+    histories: { [childVisit.conv_id]: [message(childVisit, 'proposal', '请确认', [future(cards[2])])] },
+    confirm: async () => { await hold.promise; throw new TypeError('network interrupted') }
+  })
+  const view = mount(t); await settle()
+  const pending = view.state.confirmProposal('proposal-example')
+  await view.state.selectPatient('patient_self')
+  hold.resolve(); await pending
+  await view.state.selectPatient('patient_child')
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'checking')
+  await view.state.confirmProposal('proposal-example')
+  assert.equal(backend.calls.filter(call => call.path.includes('/confirm')).length, 1)
+  backend.records.get(childVisit.conv_id).push(message(childVisit, 'receipt-late', '预约已创建', confirmation.artifacts, {kind:'operation_result', proposal_id:'proposal-example'}))
+  await view.state.refreshHistory()
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'executed')
+})
+
+test('composition does not submit; keyboard shortcut sends once with visible pending text', async t => {
+  const hold = deferred()
+  const backend = server(t, {chat: async () => { await hold.promise }})
+  const view = mount(t); await settle()
+  view.state.draft.value = '需要准备什么材料'
+  view.state.onComposerKeydown({key:'Enter',ctrlKey:true,isComposing:true,preventDefault(){throw new Error('IME must keep control')}})
+  assert.ok(!backend.calls.some(call => call.path === '/chat'))
+  view.state.onComposerKeydown({key:'Enter',ctrlKey:true,isComposing:false,preventDefault(){}})
+  await settle()
+  assert.equal(view.state.pendingOperations[childVisit.conv_id].content, '需要准备什么材料')
+  assert.equal(backend.calls.filter(call => call.path === '/chat').length, 1)
+  hold.resolve(); await settle()
+})
+
+test('a failed send after switching patients restores the original draft without overwriting new input', async t => {
+  const hold = deferred()
+  const backend = server(t, { chat: async () => { await hold.promise; throw new TypeError('connection lost before a response') } })
+  const view = mount(t); await settle()
+  view.state.draft.value = '孩子就诊前需要带什么资料'
+  const pending = view.state.sendMessage()
+  assert.equal(view.state.draft.value, '')
+  await view.state.selectPatient('patient_self')
+  view.state.draft.value = '本人这次要问的新问题'
+  hold.resolve(); await pending; await settle()
+  assert.equal(view.state.settings.conversationId, selfVisit.conv_id)
+  assert.equal(view.state.draft.value, '本人这次要问的新问题')
+  assert.equal(view.state.chatError.value, '', 'the previous patient failure must not appear in the current workspace')
+  assert.equal(view.state.pendingOperations[childVisit.conv_id], undefined)
+  await view.state.selectPatient('patient_child')
+  assert.equal(view.state.draft.value, '孩子就诊前需要带什么资料')
+  assert.equal(view.state.messages.value[0].content, '孩子事项的服务器历史')
+  assert.equal(backend.calls.filter(call => call.path === '/chat').length, 1, 'restoring a draft must never resend it')
+  await view.state.selectPatient('patient_self')
+  assert.equal(view.state.draft.value, '本人这次要问的新问题')
+})
+
+test('manual history refresh clears the stale warning after a successful confirmation whose first history read failed', async t => {
+  let failNextHistory = false
+  const backend = server(t, {
+    histories: { [childVisit.conv_id]: [message(childVisit, 'proposal', '请核对预约', [future(cards[2])])] },
+    confirm(id, body, { records }) {
+      records.get(body.conv_id).push(message(childVisit, 'receipt-recovered', '预约已创建', confirmation.artifacts,
+        { kind: 'operation_result', proposal_id: id, receipt_id: confirmation.receipt.receipt_id, metadata: { receipt: confirmation.receipt } }))
+      failNextHistory = true
+      return confirmation
+    },
+    history(id, { visits, records }) {
+      if (failNextHistory) { failNextHistory = false; throw new TypeError('history transport unavailable') }
+      return { visit: visits.get(id), items: records.get(id) }
+    }
+  })
+  const view = mount(t); await settle()
+  await view.state.confirmProposal('proposal-example')
+  assert.equal(view.state.operationReceipt.value.receipt_id, confirmation.receipt.receipt_id)
+  assert.match(view.state.chatError.value, /办理已完成，但完整记录暂未刷新/)
+  assert.equal(view.state.chatErrorKind.value, 'history')
+  assert.equal(view.state.messages.value.some(item => item.message_id === 'receipt-recovered'), false)
+  await view.state.refreshHistory(); await settle()
+  assert.equal(view.state.chatError.value, '')
+  assert.equal(view.state.chatErrorKind.value, '')
+  assert.equal(view.state.messages.value.some(item => item.message_id === 'receipt-recovered'), true)
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'executed')
+  assert.equal(view.button('确认预约'), undefined)
+  assert.doesNotMatch(view.text(), /记录暂未刷新/)
+  assert.equal(backend.calls.filter(call => call.path.includes('/confirm')).length, 1)
+})
+
+test('unknown confirmation keeps its warning on pending or unrelated history and clears only for its authoritative result', async t => {
+  let failNextHistory = false
+  const backend = server(t, {
+    histories: { [childVisit.conv_id]: [message(childVisit, 'proposal', '请核对预约', [future(cards[2])])] },
+    confirm: () => { throw new TypeError('confirmation response lost') },
+    history(id, { visits, records }) {
+      if (failNextHistory) { failNextHistory = false; throw new TypeError('history refresh interrupted') }
+      return { visit: visits.get(id), items: records.get(id) }
+    }
+  })
+  const view = mount(t); await settle()
+  await view.state.confirmProposal('proposal-example')
+  const unknownWarning = view.state.chatError.value
+  assert.match(unknownWarning, /无法确认办理结果/)
+  assert.equal(view.state.chatErrorKind.value, 'confirmation_unknown')
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'checking')
+  assert.equal(view.state.operationReceipt.value, null)
+  await view.state.refreshHistory()
+  assert.equal(view.state.chatError.value, unknownWarning, 'a successful history GET is not an execution receipt')
+  failNextHistory = true
+  await view.state.refreshHistory()
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'checking')
+  await view.state.refreshHistory()
+  assert.match(view.state.chatError.value, /无法确认办理结果/, 'recovering a history GET must retain the unresolved confirmation warning')
+  assert.equal(view.state.chatErrorKind.value, 'confirmation_unknown')
+  backend.records.get(childVisit.conv_id).push(
+    message(childVisit, 'other-result', '另一项办理结果', [], { kind: 'operation_result', proposal_id: 'other-proposal' }),
+    message(childVisit, 'user-confirmation', '已点击确认', [], { kind: 'confirmation_event', role: 'user', proposal_id: 'proposal-example' })
+  )
+  await view.state.refreshHistory()
+  assert.equal(view.state.chatError.value, unknownWarning)
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'checking')
+  await view.state.confirmProposal('proposal-example')
+  assert.equal(backend.calls.filter(call => call.path.includes('/confirm')).length, 1)
+  backend.records.get(childVisit.conv_id).push(message(childVisit, 'matching-result', '预约已创建', confirmation.artifacts,
+    { kind: 'operation_result', proposal_id: 'proposal-example', receipt_id: confirmation.receipt.receipt_id, metadata: { receipt: confirmation.receipt } }))
+  await view.state.refreshHistory(); await settle()
+  assert.equal(view.state.chatError.value, '')
+  assert.equal(view.state.chatErrorKind.value, '')
+  assert.equal(view.state.uncertainProposals['proposal-example'], undefined)
+  assert.equal(view.state.proposalStates.value['proposal-example'], 'executed')
+  assert.equal(view.button('确认预约'), undefined)
+  assert.equal(backend.calls.filter(call => call.path.includes('/confirm')).length, 1)
+})
+
+test('initial history reaches the latest message after loading replaces the placeholder with rendered content', async t => {
+  server(t, { histories: { [childVisit.conv_id]: [
+    message(childVisit, 'older-content', '较早的就诊记录。'.repeat(80)),
+    message(childVisit, 'latest-content', '最新的办理结果。')
+  ] } })
+  const view = mount(t)
+  const list = view.state.messageList.value
+  // This renderer has no layout engine: let rendered message nodes create the
+  // scroll extent. Loading placeholders have no message height to scroll through.
+  Object.defineProperty(list, 'scrollHeight', { get() {
+    return view.all(list).some(item => item.props['data-message-id'] === 'latest-content') ? 1400 : 0
+  } })
+  list.scrollTop = 0
+  assert.equal(view.state.workspaceLoading.value, true)
+  assert.equal(list.scrollHeight, 0)
+  await settle()
+  assert.equal(view.state.workspaceLoading.value, false)
+  assert.ok(view.all(list).some(item => item.props['data-message-id'] === 'latest-content'))
+  assert.equal(list.scrollTop, 1400, 'the final scroll must use the rendered history extent, not the loading placeholder')
 })

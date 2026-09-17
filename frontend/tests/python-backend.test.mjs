@@ -108,7 +108,7 @@ test('the actual App health handler reports one failed request without service f
   const { descriptor } = parse(source)
   const script = compileScript(descriptor, { id: 'b02-health-check' }).content
     // This handler-only SSR probe does not render child components; App integration tests mount them.
-    .replace(/^import (BusinessArtifacts|PatientVisitPanel|HealthArtifacts|ReportUpload) from '.+'$/gm, 'const $1 = {}')
+    .replace(/^import (BusinessArtifacts|PatientVisitPanel|HealthArtifacts|ReportUpload|MessageContent) from '.+'$/gm, 'const $1 = {}')
     .replace("from 'vue'", `from '${import.meta.resolve('vue')}'`)
     .replace("from './lib/backends'", `from '${backendUrl.href}'`)
   const { default: App } = await import(`data:text/javascript;base64,${Buffer.from(script).toString('base64')}`)
@@ -336,7 +336,9 @@ test('seven-card and cancellation fixtures stay aligned with the frozen H01 exam
   const contract = await readFile(new URL('../../docs/internal/rebuild/contracts.md', import.meta.url), 'utf8')
   const examples = marker => JSON.parse(contract.split(`<!-- ${marker} -->`)[1].match(/```json\s*([\s\S]*?)```/)[1])
   const artifacts = await fixture('artifacts')
-  assert.deepEqual(artifacts, examples('artifact-examples'))
+  // The shared contract now also contains three U001 health card types.
+  const businessTypes = new Set(artifacts.map(item => item.type))
+  assert.deepEqual(artifacts, examples('artifact-examples').filter(item => businessTypes.has(item.type)))
   assert.equal(new Set(artifacts.map(item => item.type)).size, 7)
   assert.deepEqual((await fixture('confirm-cancel')).receipt, examples('cancellation-example'))
   const variants = await fixture('proposal-states')
