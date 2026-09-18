@@ -1,5 +1,7 @@
 # U003 执行检查点
 
+2026-09-18：修复前端 API 文档入口的代理前缀丢失，Swagger/ReDoc 使用相对 schema 地址，OpenAPI servers 使用相对当前 schema 的地址。4 项文档回归及 20 项相关 API 测试通过；本地 API/前端镜像已重建，8088 Docker 入口和 5174 开发预览已恢复。8088 浏览器点击“管理与调试 → API 文档”，接口列表加载及 Try it out 健康检查返回 200 均已确认，见[修复验证](evidence/api-docs-fix.md)。本次运行状态覆盖下文旧的“未替换8088部署”；其他 U002/U003 未验收项不因此变更。
+
 2026-09-17：用户要求“实施”，开发已完成，状态 `implemented_with_validation_limits`。分支 `codex/u003-frontend-usability`，基于 `e81f447`。用户随后要求按原版结构重写根README并提交、推送当前分支；本次交付不替换8088部署。
 
 ## 任务状态

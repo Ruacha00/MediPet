@@ -7,7 +7,7 @@
 <text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">完整历史不是模型工作窗口</text>
 <text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">存储职责、身份范围与保留周期分开解释</text>
 <text id="text-4" x="40" y="1133" font-size="15" font-weight="400" fill="#597087" data-max-width="670">04  /  U001 · bb0600c · 2026-09-16</text>
-<text id="text-5" x="810" y="1133" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<text id="text-5" x="810" y="1133" font-size="15" font-weight="400" fill="#597087" data-max-width="600">就诊服务场景  ·  图中范围以配套教程与源码为准</text>
 <rect x="40" y="177" width="1360" height="111" rx="14" fill="#e8f3f3" stroke="#dbe4ed"/>
 <text id="text-6" x="62" y="213" font-size="22" font-weight="700" fill="#087f83" data-max-width="1316">身份：user_id → patient_id → conv_id</text>
 <text id="text-7" x="62" y="246" font-size="18" font-weight="400" fill="#20384f" data-max-width="1316">一个事项固定属于一位患者；卡片确认和报告追问都重新验证当前事项归属。</text>

@@ -23,6 +23,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Response, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
 from redis.asyncio import Redis
@@ -225,8 +226,22 @@ app = FastAPI(
     title="MediPet 门诊就诊助手",
     version="2.0.0",
     lifespan=lifespan,
-    docs_url="/docs",
+    docs_url=None,
+    redoc_url=None,
+    # Resolve against the schema URL, retaining a Vite/Nginx proxy prefix.
+    servers=[{"url": "."}],
 )
+
+
+@app.get("/docs", include_in_schema=False)
+async def api_docs():
+    return get_swagger_ui_html(openapi_url="./openapi.json", title=f"{app.title} - Swagger UI")
+
+
+@app.get("/redoc", include_in_schema=False)
+async def api_redoc():
+    return get_redoc_html(openapi_url="./openapi.json", title=f"{app.title} - ReDoc")
+
 
 app.add_middleware(
     CORSMiddleware,

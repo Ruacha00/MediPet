@@ -7,7 +7,7 @@
 <text id="text-2" x="40" y="98" font-size="34" font-weight="700" fill="#182f48" data-max-width="1300">一份 Compose，四个基础服务</text>
 <text id="text-3" x="40" y="134" font-size="18" font-weight="400" fill="#597087" data-max-width="1360">默认端口与持久化关系；Prometheus 为可选 monitoring profile</text>
 <text id="text-4" x="40" y="1073" font-size="15" font-weight="400" fill="#597087" data-max-width="670">06  /  U001 · bb0600c · 2026-09-16</text>
-<text id="text-5" x="810" y="1073" font-size="15" font-weight="400" fill="#597087" data-max-width="600">虚构医院演示  ·  图中范围以配套教程与源码为准</text>
+<text id="text-5" x="810" y="1073" font-size="15" font-weight="400" fill="#597087" data-max-width="600">就诊服务场景  ·  图中范围以配套教程与源码为准</text>
 <rect x="40" y="177" width="690" height="116" rx="14" fill="white" stroke="#dbe4ed"/>
 <rect x="40" y="193" width="5" height="32" rx="2" fill="#087f83"/>
 <text id="text-6" x="62" y="216" font-size="24" font-weight="700" fill="#087f83" data-max-width="646">浏览器 localhost:8088</text>
