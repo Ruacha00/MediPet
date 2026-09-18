@@ -1,0 +1,117 @@
+{
+  "id": "aq23-acetaminophen-scope",
+  "query": "对乙酰氨基酚资料对应什么产品范围？标签对重复成分用药和未收录组合各提示什么？",
+  "required_doc_ids": [
+    "health-acetaminophen-label"
+  ],
+  "group": "answer",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "medicine-pickup:0",
+          "doc_id": "medicine-pickup",
+          "title": "取药流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/medicine-pickup.md",
+          "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+          "score": 0.0242,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.112,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.0125,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-acetaminophen-label:0",
+          "doc_id": "health-acetaminophen-label",
+          "title": "对乙酰氨基酚500 mg普通片标签资料边界",
+          "source_id": "dailymed-acetaminophen-500",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=983debdf-4a61-4dde-ba34-567fdd17720e&type=display",
+          "content": "# 对乙酰氨基酚500 mg普通片标签资料边界\n\n本目录对应 DailyMed 收录的美国普通口服片标签，NDC 68788-4132，2026年6月版本；不是全部品牌、复方感冒药或儿童液体的说明书。用途、禁忌、说明书用法用量及相互作用细项由药品资料工具按该具体标签返回，不能替代手中产品的说明书。\n\n重要标签警示包括：不要与其他含对乙酰氨基酚的药品重复使用；成分过敏者不使用；肝病和使用华法林者先咨询专业人员。过量可能造成严重肝损伤，需要及时医疗处理。\n\n说明书的年龄分组和剂量数字不构成给个人的处方。儿童、孕哺期、肝肾异常或其他复杂情况由医师/药师评估，不从此文档换算个人剂量。查询未知组合时只说明资料未收录，不能据此推断可同服。\n\n核对日期2026-09-16；不评论其他医院或医师的诊疗方案。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 36.084861
+        },
+        {
+          "chunk_id": "health-child-fever:0",
+          "doc_id": "health-child-fever",
+          "title": "常见症状问答：儿童发热与就医信号",
+          "source_id": "nhs-child-fever",
+          "source": "https://www.nhs.uk/symptoms/fever-in-children/",
+          "content": "# 常见症状问答：儿童发热与就医信号\n\n体温能直接判断病因吗？不能。NHS 将儿童38℃及以上描述为发热；年龄、精神状态、呼吸、饮水和其他表现同样重要，不能由一个数字推断疾病。\n\n何时需及时联系医生？不足3个月有38℃及以上体温或疑似发热，3至6个月有39℃及以上体温或疑似发热，应及时联系医生；持续发热、脱水或明显状态改变也需评估。首次抽搐、难以唤醒或呼吸困难应立即获取急救帮助。\n\n可以按成人片剂算儿童剂量吗？不可以。本项目不计算儿童剂量，也不建议自行交替使用退热药；由医师或药师核对具体年龄、体重、健康状况和儿童产品标签。\n\n核对日期2026-09-16。英国服务电话号码不直接作为中国用户的联系路径；在中国大陆紧急情况拨打120。项目对高烧超过39.5℃的中断是约定的演示规则，不是所有年龄的统一医学阈值，低于阈值也不能排除急症。",
+          "chunk": 0,
+          "score": 0.142857,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 3.527132
+        },
+        {
+          "chunk_id": "health-ibuprofen-label:0",
+          "doc_id": "health-ibuprofen-label",
+          "title": "布洛芬200 mg普通包衣片标签资料边界",
+          "source_id": "dailymed-ibuprofen-200",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display",
+          "content": "# 布洛芬200 mg普通包衣片标签资料边界\n\n本目录对应 DailyMed 的美国200 mg普通包衣口服片，NDC 75907-428，2026年7月版本；不是缓释胶囊、复方制剂、儿童混悬液或中国所有品牌的说明书。具体说明书数字由药品资料工具查询，不能转换到其他剂型。\n\n标签提示NSAID的胃肠出血和心血管风险；成分/相关解热镇痛药过敏及心脏手术前后不使用。与其他NSAID、抗凝药或类固醇同用存在警示，布洛芬还可能影响阿司匹林的心脑血管预防作用；须由医师或药师核对。\n\n孕哺期、儿童、肝肾异常、溃疡或复杂用药不能直接套用普通成人标签；孕期20周及以后，除非医生明确指导，不应使用布洛芬。未收录的组合不等于无相互作用，助手不为个人推荐药物、剂量或要求停改已有方案。\n\n核对日期2026-09-16；不替代医生诊断、不开处方。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 13.607969
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

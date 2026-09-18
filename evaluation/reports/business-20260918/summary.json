@@ -1,0 +1,732 @@
+{
+  "metrics": {
+    "create-confirm": {
+      "passed": 5,
+      "total": 5,
+      "rate": 1.0,
+      "failed_or_missing": []
+    },
+    "cancel-confirm": {
+      "passed": 5,
+      "total": 5,
+      "rate": 1.0,
+      "failed_or_missing": []
+    },
+    "collaboration": {
+      "passed": 3,
+      "total": 5,
+      "rate": 0.6,
+      "failed_or_missing": [
+        "collaboration-new-1",
+        "collaboration-new-4"
+      ]
+    },
+    "compound_first_turn": {
+      "passed": 3,
+      "total": 5,
+      "rate": 0.6,
+      "failed_or_missing": [
+        "collaboration-new-1",
+        "collaboration-new-4"
+      ]
+    },
+    "compound_source_presence": {
+      "passed": 4,
+      "total": 5,
+      "rate": 0.8,
+      "failed_or_missing": [
+        "collaboration-new-4"
+      ]
+    },
+    "memory_scenarios": {
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0,
+      "failed_or_missing": []
+    },
+    "default_dialogs": {
+      "passed": 15,
+      "total": 15,
+      "rate": 1.0,
+      "failed_or_missing": []
+    },
+    "default_boundaries": {
+      "passed": 12,
+      "total": 12,
+      "rate": 1.0,
+      "failed_or_missing": []
+    }
+  },
+  "intent_scores": {
+    "accuracy": 1.0,
+    "macro_f1": 1.0
+  },
+  "intent_samples": 66,
+  "business": {
+    "passed": 37,
+    "expected": 39,
+    "observed": 39
+  },
+  "quality": {
+    "passed": 52,
+    "expected": 54,
+    "observed": 54,
+    "note": "LLM judge; separate from business completion"
+  },
+  "latency": {
+    "n": 61,
+    "p50_ms": 2982.170027000393,
+    "p95_ms": 4987.741930000993,
+    "scope": "observed orchestrator turns including emergency; no throughput claim"
+  },
+  "failed_results": [
+    {
+      "test_id": "collaboration-new-1:business",
+      "passed": false,
+      "scores": {},
+      "detail": "业务状态断言（独立于 Judge）",
+      "metadata": {
+        "kind": "business",
+        "status": "failed",
+        "assertions": [
+          {
+            "assertion": "agents.include=appointment,guidance",
+            "actual": [
+              "appointment"
+            ],
+            "expected": "appointment,guidance",
+            "status": "failed"
+          },
+          {
+            "assertion": "has_artifacts=slot_list,visit_checklist",
+            "actual": [
+              "appointment_proposal",
+              "slot_list"
+            ],
+            "expected": "slot_list,visit_checklist",
+            "status": "failed"
+          },
+          {
+            "assertion": "appointments.count=0",
+            "actual": 0,
+            "expected": 0,
+            "status": "passed"
+          }
+        ],
+        "facts": {
+          "appointments.count": 0,
+          "slot_delta": 0,
+          "proposal.status": "pending",
+          "proposal.target_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+          "current_proposal.target_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+          "query.department_id": "dep_pediatrics",
+          "query.date": "2026-09-17",
+          "query.period": null,
+          "selection.status": "ready",
+          "selection.slots.count": 2,
+          "agents.include": [
+            "appointment"
+          ],
+          "has_artifact": [
+            "appointment_proposal",
+            "slot_list"
+          ],
+          "has_artifacts": [
+            "appointment_proposal",
+            "slot_list"
+          ],
+          "knowledge_sources.nonempty": true,
+          "knowledge.sources.count": 5,
+          "trace.retrieval_failed": false,
+          "tool.error_code": [],
+          "memory.recall_calls": 2,
+          "emergency.interrupted": false,
+          "model.calls": 8
+        },
+        "identity": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-7685aa03f01f4e4b85ad4ba06bdbcf4e"
+        },
+        "clock": "2026-09-16T10:00:00+08:00",
+        "actions": [],
+        "turns": [
+          {
+            "question": "明天带孩子初次去儿科，帮我查可选号源，也列一下首次就诊要带的资料。",
+            "response": "已为您查到明天（2026-09-17）儿科的真实号源，并整理了首次就诊资料。\n\n## 一、可选号源（明和虚构医院 · 儿科）\n\n| 序号 | 医生 | 日期 | 时段 | 时间 | 费用 | 地点 | 余量 |\n|---|---|---|---|---|---|---|---|\n| 1 | 许知宁 | 2026-09-17 | 上午 | 09:00–11:00 | 20.00 元 | 门诊楼二层儿科诊区 | 5 |\n| 2 | 许知宁 | 2026-09-17 | 下午 | 14:00–16:00 | 20.00 元 | 门诊楼二层儿科诊区 | 5 |\n\n来源：实时号源查询（查询时间 2026-09-16 10:00，Asia/Shanghai）。余量为查询时快照，最终以页面确认为准。\n\n## 二、首次就诊需携带的资料\n\n来源：明和虚构医院《首次就诊材料》《儿科公开说明》\n\n- 儿童就诊人的身份证明\n- 陪同监护人的身份证明（儿童就诊需监护人陪同）\n- 本次预约信息或就诊凭证\n- 已有的相关儿童就诊资料\n\n到院后先到门诊楼一层门诊大厅导诊台了解报到位置，儿科诊区在二层，按预约的科室和时段办理。\n\n## 三、下一步\n\n如需预约，请告诉我您选择哪一个（例如\"第 1 个\"或\"下午那个\"），我会为您准备待确认方案。**准备方案不会占用号源，需您在页面卡片上点击确认后才生效。**\n\n请问您想选上午还是下午的号？",
+            "turn": 0,
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-7685aa03f01f4e4b85ad4ba06bdbcf4e",
+            "emergency": false,
+            "agent_type": "appointment",
+            "intent": "slot_query",
+            "agent_types": [
+              "appointment"
+            ],
+            "primary_agent": "appointment",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_slots",
+              "search_knowledge_base"
+            ],
+            "tool_traces": [
+              {
+                "agent_type": "appointment",
+                "tool_name": "search_slots",
+                "tool_use_id": "call_00_NmaX9BwQEETYHSjR6tRa6333",
+                "input": {
+                  "department": "儿科",
+                  "date": "明天"
+                },
+                "kind": "tool_call",
+                "success": true,
+                "call_success": true,
+                "result_success": true,
+                "latency_ms": 7.0,
+                "cached": false,
+                "reranked": false,
+                "error": "",
+                "error_code": null,
+                "result_summary": {
+                  "success": true,
+                  "data_keys": [
+                    "list_id",
+                    "query",
+                    "slots",
+                    "queried_at"
+                  ],
+                  "artifact_ids": [
+                    "slots:list-7731197d6676406e8ed3af62d20d113b"
+                  ],
+                  "result_count": 0
+                }
+              },
+              {
+                "agent_type": "appointment",
+                "tool_name": "search_knowledge_base",
+                "tool_use_id": "call_01_0oJvv1Zlj1r8yg8hH1Bl4315",
+                "input": {
+                  "query": "儿科首次就诊需要携带的资料 准备材料",
+                  "top_k": 5
+                },
+                "kind": "tool_call",
+                "success": true,
+                "call_success": true,
+                "result_success": true,
+                "latency_ms": 1317.3,
+                "cached": false,
+                "reranked": true,
+                "error": "",
+                "error_code": null,
+                "sources": [
+                  {
+                    "title": "首次就诊材料",
+                    "source": "knowledge/first-visit-materials.md",
+                    "source_id": "first-materials",
+                    "doc_id": "first-visit-materials",
+                    "chunk_id": "first-visit-materials:0"
+                  },
+                  {
+                    "title": "门诊就诊材料",
+                    "source": "knowledge/general-preparation.md",
+                    "source_id": "visit-materials",
+                    "doc_id": "general-preparation",
+                    "chunk_id": "general-preparation:0"
+                  },
+                  {
+                    "title": "儿科公开说明",
+                    "source": "knowledge/department-pediatrics.md",
+                    "source_id": "hospital-public",
+                    "doc_id": "department-pediatrics",
+                    "chunk_id": "department-pediatrics:0"
+                  },
+                  {
+                    "title": "到院报到流程",
+                    "source": "knowledge/arrival-checkin.md",
+                    "source_id": "visit-process",
+                    "doc_id": "arrival-checkin",
+                    "chunk_id": "arrival-checkin:0"
+                  },
+                  {
+                    "title": "人工导诊联系说明",
+                    "source": "knowledge/human-guidance.md",
+                    "source_id": "hospital-contact",
+                    "doc_id": "human-guidance",
+                    "chunk_id": "human-guidance:0"
+                  }
+                ],
+                "result_summary": {
+                  "success": true,
+                  "data_keys": [],
+                  "artifact_ids": [],
+                  "result_count": 5
+                },
+                "rewrite_error": null,
+                "rerank_error": null,
+                "recall_errors": [],
+                "partial": false,
+                "fallback_used": false
+              }
+            ],
+            "artifacts": [
+              {
+                "id": "slots:list-7731197d6676406e8ed3af62d20d113b",
+                "type": "slot_list",
+                "data": {
+                  "list_id": "list-7731197d6676406e8ed3af62d20d113b",
+                  "query": {
+                    "department_id": "dep_pediatrics",
+                    "doctor_id": null,
+                    "date": "2026-09-17",
+                    "period": null
+                  },
+                  "slots": [
+                    {
+                      "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                      "hospital_name": "明和虚构医院",
+                      "department_id": "dep_pediatrics",
+                      "department_name": "儿科",
+                      "doctor_id": "doctor_xu",
+                      "doctor_name": "许知宁",
+                      "date": "2026-09-17",
+                      "period": "morning",
+                      "start_time": "09:00",
+                      "end_time": "11:00",
+                      "fee_fen": 2000,
+                      "location_id": "pediatrics-room",
+                      "location_name": "门诊楼二层儿科诊区",
+                      "capacity": 5,
+                      "remaining": 5
+                    },
+                    {
+                      "slot_id": "slot:2026-09-17:schedule_doctor_xu_afternoon",
+                      "hospital_name": "明和虚构医院",
+                      "department_id": "dep_pediatrics",
+                      "department_name": "儿科",
+                      "doctor_id": "doctor_xu",
+                      "doctor_name": "许知宁",
+                      "date": "2026-09-17",
+                      "period": "afternoon",
+                      "start_time": "14:00",
+                      "end_time": "16:00",
+                      "fee_fen": 2000,
+                      "location_id": "pediatrics-room",
+                      "location_name": "门诊楼二层儿科诊区",
+                      "capacity": 5,
+                      "remaining": 5
+                    }
+                  ],
+                  "queried_at": "2026-09-16T10:00:00+08:00"
+                }
+              }
+            ],
+            "latency_ms": 4987.741930000993,
+            "routing_reason": "intent=slot_query, group=appointment, primary=appointment, supporting=none, scores=[appointment=1.03, general=0.20, guidance=0.00, triage=0.00, medication=0.00]",
+            "routing_confidence": 1.0,
+            "intent_embedding": {
+              "configured_backend": "semantic",
+              "active_backend": "semantic",
+              "model": "BAAI/bge-small-zh-v1.5",
+              "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+              "dimension": 512,
+              "status": "semantic_ready",
+              "generation": 1,
+              "fallback_reason": null,
+              "failure_count": 0,
+              "inference_in_flight": false,
+              "sample_counts": {
+                "semantic": 1
+              }
+            },
+            "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_child\\\", \\\"conv_id\\\": \\\"visit-7685aa03f01f4e4b85ad4ba06bdbcf4e\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_child\",\n      \"conv_id\": \"visit-7685aa03f01f4e4b85ad4ba06bdbcf4e\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"slots:list-7731197d6676406e8ed3af62d20d113b\",\n        \"type\": \"slot_list\",\n        \"data\": {\n          \"list_id\": \"list-7731197d6676406e8ed3af62d20d113b\",\n          \"query\": {\n            \"department_id\": \"dep_pediatrics\",\n            \"doctor_id\": null,\n            \"date\": \"2026-09-17\",\n            \"period\": null\n          },\n          \"slots\": [\n            {\n              \"slot_id\": \"slot:2026-09-17:schedule_doctor_xu_morning\",\n              \"hospital_name\": \"明和虚构医院\",\n              \"department_id\": \"dep_pediatrics\",\n              \"department_name\": \"儿科\",\n              \"doctor_id\": \"doctor_xu\",\n              \"doctor_name\": \"许知宁\",\n              \"date\": \"2026-09-17\",\n              \"period\": \"morning\",\n              \"start_time\": \"09:00\",\n              \"end_time\": \"11:00\",\n              \"fee_fen\": 2000,\n              \"location_id\": \"pediatrics-room\",\n              \"location_name\": \"门诊楼二层儿科诊区\",\n              \"capacity\": 5,\n              \"remaining\": 5\n            },\n            {\n              \"slot_id\": \"slot:2026-09-17:schedule_doctor_xu_afternoon\",\n              \"hospital_name\": \"明和虚构医院\",\n              \"department_id\": \"dep_pediatrics\",\n              \"department_name\": \"儿科\",\n              \"doctor_id\": \"doctor_xu\",\n              \"doctor_name\": \"许知宁\",\n              \"date\": \"2026-09-17\",\n              \"period\": \"afternoon\",\n              \"start_time\": \"14:00\",\n              \"end_time\": \"16:00\",\n              \"fee_fen\": 2000,\n              \"location_id\": \"pediatrics-room\",\n              \"location_name\": \"门诊楼二层儿科诊区\",\n              \"capacity\": 5,\n              \"remaining\": 5\n            }\n          ],\n          \"queried_at\": \"2026-09-16T10:00:00+08:00\"\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"search_slots\",\n      \"search_knowledge_base\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"appointment\",\n        \"tool_name\": \"search_slots\",\n        \"tool_use_id\": \"call_00_NmaX9BwQEETYHSjR6tRa6333\",\n        \"input\": {\n          \"department\": \"儿科\",\n          \"date\": \"明天\"\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 7.0,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"list_id\",\n            \"query\",\n            \"slots\",\n            \"queried_at\"\n          ],\n          \"artifact_ids\": [\n            \"slots:list-7731197d6676406e8ed3af62d20d113b\"\n          ],\n          \"result_count\": 0\n        }\n      },\n      {\n        \"agent_type\": \"appointment\",\n        \"tool_name\": \"search_knowledge_base\",\n        \"tool_use_id\": \"call_01_0oJvv1Zlj1r8yg8hH1Bl4315\",\n        \"input\": {\n          \"query\": \"儿科首次就诊需要携带的资料 准备材料\",\n          \"top_k\": 5\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 1317.3,\n        \"cached\": false,\n        \"reranked\": true,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"sources\": [\n          {\n            \"title\": \"首次就诊材料\",\n            \"source\": \"knowledge/first-visit-materials.md\",\n            \"source_id\": \"first-materials\",\n            \"doc_id\": \"first-visit-materials\",\n            \"chunk_id\": \"first-visit-materials:0\"\n          },\n          {\n            \"title\": \"门诊就诊材料\",\n            \"source\": \"knowledge/general-preparation.md\",\n            \"source_id\": \"visit-materials\",\n            \"doc_id\": \"general-preparation\",\n            \"chunk_id\": \"general-preparation:0\"\n          },\n          {\n            \"title\": \"儿科公开说明\",\n            \"source\": \"knowledge/department-pediatrics.md\",\n            \"source_id\": \"hospital-public\",\n            \"doc_id\": \"department-pediatrics\",\n            \"chunk_id\": \"department-pediatrics:0\"\n          },\n          {\n            \"title\": \"到院报到流程\",\n            \"source\": \"knowledge/arrival-checkin.md\",\n            \"source_id\": \"visit-process\",\n            \"doc_id\": \"arrival-checkin\",\n            \"chunk_id\": \"arrival-checkin:0\"\n          },\n          {\n            \"title\": \"人工导诊联系说明\",\n            \"source\": \"knowledge/human-guidance.md\",\n            \"source_id\": \"hospital-contact\",\n            \"doc_id\": \"human-guidance\",\n            \"chunk_id\": \"human-guidance:0\"\n          }\n        ],\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [],\n          \"artifact_ids\": [],\n          \"result_count\": 5\n        },\n        \"rewrite_error\": null,\n        \"rerank_error\": null,\n        \"recall_errors\": [],\n        \"partial\": false,\n        \"fallback_used\": false\n      }\n    ]\n  }\n}"
+          },
+          {
+            "question": "把第一个号做成待确认方案。",
+            "response": "已为您准备好待确认方案（**尚未预约，不占用号源**）。\n\n## 待确认预约方案\n\n| 项目 | 内容 |\n|---|---|\n| 就诊人 | 林小满 |\n| 医院 | 明和虚构医院 |\n| 科室 | 儿科 |\n| 医生 | 许知宁 |\n| 日期 | 2026-09-17（明天） |\n| 时段 | 上午 09:00–11:00 |\n| 费用 | 20.00 元 |\n| 地点 | 门诊楼二层儿科诊区 |\n| 方案编号 | proposal-685c1d69b7a54c1e9a5283a90183d075 |\n| 状态 | 待确认（有效期至 2026-09-16 10:15，Asia/Shanghai） |\n\n## 下一步\n\n请在页面上的方案卡片中点击**确认**，预约才会正式生效。聊天中的\"确认\"\"可以\"等文字不会执行预约。\n\n温馨提示：儿童就诊需监护人陪同，请携带儿童及陪同监护人的身份证明、预约凭证和已有就诊资料。\n\n如需改选下午时段，或需要取消该方案，请告诉我。",
+            "turn": 1,
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-7685aa03f01f4e4b85ad4ba06bdbcf4e",
+            "emergency": false,
+            "agent_type": "appointment",
+            "intent": "appointment_create",
+            "agent_types": [
+              "appointment"
+            ],
+            "primary_agent": "appointment",
+            "supporting_agents": [],
+            "tools_used": [
+              "prepare_appointment"
+            ],
+            "tool_traces": [
+              {
+                "agent_type": "appointment",
+                "tool_name": "prepare_appointment",
+                "tool_use_id": "call_00_JtFPk8ZMEFFwjsS4FysJ0785",
+                "input": {
+                  "selection_index": 1
+                },
+                "kind": "tool_call",
+                "success": true,
+                "call_success": true,
+                "result_success": true,
+                "latency_ms": 4.0,
+                "cached": false,
+                "reranked": false,
+                "error": "",
+                "error_code": null,
+                "result_summary": {
+                  "success": true,
+                  "data_keys": [
+                    "user_id",
+                    "patient_id",
+                    "conv_id",
+                    "proposal_id",
+                    "operation",
+                    "target_id",
+                    "snapshot",
+                    "status",
+                    "created_at",
+                    "expires_at",
+                    "result"
+                  ],
+                  "artifact_ids": [
+                    "proposal:proposal-685c1d69b7a54c1e9a5283a90183d075:pending"
+                  ],
+                  "result_count": 0
+                }
+              }
+            ],
+            "artifacts": [
+              {
+                "id": "proposal:proposal-685c1d69b7a54c1e9a5283a90183d075:pending",
+                "type": "appointment_proposal",
+                "data": {
+                  "user_id": "anonymous",
+                  "patient_id": "patient_child",
+                  "conv_id": "visit-7685aa03f01f4e4b85ad4ba06bdbcf4e",
+                  "proposal_id": "proposal-685c1d69b7a54c1e9a5283a90183d075",
+                  "operation": "create",
+                  "target_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                  "snapshot": {
+                    "patient_name": "林小满",
+                    "slot": {
+                      "slot_id": "slot:2026-09-17:schedule_doctor_xu_morning",
+                      "hospital_name": "明和虚构医院",
+                      "department_id": "dep_pediatrics",
+                      "department_name": "儿科",
+                      "doctor_id": "doctor_xu",
+                      "doctor_name": "许知宁",
+                      "date": "2026-09-17",
+                      "period": "morning",
+                      "start_time": "09:00",
+                      "end_time": "11:00",
+                      "fee_fen": 2000,
+                      "location_id": "pediatrics-room",
+                      "location_name": "门诊楼二层儿科诊区"
+                    }
+                  },
+                  "status": "pending",
+                  "created_at": "2026-09-16T10:00:00+08:00",
+                  "expires_at": "2026-09-16T10:15:00+08:00",
+                  "result": null
+                }
+              }
+            ],
+            "latency_ms": 2874.4355339986214,
+            "routing_reason": "intent=appointment_create, group=appointment, primary=appointment, supporting=none, scores=[appointment=1.08, general=0.10, guidance=0.00, triage=0.00, medication=0.00]",
+            "routing_confidence": 1.0,
+            "intent_embedding": {
+              "configured_backend": "semantic",
+              "active_backend": "semantic",
+              "model": "BAAI/bge-small-zh-v1.5",
+              "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+              "dimension": 512,
+              "status": "semantic_ready",
+              "generation": 1,
+              "fallback_reason": null,
+              "failure_count": 0,
+              "inference_in_flight": false,
+              "sample_counts": {
+                "semantic": 2
+              }
+            },
+            "judge_context": "{\n  \"prior_context\": \"[最近对话]\\n\\nuser: 明天带孩子初次去儿科，帮我查可选号源，也列一下首次就诊要带的资料。\\n\\nassistant: 已为您查到明天（2026-09-17）儿科的真实号源，并整理了首次就诊资料。\\n\\n## 一、可选号源（明和虚构医院 · 儿科）\\n\\n| 序号 | 医生 | 日期 | 时段 | 时间 | 费用 | 地点 | 余量 |\\n|---|---|---|---|---|---|---|---|\\n| 1 | 许知宁 | 2026-09-17 | 上午 | 09:00–11:00 | 20.00 元 | 门诊楼二层儿科诊区 | 5 |\\n| 2 | 许知宁 | 2026-09-17 | 下午 | 14:00–16:00 | 20.00 元 | 门诊楼二层儿科诊区 | 5 |\\n\\n来源：实时号源查询（查询时间 2026-09-16 10:00，Asia/Shanghai）。余量为查询时快照，最终以页面确认为准。\\n\\n## 二、首次就诊需携带的资料\\n\\n来源：明和虚构医院《首次就诊材料》《儿科公开说明》\\n\\n- 儿童就诊人的身份证明\\n- 陪同监护人的身份证明（儿童就诊需监护人陪同）\\n- 本次预约信息或就诊凭证\\n- 已有的相关儿童就诊资料\\n\\n到院后先到门诊楼一层门诊大厅导诊台了解报到位置，儿科诊区在二层，按预约的科室和时段办理。\\n\\n## 三、下一步\\n\\n如需预约，请告诉我您选择哪一个（例如\\\"第 1 个\\\"或\\\"下午那个\\\"），我会为您准备待确认方案。**准备方案不会占用号源，需您在页面卡片上点击确认后才生效。**\\n\\n请问您想选上午还是下午的号？\\n\\n[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_child\\\", \\\"conv_id\\\": \\\"visit-7685aa03f01f4e4b85ad4ba06bdbcf4e\\\", \\\"status\\\": \\\"ready\\\", \\\"list_id\\\": \\\"list-7731197d6676406e8ed3af62d20d113b\\\", \\\"query\\\": {\\\"department_id\\\": \\\"dep_pediatrics\\\", \\\"doctor_id\\\": null, \\\"date\\\": \\\"2026-09-17\\\", \\\"period\\\": null}, \\\"slots\\\": [{\\\"slot_id\\\": \\\"slot:2026-09-17:schedule_doctor_xu_morning\\\", \\\"hospital_name\\\": \\\"明和虚构医院\\\", \\\"department_id\\\": \\\"dep_pediatrics\\\", \\\"department_name\\\": \\\"儿科\\\", \\\"doctor_id\\\": \\\"doctor_xu\\\", \\\"doctor_name\\\": \\\"许知宁\\\", \\\"date\\\": \\\"2026-09-17\\\", \\\"period\\\": \\\"morning\\\", \\\"start_time\\\": \\\"09:00\\\", \\\"end_time\\\": \\\"11:00\\\", \\\"fee_fen\\\": 2000, \\\"location_id\\\": \\\"pediatrics-room\\\", \\\"location_name\\\": \\\"门诊楼二层儿科诊区\\\", \\\"capacity\\\": 5, \\\"remaining\\\": 5}, {\\\"slot_id\\\": \\\"slot:2026-09-17:schedule_doctor_xu_afternoon\\\", \\\"hospital_name\\\": \\\"明和虚构医院\\\", \\\"department_id\\\": \\\"dep_pediatrics\\\", \\\"department_name\\\": \\\"儿科\\\", \\\"doctor_id\\\": \\\"doctor_xu\\\", \\\"doctor_name\\\": \\\"许知宁\\\", \\\"date\\\": \\\"2026-09-17\\\", \\\"period\\\": \\\"afternoon\\\", \\\"start_time\\\": \\\"14:00\\\", \\\"end_time\\\": \\\"16:00\\\", \\\"fee_fen\\\": 2000, \\\"location_id\\\": \\\"pediatrics-room\\\", \\\"location_name\\\": \\\"门诊楼二层儿科诊区\\\", \\\"capacity\\\": 5, \\\"remaining\\\": 5}], \\\"queried_at\\\": \\\"2026-09-16T10:00:00+08:00\\\", \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_child\",\n      \"conv_id\": \"visit-7685aa03f01f4e4b85ad4ba06bdbcf4e\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [\n      {\n        \"id\": \"proposal:proposal-685c1d69b7a54c1e9a5283a90183d075:pending\",\n        \"type\": \"appointment_proposal\",\n        \"data\": {\n          \"user_id\": \"anonymous\",\n          \"patient_id\": \"patient_child\",\n          \"conv_id\": \"visit-7685aa03f01f4e4b85ad4ba06bdbcf4e\",\n          \"proposal_id\": \"proposal-685c1d69b7a54c1e9a5283a90183d075\",\n          \"operation\": \"create\",\n          \"target_id\": \"slot:2026-09-17:schedule_doctor_xu_morning\",\n          \"snapshot\": {\n            \"patient_name\": \"林小满\",\n            \"slot\": {\n              \"slot_id\": \"slot:2026-09-17:schedule_doctor_xu_morning\",\n              \"hospital_name\": \"明和虚构医院\",\n              \"department_id\": \"dep_pediatrics\",\n              \"department_name\": \"儿科\",\n              \"doctor_id\": \"doctor_xu\",\n              \"doctor_name\": \"许知宁\",\n              \"date\": \"2026-09-17\",\n              \"period\": \"morning\",\n              \"start_time\": \"09:00\",\n              \"end_time\": \"11:00\",\n              \"fee_fen\": 2000,\n              \"location_id\": \"pediatrics-room\",\n              \"location_name\": \"门诊楼二层儿科诊区\"\n            }\n          },\n          \"status\": \"pending\",\n          \"created_at\": \"2026-09-16T10:00:00+08:00\",\n          \"expires_at\": \"2026-09-16T10:15:00+08:00\",\n          \"result\": null\n        }\n      }\n    ],\n    \"tools_used\": [\n      \"prepare_appointment\"\n    ],\n    \"tool_traces\": [\n      {\n        \"agent_type\": \"appointment\",\n        \"tool_name\": \"prepare_appointment\",\n        \"tool_use_id\": \"call_00_JtFPk8ZMEFFwjsS4FysJ0785\",\n        \"input\": {\n          \"selection_index\": 1\n        },\n        \"kind\": \"tool_call\",\n        \"success\": true,\n        \"call_success\": true,\n        \"result_success\": true,\n        \"latency_ms\": 4.0,\n        \"cached\": false,\n        \"reranked\": false,\n        \"error\": \"\",\n        \"error_code\": null,\n        \"result_summary\": {\n          \"success\": true,\n          \"data_keys\": [\n            \"user_id\",\n            \"patient_id\",\n            \"conv_id\",\n            \"proposal_id\",\n            \"operation\",\n            \"target_id\",\n            \"snapshot\",\n            \"status\",\n            \"created_at\",\n            \"expires_at\",\n            \"result\"\n          ],\n          \"artifact_ids\": [\n            \"proposal:proposal-685c1d69b7a54c1e9a5283a90183d075:pending\"\n          ],\n          \"result_count\": 0\n        }\n      }\n    ]\n  }\n}"
+          }
+        ]
+      }
+    },
+    {
+      "test_id": "collaboration-new-4:turn:0",
+      "passed": false,
+      "scores": {
+        "relevance": 0.1,
+        "accuracy": 0.5,
+        "completeness": 0.0,
+        "helpfulness": 0.0,
+        "overall": 0.15
+      },
+      "detail": "综合评分 0.150",
+      "metadata": {
+        "question": "请一并查询明天儿科号源和儿童首次就诊所需证件材料。",
+        "response": "请补充您想了解医院信息、查询或办理预约，还是需要就诊准备、流程或院内文字指引？",
+        "turn": 0,
+        "user_id": "anonymous",
+        "patient_id": "patient_child",
+        "conv_id": "visit-02c3f3f47280431690f2142c53625f25",
+        "emergency": false,
+        "agent_type": "general",
+        "intent": "other",
+        "agent_types": [
+          "general"
+        ],
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [],
+        "tool_traces": [],
+        "artifacts": [],
+        "latency_ms": 660.6662970007164,
+        "routing_reason": "低置信度 OTHER 意图，先澄清用户需求",
+        "routing_confidence": 0.47,
+        "intent_embedding": {
+          "configured_backend": "semantic",
+          "active_backend": "semantic",
+          "model": "BAAI/bge-small-zh-v1.5",
+          "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+          "dimension": 512,
+          "status": "semantic_ready",
+          "generation": 1,
+          "fallback_reason": null,
+          "failure_count": 0,
+          "inference_in_flight": false,
+          "sample_counts": {
+            "semantic": 1
+          }
+        },
+        "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_child\\\", \\\"conv_id\\\": \\\"visit-02c3f3f47280431690f2142c53625f25\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_child\",\n      \"conv_id\": \"visit-02c3f3f47280431690f2142c53625f25\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [],\n    \"tools_used\": [],\n    \"tool_traces\": []\n  }\n}",
+        "kind": "quality",
+        "status": "failed",
+        "judge_failed": false,
+        "judge_error": null
+      }
+    },
+    {
+      "test_id": "collaboration-new-4:business",
+      "passed": false,
+      "scores": {},
+      "detail": "业务状态断言（独立于 Judge）",
+      "metadata": {
+        "kind": "business",
+        "status": "failed",
+        "assertions": [
+          {
+            "assertion": "agents.include=appointment,guidance",
+            "actual": [
+              "appointment",
+              "general"
+            ],
+            "expected": "appointment,guidance",
+            "status": "failed"
+          },
+          {
+            "assertion": "has_artifacts=slot_list,visit_checklist",
+            "actual": [],
+            "expected": "slot_list,visit_checklist",
+            "status": "failed"
+          },
+          {
+            "assertion": "appointments.count=0",
+            "actual": 0,
+            "expected": 0,
+            "status": "passed"
+          }
+        ],
+        "facts": {
+          "appointments.count": 0,
+          "slot_delta": 0,
+          "proposal.status": null,
+          "proposal.target_id": null,
+          "current_proposal.target_id": null,
+          "query.department_id": null,
+          "query.date": null,
+          "query.period": null,
+          "selection.status": "empty",
+          "selection.slots.count": 0,
+          "agents.include": [
+            "appointment",
+            "general"
+          ],
+          "has_artifact": [],
+          "has_artifacts": [],
+          "knowledge_sources.nonempty": false,
+          "knowledge.sources.count": 0,
+          "trace.retrieval_failed": false,
+          "tool.error_code": [],
+          "memory.recall_calls": 2,
+          "emergency.interrupted": false,
+          "model.calls": 3
+        },
+        "identity": {
+          "user_id": "anonymous",
+          "patient_id": "patient_child",
+          "conv_id": "visit-02c3f3f47280431690f2142c53625f25"
+        },
+        "clock": "2026-09-16T10:00:00+08:00",
+        "actions": [],
+        "turns": [
+          {
+            "question": "请一并查询明天儿科号源和儿童首次就诊所需证件材料。",
+            "response": "请补充您想了解医院信息、查询或办理预约，还是需要就诊准备、流程或院内文字指引？",
+            "turn": 0,
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-02c3f3f47280431690f2142c53625f25",
+            "emergency": false,
+            "agent_type": "general",
+            "intent": "other",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [],
+            "tool_traces": [],
+            "artifacts": [],
+            "latency_ms": 660.6662970007164,
+            "routing_reason": "低置信度 OTHER 意图，先澄清用户需求",
+            "routing_confidence": 0.47,
+            "intent_embedding": {
+              "configured_backend": "semantic",
+              "active_backend": "semantic",
+              "model": "BAAI/bge-small-zh-v1.5",
+              "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+              "dimension": 512,
+              "status": "semantic_ready",
+              "generation": 1,
+              "fallback_reason": null,
+              "failure_count": 0,
+              "inference_in_flight": false,
+              "sample_counts": {
+                "semantic": 1
+              }
+            },
+            "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_child\\\", \\\"conv_id\\\": \\\"visit-02c3f3f47280431690f2142c53625f25\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_child\",\n      \"conv_id\": \"visit-02c3f3f47280431690f2142c53625f25\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [],\n    \"tools_used\": [],\n    \"tool_traces\": []\n  }\n}"
+          },
+          {
+            "question": "请用列表第一个号生成待确认预约。",
+            "response": "我需要先说明一下：当前事项的号源列表是空的（status: empty，slots: []），还没有成功查询过任何号源，所以不存在“第一个号”可以引用。\n\n序号只能指向本事项最近一次成功查询的有序列表，现在没有有效列表，我不能凭空生成号源编号或方案。\n\n请先告诉我查询条件，我来为您查询真实号源：\n\n- **科室**（例如：儿科）\n- **日期**（例如：明天）\n- **时段**（上午 / 下午，可选）\n\n您之前提到过“明天儿科号源”，如果确认按此查询，我可以直接为您查明天儿科的实时号源，查到后再按列表序号为您准备待确认方案。",
+            "turn": 1,
+            "user_id": "anonymous",
+            "patient_id": "patient_child",
+            "conv_id": "visit-02c3f3f47280431690f2142c53625f25",
+            "emergency": false,
+            "agent_type": "appointment",
+            "intent": "appointment_create",
+            "agent_types": [
+              "appointment"
+            ],
+            "primary_agent": "appointment",
+            "supporting_agents": [],
+            "tools_used": [],
+            "tool_traces": [],
+            "artifacts": [],
+            "latency_ms": 2139.3151320007746,
+            "routing_reason": "intent=appointment_create, group=appointment, primary=appointment, supporting=none, scores=[appointment=1.26, general=0.10, guidance=0.00, triage=0.00, medication=0.00]",
+            "routing_confidence": 1.0,
+            "intent_embedding": {
+              "configured_backend": "semantic",
+              "active_backend": "semantic",
+              "model": "BAAI/bge-small-zh-v1.5",
+              "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+              "dimension": 512,
+              "status": "semantic_ready",
+              "generation": 1,
+              "fallback_reason": null,
+              "failure_count": 0,
+              "inference_in_flight": false,
+              "sample_counts": {
+                "semantic": 2
+              }
+            },
+            "judge_context": "{\n  \"prior_context\": \"[最近对话]\\n\\nuser: 请一并查询明天儿科号源和儿童首次就诊所需证件材料。\\n\\nassistant: 请补充您想了解医院信息、查询或办理预约，还是需要就诊准备、流程或院内文字指引？\\n\\n[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_child\\\", \\\"conv_id\\\": \\\"visit-02c3f3f47280431690f2142c53625f25\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_child\",\n      \"conv_id\": \"visit-02c3f3f47280431690f2142c53625f25\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [],\n    \"tools_used\": [],\n    \"tool_traces\": []\n  }\n}"
+          }
+        ]
+      }
+    },
+    {
+      "test_id": "archive-restore:turn:0",
+      "passed": false,
+      "scores": {
+        "relevance": 0.7,
+        "accuracy": 0.9,
+        "completeness": 0.3,
+        "helpfulness": 0.4,
+        "overall": 0.575
+      },
+      "detail": "综合评分 0.575",
+      "metadata": {
+        "question": "提供大厅到药房的文字说明。",
+        "response": "您需要从大厅到药房的院内指引，但还缺少一个关键条件：\n\n**请确认路线模式**：您需要**普通路线**还是**无障碍路线**？\n\n（起点「大厅」和目的地「药房」已明确，确认模式后我立即为您查询预置文字指引。）",
+        "turn": 0,
+        "user_id": "anonymous",
+        "patient_id": "patient_self",
+        "conv_id": "visit-a2cacce45e51482fb1675ba7a57e7a33",
+        "emergency": false,
+        "agent_type": "guidance",
+        "intent": "wayfinding",
+        "agent_types": [
+          "guidance"
+        ],
+        "primary_agent": "guidance",
+        "supporting_agents": [],
+        "tools_used": [],
+        "tool_traces": [],
+        "artifacts": [],
+        "latency_ms": 1520.145375001448,
+        "routing_reason": "intent=wayfinding, group=guidance, primary=guidance, supporting=none, scores=[guidance=0.75, general=0.10, appointment=0.00, triage=0.00, medication=0.00]",
+        "routing_confidence": 0.75,
+        "intent_embedding": {
+          "configured_backend": "semantic",
+          "active_backend": "semantic",
+          "model": "BAAI/bge-small-zh-v1.5",
+          "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+          "dimension": 512,
+          "status": "semantic_ready",
+          "generation": 1,
+          "fallback_reason": null,
+          "failure_count": 0,
+          "inference_in_flight": false,
+          "sample_counts": {
+            "semantic": 1
+          }
+        },
+        "judge_context": "{\n  \"prior_context\": \"[当前事项的最近查询与选择；序号从1开始，仅可引用列出的真实号源ID；余量和方案可执行性须由业务工具复核]\\n{\\\"user_id\\\": \\\"anonymous\\\", \\\"patient_id\\\": \\\"patient_self\\\", \\\"conv_id\\\": \\\"visit-a2cacce45e51482fb1675ba7a57e7a33\\\", \\\"status\\\": \\\"empty\\\", \\\"list_id\\\": null, \\\"query\\\": {\\\"department_id\\\": null, \\\"doctor_id\\\": null, \\\"date\\\": null, \\\"period\\\": null}, \\\"slots\\\": [], \\\"queried_at\\\": null, \\\"current_proposal_id\\\": null}\",\n  \"current_turn\": {\n    \"identity\": {\n      \"user_id\": \"anonymous\",\n      \"patient_id\": \"patient_self\",\n      \"conv_id\": \"visit-a2cacce45e51482fb1675ba7a57e7a33\"\n    },\n    \"business_clock\": \"2026-09-16T10:00:00+08:00\",\n    \"artifacts\": [],\n    \"tools_used\": [],\n    \"tool_traces\": []\n  }\n}",
+        "kind": "quality",
+        "status": "failed",
+        "judge_failed": false,
+        "judge_error": null
+      }
+    }
+  ],
+  "http_errors": [],
+  "judge_failures": [],
+  "call_failures": [],
+  "skipped": [],
+  "run_ids": [
+    "578e640ce0e04500b07c9c6321fd1163",
+    "0c26fa0126ec48f2b08596d9f416fd96",
+    "f6617a3b6a07406cbdecc14e16f16842",
+    "b0f6ad4d5c5b4484bcbed3f5c2e2dfd8",
+    "64398b2fa9a941289722837634271df6",
+    "711d3c3a05a4454d8dbc8acee3adc856",
+    "3ff3083a58804fd8b7dd7f21a2cd6844",
+    "cea98d93fe0c4d629dafaa3c264d666a",
+    "6e2416877da14baca33f5b75151c0caa",
+    "135c8b01c42142dd8f995d73dc3f7523",
+    "b8e37e939b994b3b9b4ed25255be72a1",
+    "301f1a556360439cb0530eb0e3d628f8",
+    "09d11675c714433ebb5f54b74f9ce41c"
+  ],
+  "baseline_status": "candidate"
+}

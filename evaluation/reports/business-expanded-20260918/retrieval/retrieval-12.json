@@ -1,0 +1,114 @@
+{
+  "id": "retrieval-12",
+  "query": "儿童看病的诊区在哪层，医生叫什么名字？",
+  "required_doc_ids": [
+    "department-pediatrics"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "department-ophthalmology:0",
+        "doc_id": "department-ophthalmology",
+        "title": "眼科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-ophthalmology.md",
+        "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+        "score": 0.4555,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "department-pediatrics:0",
+        "doc_id": "department-pediatrics",
+        "title": "儿科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-pediatrics.md",
+        "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+        "score": 0.3787,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "department-internal:0",
+        "doc_id": "department-internal",
+        "title": "内科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-internal.md",
+        "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+        "score": 0.2825,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 1.0,
+      "hit_at_3": 1,
+      "all_required_at_3": 1,
+      "doc_ids": [
+        "department-internal",
+        "department-ophthalmology",
+        "department-pediatrics"
+      ]
+    },
+    "elapsed_seconds": 0.0327151599994977
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.3787,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.3502,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "accessible-wayfinding:0",
+          "doc_id": "accessible-wayfinding",
+          "title": "无障碍文字指引说明",
+          "source_id": "hospital-wayfinding",
+          "source": "knowledge/accessible-wayfinding.md",
+          "content": "# 无障碍文字指引说明\n\n明和虚构医院收录有限起点和目的地组合的文字说明。查询时说明起点、目的地，以及普通或无障碍模式；精确步骤由文字指引工具从预置资料读取。\n\n已收录门诊大厅到收费处、药房、检验科、内科诊区、儿科诊区、眼科诊区，以及儿科诊区到检验科的指引。涉及跨楼层的无障碍路线使用无障碍电梯，同层路线使用无台阶通道。\n\n没有收录的地点组合应联系导诊台。系统不计算新路线，也不提供实时地图导航。",
+          "score": 0.2237,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 1.0,
+      "hit_at_3": 1,
+      "all_required_at_3": 1,
+      "doc_ids": [
+        "accessible-wayfinding",
+        "arrival-checkin",
+        "department-pediatrics"
+      ]
+    },
+    "elapsed_seconds": 1.507821293998859,
+    "model_calls": 2
+  }
+}

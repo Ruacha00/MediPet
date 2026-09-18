@@ -1,0 +1,284 @@
+{
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "per_class": {
+    "appointment_cancel": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "appointment_create": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "medication_query": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "other": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "wayfinding": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "total": 6,
+  "correct": 6,
+  "cases": [
+    {
+      "id": "holdout:supplement:selection_ellipsis",
+      "message": "就它了，先给我核对单。",
+      "expected": "appointment_create",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": [
+          {
+            "role": "assistant",
+            "content": "这里展示可预约号源slot_demo_005；选择后可先生成预约核对单。"
+          }
+        ]
+      },
+      "predicted": "appointment_create",
+      "confidence": 0.7925563046707762,
+      "reasoning": "用户确认选择该号源并要求生成预约核对单，属于创建预约流程。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 12.46955600072397,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.637781523353881,
+        "runner_up": 0.5814896934799249,
+        "margin": 0.0562918298739562,
+        "accepted": true,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:supplement:cancellation_ellipsis",
+      "message": "对，就是这笔，先出撤销单。",
+      "expected": "appointment_cancel",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": [
+          {
+            "role": "assistant",
+            "content": "已查到现有预约appt_demo_005，您刚才要准备取消这一笔。"
+          }
+        ]
+      },
+      "predicted": "appointment_cancel",
+      "confidence": 0.8172941737383372,
+      "reasoning": "用户确认取消该预约并要求出撤销单，属于取消预约意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.7816559997736476,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6914708686916866,
+        "runner_up": 0.5230077962403066,
+        "margin": 0.16846307245138004,
+        "accepted": true,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:supplement:route_ellipsis",
+      "message": "能不走楼梯吗？",
+      "expected": "wayfinding",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": [
+          {
+            "role": "assistant",
+            "content": "当前在说明从门诊大厅到眼科诊区的步行路线。"
+          }
+        ]
+      },
+      "predicted": "wayfinding",
+      "confidence": 0.6649999999999999,
+      "reasoning": "用户针对当前从门诊大厅到眼科诊区的路线询问能否不走楼梯，属于就诊路线指引。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.1184290019155014,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.47620124490994775,
+        "runner_up": 0.44548042676458033,
+        "margin": 0.030720818145367423,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:supplement:medicine_ellipsis",
+      "message": "和我正在用的那种一起呢？",
+      "expected": "medication_query",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": [
+          {
+            "role": "user",
+            "content": "我在用华法林，刚才问了布洛芬200mg普通片的标签。"
+          }
+        ]
+      },
+      "predicted": "medication_query",
+      "confidence": 0.6649999999999999,
+      "reasoning": "用户询问华法林与布洛芬200mg普通片一起使用的相互作用，属于药物相互作用咨询。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.4764759984682314,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5260614965707209,
+        "runner_up": 0.497253068644258,
+        "margin": 0.028808427926462876,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:supplement:unresolved_object",
+      "message": "这里能办理吗？",
+      "expected": "other",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "other",
+      "confidence": 0.35,
+      "reasoning": "用户询问“这里能办理吗”，未指明具体业务，无法匹配明确意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.1704519969935063,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.7235604716555677,
+        "runner_up": 0.6961536150912964,
+        "margin": 0.02740685656427133,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:supplement:conflicting_wish",
+      "message": "既想取消这条预约又想保留，我还没想清楚。",
+      "expected": "other",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "other",
+      "confidence": 0.42,
+      "reasoning": "用户表达矛盾犹豫，既想取消又想保留预约，尚未形成明确操作意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 20.52973899844801,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.8639306867968001,
+        "runner_up": 0.6686596721709183,
+        "margin": 0.1952710146258818,
+        "accepted": true,
+        "cache_hit": false
+      }
+    }
+  ],
+  "call_failures": 0
+}

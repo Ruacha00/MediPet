@@ -1,0 +1,134 @@
+{
+  "started_at": "2026-09-18T08:24:29.077668+00:00",
+  "head": "bf4f3538b5b2277497d6bed75f68569d97a9229e",
+  "inputs_sha256": "66a589acb19b85ba56c2b6f4aaeabbffccd5a9830bcfe8a1bc93c4f480abbb69",
+  "requests": [
+    {
+      "id": "expanded-create-01",
+      "completed": true,
+      "elapsed_seconds": 8.047
+    },
+    {
+      "id": "expanded-cancel-01",
+      "completed": true,
+      "elapsed_seconds": 8.5
+    },
+    {
+      "id": "expanded-compound-01",
+      "completed": true,
+      "elapsed_seconds": 6.218
+    },
+    {
+      "id": "expanded-context-01",
+      "completed": true,
+      "elapsed_seconds": 9.329
+    },
+    {
+      "id": "expanded-create-02",
+      "completed": true,
+      "elapsed_seconds": 7.625
+    },
+    {
+      "id": "expanded-cancel-02",
+      "completed": true,
+      "elapsed_seconds": 9.687
+    },
+    {
+      "id": "expanded-compound-02",
+      "completed": true,
+      "elapsed_seconds": 9.5
+    },
+    {
+      "id": "expanded-context-02",
+      "completed": true,
+      "elapsed_seconds": 12.328
+    },
+    {
+      "id": "expanded-create-03",
+      "completed": true,
+      "elapsed_seconds": 9.672
+    },
+    {
+      "id": "expanded-cancel-03",
+      "completed": true,
+      "elapsed_seconds": 7.968
+    },
+    {
+      "id": "expanded-compound-03",
+      "completed": true,
+      "elapsed_seconds": 6.047
+    },
+    {
+      "id": "expanded-context-03",
+      "completed": true,
+      "elapsed_seconds": 10.39
+    },
+    {
+      "id": "expanded-create-04",
+      "completed": true,
+      "elapsed_seconds": 7.765
+    },
+    {
+      "id": "expanded-cancel-04",
+      "completed": true,
+      "elapsed_seconds": 8.469
+    },
+    {
+      "id": "expanded-compound-04",
+      "completed": true,
+      "elapsed_seconds": 5.281
+    },
+    {
+      "id": "expanded-context-04",
+      "completed": true,
+      "elapsed_seconds": 11.5
+    },
+    {
+      "id": "expanded-create-05",
+      "completed": true,
+      "elapsed_seconds": 7.579
+    },
+    {
+      "id": "expanded-cancel-05",
+      "completed": true,
+      "elapsed_seconds": 8.265
+    },
+    {
+      "id": "expanded-compound-05",
+      "completed": true,
+      "elapsed_seconds": 6.86
+    },
+    {
+      "id": "expanded-context-05",
+      "completed": true,
+      "elapsed_seconds": 10.843
+    },
+    {
+      "id": "expanded-create-06",
+      "completed": true,
+      "elapsed_seconds": 7.922
+    },
+    {
+      "id": "expanded-cancel-06",
+      "completed": true,
+      "elapsed_seconds": 9.219
+    },
+    {
+      "id": "expanded-compound-06",
+      "completed": true,
+      "elapsed_seconds": 7.078
+    },
+    {
+      "id": "expanded-context-06",
+      "completed": true,
+      "elapsed_seconds": 7.015
+    }
+  ],
+  "retries": 0,
+  "status": "aborted_for_independent_boundary_defects",
+  "stopped_at": "2026-09-18T08:28:23.885786+00:00",
+  "reason": "Explicit decline and previous child subject incorrectly trigger compound delivery/type normalization. Completed responses retained; in-flight API request may have completed after runner termination. Not used as final benchmark.",
+  "completed_responses": 24,
+  "source_unchanged": true,
+  "baseline_unchanged": true
+}

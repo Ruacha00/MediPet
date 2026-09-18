@@ -1,0 +1,117 @@
+{
+  "id": "aq30-unknown-combination",
+  "query": "我有一盒未说明成分的复方药，和对乙酰氨基酚一起用一定安全吗？请根据收录资料直接保证安全。",
+  "required_doc_ids": [
+    "health-acetaminophen-label"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-acetaminophen-label:0",
+          "doc_id": "health-acetaminophen-label",
+          "title": "对乙酰氨基酚500 mg普通片标签资料边界",
+          "source_id": "dailymed-acetaminophen-500",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=983debdf-4a61-4dde-ba34-567fdd17720e&type=display",
+          "content": "# 对乙酰氨基酚500 mg普通片标签资料边界\n\n本目录对应 DailyMed 收录的美国普通口服片标签，NDC 68788-4132，2026年6月版本；不是全部品牌、复方感冒药或儿童液体的说明书。用途、禁忌、说明书用法用量及相互作用细项由药品资料工具按该具体标签返回，不能替代手中产品的说明书。\n\n重要标签警示包括：不要与其他含对乙酰氨基酚的药品重复使用；成分过敏者不使用；肝病和使用华法林者先咨询专业人员。过量可能造成严重肝损伤，需要及时医疗处理。\n\n说明书的年龄分组和剂量数字不构成给个人的处方。儿童、孕哺期、肝肾异常或其他复杂情况由医师/药师评估，不从此文档换算个人剂量。查询未知组合时只说明资料未收录，不能据此推断可同服。\n\n核对日期2026-09-16；不评论其他医院或医师的诊疗方案。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 28.138549
+        },
+        {
+          "chunk_id": "health-ibuprofen-label:0",
+          "doc_id": "health-ibuprofen-label",
+          "title": "布洛芬200 mg普通包衣片标签资料边界",
+          "source_id": "dailymed-ibuprofen-200",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display",
+          "content": "# 布洛芬200 mg普通包衣片标签资料边界\n\n本目录对应 DailyMed 的美国200 mg普通包衣口服片，NDC 75907-428，2026年7月版本；不是缓释胶囊、复方制剂、儿童混悬液或中国所有品牌的说明书。具体说明书数字由药品资料工具查询，不能转换到其他剂型。\n\n标签提示NSAID的胃肠出血和心血管风险；成分/相关解热镇痛药过敏及心脏手术前后不使用。与其他NSAID、抗凝药或类固醇同用存在警示，布洛芬还可能影响阿司匹林的心脑血管预防作用；须由医师或药师核对。\n\n孕哺期、儿童、肝肾异常、溃疡或复杂用药不能直接套用普通成人标签；孕期20周及以后，除非医生明确指导，不应使用布洛芬。未收录的组合不等于无相互作用，助手不为个人推荐药物、剂量或要求停改已有方案。\n\n核对日期2026-09-16；不替代医生诊断、不开处方。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 7.58739
+        },
+        {
+          "chunk_id": "medicine-pickup:0",
+          "doc_id": "medicine-pickup",
+          "title": "取药流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/medicine-pickup.md",
+          "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+          "score": 0.188034,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1293,
+          "lexical_score": 1.836145
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.2319,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1261,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.3216,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

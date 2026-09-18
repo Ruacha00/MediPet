@@ -1,0 +1,35 @@
+{
+  "reviewer": "assistant_source_review",
+  "scope": "failure attribution, not baseline acceptance or medical review",
+  "report_sha256": "c26e99b1e3a007d77d8c773bf95d7780512ded948854c5a5944a174d616eb579",
+  "rows": [
+    {
+      "case_id": "aq21-fever-rule",
+      "status": "judge_invalid",
+      "validation_error": "judge cited evidence not present in actual retrieval",
+      "missing_facts": [],
+      "non_exact_quotes": [
+        {
+          "claim": "布洛芬资料不是儿童混悬液或其他剂型，不能转换到其他剂型",
+          "evidence_id": "E3",
+          "quote": "不是缓释胶囊、复方制剂、儿童混悬液或中国所有品牌的说明书；具体说明书数字由药品资料工具查询，不能转换到其他剂型"
+        }
+      ],
+      "metric_overridden": false
+    },
+    {
+      "case_id": "aq25-child-arrival-fee",
+      "status": "scored",
+      "validation_error": null,
+      "missing_facts": [
+        {
+          "fact_index": 1,
+          "covered": false,
+          "reason": "回答只说明儿科诊区位于门诊楼二层，未说明先在一层门诊大厅导诊台了解报到位置。"
+        }
+      ],
+      "non_exact_quotes": [],
+      "metric_overridden": false
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": "aq12-lab",
+  "query": "检验科位于哪里，演示资料收录了哪些到检验科的路线及模式？",
+  "required_doc_ids": [
+    "lab-process"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "score": 0.219298,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.0453,
+          "lexical_score": 18.830235
+        },
+        {
+          "chunk_id": "accessible-wayfinding:0",
+          "doc_id": "accessible-wayfinding",
+          "title": "无障碍文字指引说明",
+          "source_id": "hospital-wayfinding",
+          "source": "knowledge/accessible-wayfinding.md",
+          "content": "# 无障碍文字指引说明\n\n明和虚构医院收录有限起点和目的地组合的文字说明。查询时说明起点、目的地，以及普通或无障碍模式；精确步骤由文字指引工具从预置资料读取。\n\n已收录门诊大厅到收费处、药房、检验科、内科诊区、儿科诊区、眼科诊区，以及儿科诊区到检验科的指引。涉及跨楼层的无障碍路线使用无障碍电梯，同层路线使用无台阶通道。\n\n没有收录的地点组合应联系导诊台。系统不计算新路线，也不提供实时地图导航。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 20.654496
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.201681,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0356,
+          "lexical_score": 3.820962
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "hospital-overview:0",
+          "doc_id": "hospital-overview",
+          "title": "医院概况",
+          "source_id": "hospital-public",
+          "source": "knowledge/hospital-overview.md",
+          "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+          "score": -0.0405,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.3376,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": 0.2858,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

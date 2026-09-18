@@ -1,0 +1,8 @@
+{
+  "intent_accuracy_percent": 99.46236559139786,
+  "intent_macro_f1": 0.9946605644546148,
+  "booking_completion_percent": 100.0,
+  "context_completion_percent": 95.0,
+  "retrieval_recall_percent": 50.0,
+  "retrieval_gain_percentage_points": 23.75
+}

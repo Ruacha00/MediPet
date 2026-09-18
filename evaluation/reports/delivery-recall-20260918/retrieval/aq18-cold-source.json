@@ -1,0 +1,117 @@
+{
+  "id": "aq18-cold-source",
+  "query": "只按仓库科普说明，普通感冒资料来自哪里，一般改善时间是多少？能据鼻塞咳嗽直接断定个人患感冒吗？",
+  "required_doc_ids": [
+    "health-common-cold"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-common-cold:0",
+          "doc_id": "health-common-cold",
+          "title": "常见病问答：普通感冒的一般知识",
+          "source_id": "nhs-common-cold",
+          "source": "https://www.nhs.uk/conditions/common-cold/",
+          "content": "# 常见病问答：普通感冒的一般知识\n\n普通感冒是什么？NHS 介绍，普通感冒由病毒引起，常见表现包括鼻塞、流鼻涕、咽痛和咳嗽，通常在一至两周内逐渐改善。这些症状也可能出现在其他情况，不能据此认定用户已经患感冒。\n\n一定需要抗生素吗？抗生素针对细菌，不能治疗普通病毒性感冒；是否存在其他疾病及是否需要用药应由医生判断，不建议自行选择抗生素。\n\n何时咨询医生？症状加重、持续不改善、发热超过三天，或有基础病、免疫功能受影响时，应咨询医生。胸痛、呼吸困难等不应只作为普通感冒等待处理。\n\n本资料为一般科普，核对日期2026-09-16。来源是英国 NHS；演示医院的科室映射属于本项目本地规则，不是 NHS 指定分科，也不替代医生诊断。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 27.870325
+        },
+        {
+          "chunk_id": "health-abdominal-symptoms:0",
+          "doc_id": "health-abdominal-symptoms",
+          "title": "常见症状问答：腹痛与腹胀",
+          "source_id": "nhs-stomach-ache",
+          "source": "https://www.nhs.uk/symptoms/stomach-ache/",
+          "content": "# 常见症状问答：腹痛与腹胀\n\n腹痛一定是胃病吗？不是。腹痛、腹胀可能有不同原因，NHS 建议不自行诊断；反复或加重、持续不缓解，或孕期出现腹痛时应由医生评估。\n\n哪些情况不能等普通挂号？突然或剧烈腹痛、触碰腹部明显疼痛、呕血、黑色黏便、不能呼吸或倒下等应立即获取紧急医疗帮助。本项目仅做有限就医信息提示，不能排除未收录的急症。\n\n如何准备咨询？说明疼痛位置、开始时间、程度、是否反复，以及发热、呕吐、排便变化等已有表现；不由助手决定检查、病因或处方。\n\n核对日期2026-09-16；资料不替代医生诊断。英国 NHS 的家庭医生/急诊建议在本项目只转述为及时寻求当地医疗评估，不作为虚构医院的实际服务承诺。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 6.948548
+        },
+        {
+          "chunk_id": "health-child-fever:0",
+          "doc_id": "health-child-fever",
+          "title": "常见症状问答：儿童发热与就医信号",
+          "source_id": "nhs-child-fever",
+          "source": "https://www.nhs.uk/symptoms/fever-in-children/",
+          "content": "# 常见症状问答：儿童发热与就医信号\n\n体温能直接判断病因吗？不能。NHS 将儿童38℃及以上描述为发热；年龄、精神状态、呼吸、饮水和其他表现同样重要，不能由一个数字推断疾病。\n\n何时需及时联系医生？不足3个月有38℃及以上体温或疑似发热，3至6个月有39℃及以上体温或疑似发热，应及时联系医生；持续发热、脱水或明显状态改变也需评估。首次抽搐、难以唤醒或呼吸困难应立即获取急救帮助。\n\n可以按成人片剂算儿童剂量吗？不可以。本项目不计算儿童剂量，也不建议自行交替使用退热药；由医师或药师核对具体年龄、体重、健康状况和儿童产品标签。\n\n核对日期2026-09-16。英国服务电话号码不直接作为中国用户的联系路径；在中国大陆紧急情况拨打120。项目对高烧超过39.5℃的中断是约定的演示规则，不是所有年龄的统一医学阈值，低于阈值也不能排除急症。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 7.860547
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.3913,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.2888,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": 0.2887,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

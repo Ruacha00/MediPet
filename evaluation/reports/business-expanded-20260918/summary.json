@@ -1,0 +1,1783 @@
+{
+  "groups": {
+    "create": {
+      "passed": 20,
+      "total": 20,
+      "rate": 1.0,
+      "failed": []
+    },
+    "cancel": {
+      "passed": 20,
+      "total": 20,
+      "rate": 1.0,
+      "failed": []
+    },
+    "compound": {
+      "passed": 11,
+      "total": 20,
+      "rate": 0.55,
+      "failed": [
+        "expanded-compound-04",
+        "expanded-compound-05",
+        "expanded-compound-13",
+        "expanded-compound-14",
+        "expanded-compound-15",
+        "expanded-compound-16",
+        "expanded-compound-18",
+        "expanded-compound-19",
+        "expanded-compound-20"
+      ]
+    },
+    "context": {
+      "passed": 19,
+      "total": 20,
+      "rate": 0.95,
+      "failed": [
+        "expanded-context-03"
+      ]
+    }
+  },
+  "booking_completion": {
+    "passed": 40,
+    "total": 40,
+    "rate": 1.0
+  },
+  "quality": {
+    "passed": 140,
+    "observed": 145,
+    "expected": 145
+  },
+  "dual_role_compound": {
+    "passed": 11,
+    "total": 20
+  },
+  "call_failures": [],
+  "judge_failures": [],
+  "rows": [
+    {
+      "id": "expanded-create-01",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-01",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-01",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-01",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 3,
+      "quality_observed": 3,
+      "expected_turns": 3,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-02",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-02",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-02",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-02",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 3,
+      "quality_observed": 3,
+      "expected_turns": 3,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-03",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-03",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-03",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-03",
+      "family": "context",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 3,
+      "quality_observed": 3,
+      "expected_turns": 3,
+      "failed_results": [
+        {
+          "test_id": "expanded-context-03:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "query.department_id=dep_ophthalmology",
+              "actual": "dep_ophthalmology",
+              "expected": "dep_ophthalmology",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-18",
+              "actual": "2026-09-18",
+              "expected": "2026-09-18",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.period=afternoon",
+              "actual": null,
+              "expected": "afternoon",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-create-04",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-04",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-04",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-04:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [
+                "slot_list"
+              ],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_pediatrics",
+              "actual": "dep_pediatrics",
+              "expected": "dep_pediatrics",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-18",
+              "actual": "2026-09-18",
+              "expected": "2026-09-18",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-04",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 3,
+      "quality_observed": 3,
+      "expected_turns": 3,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-05",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-05",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-05",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": false,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 0,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-05:turn:0",
+          "detail": "综合评分 0.150",
+          "scores": {
+            "relevance": 0.1,
+            "accuracy": 0.5,
+            "completeness": 0.0,
+            "helpfulness": 0.0,
+            "overall": 0.15
+          },
+          "assertions": null
+        },
+        {
+          "test_id": "expanded-compound-05:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_internal",
+              "actual": null,
+              "expected": "dep_internal",
+              "status": "failed"
+            },
+            {
+              "assertion": "query.date=2026-09-18",
+              "actual": null,
+              "expected": "2026-09-18",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-05",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 3,
+      "quality_observed": 3,
+      "expected_turns": 3,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-06",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-06",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-06",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-06",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-07",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-07",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-07",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-07",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-08",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-08",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-08",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-08",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-09",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-09",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-09",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-09",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-10",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-10",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-10",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-10",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-11",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-11",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-11",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-11",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-12",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-12",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-12",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-12",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-13",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-13",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-13",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-13:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [
+                "slot_list"
+              ],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_pediatrics",
+              "actual": "dep_pediatrics",
+              "expected": "dep_pediatrics",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-21",
+              "actual": "2026-09-21",
+              "expected": "2026-09-21",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-13",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-14",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-14",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-14",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": false,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 0,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-14:turn:0",
+          "detail": "综合评分 0.225",
+          "scores": {
+            "relevance": 0.2,
+            "accuracy": 0.5,
+            "completeness": 0.1,
+            "helpfulness": 0.1,
+            "overall": 0.225
+          },
+          "assertions": null
+        },
+        {
+          "test_id": "expanded-compound-14:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_internal",
+              "actual": null,
+              "expected": "dep_internal",
+              "status": "failed"
+            },
+            {
+              "assertion": "query.date=2026-09-21",
+              "actual": null,
+              "expected": "2026-09-21",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-14",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-15",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-15",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-15",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-15:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [
+                "slot_list"
+              ],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_ophthalmology",
+              "actual": "dep_ophthalmology",
+              "expected": "dep_ophthalmology",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-21",
+              "actual": "2026-09-21",
+              "expected": "2026-09-21",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-15",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-16",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-16",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-16",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-16:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [
+                "slot_list"
+              ],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_pediatrics",
+              "actual": "dep_pediatrics",
+              "expected": "dep_pediatrics",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-22",
+              "actual": "2026-09-22",
+              "expected": "2026-09-22",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-16",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-17",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-17",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-17",
+      "family": "compound",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": true
+      },
+      "dual_roles": true,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-context-17",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-18",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-18",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-18",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": true,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 1,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-18:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [
+                "slot_list"
+              ],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_ophthalmology",
+              "actual": "dep_ophthalmology",
+              "expected": "dep_ophthalmology",
+              "status": "passed"
+            },
+            {
+              "assertion": "query.date=2026-09-22",
+              "actual": "2026-09-22",
+              "expected": "2026-09-22",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-18",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-create-19",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-19",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-19",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": false,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 0,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-19:turn:0",
+          "detail": "综合评分 0.163",
+          "scores": {
+            "relevance": 0.1,
+            "accuracy": 0.5,
+            "completeness": 0.0,
+            "helpfulness": 0.05,
+            "overall": 0.1625
+          },
+          "assertions": null
+        },
+        {
+          "test_id": "expanded-compound-19:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_pediatrics",
+              "actual": null,
+              "expected": "dep_pediatrics",
+              "status": "failed"
+            },
+            {
+              "assertion": "query.date=2026-09-17",
+              "actual": null,
+              "expected": "2026-09-17",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-19",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 1,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": [
+        {
+          "test_id": "expanded-context-19:turn:0",
+          "detail": "综合评分 0.675",
+          "scores": {
+            "relevance": 0.6,
+            "accuracy": 0.9,
+            "completeness": 0.5,
+            "helpfulness": 0.7,
+            "overall": 0.675
+          },
+          "assertions": null
+        }
+      ]
+    },
+    {
+      "id": "expanded-create-20",
+      "family": "create",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true,
+        "chosen_slot": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-cancel-20",
+      "family": "cancel",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true,
+        "receipt_operation": true,
+        "patient": true,
+        "department": true,
+        "date": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    },
+    {
+      "id": "expanded-compound-20",
+      "family": "compound",
+      "passed": false,
+      "checks": {
+        "business_assertions": false,
+        "no_call_failure": true,
+        "matching_slots": false,
+        "nonempty_checklist": false
+      },
+      "dual_roles": false,
+      "quality_passed": 0,
+      "quality_observed": 1,
+      "expected_turns": 1,
+      "failed_results": [
+        {
+          "test_id": "expanded-compound-20:turn:0",
+          "detail": "综合评分 0.163",
+          "scores": {
+            "relevance": 0.1,
+            "accuracy": 0.5,
+            "completeness": 0.0,
+            "helpfulness": 0.05,
+            "overall": 0.1625
+          },
+          "assertions": null
+        },
+        {
+          "test_id": "expanded-compound-20:business",
+          "detail": "业务状态断言（独立于 Judge）",
+          "scores": {},
+          "assertions": [
+            {
+              "assertion": "has_artifacts=slot_list,visit_checklist",
+              "actual": [],
+              "expected": "slot_list,visit_checklist",
+              "status": "failed"
+            },
+            {
+              "assertion": "appointments.count=0",
+              "actual": 0,
+              "expected": 0,
+              "status": "passed"
+            },
+            {
+              "assertion": "query.department_id=dep_internal",
+              "actual": null,
+              "expected": "dep_internal",
+              "status": "failed"
+            },
+            {
+              "assertion": "query.date=2026-09-17",
+              "actual": null,
+              "expected": "2026-09-17",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expanded-context-20",
+      "family": "context",
+      "passed": true,
+      "checks": {
+        "business_assertions": true,
+        "no_call_failure": true
+      },
+      "dual_roles": null,
+      "quality_passed": 2,
+      "quality_observed": 2,
+      "expected_turns": 2,
+      "failed_results": []
+    }
+  ]
+}

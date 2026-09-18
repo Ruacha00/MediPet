@@ -1,0 +1,117 @@
+{
+  "id": "aq02-internal",
+  "query": "资料中的内科在哪层，演示医生是谁？公开介绍能直接证明某天还有号吗？",
+  "required_doc_ids": [
+    "department-internal"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.253247,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.3388,
+          "lexical_score": 18.996518
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.222222,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.1245,
+          "lexical_score": 6.290243
+        },
+        {
+          "chunk_id": "hospital-overview:0",
+          "doc_id": "hospital-overview",
+          "title": "医院概况",
+          "source_id": "hospital-public",
+          "source": "knowledge/hospital-overview.md",
+          "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+          "score": 0.195489,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.0824,
+          "lexical_score": 6.08847
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.3388,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "appointment-fees:0",
+          "doc_id": "appointment-fees",
+          "title": "演示预约费用说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/appointment-fees.md",
+          "content": "# 演示预约费用说明\n\n明和虚构医院静态排班的演示费用为：内科1500分（15元），儿科2000分（20元），眼科2000分（20元）。费用以整数分保存，页面展示为元。\n\n具体预约的确认资料直接来自所选号源，确认前应核对其费用。MediPet 不接入收费、支付或退款系统；本说明仅解释演示资料，不证明已经发生真实付款。",
+          "score": 0.3801,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "payment-process:0",
+          "doc_id": "payment-process",
+          "title": "缴费流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/payment-process.md",
+          "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+          "score": 0.4911,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "id": "retrieval-40",
+  "query": "说一下检验办理流程，并解释报告参考区间的含义。",
+  "required_doc_ids": [
+    "lab-process",
+    "health-report-terms"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 31.470693
+        },
+        {
+          "chunk_id": "health-report-terms:0",
+          "doc_id": "health-report-terms",
+          "title": "报告术语与参考区间说明",
+          "source_id": "medlineplus-lab-results",
+          "source": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/",
+          "content": "# 报告术语与参考区间说明\n\n参考区间是实验室根据特定人群和方法建立的比较范围。不同年龄、实验室、检测方法和单位可能不同，应使用用户这份报告自身的区间；不能用网上数字填补缺失范围，或不经核实比较不同单位。\n\n数值超出区间并不自动等于患病，数值在区间内也不保证没有疾病。阳性/阴性/不确定是检查结果描述，其个人意义仍需医生结合病史、症状和其他检查判断；不能凭单份报告确诊或开药。\n\nMediPet 的预处理只整理报告原文、项目、数值、单位及提供的参考区间，解释这些有限术语。上传PDF或图片后应核对提取文字，模糊数字、缺失单位和范围均保留待确认；不补造检查结果，不评论其他医师的诊疗方案。\n\n核对日期2026-09-16；来源为美国国家医学图书馆 MedlinePlus，提供一般信息，不替代专业医疗服务。",
+          "score": 0.23445,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.0524,
+          "lexical_score": 21.448065
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.189076,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.14,
+          "lexical_score": 2.673578
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "score": 0.1822,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.14,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "payment-process:0",
+          "doc_id": "payment-process",
+          "title": "缴费流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/payment-process.md",
+          "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+          "score": 0.002,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

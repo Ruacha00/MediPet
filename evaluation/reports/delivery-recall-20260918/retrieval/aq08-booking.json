@@ -1,0 +1,117 @@
+{
+  "id": "aq08-booking",
+  "query": "选择一个号源后要怎样才真正创建预约？方案多久失效，改选号源后旧方案还能用吗？",
+  "required_doc_ids": [
+    "appointment-howto"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "appointment-howto:0",
+          "doc_id": "appointment-howto",
+          "title": "预约办理步骤",
+          "source_id": "appointment-process",
+          "source": "knowledge/appointment-howto.md",
+          "content": "# 预约办理步骤\n\n在明和虚构医院演示页面，先选择就诊人及事项，再查询科室、医生、日期和时段对应的号源。列表中的顺序仅对应当前这一次实际查询。\n\n选择号源后，系统展示待确认预约方案，包含就诊人、医院、科室、医生、日期、时段、费用和地点。核对后点击方案上的确认按钮，服务才创建预约并返回记录。\n\n聊天中说“确认预约”或仅生成方案都不代表已预约。默认方案有效期为15分钟；改选后旧方案不能继续执行。没有号源时应修改查询条件，不能根据历史文字声称仍有号。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 21.791349
+        },
+        {
+          "chunk_id": "appointment-cancellation:0",
+          "doc_id": "appointment-cancellation",
+          "title": "取消预约步骤",
+          "source_id": "appointment-process",
+          "source": "knowledge/appointment-cancellation.md",
+          "content": "# 取消预约步骤\n\n先查询当前患者的预约记录，再选择要取消的预约，查看待确认取消方案。只有点击该方案的确认按钮后，预约状态才改为已取消，并释放相应演示号源。\n\n同一患者可以在新的事项中取消此前事项创建的预约，预约仍保留原来的创建事项，取消回执保存到本次操作事项。本人不能取消家属以外身份的记录，切换患者应进入该患者的事项。\n\n重复确认同一个已执行方案返回原回执，不重复创建或取消。过期或被改选的方案需要重新准备。本演示不执行支付或退款。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 12.651506
+        },
+        {
+          "chunk_id": "appointment-fees:0",
+          "doc_id": "appointment-fees",
+          "title": "演示预约费用说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/appointment-fees.md",
+          "content": "# 演示预约费用说明\n\n明和虚构医院静态排班的演示费用为：内科1500分（15元），儿科2000分（20元），眼科2000分（20元）。费用以整数分保存，页面展示为元。\n\n具体预约的确认资料直接来自所选号源，确认前应核对其费用。MediPet 不接入收费、支付或退款系统；本说明仅解释演示资料，不证明已经发生真实付款。",
+          "score": 0.157895,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0451,
+          "lexical_score": 1.867273
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.0589,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.0409,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.0305,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

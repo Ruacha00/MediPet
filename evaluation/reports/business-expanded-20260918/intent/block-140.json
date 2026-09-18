@@ -1,0 +1,571 @@
+{
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "per_class": {
+    "emergency": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "greeting": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "total": 20,
+  "correct": 20,
+  "cases": [
+    {
+      "id": "holdout:emergency:high_fever_numeric:1",
+      "message": "现在测到体温39.6℃，正在发热。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:high_fever_numeric:2",
+      "message": "孩子此刻体温40.1度，请问怎么办。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:1",
+      "message": "我没有胸痛，并且现在呼吸困难。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:affirmative_after_negation:2",
+      "message": "刚才没有不适，但现在剧烈胸痛。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:1",
+      "message": "我现在胸痛，应该挂哪个科？",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:symptom_in_question:2",
+      "message": "正在呼吸困难，该怎样寻求帮助？",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:third_party_now:1",
+      "message": "同行者现在呼吸困难，我就在旁边。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:third_party_now:2",
+      "message": "有人此刻突然失去意识，现场该怎么办？",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:present_after_past:1",
+      "message": "昨天没有胸痛，现在却胸痛。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:emergency:present_after_past:2",
+      "message": "前几天呼吸正常，但现在呼吸困难。",
+      "expected": "emergency",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "emergency",
+      "confidence": 1.0,
+      "reasoning": "预设急症信号",
+      "intent_embedding": {
+        "status": "bypassed_emergency",
+        "elapsed_ms": null
+      }
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:1",
+      "message": "我来啦，先说声嗨。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.736,
+      "reasoning": "用户以打招呼开场，未涉及具体业务诉求。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.5675140024977736,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5811833654432186,
+        "runner_up": 0.5538417995193542,
+        "margin": 0.027341565923864386,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:friendly_arrival:2",
+      "message": "刚见面，向你问个好。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.8115300454347416,
+      "reasoning": "用户表达见面问好，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.3858779970614705,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6276502271737084,
+        "runner_up": 0.5742634269773459,
+        "margin": 0.05338680019636255,
+        "accepted": true,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:1",
+      "message": "很高兴认识你，先打声招呼。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.6859999999999999,
+      "reasoning": "用户表达很高兴认识并打招呼，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.772486001253128,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5438128285027649,
+        "runner_up": 0.5393238002804851,
+        "margin": 0.004489028222279812,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:first_meeting:2",
+      "message": "初次见面，请多关照呀。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.6649999999999999,
+      "reasoning": "用户以初次见面的问候语开场，属于社交问候，无具体业务诉求。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 12.609299999894574,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5872991979539913,
+        "runner_up": 0.5859426240504717,
+        "margin": 0.00135657390351962,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:1",
+      "message": "我又来了，你好呀。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.8396623832729143,
+      "reasoning": "用户以“你好呀”打招呼，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.6397100011527073,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6233119163645716,
+        "runner_up": 0.5618348586158939,
+        "margin": 0.06147705774867773,
+        "accepted": true,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:return_salutation:2",
+      "message": "隔了一阵子又见面了，嗨！",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.715,
+      "reasoning": "用户以寒暄方式打招呼，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 4.0581799985375255,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5928131145638507,
+        "runner_up": 0.51460136167111,
+        "margin": 0.07821175289274063,
+        "accepted": true,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:1",
+      "message": "Hello there，向你问好。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.736,
+      "reasoning": "用户用“Hello there，向你问好”打招呼，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 4.004857000836637,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5706460642203833,
+        "runner_up": 0.5475194044657299,
+        "margin": 0.023126659754653445,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:english_salutation:2",
+      "message": "Hi，初次来到这个助手。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.715,
+      "reasoning": "用户以问候语打招呼并说明初次使用，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 4.727597999590216,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6016305997140101,
+        "runner_up": 0.5917291902044258,
+        "margin": 0.009901409509584291,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:1",
+      "message": "见面先问声好，暂时没有要办的事。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.6649999999999999,
+      "reasoning": "用户表示见面先问好且暂无要办的事，属于打招呼。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 4.419177999807289,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6061652059858785,
+        "runner_up": 0.5914938933835048,
+        "margin": 0.014671312602373754,
+        "accepted": false,
+        "cache_hit": false
+      }
+    },
+    {
+      "id": "holdout:greeting:social_opening:2",
+      "message": "先跟你打个招呼，待会儿再聊正事。",
+      "expected": "greeting",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "greeting",
+      "confidence": 0.6649999999999999,
+      "reasoning": "用户仅打招呼并表示稍后再聊正事，属于问候意图。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 3.9694599981885403,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.5303148442578891,
+        "runner_up": 0.5177247847424221,
+        "margin": 0.01259005951546699,
+        "accepted": false,
+        "cache_hit": false
+      }
+    }
+  ],
+  "call_failures": 0
+}

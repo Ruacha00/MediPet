@@ -1,0 +1,115 @@
+{
+  "id": "retrieval-34",
+  "query": "想先了解预约如何确认，以及之后怎么取消。",
+  "required_doc_ids": [
+    "appointment-howto",
+    "appointment-cancellation"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "general-preparation:0",
+        "doc_id": "general-preparation",
+        "title": "门诊就诊材料",
+        "source_id": "visit-materials",
+        "source": "knowledge/general-preparation.md",
+        "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+        "score": 0.2575,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "first-visit-materials:0",
+        "doc_id": "first-visit-materials",
+        "title": "首次就诊材料",
+        "source_id": "first-materials",
+        "source": "knowledge/first-visit-materials.md",
+        "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+        "score": 0.2028,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "department-pediatrics:0",
+        "doc_id": "department-pediatrics",
+        "title": "儿科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-pediatrics.md",
+        "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+        "score": 0.1898,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "department-pediatrics",
+        "first-visit-materials",
+        "general-preparation"
+      ]
+    },
+    "elapsed_seconds": 0.09728125699984957
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": -0.0313,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.2575,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.2028,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "first-visit-materials",
+        "general-preparation",
+        "human-guidance"
+      ]
+    },
+    "elapsed_seconds": 1.116973288000736,
+    "model_calls": 2
+  }
+}

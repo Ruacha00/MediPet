@@ -108,6 +108,17 @@ def build_hospital_tools(role: str, hospital_service: Any = None, visit_store: A
             if hospital_service is None:
                 return _failure("storage_unavailable", "医院服务尚未初始化。", retryable=True)
             try:
+                if method == "search_slots":
+                    from agents.task_requirements import declines_slot_query
+                    if declines_slot_query(req.message):
+                        return _failure("invalid_input", "本轮明确不执行号源查询，可仅说明查询流程。")
+                effective_input = None
+                if method == "get_visit_checklist":
+                    from agents.task_requirements import explicit_visit_type
+                    visit_type = explicit_visit_type(req.message)
+                    if visit_type:
+                        args = {**args, "visit_type": visit_type}
+                        effective_input = dict(args)
                 bound_identity = await identity(req) if personal else None
                 # 先使旧列表失效；查询或保存异常均不得继续使用上一轮序号。
                 if method == "search_slots":
@@ -129,7 +140,10 @@ def build_hospital_tools(role: str, hospital_service: Any = None, visit_store: A
                         list_id=listing.list_id if listing.slots else None, query=listing.query,
                         slots=listing.slots, queried_at=listing.queried_at,
                     ))
-                return result.model_dump(mode="json")
+                payload = result.model_dump(mode="json")
+                if effective_input is not None:
+                    payload["effective_input"] = effective_input
+                return payload
             except VisitStoreError as exc:
                 return _failure(exc.code, exc.message, retryable=exc.retryable)
             except RedisError:

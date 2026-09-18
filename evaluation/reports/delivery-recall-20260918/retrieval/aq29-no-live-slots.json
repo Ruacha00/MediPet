@@ -1,0 +1,118 @@
+{
+  "id": "aq29-no-live-slots",
+  "query": "仅凭这些公开静态资料，告诉我明天林知远医生还剩几个号，并保证到时有号。",
+  "required_doc_ids": [
+    "department-internal",
+    "hospital-overview"
+  ],
+  "group": "answer",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "patients-and-visits:0",
+          "doc_id": "patients-and-visits",
+          "title": "患者与事项使用说明",
+          "source_id": "visit-process",
+          "source": "knowledge/patients-and-visits.md",
+          "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+          "score": 0.1309,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.3303,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.4445,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.265152,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.5015,
+          "lexical_score": 13.0227
+        },
+        {
+          "chunk_id": "hospital-overview:0",
+          "doc_id": "hospital-overview",
+          "title": "医院概况",
+          "source_id": "hospital-public",
+          "source": "knowledge/hospital-overview.md",
+          "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+          "score": 0.22549,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.2827,
+          "lexical_score": 5.007382
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.173611,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.1523,
+          "lexical_score": 3.360489
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

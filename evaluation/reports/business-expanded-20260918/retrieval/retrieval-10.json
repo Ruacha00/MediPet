@@ -1,0 +1,114 @@
+{
+  "id": "retrieval-10",
+  "query": "我想了解门诊的营业时间和地址。",
+  "required_doc_ids": [
+    "hospital-overview"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "human-guidance:0",
+        "doc_id": "human-guidance",
+        "title": "人工导诊联系说明",
+        "source_id": "hospital-contact",
+        "source": "knowledge/human-guidance.md",
+        "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+        "score": 0.1144,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "first-visit-materials:0",
+        "doc_id": "first-visit-materials",
+        "title": "首次就诊材料",
+        "source_id": "first-materials",
+        "source": "knowledge/first-visit-materials.md",
+        "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+        "score": 0.0753,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "arrival-checkin:0",
+        "doc_id": "arrival-checkin",
+        "title": "到院报到流程",
+        "source_id": "visit-process",
+        "source": "knowledge/arrival-checkin.md",
+        "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+        "score": -0.0036,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "arrival-checkin",
+        "first-visit-materials",
+        "human-guidance"
+      ]
+    },
+    "elapsed_seconds": 0.03211039199959487
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": 0.1144,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": -0.0036,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "accessible-wayfinding:0",
+          "doc_id": "accessible-wayfinding",
+          "title": "无障碍文字指引说明",
+          "source_id": "hospital-wayfinding",
+          "source": "knowledge/accessible-wayfinding.md",
+          "content": "# 无障碍文字指引说明\n\n明和虚构医院收录有限起点和目的地组合的文字说明。查询时说明起点、目的地，以及普通或无障碍模式；精确步骤由文字指引工具从预置资料读取。\n\n已收录门诊大厅到收费处、药房、检验科、内科诊区、儿科诊区、眼科诊区，以及儿科诊区到检验科的指引。涉及跨楼层的无障碍路线使用无障碍电梯，同层路线使用无台阶通道。\n\n没有收录的地点组合应联系导诊台。系统不计算新路线，也不提供实时地图导航。",
+          "score": 0.1368,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "accessible-wayfinding",
+        "arrival-checkin",
+        "human-guidance"
+      ]
+    },
+    "elapsed_seconds": 1.3870822659991973,
+    "model_calls": 2
+  }
+}

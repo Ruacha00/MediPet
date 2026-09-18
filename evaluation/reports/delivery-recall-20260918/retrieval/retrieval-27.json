@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-27",
+  "query": "页面显示20元，为什么底层预约费用记录为2000？",
+  "required_doc_ids": [
+    "appointment-fees"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "appointment-fees:0",
+          "doc_id": "appointment-fees",
+          "title": "演示预约费用说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/appointment-fees.md",
+          "content": "# 演示预约费用说明\n\n明和虚构医院静态排班的演示费用为：内科1500分（15元），儿科2000分（20元），眼科2000分（20元）。费用以整数分保存，页面展示为元。\n\n具体预约的确认资料直接来自所选号源，确认前应核对其费用。MediPet 不接入收费、支付或退款系统；本说明仅解释演示资料，不证明已经发生真实付款。",
+          "score": 0.3519,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "payment-process:0",
+          "doc_id": "payment-process",
+          "title": "缴费流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/payment-process.md",
+          "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+          "score": 0.0584,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.0303,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "appointment-fees:0",
+          "doc_id": "appointment-fees",
+          "title": "演示预约费用说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/appointment-fees.md",
+          "content": "# 演示预约费用说明\n\n明和虚构医院静态排班的演示费用为：内科1500分（15元），儿科2000分（20元），眼科2000分（20元）。费用以整数分保存，页面展示为元。\n\n具体预约的确认资料直接来自所选号源，确认前应核对其费用。MediPet 不接入收费、支付或退款系统；本说明仅解释演示资料，不证明已经发生真实付款。",
+          "score": 0.272727,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.3519,
+          "lexical_score": 19.161341
+        },
+        {
+          "chunk_id": "appointment-howto:0",
+          "doc_id": "appointment-howto",
+          "title": "预约办理步骤",
+          "source_id": "appointment-process",
+          "source": "knowledge/appointment-howto.md",
+          "content": "# 预约办理步骤\n\n在明和虚构医院演示页面，先选择就诊人及事项，再查询科室、医生、日期和时段对应的号源。列表中的顺序仅对应当前这一次实际查询。\n\n选择号源后，系统展示待确认预约方案，包含就诊人、医院、科室、医生、日期、时段、费用和地点。核对后点击方案上的确认按钮，服务才创建预约并返回记录。\n\n聊天中说“确认预约”或仅生成方案都不代表已预约。默认方案有效期为15分钟；改选后旧方案不能继续执行。没有号源时应修改查询条件，不能根据历史文字声称仍有号。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 8.865837
+        },
+        {
+          "chunk_id": "payment-process:0",
+          "doc_id": "payment-process",
+          "title": "缴费流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/payment-process.md",
+          "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+          "score": 0.25,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.0584,
+          "lexical_score": 7.10602
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

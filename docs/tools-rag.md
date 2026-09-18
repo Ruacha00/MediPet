@@ -23,6 +23,8 @@
 
 `AgentTurn` 为本轮单独收集 `tools_used`、`tool_traces` 和 `artifacts`。trace 区分调用成功与业务成功，记录输入、延迟、错误及结果摘要；卡片由工具返回后按 [hospital/models.py](../hospital/models.py) 校验并复制。最终生成文字不能凭空补一张预约卡，另一并发患者的结果也不能复用本轮容器。
 
+明确同时查询号源和材料时，两角色的首次模型请求分别指定只读 `search_slots`、`get_visit_checklist`，随后恢复普通工具选择，仍共用三次请求上限。材料工具按本轮明确的儿童/首次就诊要求核对类型，覆盖模型不匹配的通用类型时另记 `effective_input`；不凭家属关系或患者ID推断年龄。工具失败保留失败轨迹，不从模型正文补造卡片。
+
 ## 业务、健康信息与 RAG 分别执行
 
 ```mermaid
@@ -51,9 +53,9 @@ flowchart LR
 [mcp/tool_manager.py](../mcp/tool_manager.py) 的 `search_with_rewrite` 依次执行：
 
 1. 保留原问题，模型最多补三个不同角度的查询。改写失败只用原问题，记录 `rewrite_error`。
-2. 用 `asyncio.gather` 并行调用 `knowledge_search`，每个查询至少召回五项或请求的 `top_k`。
+2. 用 `asyncio.gather` 并行调用 `knowledge_search`，每个查询至少召回五项或请求的 `top_k`。知识库在本次查询内融合向量与中文词法候选，再返回有限条数。
 3. 优先按稳定 `chunk_id` 去重，旧格式结果按内容去重；失败的召回不伪造文档，写入 `recall_errors`。部分成功时返回已有片段和 `partial`。
-4. 候选多于 `top_k` 时请模型输出完整、唯一、范围有效的排序索引。解析失败保留原顺序前 `top_k`，`reranked=false` 并记录 `rerank_error`；候选不足时无需重排。
+4. 候选多于 `top_k` 时请模型输出完整、唯一、范围有效的排序索引。标题和正文分别限长120/1200字符，避免文档ID和路径占满预算、正文未进入重排。解析失败保留原顺序前 `top_k`，`reranked=false` 并记录 `rerank_error`；候选不足时无需重排。
 
 成功执行但没有文档返回 `no_results`；所有召回都失败返回 `retrieval_failed`。自定义 fallback 的提示仍带 `success=false`，不能冒充检索成功。改写/重排错误属于各自请求结果，没有共享的“上次错误”状态。
 
@@ -65,7 +67,11 @@ flowchart LR
 
 当前为 **24 份文档**：原 17 份医院资料加 7 份医疗知识，覆盖普通感冒、眼部不适、儿童发热、腹部不适、两个药品标签和报告术语。医院资料标明演示来源；新增医学资料保留 NHS、DailyMed、MedlinePlus 的官方 URL，详见[来源清单](internal/updates/U001-health-consultation/evidence/medical-sources.md)。检索到一段资料不代表已验证患者诊断或合并用药安全；工具卡片来源与检索 trace 中的实际片段来源也需分别核对。
 
-`medipet_knowledge` 与情景、画像集合分开。HTTP 模式同样由 Chroma 客户端默认的 `all-MiniLM-L6-v2` 计算向量，再由存储端检索；不调用 Anthropic Embeddings API。这也不同于意图分类的字符哈希。返回结果保留片段 ID、标题、来源和距离转换分，分数不是答案正确率。
+`medipet_knowledge` 与情景、画像集合分开。HTTP 模式同样由 Chroma 客户端默认的 `all-MiniLM-L6-v2` 计算向量，再由存储端检索；不调用 Anthropic Embeddings API，也不同于意图分类的中文BGE向量分支。
+
+中文词法召回使用相邻双字和英文/数字词计算BM25，标题计两次；与向量候选按加权RRF融合（词法权重2、向量权重1，平滑常数10），不直接相加不同量纲的距离和词法分。每路最多取 `max(2 * top_k, 5)` 个候选且不超过集合数量，最终只返回 `top_k`。保留片段、文档和来源身份；混合分标记 `score_type=hybrid_rrf`，原始向量分与词法分另列，均不代表答案正确率。没有词法命中时沿用向量排序。
+
+当前小规模知识库每次读取Chroma中的文本快照计算词法分，因此新上传与内置更新可以直接参与检索，不另建持久索引或重写已有向量集合。代价是每个查询需要扫描文本；扩展至大语料前应替换为可增量维护的词法索引，不能把此实现描述成大规模搜索性能优化。
 
 Chroma 服务连接失败时，知识库允许使用本地持久模式，运行时应区分实际使用的存储。首次默认 embedding 可能下载模型。默认医院文档不能为空；测试空检索通过清空独立测试集合完成，不改变初始化契约。
 
@@ -73,4 +79,4 @@ Chroma 服务连接失败时，知识库允许使用本地持久模式，运行�
 
 [知识与 Skill 测试](../tests/test_knowledge_skills.py)覆盖改写、并行召回、稳定去重、无结果、超时、熔断、重排无效索引和并发错误隔离。U001 已将文档与 Skill 契约更新为 24/6，与健康信息检查合计 **97 项局部确定性测试通过**，不与旧 [K03 记录](internal/rebuild/specs/S05-knowledge/issues/K03.md)叠加。工具白名单、三次上限、身份覆盖拒绝和真实服务结果透传见 [Agent 测试](../tests/test_agent_orchestrator.py)，新增医疗接线见 [test_health_routing.py](../tests/test_health_routing.py)。
 
-旧基准的[真实存储验证](internal/rebuild/evidence/storage.md)另外验证 HTTP Chroma 查询来源、重复导入、缺失片段补齐和空集合语义；新增医疗场景的真实模型答复已验证，真实存储升级与范围限制已记录，见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。查询改写与重排增加了模型请求及失败点；目前没有受控前后对照，不能据此声称召回质量或速度已提升。
+旧基准的[真实存储验证](internal/rebuild/evidence/storage.md)另外验证 HTTP Chroma 查询来源、重复导入、缺失片段补齐和空集合语义；新增医疗场景的真实模型答复已验证，真实存储升级与范围限制已记录，见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。查询改写与重排增加了模型请求及失败点。2026-09-18的[同条件检索对照](../evaluation/reports/delivery-recall-20260918/notes.md)中，40条已知问题的完整链Recall@3从51.25%提升到97.5%；两组均保留真实降级与失败。该结果只说明本题集上的召回改善，不代表回答准确率或速度提升。

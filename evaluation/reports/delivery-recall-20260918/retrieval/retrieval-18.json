@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-18",
+  "query": "报告数值正常是否代表没有疾病，缺失的参考区间能补吗？",
+  "required_doc_ids": [
+    "health-report-terms"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-report-terms:0",
+          "doc_id": "health-report-terms",
+          "title": "报告术语与参考区间说明",
+          "source_id": "medlineplus-lab-results",
+          "source": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/",
+          "content": "# 报告术语与参考区间说明\n\n参考区间是实验室根据特定人群和方法建立的比较范围。不同年龄、实验室、检测方法和单位可能不同，应使用用户这份报告自身的区间；不能用网上数字填补缺失范围，或不经核实比较不同单位。\n\n数值超出区间并不自动等于患病，数值在区间内也不保证没有疾病。阳性/阴性/不确定是检查结果描述，其个人意义仍需医生结合病史、症状和其他检查判断；不能凭单份报告确诊或开药。\n\nMediPet 的预处理只整理报告原文、项目、数值、单位及提供的参考区间，解释这些有限术语。上传PDF或图片后应核对提取文字，模糊数字、缺失单位和范围均保留待确认；不补造检查结果，不评论其他医师的诊疗方案。\n\n核对日期2026-09-16；来源为美国国家医学图书馆 MedlinePlus，提供一般信息，不替代专业医疗服务。",
+          "score": 0.253247,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1156,
+          "lexical_score": 18.985517
+        },
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "score": 0.206478,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0015,
+          "lexical_score": 12.269017
+        },
+        {
+          "chunk_id": "health-abdominal-symptoms:0",
+          "doc_id": "health-abdominal-symptoms",
+          "title": "常见症状问答：腹痛与腹胀",
+          "source_id": "nhs-stomach-ache",
+          "source": "https://www.nhs.uk/symptoms/stomach-ache/",
+          "content": "# 常见症状问答：腹痛与腹胀\n\n腹痛一定是胃病吗？不是。腹痛、腹胀可能有不同原因，NHS 建议不自行诊断；反复或加重、持续不缓解，或孕期出现腹痛时应由医生评估。\n\n哪些情况不能等普通挂号？突然或剧烈腹痛、触碰腹部明显疼痛、呕血、黑色黏便、不能呼吸或倒下等应立即获取紧急医疗帮助。本项目仅做有限就医信息提示，不能排除未收录的急症。\n\n如何准备咨询？说明疼痛位置、开始时间、程度、是否反复，以及发热、呕吐、排便变化等已有表现；不由助手决定检查、病因或处方。\n\n核对日期2026-09-16；资料不替代医生诊断。英国 NHS 的家庭医生/急诊建议在本项目只转述为及时寻求当地医疗评估，不作为虚构医院的实际服务承诺。",
+          "chunk": 0,
+          "score": 0.142857,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 6.295312
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-report-terms:0",
+          "doc_id": "health-report-terms",
+          "title": "报告术语与参考区间说明",
+          "source_id": "medlineplus-lab-results",
+          "source": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/",
+          "content": "# 报告术语与参考区间说明\n\n参考区间是实验室根据特定人群和方法建立的比较范围。不同年龄、实验室、检测方法和单位可能不同，应使用用户这份报告自身的区间；不能用网上数字填补缺失范围，或不经核实比较不同单位。\n\n数值超出区间并不自动等于患病，数值在区间内也不保证没有疾病。阳性/阴性/不确定是检查结果描述，其个人意义仍需医生结合病史、症状和其他检查判断；不能凭单份报告确诊或开药。\n\nMediPet 的预处理只整理报告原文、项目、数值、单位及提供的参考区间，解释这些有限术语。上传PDF或图片后应核对提取文字，模糊数字、缺失单位和范围均保留待确认；不补造检查结果，不评论其他医师的诊疗方案。\n\n核对日期2026-09-16；来源为美国国家医学图书馆 MedlinePlus，提供一般信息，不替代专业医疗服务。",
+          "score": 0.1156,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.2567,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-ophthalmology:0",
+          "doc_id": "department-ophthalmology",
+          "title": "眼科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-ophthalmology.md",
+          "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+          "score": 0.2351,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

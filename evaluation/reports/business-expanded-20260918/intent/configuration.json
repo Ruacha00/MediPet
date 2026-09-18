@@ -1,0 +1,33 @@
+{
+  "started_at": "2026-09-18T07:49:13.169074+00:00",
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "use": "previously used set; current-version regression only",
+  "fresh_recognizer": true,
+  "learn_calls": 0,
+  "input_sha256": "fabf0c3012bc24a0189861ad4bb34cc50c2d197a6ae955db1802d4d9f6192e9e",
+  "script_sha256": "60734724b422b359a22b49a2b8a1f19000a9c3514600e235a85b6601e1ab717f",
+  "sources": {
+    "core/intent_recognizer.py": "d3399bd0f07328627e34f66ea7037d7e0b07dd96e3416114e4a2163e3398519e",
+    "core/intent_embeddings.py": "0f9b656672e3611246987cfc08bee5e719ceb517f80daf0a7357b806c3ed79fb",
+    "evaluation/evaluator.py": "6b1202c1588d8d2992d84b9fe5e5a2fd0275e29356537e8e21ad6adff4bcddab"
+  },
+  "finished_at": "2026-09-18T07:51:25.455018+00:00",
+  "model_calls": 176,
+  "embedding": {
+    "configured_backend": "semantic",
+    "active_backend": "semantic",
+    "model": "BAAI/bge-small-zh-v1.5",
+    "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+    "dimension": 512,
+    "status": "semantic_ready",
+    "generation": 1,
+    "fallback_reason": null,
+    "failure_count": 0,
+    "inference_in_flight": false,
+    "sample_counts": {
+      "semantic": 176
+    }
+  },
+  "template_revision": 0
+}

@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-21",
+  "query": "腹痛咨询前要记录哪些症状，哪些变化应及时求助？",
+  "required_doc_ids": [
+    "health-abdominal-symptoms"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.2861,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.2376,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": -0.0177,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-abdominal-symptoms:0",
+          "doc_id": "health-abdominal-symptoms",
+          "title": "常见症状问答：腹痛与腹胀",
+          "source_id": "nhs-stomach-ache",
+          "source": "https://www.nhs.uk/symptoms/stomach-ache/",
+          "content": "# 常见症状问答：腹痛与腹胀\n\n腹痛一定是胃病吗？不是。腹痛、腹胀可能有不同原因，NHS 建议不自行诊断；反复或加重、持续不缓解，或孕期出现腹痛时应由医生评估。\n\n哪些情况不能等普通挂号？突然或剧烈腹痛、触碰腹部明显疼痛、呕血、黑色黏便、不能呼吸或倒下等应立即获取紧急医疗帮助。本项目仅做有限就医信息提示，不能排除未收录的急症。\n\n如何准备咨询？说明疼痛位置、开始时间、程度、是否反复，以及发热、呕吐、排便变化等已有表现；不由助手决定检查、病因或处方。\n\n核对日期2026-09-16；资料不替代医生诊断。英国 NHS 的家庭医生/急诊建议在本项目只转述为及时寻求当地医疗评估，不作为虚构医院的实际服务承诺。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 14.710974
+        },
+        {
+          "chunk_id": "health-child-fever:0",
+          "doc_id": "health-child-fever",
+          "title": "常见症状问答：儿童发热与就医信号",
+          "source_id": "nhs-child-fever",
+          "source": "https://www.nhs.uk/symptoms/fever-in-children/",
+          "content": "# 常见症状问答：儿童发热与就医信号\n\n体温能直接判断病因吗？不能。NHS 将儿童38℃及以上描述为发热；年龄、精神状态、呼吸、饮水和其他表现同样重要，不能由一个数字推断疾病。\n\n何时需及时联系医生？不足3个月有38℃及以上体温或疑似发热，3至6个月有39℃及以上体温或疑似发热，应及时联系医生；持续发热、脱水或明显状态改变也需评估。首次抽搐、难以唤醒或呼吸困难应立即获取急救帮助。\n\n可以按成人片剂算儿童剂量吗？不可以。本项目不计算儿童剂量，也不建议自行交替使用退热药；由医师或药师核对具体年龄、体重、健康状况和儿童产品标签。\n\n核对日期2026-09-16。英国服务电话号码不直接作为中国用户的联系路径；在中国大陆紧急情况拨打120。项目对高烧超过39.5℃的中断是约定的演示规则，不是所有年龄的统一医学阈值，低于阈值也不能排除急症。",
+          "chunk": 0,
+          "score": 0.153846,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 6.235711
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.244755,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.0443,
+          "lexical_score": 7.005765
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

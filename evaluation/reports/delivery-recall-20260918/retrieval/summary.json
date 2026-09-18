@@ -1,0 +1,24 @@
+{
+  "current": {
+    "total": 40,
+    "observed": 40,
+    "recall_at_3": 0.5125,
+    "hit_at_3": 0.55,
+    "all_required_at_3": 0.475,
+    "failures": [],
+    "degraded": [
+      "aq01-hospital"
+    ]
+  },
+  "improved": {
+    "total": 40,
+    "observed": 40,
+    "recall_at_3": 0.975,
+    "hit_at_3": 1.0,
+    "all_required_at_3": 0.95,
+    "failures": [],
+    "degraded": [
+      "retrieval-17"
+    ]
+  }
+}

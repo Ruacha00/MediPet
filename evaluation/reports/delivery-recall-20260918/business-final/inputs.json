@@ -1,0 +1,2580 @@
+{
+  "business": [
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-01",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-17儿科可预约的号源。",
+          "选列表第一项，请生成待确认预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-17"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-01",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "查看当前就诊人的有效预约。",
+          "请为第一条预约生成取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-17"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-01",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请查2026-09-17儿科的可选号源，同时列出儿童首次就诊材料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-17"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-18",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-01",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-17儿科可预约的号源。",
+          "日期改成2026-09-18，科室不变。",
+          "只看下午的。"
+        ],
+        "assertions": [
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-18",
+          "query.period=afternoon"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-02",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去内科就诊，看看2026-09-17有哪些号可以选。",
+          "把第二个号整理成预约方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-17"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-02",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出我已经约好的门诊记录。",
+          "列表第一项不去了，先展示取消确认信息。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-17"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-02",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-17去内科，想知道还有哪些号，以及成人第一次到院要带哪些资料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-17"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-02",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去内科就诊，看看2026-09-17有哪些号可以选。",
+          "日期改成2026-09-18，科室不变。",
+          "只看下午的。"
+        ],
+        "assertions": [
+          "query.department_id=dep_internal",
+          "query.date=2026-09-18",
+          "query.period=afternoon"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-17",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-03",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-17的眼科门诊号。",
+          "我选第一条，先展示预约确认资料。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-17"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-03",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查询尚未取消的预约。",
+          "准备取消第一个预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-17"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-03",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查眼科2026-09-17剩余的号，再给一份成人初次就诊准备清单。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-17"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-03",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-17的眼科门诊号。",
+          "日期改成2026-09-18，科室不变。",
+          "只看下午的。"
+        ],
+        "assertions": [
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-18",
+          "query.period=afternoon"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-18",
+        "patient_id": "patient_child",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-04",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-18准备去儿科，还有哪些预约时段？",
+          "就用第二个可选号，帮我准备预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-18"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-18",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-04",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "展示这个患者的预约记录。",
+          "第一条需要退掉，请生成待确认取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-18"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-18",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-04",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要2026-09-18儿科的号源列表，也要了解儿童首次就诊需带的证件。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-18"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-19",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-04",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-18准备去儿科，还有哪些预约时段？",
+          "日期改成2026-09-19，科室不变。",
+          "只看下午的。"
+        ],
+        "assertions": [
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-19",
+          "query.period=afternoon"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-18",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-05",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询内科2026-09-18的剩余号源。",
+          "请为列表中的第一个号生成确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-18"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-05",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我之前的挂号记录有哪些仍有效？",
+          "请把首条预约做成取消确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-18"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-05",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "能一起查2026-09-18内科可选时段和成人首次就诊材料吗？"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-18"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-05",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询内科2026-09-18的剩余号源。",
+          "日期改成2026-09-19，科室不变。",
+          "只看下午的。"
+        ],
+        "assertions": [
+          "query.department_id=dep_internal",
+          "query.date=2026-09-19",
+          "query.period=afternoon"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-18",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-06",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-18眼科可预约的号源。",
+          "选列表第二项，请生成待确认预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-18"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-06",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "查看当前就诊人的有效预约。",
+          "请为第一条预约生成取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-18"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-06",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "成人2026-09-18要看眼科，请查号并说明第一次到院需要的资料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-18"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-18",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-06",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-18眼科可预约的号源。",
+          "选列表第二项，请生成待确认预约。"
+        ],
+        "assertions": [
+          "proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-18"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-19",
+        "patient_id": "patient_child",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-07",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "想去儿科就诊，看看2026-09-19有哪些号可以选。",
+          "把第一个号整理成预约方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-19"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-19",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-07",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出我已经约好的门诊记录。",
+          "列表第一项不去了，先展示取消确认信息。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-19"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-19",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-07",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "麻烦列出2026-09-19儿科能约的号，并展示儿童初诊材料清单。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-19",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-07",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "想去儿科就诊，看看2026-09-19有哪些号可以选。",
+          "把第一个号整理成预约方案。"
+        ],
+        "assertions": [
+          "proposal.target_id=last_slot_list.slots[0].slot_id",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-19",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-08",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-19的内科门诊号。",
+          "我选第二条，先展示预约确认资料。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-19"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-08",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查询尚未取消的预约。",
+          "准备取消第一个预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-19"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-08",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-19内科还有号吗？另外，成人首次来院需要准备哪些材料？"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-08",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-19的内科门诊号。",
+          "我选第二条，先展示预约确认资料。"
+        ],
+        "assertions": [
+          "proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-19",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-09",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-19准备去眼科，还有哪些预约时段？",
+          "就用第一个可选号，帮我准备预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-19"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-09",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "展示这个患者的预约记录。",
+          "第一条需要退掉，请生成待确认取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-19"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-09",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "查一下眼科2026-09-19的号源，顺便把成人第一次来就诊的材料列出来。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-19",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-09",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-19准备去眼科，还有哪些预约时段？",
+          "就用第一个可选号，帮我准备预约。"
+        ],
+        "assertions": [
+          "proposal.target_id=last_slot_list.slots[0].slot_id",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-19"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-20",
+        "patient_id": "patient_child",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-10",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询儿科2026-09-20的剩余号源。",
+          "请为列表中的第二个号生成确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-20"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-20",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-10",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "我之前的挂号记录有哪些仍有效？",
+          "请把首条预约做成取消确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-20"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-20",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-10",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请把2026-09-20儿科的剩余号源和儿童首次就诊准备事项一起给我。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-20"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-20",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-10",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询儿科2026-09-20的剩余号源。",
+          "请为列表中的第二个号生成确认单。"
+        ],
+        "assertions": [
+          "proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-20"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-20",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-11",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-20内科可预约的号源。",
+          "选列表第一项，请生成待确认预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-20"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-11",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "查看当前就诊人的有效预约。",
+          "请为第一条预约生成取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-20"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-11",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "成人计划2026-09-20去内科初诊，能选哪些号，要带什么资料？"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-20"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-11",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-20内科可预约的号源。",
+          "请给刚才列表第一个号准备预约方案。"
+        ],
+        "assertions": [
+          "complete_history.count.unchanged=true",
+          "proposal.target_id=saved_slot_list.slots[0].slot_id",
+          "appointments.count=0"
+        ],
+        "between_turns": {
+          "1": [
+            {
+              "action": "expire_working_memory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-20",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-12",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去眼科就诊，看看2026-09-20有哪些号可以选。",
+          "把第二个号整理成预约方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-20"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-12",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出我已经约好的门诊记录。",
+          "列表第一项不去了，先展示取消确认信息。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-20"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-12",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "给我2026-09-20眼科门诊号列表，同时说明成人首次就诊所需材料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-20"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-20",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-12",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去眼科就诊，看看2026-09-20有哪些号可以选。",
+          "请给刚才列表第二个号准备预约方案。"
+        ],
+        "assertions": [
+          "complete_history.count.unchanged=true",
+          "proposal.target_id=saved_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ],
+        "between_turns": {
+          "1": [
+            {
+              "action": "expire_working_memory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-21",
+        "patient_id": "patient_child",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-13",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-21的儿科门诊号。",
+          "我选第一条，先展示预约确认资料。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-21"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-21",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-13",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查询尚未取消的预约。",
+          "准备取消第一个预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-21"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-21",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-13",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "我想了解儿科2026-09-21哪些时段有号，也想要儿童首次就诊的准备清单。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-21"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-21",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-13",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-21的儿科门诊号。",
+          "请给刚才列表第一个号准备预约方案。"
+        ],
+        "assertions": [
+          "complete_history.count.unchanged=true",
+          "proposal.target_id=saved_slot_list.slots[0].slot_id",
+          "appointments.count=0"
+        ],
+        "between_turns": {
+          "1": [
+            {
+              "action": "expire_working_memory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-21",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-14",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-21准备去内科，还有哪些预约时段？",
+          "就用第二个可选号，帮我准备预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-21"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-14",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "展示这个患者的预约记录。",
+          "第一条需要退掉，请生成待确认取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-21"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-14",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-21到内科，请同时查询号源与成人第一次就诊的材料要求。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-21"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-14",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-21准备去内科，还有哪些预约时段？",
+          "请给刚才列表第二个号准备预约方案。"
+        ],
+        "assertions": [
+          "complete_history.count.unchanged=true",
+          "proposal.target_id=saved_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ],
+        "between_turns": {
+          "1": [
+            {
+              "action": "expire_working_memory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-21",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-15",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询眼科2026-09-21的剩余号源。",
+          "请为列表中的第一个号生成确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-21"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-15",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我之前的挂号记录有哪些仍有效？",
+          "请把首条预约做成取消确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-21"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-15",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "先列2026-09-21眼科可预约号，再列成人首次就诊证件资料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-21"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-21",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-15",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询眼科2026-09-21的剩余号源。",
+          "请给刚才列表第一个号准备预约方案。"
+        ],
+        "assertions": [
+          "complete_history.count.unchanged=true",
+          "proposal.target_id=saved_slot_list.slots[0].slot_id",
+          "appointments.count=0"
+        ],
+        "between_turns": {
+          "1": [
+            {
+              "action": "expire_working_memory"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-22",
+        "patient_id": "patient_child",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-16",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-22儿科可预约的号源。",
+          "选列表第二项，请生成待确认预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-22"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-22",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-16",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "查看当前就诊人的有效预约。",
+          "请为第一条预约生成取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-22"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-22",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-16",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "儿童2026-09-22第一次去儿科，请查可选门诊号，并列明要带的东西。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-22"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-22",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-16",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出2026-09-22儿科可预约的号源。并把第一个号做成待确认方案。",
+          "改选第二个号，重新出确认方案。"
+        ],
+        "assertions": [
+          "old_proposal.status=superseded",
+          "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-22",
+        "patient_id": "patient_self",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-17",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去内科就诊，看看2026-09-22有哪些号可以选。",
+          "把第一个号整理成预约方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-22"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-17",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请列出我已经约好的门诊记录。",
+          "列表第一项不去了，先展示取消确认信息。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-22"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-17",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "请查2026-09-22内科剩余号源；也请说明成人初诊要携带的材料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-22"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-17",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "想去内科就诊，看看2026-09-22有哪些号可以选。并把第一个号做成待确认方案。",
+          "改选第二个号，重新出确认方案。"
+        ],
+        "assertions": [
+          "old_proposal.status=superseded",
+          "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-22",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-18",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-22的眼科门诊号。",
+          "我选第二条，先展示预约确认资料。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-22"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-18",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查询尚未取消的预约。",
+          "准备取消第一个预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "眼科",
+            "date": "2026-09-22"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-18",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "眼科2026-09-22还能预约哪些号？成人第一次就诊的准备清单也请给我。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_ophthalmology",
+          "query.date=2026-09-22"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_ophthalmology",
+        "date": "2026-09-22",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-18",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "帮我查2026-09-22的眼科门诊号。并把第一个号做成待确认方案。",
+          "改选第二个号，重新出确认方案。"
+        ],
+        "assertions": [
+          "old_proposal.status=superseded",
+          "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child",
+        "selection_index": 0
+      },
+      "case": {
+        "id": "expanded-create-19",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-17准备去儿科，还有哪些预约时段？",
+          "就用第一个可选号，帮我准备预约。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-17"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-cancel-19",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "展示这个患者的预约记录。",
+          "第一条需要退掉，请生成待确认取消方案。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "儿科",
+            "date": "2026-09-17"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-compound-19",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "麻烦一并查询2026-09-17儿科号源和儿童首次就诊所需证件材料。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_pediatrics",
+          "query.date=2026-09-17"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_pediatrics",
+        "date": "2026-09-17",
+        "patient_id": "patient_child"
+      },
+      "case": {
+        "id": "expanded-context-19",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_child",
+        "user_id": "anonymous",
+        "turns": [
+          "2026-09-17准备去儿科，还有哪些预约时段？并把第一个号做成待确认方案。",
+          "改选第二个号，重新出确认方案。"
+        ],
+        "assertions": [
+          "old_proposal.status=superseded",
+          "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ]
+      }
+    },
+    {
+      "family": "create",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self",
+        "selection_index": 1
+      },
+      "case": {
+        "id": "expanded-create-20",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询内科2026-09-17的剩余号源。",
+          "请为列表中的第二个号生成确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointments.count=0",
+          "after_confirmation.appointments.count=1",
+          "after_confirmation.slot_delta=-1",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-17"
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "cancel",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-cancel-20",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我之前的挂号记录有哪些仍有效？",
+          "请把首条预约做成取消确认单。"
+        ],
+        "assertions": [
+          "before_confirmation.appointment.status=active",
+          "after_confirmation.appointment.status=cancelled",
+          "after_confirmation.slot_delta=1"
+        ],
+        "setup": [
+          {
+            "action": "create_existing_appointment",
+            "department": "内科",
+            "date": "2026-09-17"
+          }
+        ],
+        "after_turns": [
+          {
+            "action": "confirm_current"
+          }
+        ]
+      }
+    },
+    {
+      "family": "compound",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-compound-20",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "需要2026-09-17内科可选门诊时段，以及成人初次就诊材料，两项都请帮忙查。"
+        ],
+        "assertions": [
+          "has_artifacts=slot_list,visit_checklist",
+          "appointments.count=0",
+          "query.department_id=dep_internal",
+          "query.date=2026-09-17"
+        ]
+      }
+    },
+    {
+      "family": "context",
+      "expected": {
+        "department_id": "dep_internal",
+        "date": "2026-09-17",
+        "patient_id": "patient_self"
+      },
+      "case": {
+        "id": "expanded-context-20",
+        "clock": "2026-09-16T10:00:00+08:00",
+        "patient_id": "patient_self",
+        "user_id": "anonymous",
+        "turns": [
+          "我需要查询内科2026-09-17的剩余号源。并把第一个号做成待确认方案。",
+          "改选第二个号，重新出确认方案。"
+        ],
+        "assertions": [
+          "old_proposal.status=superseded",
+          "current_proposal.target_id=last_slot_list.slots[1].slot_id",
+          "appointments.count=0"
+        ]
+      }
+    }
+  ],
+  "retrieval": [
+    {
+      "id": "retrieval-01",
+      "query": "第一次来门诊，身份证明、预约凭证和旧病历应该怎么准备？",
+      "required_doc_ids": [
+        "first-visit-materials"
+      ]
+    },
+    {
+      "id": "retrieval-02",
+      "query": "带孩子就诊，监护人和孩子分别要带什么证件？",
+      "required_doc_ids": [
+        "child-visit-materials"
+      ]
+    },
+    {
+      "id": "retrieval-03",
+      "query": "已经约好门诊，出发之前一般要整理哪些资料？",
+      "required_doc_ids": [
+        "general-preparation"
+      ]
+    },
+    {
+      "id": "retrieval-04",
+      "query": "我到医院之后应该先找哪里核对科室和预约时间？",
+      "required_doc_ids": [
+        "arrival-checkin"
+      ]
+    },
+    {
+      "id": "retrieval-05",
+      "query": "在聊天里说确认算挂号成功吗，实际还要点哪个按钮？",
+      "required_doc_ids": [
+        "appointment-howto"
+      ]
+    },
+    {
+      "id": "retrieval-06",
+      "query": "取消预约时需要先选记录吗，取消后号源会释放吗？",
+      "required_doc_ids": [
+        "appointment-cancellation"
+      ]
+    },
+    {
+      "id": "retrieval-07",
+      "query": "儿科和内科的演示挂号费分别是多少？",
+      "required_doc_ids": [
+        "appointment-fees"
+      ]
+    },
+    {
+      "id": "retrieval-08",
+      "query": "有人推轮椅，院内无障碍路线支持哪些地点和设施？",
+      "required_doc_ids": [
+        "accessible-wayfinding"
+      ]
+    },
+    {
+      "id": "retrieval-09",
+      "query": "需要人工帮我核对材料，导诊台几点有人，在哪儿？",
+      "required_doc_ids": [
+        "human-guidance"
+      ]
+    },
+    {
+      "id": "retrieval-10",
+      "query": "我想了解门诊的营业时间和地址。",
+      "required_doc_ids": [
+        "hospital-overview"
+      ]
+    },
+    {
+      "id": "retrieval-11",
+      "query": "内科诊区在哪层，负责普通门诊的医生是谁？",
+      "required_doc_ids": [
+        "department-internal"
+      ]
+    },
+    {
+      "id": "retrieval-12",
+      "query": "儿童看病的诊区在哪层，医生叫什么名字？",
+      "required_doc_ids": [
+        "department-pediatrics"
+      ]
+    },
+    {
+      "id": "retrieval-13",
+      "query": "眼科的诊区楼层、医生和报到准备是什么？",
+      "required_doc_ids": [
+        "department-ophthalmology"
+      ]
+    },
+    {
+      "id": "retrieval-14",
+      "query": "拿到院方有效取药凭证之后，去哪里核对信息领药？",
+      "required_doc_ids": [
+        "medicine-pickup"
+      ]
+    },
+    {
+      "id": "retrieval-15",
+      "query": "去做检验的办理地点在哪里，能否从这里确定空腹要求？",
+      "required_doc_ids": [
+        "lab-process"
+      ]
+    },
+    {
+      "id": "retrieval-16",
+      "query": "收费处在哪里，这个系统能替我支付费用吗？",
+      "required_doc_ids": [
+        "payment-process"
+      ]
+    },
+    {
+      "id": "retrieval-17",
+      "query": "把就诊事项归档后，聊天和预约会一起被删除吗？",
+      "required_doc_ids": [
+        "patients-and-visits"
+      ]
+    },
+    {
+      "id": "retrieval-18",
+      "query": "报告数值正常是否代表没有疾病，缺失的参考区间能补吗？",
+      "required_doc_ids": [
+        "health-report-terms"
+      ]
+    },
+    {
+      "id": "retrieval-19",
+      "query": "普通病毒性感冒一定需要抗生素吗？",
+      "required_doc_ids": [
+        "health-common-cold"
+      ]
+    },
+    {
+      "id": "retrieval-20",
+      "query": "小婴儿发热为什么需要结合年龄判断就医紧迫性？",
+      "required_doc_ids": [
+        "health-child-fever"
+      ]
+    },
+    {
+      "id": "retrieval-21",
+      "query": "腹痛咨询前要记录哪些症状，哪些变化应及时求助？",
+      "required_doc_ids": [
+        "health-abdominal-symptoms"
+      ]
+    },
+    {
+      "id": "retrieval-22",
+      "query": "红眼会不会有感染或过敏之外的原因，日常如何减少传播？",
+      "required_doc_ids": [
+        "health-red-eye"
+      ]
+    },
+    {
+      "id": "retrieval-23",
+      "query": "布洛芬200毫克普通片资料为什么不能套到儿童混悬液？",
+      "required_doc_ids": [
+        "health-ibuprofen-label"
+      ]
+    },
+    {
+      "id": "retrieval-24",
+      "query": "对乙酰氨基酚为什么不能和同成分药重复使用？",
+      "required_doc_ids": [
+        "health-acetaminophen-label"
+      ]
+    },
+    {
+      "id": "retrieval-25",
+      "query": "预约方案多久失效，改选以后原来的方案还能点吗？",
+      "required_doc_ids": [
+        "appointment-howto"
+      ]
+    },
+    {
+      "id": "retrieval-26",
+      "query": "同一个取消方案连续确认两次，会多释放一个号吗？",
+      "required_doc_ids": [
+        "appointment-cancellation"
+      ]
+    },
+    {
+      "id": "retrieval-27",
+      "query": "页面显示20元，为什么底层预约费用记录为2000？",
+      "required_doc_ids": [
+        "appointment-fees"
+      ]
+    },
+    {
+      "id": "retrieval-28",
+      "query": "我替家属看病，为什么需要切换到对方的事项？",
+      "required_doc_ids": [
+        "patients-and-visits"
+      ]
+    },
+    {
+      "id": "retrieval-29",
+      "query": "没有收录的院内路线能不能自动规划出来？",
+      "required_doc_ids": [
+        "accessible-wayfinding"
+      ]
+    },
+    {
+      "id": "retrieval-30",
+      "query": "提供导诊电话号码后，是否代表已经替我接通工作人员？",
+      "required_doc_ids": [
+        "human-guidance"
+      ]
+    },
+    {
+      "id": "retrieval-31",
+      "query": "检查报告的单位不同，是否可以直接拿数字比较？",
+      "required_doc_ids": [
+        "health-report-terms"
+      ]
+    },
+    {
+      "id": "retrieval-32",
+      "query": "已有布洛芬标签资料能否判断所有未知合用药都安全？",
+      "required_doc_ids": [
+        "health-ibuprofen-label"
+      ]
+    },
+    {
+      "id": "retrieval-33",
+      "query": "为孩子准备证件后，到院应该怎样报到？",
+      "required_doc_ids": [
+        "child-visit-materials",
+        "arrival-checkin"
+      ]
+    },
+    {
+      "id": "retrieval-34",
+      "query": "想先了解预约如何确认，以及之后怎么取消。",
+      "required_doc_ids": [
+        "appointment-howto",
+        "appointment-cancellation"
+      ]
+    },
+    {
+      "id": "retrieval-35",
+      "query": "门诊几点开放，找人工导诊的联系方式是什么？",
+      "required_doc_ids": [
+        "hospital-overview",
+        "human-guidance"
+      ]
+    },
+    {
+      "id": "retrieval-36",
+      "query": "眼科的医生是谁，儿科的医生又是谁？",
+      "required_doc_ids": [
+        "department-ophthalmology",
+        "department-pediatrics"
+      ]
+    },
+    {
+      "id": "retrieval-37",
+      "query": "先讲儿童就诊需要的证件，再讲一般门诊准备资料。",
+      "required_doc_ids": [
+        "child-visit-materials",
+        "general-preparation"
+      ]
+    },
+    {
+      "id": "retrieval-38",
+      "query": "取药和缴费分别去什么位置办理？",
+      "required_doc_ids": [
+        "medicine-pickup",
+        "payment-process"
+      ]
+    },
+    {
+      "id": "retrieval-39",
+      "query": "解释怎么预约门诊，以及各科的预约费用。",
+      "required_doc_ids": [
+        "appointment-howto",
+        "appointment-fees"
+      ]
+    },
+    {
+      "id": "retrieval-40",
+      "query": "说一下检验办理流程，并解释报告参考区间的含义。",
+      "required_doc_ids": [
+        "lab-process",
+        "health-report-terms"
+      ]
+    }
+  ],
+  "clock": "2026-09-16T10:00:00+08:00"
+}

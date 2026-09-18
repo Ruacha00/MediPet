@@ -26,6 +26,8 @@
 
 API 的 `_load_visit` 与 `VisitStore.require_identity` 固定 `user_id / patient_id / conv_id`。已预分类请求和直接编排请求最终使用同一套实体与路由机制。低置信度 `OTHER` 的一般模糊消息通过 `_needs_clarification` 返回澄清，不直接调用业务工具。
 
+当前消息明确同时要求号源与就诊材料时，`agents/task_requirements.py` 检查两项只读需求，不因主意图为低置信度OTHER而丢弃整个请求；缺少查询字段仍由对应角色澄清。显式不要/不用的分句不用于这项复合交付判定，预约准备和取消资料也不等同于就诊材料。
+
 急症信号先经过 [core/emergency.py](../core/emergency.py) 的 `detect_emergency`。API、直接编排和独立分诊入口均复用它；有限胸痛、呼吸困难、意识异常表达及超过 39.5℃ 的演示条件优先提示立即就医，中国大陆拨打 120。一般咨询、否定、过去经历或引用不能仅因模型给出 `EMERGENCY` 标签而进入此分支；规则不代表完整医学判断。
 
 ## 医疗扩展的三个意图
@@ -47,6 +49,7 @@ U001 在既有医院和预约类别上新增三项，继续使用原三路投票
 - 意图映射到 General 加 0.55，映射到专属领域加 0.75。
 - Guidance、Appointment、Triage、Medication 每命中一个领域关键词加 0.18，最多加 0.45；General 每个加 0.12，最多加 0.35。
 - 地点或无障碍实体为 Guidance 加 0.2；号源、预约或选择序号为 Appointment 加 0.15，日期或时段再加 0.1；科室或医生为 General 加 0.1。
+- 明确“号源＋材料”的复合需求为 Appointment、Guidance 各加0.75，并注册两项协作目标，防止通用标签盖过已明确的业务需求。
 
 `_route_decision` 取最高分可用领域为主角色，先采用 `_collaboration_targets` 检出的预约、指引、分诊或药品复合需求作为辅助角色。没有显式协作目标时，才考虑分数至少 0.45 且达到主角色分数 55% 的其他专属领域。人工联系和急症优先进入 Escalation。
 

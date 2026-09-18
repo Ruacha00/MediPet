@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-20",
+  "query": "小婴儿发热为什么需要结合年龄判断就医紧迫性？",
+  "required_doc_ids": [
+    "health-child-fever"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-child-fever:0",
+          "doc_id": "health-child-fever",
+          "title": "常见症状问答：儿童发热与就医信号",
+          "source_id": "nhs-child-fever",
+          "source": "https://www.nhs.uk/symptoms/fever-in-children/",
+          "content": "# 常见症状问答：儿童发热与就医信号\n\n体温能直接判断病因吗？不能。NHS 将儿童38℃及以上描述为发热；年龄、精神状态、呼吸、饮水和其他表现同样重要，不能由一个数字推断疾病。\n\n何时需及时联系医生？不足3个月有38℃及以上体温或疑似发热，3至6个月有39℃及以上体温或疑似发热，应及时联系医生；持续发热、脱水或明显状态改变也需评估。首次抽搐、难以唤醒或呼吸困难应立即获取急救帮助。\n\n可以按成人片剂算儿童剂量吗？不可以。本项目不计算儿童剂量，也不建议自行交替使用退热药；由医师或药师核对具体年龄、体重、健康状况和儿童产品标签。\n\n核对日期2026-09-16。英国服务电话号码不直接作为中国用户的联系路径；在中国大陆紧急情况拨打120。项目对高烧超过39.5℃的中断是约定的演示规则，不是所有年龄的统一医学阈值，低于阈值也不能排除急症。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 10.146335
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.233766,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1628,
+          "lexical_score": 3.490886
+        },
+        {
+          "chunk_id": "health-common-cold:0",
+          "doc_id": "health-common-cold",
+          "title": "常见病问答：普通感冒的一般知识",
+          "source_id": "nhs-common-cold",
+          "source": "https://www.nhs.uk/conditions/common-cold/",
+          "content": "# 常见病问答：普通感冒的一般知识\n\n普通感冒是什么？NHS 介绍，普通感冒由病毒引起，常见表现包括鼻塞、流鼻涕、咽痛和咳嗽，通常在一至两周内逐渐改善。这些症状也可能出现在其他情况，不能据此认定用户已经患感冒。\n\n一定需要抗生素吗？抗生素针对细菌，不能治疗普通病毒性感冒；是否存在其他疾病及是否需要用药应由医生判断，不建议自行选择抗生素。\n\n何时咨询医生？症状加重、持续不改善、发热超过三天，或有基础病、免疫功能受影响时，应咨询医生。胸痛、呼吸困难等不应只作为普通感冒等待处理。\n\n本资料为一般科普，核对日期2026-09-16。来源是英国 NHS；演示医院的科室映射属于本项目本地规则，不是 NHS 指定分科，也不替代医生诊断。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 7.053251
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1213,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.0101,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.0706,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

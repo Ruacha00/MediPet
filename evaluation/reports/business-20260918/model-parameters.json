@@ -1,0 +1,181 @@
+{
+  "configuration": {
+    "source": "local .env allowlist; process settings confirmed separately by coordinator",
+    "values": {
+      "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
+      "ANTHROPIC_MODEL": "deepseek-flash",
+      "MEDIPET_SKILLS_MAX_PROMPT_CHARS": "5000",
+      "MEDIPET_COMPOSER_MAX_TOKENS": "1000",
+      "MEDIPET_COMPOSER_TEMPERATURE": "0.1",
+      "MEDIPET_THINKING": "disabled"
+    }
+  },
+  "source_parameter_expressions": [
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 490,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.3",
+        "max_tokens": "900"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 515,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.1",
+        "max_tokens": "1200"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 547,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.0",
+        "max_tokens": "1100"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 575,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.0",
+        "max_tokens": "1200"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 597,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.0",
+        "max_tokens": "1400"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 621,
+      "call": "AgentProfile",
+      "parameters": {
+        "temperature": "0.0",
+        "max_tokens": "500"
+      },
+      "expanded_kwargs": []
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 320,
+      "call": "self._client.messages.create",
+      "parameters": {},
+      "expanded_kwargs": [
+        "request_kwargs"
+      ]
+    },
+    {
+      "file": "agents/agent_orchestrator.py",
+      "line": 705,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "_env_int('MEDIPET_COMPOSER_MAX_TOKENS', 1000)",
+        "temperature": "_env_float('MEDIPET_COMPOSER_TEMPERATURE', 0.1)"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "core/intent_recognizer.py",
+      "line": 367,
+      "call": "self.client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.1"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "memory/conversation_memory.py",
+      "line": 210,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "512",
+        "temperature": "0.0"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "memory/conversation_memory.py",
+      "line": 323,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.0"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "memory/conversation_memory.py",
+      "line": 512,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.0"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "mcp/tool_manager.py",
+      "line": 302,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.3"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "mcp/tool_manager.py",
+      "line": 403,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.0"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    },
+    {
+      "file": "evaluation/evaluator.py",
+      "line": 163,
+      "call": "self._client.messages.create",
+      "parameters": {
+        "max_tokens": "256",
+        "temperature": "0.0"
+      },
+      "expanded_kwargs": [
+        "llm_request_options()"
+      ]
+    }
+  ],
+  "note": "Role defaults feed request_kwargs; returned report independently records model and Judge parameters."
+}

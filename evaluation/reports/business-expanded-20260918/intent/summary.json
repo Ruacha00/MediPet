@@ -1,0 +1,140 @@
+{
+  "total": 186,
+  "observed": 186,
+  "correct": 185,
+  "accuracy": 0.9946236559139785,
+  "macro_f1": 0.9946605644546148,
+  "per_class": {
+    "appointment_cancel": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "appointment_create": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "appointment_status": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "department_info": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "doctor_info": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "emergency": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "feedback": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "greeting": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "hospital_info": {
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316
+    },
+    "human_handoff": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "medication_query": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "other": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "report_query": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "slot_query": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "symptom_query": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "visit_preparation": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "visit_process": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "wayfinding": {
+      "precision": 0.9166666666666666,
+      "recall": 1.0,
+      "f1": 0.9565217391304348
+    }
+  },
+  "failures": [
+    {
+      "id": "holdout:hospital_info:geographical_landmark:2",
+      "message": "家属在找明和所在地，请发医院的地理位置描述。",
+      "expected": "hospital_info",
+      "patient_id": null,
+      "expected_agent": null,
+      "context": {
+        "history": []
+      },
+      "predicted": "wayfinding",
+      "confidence": 0.63,
+      "reasoning": "用户询问医院地理位置描述，属于到院路线与位置指引。",
+      "intent_embedding": {
+        "configured_backend": "semantic",
+        "active_backend": "semantic",
+        "model": "BAAI/bge-small-zh-v1.5",
+        "space_id": "semantic:d001ef9a85563852270fc1bfc59cb6e2ba3b6d9ed8b61a07be66f658f72efde3",
+        "dimension": 512,
+        "status": "semantic_ready",
+        "generation": 1,
+        "fallback_reason": null,
+        "failure_count": 0,
+        "inference_in_flight": false,
+        "truncated": false,
+        "elapsed_ms": 4.928013000608189,
+        "template_revision": 0,
+        "template_fingerprint": "2840bfc23940cad6971979e3fba6e794b19af4c5bfaadb2dd9e627c67cdfa8d2",
+        "calibration_version": "bcb17c932aba20be74f26f37bebbad6f145107bd2745b68605943170fa0b7eed",
+        "calibration_status": "calibrated",
+        "template_changed_since_calibration": false,
+        "requires_context": false,
+        "top1": 0.6702183717192771,
+        "runner_up": 0.6463247519134496,
+        "margin": 0.023893619805827493,
+        "accepted": false,
+        "cache_hit": false
+      }
+    }
+  ],
+  "call_failures": 0
+}

@@ -1,0 +1,117 @@
+{
+  "id": "aq17-visits",
+  "query": "一个事项可以换成另一位患者吗？归档会删除消息和预约吗，归档后还能直接确认吗？",
+  "required_doc_ids": [
+    "patients-and-visits"
+  ],
+  "group": "answer",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "patients-and-visits:0",
+          "doc_id": "patients-and-visits",
+          "title": "患者与事项使用说明",
+          "source_id": "visit-process",
+          "source": "knowledge/patients-and-visits.md",
+          "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+          "score": 0.1415,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1842,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": 0.1714,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "patients-and-visits:0",
+          "doc_id": "patients-and-visits",
+          "title": "患者与事项使用说明",
+          "source_id": "visit-process",
+          "source": "knowledge/patients-and-visits.md",
+          "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+          "score": 0.240642,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0004,
+          "lexical_score": 34.112749
+        },
+        {
+          "chunk_id": "appointment-howto:0",
+          "doc_id": "appointment-howto",
+          "title": "预约办理步骤",
+          "source_id": "appointment-process",
+          "source": "knowledge/appointment-howto.md",
+          "content": "# 预约办理步骤\n\n在明和虚构医院演示页面，先选择就诊人及事项，再查询科室、医生、日期和时段对应的号源。列表中的顺序仅对应当前这一次实际查询。\n\n选择号源后，系统展示待确认预约方案，包含就诊人、医院、科室、医生、日期、时段、费用和地点。核对后点击方案上的确认按钮，服务才创建预约并返回记录。\n\n聊天中说“确认预约”或仅生成方案都不代表已预约。默认方案有效期为15分钟；改选后旧方案不能继续执行。没有号源时应修改查询条件，不能根据历史文字声称仍有号。",
+          "chunk": 0,
+          "score": 0.153846,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 3.282932
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.196172,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1842,
+          "lexical_score": 4.058377
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

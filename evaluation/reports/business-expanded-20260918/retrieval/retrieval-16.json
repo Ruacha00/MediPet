@@ -1,0 +1,114 @@
+{
+  "id": "retrieval-16",
+  "query": "收费处在哪里，这个系统能替我支付费用吗？",
+  "required_doc_ids": [
+    "payment-process"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "first-visit-materials:0",
+        "doc_id": "first-visit-materials",
+        "title": "首次就诊材料",
+        "source_id": "first-materials",
+        "source": "knowledge/first-visit-materials.md",
+        "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+        "score": 0.0654,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "arrival-checkin:0",
+        "doc_id": "arrival-checkin",
+        "title": "到院报到流程",
+        "source_id": "visit-process",
+        "source": "knowledge/arrival-checkin.md",
+        "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+        "score": -0.0099,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "department-pediatrics:0",
+        "doc_id": "department-pediatrics",
+        "title": "儿科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-pediatrics.md",
+        "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+        "score": -0.0454,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "arrival-checkin",
+        "department-pediatrics",
+        "first-visit-materials"
+      ]
+    },
+    "elapsed_seconds": 0.02107065100062755
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "payment-process:0",
+          "doc_id": "payment-process",
+          "title": "缴费流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/payment-process.md",
+          "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+          "score": -0.0576,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": -0.0099,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": -0.1056,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 1.0,
+      "hit_at_3": 1,
+      "all_required_at_3": 1,
+      "doc_ids": [
+        "arrival-checkin",
+        "human-guidance",
+        "payment-process"
+      ]
+    },
+    "elapsed_seconds": 1.3627017610015173,
+    "model_calls": 2
+  }
+}

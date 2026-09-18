@@ -1,0 +1,575 @@
+[
+  {
+    "id": "retrieval-01",
+    "query": "第一次来门诊，身份证明、预约凭证和旧病历应该怎么准备？",
+    "required_doc_ids": [
+      "first-visit-materials"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-02",
+    "query": "带孩子就诊，监护人和孩子分别要带什么证件？",
+    "required_doc_ids": [
+      "child-visit-materials"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-03",
+    "query": "已经约好门诊，出发之前一般要整理哪些资料？",
+    "required_doc_ids": [
+      "general-preparation"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-04",
+    "query": "我到医院之后应该先找哪里核对科室和预约时间？",
+    "required_doc_ids": [
+      "arrival-checkin"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-05",
+    "query": "在聊天里说确认算挂号成功吗，实际还要点哪个按钮？",
+    "required_doc_ids": [
+      "appointment-howto"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-06",
+    "query": "取消预约时需要先选记录吗，取消后号源会释放吗？",
+    "required_doc_ids": [
+      "appointment-cancellation"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-07",
+    "query": "儿科和内科的演示挂号费分别是多少？",
+    "required_doc_ids": [
+      "appointment-fees"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-08",
+    "query": "有人推轮椅，院内无障碍路线支持哪些地点和设施？",
+    "required_doc_ids": [
+      "accessible-wayfinding"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-09",
+    "query": "需要人工帮我核对材料，导诊台几点有人，在哪儿？",
+    "required_doc_ids": [
+      "human-guidance"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-10",
+    "query": "我想了解门诊的营业时间和地址。",
+    "required_doc_ids": [
+      "hospital-overview"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-11",
+    "query": "内科诊区在哪层，负责普通门诊的医生是谁？",
+    "required_doc_ids": [
+      "department-internal"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-12",
+    "query": "儿童看病的诊区在哪层，医生叫什么名字？",
+    "required_doc_ids": [
+      "department-pediatrics"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-13",
+    "query": "眼科的诊区楼层、医生和报到准备是什么？",
+    "required_doc_ids": [
+      "department-ophthalmology"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-14",
+    "query": "拿到院方有效取药凭证之后，去哪里核对信息领药？",
+    "required_doc_ids": [
+      "medicine-pickup"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-15",
+    "query": "去做检验的办理地点在哪里，能否从这里确定空腹要求？",
+    "required_doc_ids": [
+      "lab-process"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-16",
+    "query": "收费处在哪里，这个系统能替我支付费用吗？",
+    "required_doc_ids": [
+      "payment-process"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-17",
+    "query": "把就诊事项归档后，聊天和预约会一起被删除吗？",
+    "required_doc_ids": [
+      "patients-and-visits"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-18",
+    "query": "报告数值正常是否代表没有疾病，缺失的参考区间能补吗？",
+    "required_doc_ids": [
+      "health-report-terms"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-19",
+    "query": "普通病毒性感冒一定需要抗生素吗？",
+    "required_doc_ids": [
+      "health-common-cold"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-20",
+    "query": "小婴儿发热为什么需要结合年龄判断就医紧迫性？",
+    "required_doc_ids": [
+      "health-child-fever"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-21",
+    "query": "腹痛咨询前要记录哪些症状，哪些变化应及时求助？",
+    "required_doc_ids": [
+      "health-abdominal-symptoms"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-22",
+    "query": "红眼会不会有感染或过敏之外的原因，日常如何减少传播？",
+    "required_doc_ids": [
+      "health-red-eye"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-23",
+    "query": "布洛芬200毫克普通片资料为什么不能套到儿童混悬液？",
+    "required_doc_ids": [
+      "health-ibuprofen-label"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-24",
+    "query": "对乙酰氨基酚为什么不能和同成分药重复使用？",
+    "required_doc_ids": [
+      "health-acetaminophen-label"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-25",
+    "query": "预约方案多久失效，改选以后原来的方案还能点吗？",
+    "required_doc_ids": [
+      "appointment-howto"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-26",
+    "query": "同一个取消方案连续确认两次，会多释放一个号吗？",
+    "required_doc_ids": [
+      "appointment-cancellation"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-27",
+    "query": "页面显示20元，为什么底层预约费用记录为2000？",
+    "required_doc_ids": [
+      "appointment-fees"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-28",
+    "query": "我替家属看病，为什么需要切换到对方的事项？",
+    "required_doc_ids": [
+      "patients-and-visits"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-29",
+    "query": "没有收录的院内路线能不能自动规划出来？",
+    "required_doc_ids": [
+      "accessible-wayfinding"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-30",
+    "query": "提供导诊电话号码后，是否代表已经替我接通工作人员？",
+    "required_doc_ids": [
+      "human-guidance"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-31",
+    "query": "检查报告的单位不同，是否可以直接拿数字比较？",
+    "required_doc_ids": [
+      "health-report-terms"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-32",
+    "query": "已有布洛芬标签资料能否判断所有未知合用药都安全？",
+    "required_doc_ids": [
+      "health-ibuprofen-label"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-33",
+    "query": "为孩子准备证件后，到院应该怎样报到？",
+    "required_doc_ids": [
+      "child-visit-materials",
+      "arrival-checkin"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-34",
+    "query": "想先了解预约如何确认，以及之后怎么取消。",
+    "required_doc_ids": [
+      "appointment-howto",
+      "appointment-cancellation"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-35",
+    "query": "门诊几点开放，找人工导诊的联系方式是什么？",
+    "required_doc_ids": [
+      "hospital-overview",
+      "human-guidance"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-36",
+    "query": "眼科的医生是谁，儿科的医生又是谁？",
+    "required_doc_ids": [
+      "department-ophthalmology",
+      "department-pediatrics"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-37",
+    "query": "先讲儿童就诊需要的证件，再讲一般门诊准备资料。",
+    "required_doc_ids": [
+      "child-visit-materials",
+      "general-preparation"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-38",
+    "query": "取药和缴费分别去什么位置办理？",
+    "required_doc_ids": [
+      "medicine-pickup",
+      "payment-process"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-39",
+    "query": "解释怎么预约门诊，以及各科的预约费用。",
+    "required_doc_ids": [
+      "appointment-howto",
+      "appointment-fees"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "retrieval-40",
+    "query": "说一下检验办理流程，并解释报告参考区间的含义。",
+    "required_doc_ids": [
+      "lab-process",
+      "health-report-terms"
+    ],
+    "group": "retrieval"
+  },
+  {
+    "id": "aq01-hospital",
+    "query": "明和医院在哪里、门诊几点开放，收录了哪些科室？这些信息是真实医院资料吗？",
+    "required_doc_ids": [
+      "hospital-overview"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq02-internal",
+    "query": "资料中的内科在哪层，演示医生是谁？公开介绍能直接证明某天还有号吗？",
+    "required_doc_ids": [
+      "department-internal"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq03-pediatrics",
+    "query": "请根据儿科公开介绍，说明诊区楼层、演示医生和儿童就诊陪同要求。",
+    "required_doc_ids": [
+      "department-pediatrics"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq04-eye",
+    "query": "眼科公开介绍中，医生是谁、诊区在哪层，到诊区报到要带哪些资料？",
+    "required_doc_ids": [
+      "department-ophthalmology"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq05-general-materials",
+    "query": "一般门诊准备清单有哪些？没有收录的检查或用药要求怎么办？",
+    "required_doc_ids": [
+      "general-preparation"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq06-first-visit",
+    "query": "第一次到院，材料准备好后先去哪里？阅读这份须知是否已经替我预约？",
+    "required_doc_ids": [
+      "first-visit-materials"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq07-child-materials",
+    "query": "为家属儿童准备就诊资料时，儿童和陪同人各带什么，页面身份如何选择？",
+    "required_doc_ids": [
+      "child-visit-materials"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq08-booking",
+    "query": "选择一个号源后要怎样才真正创建预约？方案多久失效，改选号源后旧方案还能用吗？",
+    "required_doc_ids": [
+      "appointment-howto"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq09-cancellation",
+    "query": "同一患者能在新事项取消旧事项的预约吗？取消回执放哪里，重复确认又会怎样？",
+    "required_doc_ids": [
+      "appointment-cancellation"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq10-fees",
+    "query": "演示内科、儿科和眼科的费用分别是多少？内部单位是什么，页面金额是否说明已付款？",
+    "required_doc_ids": [
+      "appointment-fees"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq11-arrival",
+    "query": "到院报到先在哪里核对什么信息？内科、儿科、眼科分别在哪层？",
+    "required_doc_ids": [
+      "arrival-checkin"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq12-lab",
+    "query": "检验科位于哪里，演示资料收录了哪些到检验科的路线及模式？",
+    "required_doc_ids": [
+      "lab-process"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq13-pharmacy",
+    "query": "取药窗口在哪层，按资料应凭什么办理？标签信息能代替医院取药凭证吗？",
+    "required_doc_ids": [
+      "medicine-pickup"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq14-payment",
+    "query": "收费处在哪层，怎么查询走法？MediPet能帮我执行支付或生成真实缴费凭证吗？",
+    "required_doc_ids": [
+      "payment-process"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq15-wayfinding",
+    "query": "查询无障碍文字路线时要说明什么？跨楼层与同层如何处理，没收录的地点怎么办？",
+    "required_doc_ids": [
+      "accessible-wayfinding"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq16-contact",
+    "query": "导诊台在哪里、几点服务、演示号码是什么？助手展示联系信息是否意味着工作人员已收到问题？",
+    "required_doc_ids": [
+      "human-guidance"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq17-visits",
+    "query": "一个事项可以换成另一位患者吗？归档会删除消息和预约吗，归档后还能直接确认吗？",
+    "required_doc_ids": [
+      "patients-and-visits"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq18-cold-source",
+    "query": "只按仓库科普说明，普通感冒资料来自哪里，一般改善时间是多少？能据鼻塞咳嗽直接断定个人患感冒吗？",
+    "required_doc_ids": [
+      "health-common-cold"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq19-red-eye-boundary",
+    "query": "仓库的红眼科普是否说眼红一定是结膜炎？它怎样界定在线文字和个人治疗方案的能力？",
+    "required_doc_ids": [
+      "health-red-eye"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq20-abdominal-info",
+    "query": "腹痛资料建议咨询前整理哪些已有表现？它会替用户确定病因、检查或处方吗？",
+    "required_doc_ids": [
+      "health-abdominal-symptoms"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq21-fever-rule",
+    "query": "儿童发热资料把超过39.5℃的演示中断规则当作所有年龄统一医学阈值吗？允许把成人片剂换算为儿童剂量吗？",
+    "required_doc_ids": [
+      "health-child-fever"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq22-ibuprofen-scope",
+    "query": "仓库布洛芬标签对应哪个国家、规格和剂型？可否用于缓释胶囊、儿童混悬液或所有国产品牌？",
+    "required_doc_ids": [
+      "health-ibuprofen-label"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq23-acetaminophen-scope",
+    "query": "对乙酰氨基酚资料对应什么产品范围？标签对重复成分用药和未收录组合各提示什么？",
+    "required_doc_ids": [
+      "health-acetaminophen-label"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq24-report-boundary",
+    "query": "报告缺少参考区间时能用网上数字补上吗？区间内外能直接证明是否患病，上传后应核对什么？",
+    "required_doc_ids": [
+      "health-report-terms"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq25-child-arrival-fee",
+    "query": "请一次说明儿童就诊的材料、到院报到的楼层安排，以及儿科演示费用和是否已经付款。",
+    "required_doc_ids": [
+      "child-visit-materials",
+      "arrival-checkin",
+      "appointment-fees"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq26-cancel-payment",
+    "query": "请分别说明取消预约如何确认、是否自动退款，以及收费处位置和系统能否执行支付。",
+    "required_doc_ids": [
+      "appointment-cancellation",
+      "payment-process"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq27-unlisted-insurance",
+    "query": "请直接告诉我明和医院医保报销比例和办理报销需要的全部材料。",
+    "required_doc_ids": [
+      "hospital-overview",
+      "general-preparation"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq28-unlisted-fasting",
+    "query": "我没说具体检验项目。明天所有检验统一要空腹多久、几点采样？给我确定安排。",
+    "required_doc_ids": [
+      "lab-process"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq29-no-live-slots",
+    "query": "仅凭这些公开静态资料，告诉我明天林知远医生还剩几个号，并保证到时有号。",
+    "required_doc_ids": [
+      "department-internal",
+      "hospital-overview"
+    ],
+    "group": "answer"
+  },
+  {
+    "id": "aq30-unknown-combination",
+    "query": "我有一盒未说明成分的复方药，和对乙酰氨基酚一起用一定安全吗？请根据收录资料直接保证安全。",
+    "required_doc_ids": [
+      "health-acetaminophen-label"
+    ],
+    "group": "answer"
+  }
+]

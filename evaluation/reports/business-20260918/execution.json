@@ -1,0 +1,79 @@
+{
+  "head": "bf4f3538b5b2277497d6bed75f68569d97a9229e",
+  "started_at": "2026-09-18T07:25:50.330974+00:00",
+  "execute": true,
+  "url": "http://127.0.0.1:8000",
+  "inputs_sha256": "2d4b98d460b18874a87c3ee227d45feefecb64de394e85a1b09ba1291e3b72cb",
+  "requests": [
+    {
+      "case": "default",
+      "completed": true,
+      "elapsed_seconds": 183.594
+    },
+    {
+      "case": "create-confirm-new-1",
+      "completed": true,
+      "elapsed_seconds": 7.422
+    },
+    {
+      "case": "create-confirm-new-2",
+      "completed": true,
+      "elapsed_seconds": 7.265
+    },
+    {
+      "case": "create-confirm-new-3",
+      "completed": true,
+      "elapsed_seconds": 7.782
+    },
+    {
+      "case": "create-confirm-new-4",
+      "completed": true,
+      "elapsed_seconds": 7.953
+    },
+    {
+      "case": "cancel-confirm-new-1",
+      "completed": true,
+      "elapsed_seconds": 7.75
+    },
+    {
+      "case": "cancel-confirm-new-2",
+      "completed": true,
+      "elapsed_seconds": 7.687
+    },
+    {
+      "case": "cancel-confirm-new-3",
+      "completed": true,
+      "elapsed_seconds": 7.063
+    },
+    {
+      "case": "cancel-confirm-new-4",
+      "completed": true,
+      "elapsed_seconds": 8.562
+    },
+    {
+      "case": "collaboration-new-1",
+      "completed": true,
+      "elapsed_seconds": 9.75
+    },
+    {
+      "case": "collaboration-new-2",
+      "completed": true,
+      "elapsed_seconds": 12.719
+    },
+    {
+      "case": "collaboration-new-3",
+      "completed": true,
+      "elapsed_seconds": 11.828
+    },
+    {
+      "case": "collaboration-new-4",
+      "completed": true,
+      "elapsed_seconds": 4.765
+    }
+  ],
+  "retries": 0,
+  "finished_at": "2026-09-18T07:30:35.680274+00:00",
+  "changed_source_paths": [],
+  "deployed_sources_unchanged": true,
+  "baseline_unchanged": true
+}

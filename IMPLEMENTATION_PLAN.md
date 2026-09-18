@@ -2,6 +2,8 @@
 
 日期：2026-09-16
 
+2026-09-18当前专项：[复合交付、知识召回与回答效果改进](docs/internal/metrics/20260918-delivery-recall-plan.md)。用户已授权实施，沿用主辅并行、三轮工具循环和Chroma/RAG主链；新增只读交付约束、中文词法融合召回及回答专项评测。此前各更新及候选基线状态独立保留，结果见[专项记录](evaluation/reports/delivery-recall-20260918/notes.md)。
+
 最新实施：[U003 前端可用性与展示精简](docs/internal/updates/U003-frontend-usability/intent.md)。2026-09-17用户要求先做计划，并确认就诊操作优先、管理与调试放到次级入口；[计划](docs/internal/updates/U003-frontend-usability/plan.md)已形成，用户已要求实施，当前在codex/u003-frontend-usability完成开发与验收。下方U002状态继续独立保留。
 
 当前更新入口：[U002 中文语义意图向量接入](docs/internal/updates/U002-semantic-intent/intent.md)。2026-09-17 用户已授权并行实施；当前分支 `codex/u002-semantic-intent`，按4份 spec、10个原子 issue执行。接续先读其[执行检查点](docs/internal/updates/U002-semantic-intent/EXECUTION.md)。U002 保留三路融合与正常权重，以中文语义模型为主、字符哈希明确降级，并单独修正 LLM 失败接受条件；它覆盖下文 §4.1/§12 的对应旧限制。

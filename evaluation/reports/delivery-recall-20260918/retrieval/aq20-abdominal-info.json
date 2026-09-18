@@ -1,0 +1,117 @@
+{
+  "id": "aq20-abdominal-info",
+  "query": "腹痛资料建议咨询前整理哪些已有表现？它会替用户确定病因、检查或处方吗？",
+  "required_doc_ids": [
+    "health-abdominal-symptoms"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-abdominal-symptoms:0",
+          "doc_id": "health-abdominal-symptoms",
+          "title": "常见症状问答：腹痛与腹胀",
+          "source_id": "nhs-stomach-ache",
+          "source": "https://www.nhs.uk/symptoms/stomach-ache/",
+          "content": "# 常见症状问答：腹痛与腹胀\n\n腹痛一定是胃病吗？不是。腹痛、腹胀可能有不同原因，NHS 建议不自行诊断；反复或加重、持续不缓解，或孕期出现腹痛时应由医生评估。\n\n哪些情况不能等普通挂号？突然或剧烈腹痛、触碰腹部明显疼痛、呕血、黑色黏便、不能呼吸或倒下等应立即获取紧急医疗帮助。本项目仅做有限就医信息提示，不能排除未收录的急症。\n\n如何准备咨询？说明疼痛位置、开始时间、程度、是否反复，以及发热、呕吐、排便变化等已有表现；不由助手决定检查、病因或处方。\n\n核对日期2026-09-16；资料不替代医生诊断。英国 NHS 的家庭医生/急诊建议在本项目只转述为及时寻求当地医疗评估，不作为虚构医院的实际服务承诺。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 24.393655
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.24359,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1077,
+          "lexical_score": 7.375582
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.25,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.268,
+          "lexical_score": 9.091553
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.227,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.1077,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "patients-and-visits:0",
+          "doc_id": "patients-and-visits",
+          "title": "患者与事项使用说明",
+          "source_id": "visit-process",
+          "source": "knowledge/patients-and-visits.md",
+          "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+          "score": 0.031,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

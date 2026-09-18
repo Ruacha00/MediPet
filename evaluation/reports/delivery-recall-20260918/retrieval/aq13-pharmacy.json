@@ -1,0 +1,117 @@
+{
+  "id": "aq13-pharmacy",
+  "query": "取药窗口在哪层，按资料应凭什么办理？标签信息能代替医院取药凭证吗？",
+  "required_doc_ids": [
+    "medicine-pickup"
+  ],
+  "group": "answer",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "arrival-checkin:0",
+          "doc_id": "arrival-checkin",
+          "title": "到院报到流程",
+          "source_id": "visit-process",
+          "source": "knowledge/arrival-checkin.md",
+          "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+          "score": 0.072,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.1038,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.1173,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "medicine-pickup:0",
+          "doc_id": "medicine-pickup",
+          "title": "取药流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/medicine-pickup.md",
+          "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+          "score": 0.237374,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0242,
+          "lexical_score": 20.962667
+        },
+        {
+          "chunk_id": "health-acetaminophen-label:0",
+          "doc_id": "health-acetaminophen-label",
+          "title": "对乙酰氨基酚500 mg普通片标签资料边界",
+          "source_id": "dailymed-acetaminophen-500",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=983debdf-4a61-4dde-ba34-567fdd17720e&type=display",
+          "content": "# 对乙酰氨基酚500 mg普通片标签资料边界\n\n本目录对应 DailyMed 收录的美国普通口服片标签，NDC 68788-4132，2026年6月版本；不是全部品牌、复方感冒药或儿童液体的说明书。用途、禁忌、说明书用法用量及相互作用细项由药品资料工具按该具体标签返回，不能替代手中产品的说明书。\n\n重要标签警示包括：不要与其他含对乙酰氨基酚的药品重复使用；成分过敏者不使用；肝病和使用华法林者先咨询专业人员。过量可能造成严重肝损伤，需要及时医疗处理。\n\n说明书的年龄分组和剂量数字不构成给个人的处方。儿童、孕哺期、肝肾异常或其他复杂情况由医师/药师评估，不从此文档换算个人剂量。查询未知组合时只说明资料未收录，不能据此推断可同服。\n\n核对日期2026-09-16；不评论其他医院或医师的诊疗方案。",
+          "chunk": 0,
+          "score": 0.166667,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 6.56942
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.21978,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1038,
+          "lexical_score": 4.070647
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "accessible-wayfinding": {
+    "doc_id": "accessible-wayfinding",
+    "title": "无障碍文字指引说明",
+    "source": "knowledge/accessible-wayfinding.md",
+    "source_id": "hospital-wayfinding",
+    "content": "# 无障碍文字指引说明\n\n明和虚构医院收录有限起点和目的地组合的文字说明。查询时说明起点、目的地，以及普通或无障碍模式；精确步骤由文字指引工具从预置资料读取。\n\n已收录门诊大厅到收费处、药房、检验科、内科诊区、儿科诊区、眼科诊区，以及儿科诊区到检验科的指引。涉及跨楼层的无障碍路线使用无障碍电梯，同层路线使用无台阶通道。\n\n没有收录的地点组合应联系导诊台。系统不计算新路线，也不提供实时地图导航。",
+    "sha256": "ed5e55645ccd8b458950e180522ce3e320fb848257973eac36531d0a1501efa7"
+  },
+  "appointment-cancellation": {
+    "doc_id": "appointment-cancellation",
+    "title": "取消预约步骤",
+    "source": "knowledge/appointment-cancellation.md",
+    "source_id": "appointment-process",
+    "content": "# 取消预约步骤\n\n先查询当前患者的预约记录，再选择要取消的预约，查看待确认取消方案。只有点击该方案的确认按钮后，预约状态才改为已取消，并释放相应演示号源。\n\n同一患者可以在新的事项中取消此前事项创建的预约，预约仍保留原来的创建事项，取消回执保存到本次操作事项。本人不能取消家属以外身份的记录，切换患者应进入该患者的事项。\n\n重复确认同一个已执行方案返回原回执，不重复创建或取消。过期或被改选的方案需要重新准备。本演示不执行支付或退款。",
+    "sha256": "9ce75fb78e0d2cf64aa45cc6cfeb1743de2fd9584647de8dcf64711a3c105aff"
+  },
+  "appointment-fees": {
+    "doc_id": "appointment-fees",
+    "title": "演示预约费用说明",
+    "source": "knowledge/appointment-fees.md",
+    "source_id": "hospital-public",
+    "content": "# 演示预约费用说明\n\n明和虚构医院静态排班的演示费用为：内科1500分（15元），儿科2000分（20元），眼科2000分（20元）。费用以整数分保存，页面展示为元。\n\n具体预约的确认资料直接来自所选号源，确认前应核对其费用。MediPet 不接入收费、支付或退款系统；本说明仅解释演示资料，不证明已经发生真实付款。",
+    "sha256": "78732dae17be3e2c522225cbdac04467f61b6758d1832b07f272eafd939d7b9b"
+  },
+  "appointment-howto": {
+    "doc_id": "appointment-howto",
+    "title": "预约办理步骤",
+    "source": "knowledge/appointment-howto.md",
+    "source_id": "appointment-process",
+    "content": "# 预约办理步骤\n\n在明和虚构医院演示页面，先选择就诊人及事项，再查询科室、医生、日期和时段对应的号源。列表中的顺序仅对应当前这一次实际查询。\n\n选择号源后，系统展示待确认预约方案，包含就诊人、医院、科室、医生、日期、时段、费用和地点。核对后点击方案上的确认按钮，服务才创建预约并返回记录。\n\n聊天中说“确认预约”或仅生成方案都不代表已预约。默认方案有效期为15分钟；改选后旧方案不能继续执行。没有号源时应修改查询条件，不能根据历史文字声称仍有号。",
+    "sha256": "df37211ae233a4a518afa3084299c0592879b596ade8d7d598d2ba9c50dba5c5"
+  },
+  "arrival-checkin": {
+    "doc_id": "arrival-checkin",
+    "title": "到院报到流程",
+    "source": "knowledge/arrival-checkin.md",
+    "source_id": "visit-process",
+    "content": "# 到院报到流程\n\n到达明和虚构医院后，在门诊楼一层门诊大厅的导诊台了解报到位置，核对预约的就诊人、科室、日期和时段。\n\n内科、儿科诊区在二层，眼科诊区在三层。根据预约信息前往对应诊区报到；需要具体走法时提供起点、目的地以及是否需要无障碍指引，由文字指引查询返回已收录步骤。\n\n本项目展示演示流程，不向真实医院发送报到信息。",
+    "sha256": "3604b1f1cbba0c9182aa1d7174082529d73e1bf6fd0fbee40827aac73089b5c5"
+  },
+  "child-visit-materials": {
+    "doc_id": "child-visit-materials",
+    "title": "儿童就诊材料",
+    "source": "knowledge/child-visit-materials.md",
+    "source_id": "child-materials",
+    "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+    "sha256": "252525e836276e04c23e950876704947c68396e4b6dc1808a88daffc0a2f6f8f"
+  },
+  "department-internal": {
+    "doc_id": "department-internal",
+    "title": "内科公开说明",
+    "source": "knowledge/department-internal.md",
+    "source_id": "hospital-public",
+    "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+    "sha256": "d3f1b0ac58b2d503b7c0531ee4673a72c652217de9f4782ddddfbfcf5fb410e4"
+  },
+  "department-ophthalmology": {
+    "doc_id": "department-ophthalmology",
+    "title": "眼科公开说明",
+    "source": "knowledge/department-ophthalmology.md",
+    "source_id": "hospital-public",
+    "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+    "sha256": "b5d8184996ae23e4c597e66adbf2d0022cf5e6c40a1bba73f37ea3f88106b484"
+  },
+  "department-pediatrics": {
+    "doc_id": "department-pediatrics",
+    "title": "儿科公开说明",
+    "source": "knowledge/department-pediatrics.md",
+    "source_id": "hospital-public",
+    "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+    "sha256": "0edbee50ac4a52ad87fb923d6796e6ca7fcdd7cc78d73e051736b99c8ee10708"
+  },
+  "first-visit-materials": {
+    "doc_id": "first-visit-materials",
+    "title": "首次就诊材料",
+    "source": "knowledge/first-visit-materials.md",
+    "source_id": "first-materials",
+    "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+    "sha256": "6b9d7631c603d3a69f5a3590ea1a3c03146f30c90c1cc215ee73089d46bdccad"
+  },
+  "general-preparation": {
+    "doc_id": "general-preparation",
+    "title": "门诊就诊材料",
+    "source": "knowledge/general-preparation.md",
+    "source_id": "visit-materials",
+    "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+    "sha256": "aa4db0c40cf9a13a46392dca5aca26ff4bdba77c5c1e2b957588f5d4d3e34e92"
+  },
+  "health-abdominal-symptoms": {
+    "doc_id": "health-abdominal-symptoms",
+    "title": "常见症状问答：腹痛与腹胀",
+    "source": "https://www.nhs.uk/symptoms/stomach-ache/",
+    "source_id": "nhs-stomach-ache",
+    "content": "# 常见症状问答：腹痛与腹胀\n\n腹痛一定是胃病吗？不是。腹痛、腹胀可能有不同原因，NHS 建议不自行诊断；反复或加重、持续不缓解，或孕期出现腹痛时应由医生评估。\n\n哪些情况不能等普通挂号？突然或剧烈腹痛、触碰腹部明显疼痛、呕血、黑色黏便、不能呼吸或倒下等应立即获取紧急医疗帮助。本项目仅做有限就医信息提示，不能排除未收录的急症。\n\n如何准备咨询？说明疼痛位置、开始时间、程度、是否反复，以及发热、呕吐、排便变化等已有表现；不由助手决定检查、病因或处方。\n\n核对日期2026-09-16；资料不替代医生诊断。英国 NHS 的家庭医生/急诊建议在本项目只转述为及时寻求当地医疗评估，不作为虚构医院的实际服务承诺。",
+    "sha256": "a9e3c86f5cf4bcdbc6940114d2f349868ffbca069827b811fe9f0470f5656a1b"
+  },
+  "health-acetaminophen-label": {
+    "doc_id": "health-acetaminophen-label",
+    "title": "对乙酰氨基酚500 mg普通片标签资料边界",
+    "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=983debdf-4a61-4dde-ba34-567fdd17720e&type=display",
+    "source_id": "dailymed-acetaminophen-500",
+    "content": "# 对乙酰氨基酚500 mg普通片标签资料边界\n\n本目录对应 DailyMed 收录的美国普通口服片标签，NDC 68788-4132，2026年6月版本；不是全部品牌、复方感冒药或儿童液体的说明书。用途、禁忌、说明书用法用量及相互作用细项由药品资料工具按该具体标签返回，不能替代手中产品的说明书。\n\n重要标签警示包括：不要与其他含对乙酰氨基酚的药品重复使用；成分过敏者不使用；肝病和使用华法林者先咨询专业人员。过量可能造成严重肝损伤，需要及时医疗处理。\n\n说明书的年龄分组和剂量数字不构成给个人的处方。儿童、孕哺期、肝肾异常或其他复杂情况由医师/药师评估，不从此文档换算个人剂量。查询未知组合时只说明资料未收录，不能据此推断可同服。\n\n核对日期2026-09-16；不评论其他医院或医师的诊疗方案。",
+    "sha256": "ec0ff1959de9473ca385c281611717e17e69233045bce32a6ceecf535324799d"
+  },
+  "health-child-fever": {
+    "doc_id": "health-child-fever",
+    "title": "常见症状问答：儿童发热与就医信号",
+    "source": "https://www.nhs.uk/symptoms/fever-in-children/",
+    "source_id": "nhs-child-fever",
+    "content": "# 常见症状问答：儿童发热与就医信号\n\n体温能直接判断病因吗？不能。NHS 将儿童38℃及以上描述为发热；年龄、精神状态、呼吸、饮水和其他表现同样重要，不能由一个数字推断疾病。\n\n何时需及时联系医生？不足3个月有38℃及以上体温或疑似发热，3至6个月有39℃及以上体温或疑似发热，应及时联系医生；持续发热、脱水或明显状态改变也需评估。首次抽搐、难以唤醒或呼吸困难应立即获取急救帮助。\n\n可以按成人片剂算儿童剂量吗？不可以。本项目不计算儿童剂量，也不建议自行交替使用退热药；由医师或药师核对具体年龄、体重、健康状况和儿童产品标签。\n\n核对日期2026-09-16。英国服务电话号码不直接作为中国用户的联系路径；在中国大陆紧急情况拨打120。项目对高烧超过39.5℃的中断是约定的演示规则，不是所有年龄的统一医学阈值，低于阈值也不能排除急症。",
+    "sha256": "5b343cd511450c1bb519bb2983a3f4388f2b3737dee05c6e2269eaa2c2a786eb"
+  },
+  "health-common-cold": {
+    "doc_id": "health-common-cold",
+    "title": "常见病问答：普通感冒的一般知识",
+    "source": "https://www.nhs.uk/conditions/common-cold/",
+    "source_id": "nhs-common-cold",
+    "content": "# 常见病问答：普通感冒的一般知识\n\n普通感冒是什么？NHS 介绍，普通感冒由病毒引起，常见表现包括鼻塞、流鼻涕、咽痛和咳嗽，通常在一至两周内逐渐改善。这些症状也可能出现在其他情况，不能据此认定用户已经患感冒。\n\n一定需要抗生素吗？抗生素针对细菌，不能治疗普通病毒性感冒；是否存在其他疾病及是否需要用药应由医生判断，不建议自行选择抗生素。\n\n何时咨询医生？症状加重、持续不改善、发热超过三天，或有基础病、免疫功能受影响时，应咨询医生。胸痛、呼吸困难等不应只作为普通感冒等待处理。\n\n本资料为一般科普，核对日期2026-09-16。来源是英国 NHS；演示医院的科室映射属于本项目本地规则，不是 NHS 指定分科，也不替代医生诊断。",
+    "sha256": "3d41fe9780b82a958a260067d18fd3648bea723928762cc9555aa152fa27f14d"
+  },
+  "health-ibuprofen-label": {
+    "doc_id": "health-ibuprofen-label",
+    "title": "布洛芬200 mg普通包衣片标签资料边界",
+    "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display",
+    "source_id": "dailymed-ibuprofen-200",
+    "content": "# 布洛芬200 mg普通包衣片标签资料边界\n\n本目录对应 DailyMed 的美国200 mg普通包衣口服片，NDC 75907-428，2026年7月版本；不是缓释胶囊、复方制剂、儿童混悬液或中国所有品牌的说明书。具体说明书数字由药品资料工具查询，不能转换到其他剂型。\n\n标签提示NSAID的胃肠出血和心血管风险；成分/相关解热镇痛药过敏及心脏手术前后不使用。与其他NSAID、抗凝药或类固醇同用存在警示，布洛芬还可能影响阿司匹林的心脑血管预防作用；须由医师或药师核对。\n\n孕哺期、儿童、肝肾异常、溃疡或复杂用药不能直接套用普通成人标签；孕期20周及以后，除非医生明确指导，不应使用布洛芬。未收录的组合不等于无相互作用，助手不为个人推荐药物、剂量或要求停改已有方案。\n\n核对日期2026-09-16；不替代医生诊断、不开处方。",
+    "sha256": "156a467ac6af1a0193bffcef5b36eb9ddaa66d2bfde5263955391e889852ee6d"
+  },
+  "health-red-eye": {
+    "doc_id": "health-red-eye",
+    "title": "常见病问答：结膜炎与红眼的一般知识",
+    "source": "https://www.nhs.uk/conditions/conjunctivitis/",
+    "source_id": "nhs-conjunctivitis",
+    "content": "# 常见病问答：结膜炎与红眼的一般知识\n\n红眼一定是结膜炎吗？不是。NHS 说明结膜炎可能与感染或过敏有关，可出现眼红、眼痒、流泪或分泌物；但其他眼部问题也会出现类似表现，在线文字不能确诊。\n\n日常如何减少传播？注意洗手，不共用毛巾和枕头；眼部不适期间避免佩戴隐形眼镜。是否需要滴眼液或其他治疗由专业人员评估，助手不推荐个人处方。\n\n哪些表现需要及时评估？眼痛、畏光、视力变化或明显眼红应尽快就医；不足30天的新生儿出现红眼和黏性分泌物也需及时就医。不能仅安排普通眼科预约而延误评估。\n\n核对日期2026-09-16；这是一般健康信息，不是个人诊断，不评论其他医师的诊疗方案。",
+    "sha256": "55a307c07f28a8f320b111cf54f533ef9eadefe9c61ce127a51f53ec1424ebb3"
+  },
+  "health-report-terms": {
+    "doc_id": "health-report-terms",
+    "title": "报告术语与参考区间说明",
+    "source": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/",
+    "source_id": "medlineplus-lab-results",
+    "content": "# 报告术语与参考区间说明\n\n参考区间是实验室根据特定人群和方法建立的比较范围。不同年龄、实验室、检测方法和单位可能不同，应使用用户这份报告自身的区间；不能用网上数字填补缺失范围，或不经核实比较不同单位。\n\n数值超出区间并不自动等于患病，数值在区间内也不保证没有疾病。阳性/阴性/不确定是检查结果描述，其个人意义仍需医生结合病史、症状和其他检查判断；不能凭单份报告确诊或开药。\n\nMediPet 的预处理只整理报告原文、项目、数值、单位及提供的参考区间，解释这些有限术语。上传PDF或图片后应核对提取文字，模糊数字、缺失单位和范围均保留待确认；不补造检查结果，不评论其他医师的诊疗方案。\n\n核对日期2026-09-16；来源为美国国家医学图书馆 MedlinePlus，提供一般信息，不替代专业医疗服务。",
+    "sha256": "32acddd2d70e041e5e529cd951beacbcfa05f45a7f3341900c307ae3ac020686"
+  },
+  "hospital-overview": {
+    "doc_id": "hospital-overview",
+    "title": "医院概况",
+    "source": "knowledge/hospital-overview.md",
+    "source_id": "hospital-public",
+    "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+    "sha256": "45427583004903d71f5438669f07d1a0168f03d178a706f4e2c567dbace87226"
+  },
+  "human-guidance": {
+    "doc_id": "human-guidance",
+    "title": "人工导诊联系说明",
+    "source": "knowledge/human-guidance.md",
+    "source_id": "hospital-contact",
+    "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+    "sha256": "079315fe298bce5f906ad1e2feb8cf3eef8678eb9176b87f43cc448f043ad6fd"
+  },
+  "lab-process": {
+    "doc_id": "lab-process",
+    "title": "检验办理流程",
+    "source": "knowledge/lab-process.md",
+    "source_id": "visit-process",
+    "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+    "sha256": "339dc24ebeadc8dca223964eeddd57d91e528c133b18cdc86dc1692d5bdcfe11"
+  },
+  "medicine-pickup": {
+    "doc_id": "medicine-pickup",
+    "title": "取药流程说明",
+    "source": "knowledge/medicine-pickup.md",
+    "source_id": "visit-process",
+    "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+    "sha256": "1558323b64a2a3cbd7300f84d120a574c6f32829b0559ea25a4541b5ec1a30b6"
+  },
+  "patients-and-visits": {
+    "doc_id": "patients-and-visits",
+    "title": "患者与事项使用说明",
+    "source": "knowledge/patients-and-visits.md",
+    "source_id": "visit-process",
+    "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+    "sha256": "e9e40a230db3dadc96bbb9779b7acb78108b70527945b1eef60a7faf575f0ed2"
+  },
+  "payment-process": {
+    "doc_id": "payment-process",
+    "title": "缴费流程说明",
+    "source": "knowledge/payment-process.md",
+    "source_id": "visit-process",
+    "content": "# 缴费流程说明\n\n明和虚构医院收费处位于门诊楼一层。演示流程是在院方明确相关项目后，按办理说明前往收费处；需要走法时查询“门诊大厅到收费处”的文字指引。\n\nMediPet 不收取费用，也没有支付执行入口。预约方案中的费用来自号源资料，用于核对演示预约信息；本说明不显示支付成功或生成真实缴费凭证。",
+    "sha256": "5ba31dd81dcf1b13d97dff9dba6ca7175a532b3841eef41af2a5fbbdd80208c0"
+  }
+}

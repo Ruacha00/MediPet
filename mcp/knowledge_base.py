@@ -20,6 +20,8 @@ from typing import Any, Dict, List, Optional
 
 import chromadb
 
+from mcp.knowledge_retrieval import fuse_rankings, lexical_ranking
+
 logger = logging.getLogger(__name__)
 
 
@@ -117,18 +119,21 @@ class KnowledgeBase:
 
     def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
         """
-        语义检索：根据 query 返回最相关的文档片段。
+        中文词法与向量混合检索，返回不超过 top_k 个带来源的片段。
 
-        客户端将 query 转为向量，ChromaDB 按集合距离度量匹配。
+        保留默认 embedding 与已有集合。词法使用集合中的当前文本（含上传），
+        有限候选经 RRF 融合后再进入外层改写/重排；不把整库发送给模型。
+        混合 score 是排名分，不是语义相似度或概率；无词法命中保留向量分。
         """
         if type(top_k) is not int or top_k <= 0:
             raise ValueError("top_k 必须是正整数")
         count = self._collection.count()
         if not query.strip() or count == 0:
             return []
+        candidate_k = min(max(top_k * 2, 5), count)
         results = self._collection.query(
             query_texts=[query],
-            n_results=min(top_k, count),
+            n_results=candidate_k,
         )
 
         items = []
@@ -150,7 +155,19 @@ class KnowledgeBase:
                     "chunk":    meta.get("chunk_index", 0),
                 })
 
-        return items
+        if not items:
+            return []
+        # 当前演示库很小，直接读取快照避免导入/内置升级后词法缓存过期。
+        snapshot = self._collection.get(include=["documents", "metadatas"])
+        records = [
+            {"chunk_id": chunk_id, "doc_id": meta.get("doc_id", ""),
+             "title": meta.get("title", ""), "source_id": meta.get("source_id", ""),
+             "source": meta.get("source", ""), "content": doc,
+             "chunk": meta.get("chunk_index", 0)}
+            for chunk_id, doc, meta in zip(snapshot["ids"], snapshot["documents"], snapshot["metadatas"])
+        ]
+        lexical = lexical_ranking(query, records)[:candidate_k]
+        return fuse_rankings(items, lexical, records, top_k)
 
     async def search_async(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
         """异步检索；ChromaDB 客户端为同步实现，因此放入线程池执行。"""

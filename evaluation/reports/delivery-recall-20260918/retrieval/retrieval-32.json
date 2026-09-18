@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-32",
+  "query": "已有布洛芬标签资料能否判断所有未知合用药都安全？",
+  "required_doc_ids": [
+    "health-ibuprofen-label"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-ibuprofen-label:0",
+          "doc_id": "health-ibuprofen-label",
+          "title": "布洛芬200 mg普通包衣片标签资料边界",
+          "source_id": "dailymed-ibuprofen-200",
+          "source": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=4d830b9b-b396-9581-7572-c7f19ff17597&type=display",
+          "content": "# 布洛芬200 mg普通包衣片标签资料边界\n\n本目录对应 DailyMed 的美国200 mg普通包衣口服片，NDC 75907-428，2026年7月版本；不是缓释胶囊、复方制剂、儿童混悬液或中国所有品牌的说明书。具体说明书数字由药品资料工具查询，不能转换到其他剂型。\n\n标签提示NSAID的胃肠出血和心血管风险；成分/相关解热镇痛药过敏及心脏手术前后不使用。与其他NSAID、抗凝药或类固醇同用存在警示，布洛芬还可能影响阿司匹林的心脑血管预防作用；须由医师或药师核对。\n\n孕哺期、儿童、肝肾异常、溃疡或复杂用药不能直接套用普通成人标签；孕期20周及以后，除非医生明确指导，不应使用布洛芬。未收录的组合不等于无相互作用，助手不为个人推荐药物、剂量或要求停改已有方案。\n\n核对日期2026-09-16；不替代医生诊断、不开处方。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 19.939675
+        },
+        {
+          "chunk_id": "medicine-pickup:0",
+          "doc_id": "medicine-pickup",
+          "title": "取药流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/medicine-pickup.md",
+          "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+          "score": 0.209402,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.028,
+          "lexical_score": 5.294176
+        },
+        {
+          "chunk_id": "health-common-cold:0",
+          "doc_id": "health-common-cold",
+          "title": "常见病问答：普通感冒的一般知识",
+          "source_id": "nhs-common-cold",
+          "source": "https://www.nhs.uk/conditions/common-cold/",
+          "content": "# 常见病问答：普通感冒的一般知识\n\n普通感冒是什么？NHS 介绍，普通感冒由病毒引起，常见表现包括鼻塞、流鼻涕、咽痛和咳嗽，通常在一至两周内逐渐改善。这些症状也可能出现在其他情况，不能据此认定用户已经患感冒。\n\n一定需要抗生素吗？抗生素针对细菌，不能治疗普通病毒性感冒；是否存在其他疾病及是否需要用药应由医生判断，不建议自行选择抗生素。\n\n何时咨询医生？症状加重、持续不改善、发热超过三天，或有基础病、免疫功能受影响时，应咨询医生。胸痛、呼吸困难等不应只作为普通感冒等待处理。\n\n本资料为一般科普，核对日期2026-09-16。来源是英国 NHS；演示医院的科室映射属于本项目本地规则，不是 NHS 指定分科，也不替代医生诊断。",
+          "chunk": 0,
+          "score": 0.153846,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 5.843292
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.206,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.0975,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.0603,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

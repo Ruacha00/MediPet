@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-17",
+  "query": "把就诊事项归档后，聊天和预约会一起被删除吗？",
+  "required_doc_ids": [
+    "patients-and-visits"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1499,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "human-guidance:0",
+          "doc_id": "human-guidance",
+          "title": "人工导诊联系说明",
+          "source_id": "hospital-contact",
+          "source": "knowledge/human-guidance.md",
+          "content": "# 人工导诊联系说明\n\n明和虚构医院导诊台位于门诊大厅，服务时间为 08:00—17:00，演示联系号码为 010-00000000（演示号码）。\n\nMediPet 展示联系信息和可复制的问题摘要，供用户自行使用；不会声称已经把问题提交给真实工作人员。资料不足或地点组合未收录时，可以整理所问事项后联系导诊台。",
+          "score": 0.1409,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": 0.1233,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "patients-and-visits:0",
+          "doc_id": "patients-and-visits",
+          "title": "患者与事项使用说明",
+          "source_id": "visit-process",
+          "source": "knowledge/patients-and-visits.md",
+          "content": "# 患者与事项使用说明\n\n演示页面提供本人和家属两个预置就诊人。一项连续就诊事项固定绑定一名患者；切换患者时进入该患者的另一个事项，恢复旧事项时恢复其原患者。\n\n事项可以新建、重命名、归档和恢复。归档从默认列表隐藏事项，但不删除完整消息或预约记录；恢复后才可继续对话和确认操作。刷新后可以重新读取完整历史和业务卡片。\n\n历史中的号源列表和预约文字是当时的记录，当前余量和预约状态应重新查询。",
+          "score": 0.240642,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0388,
+          "lexical_score": 18.152666
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.233766,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1499,
+          "lexical_score": 3.694951
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": 0.230769,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1233,
+          "lexical_score": 4.955126
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": false,
+        "rewrite_error": null,
+        "rerank_error": "重排索引必须完整、唯一且在结果范围内",
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

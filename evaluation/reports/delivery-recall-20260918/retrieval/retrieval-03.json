@@ -1,0 +1,117 @@
+{
+  "id": "retrieval-03",
+  "query": "已经约好门诊，出发之前一般要整理哪些资料？",
+  "required_doc_ids": [
+    "general-preparation"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.1729,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.1533,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": 0.2273,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.233766,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1729,
+          "lexical_score": 3.906936
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.20098,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.2059,
+          "lexical_score": 3.125977
+        },
+        {
+          "chunk_id": "department-ophthalmology:0",
+          "doc_id": "department-ophthalmology",
+          "title": "眼科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-ophthalmology.md",
+          "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+          "score": 0.204762,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0511,
+          "lexical_score": 3.552636
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

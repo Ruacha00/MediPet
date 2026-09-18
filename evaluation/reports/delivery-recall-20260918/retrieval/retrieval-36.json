@@ -1,0 +1,118 @@
+{
+  "id": "retrieval-36",
+  "query": "眼科的医生是谁，儿科的医生又是谁？",
+  "required_doc_ids": [
+    "department-ophthalmology",
+    "department-pediatrics"
+  ],
+  "group": "retrieval",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-ophthalmology:0",
+          "doc_id": "department-ophthalmology",
+          "title": "眼科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-ophthalmology.md",
+          "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+          "score": 0.230769,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1397,
+          "lexical_score": 3.702665
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.22619,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.1592,
+          "lexical_score": 3.328999
+        },
+        {
+          "chunk_id": "hospital-overview:0",
+          "doc_id": "hospital-overview",
+          "title": "医院概况",
+          "source_id": "hospital-public",
+          "source": "knowledge/hospital-overview.md",
+          "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+          "score": 0.209402,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.1188,
+          "lexical_score": 5.242257
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-ophthalmology:0",
+          "doc_id": "department-ophthalmology",
+          "title": "眼科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-ophthalmology.md",
+          "content": "# 眼科公开说明\n\n明和虚构医院眼科诊区位于门诊楼三层。演示医生顾清禾承担眼科普通门诊排班。\n\n按预约信息中的时段到眼科诊区报到，携带就诊人身份证明、本次预约信息和已有的相关就诊资料。医生出诊和号源情况通过实时业务查询获得；报告可另行整理原文、数值及参考区间，本说明不作报告诊断或推断眼部疾病。",
+          "score": 0.1397,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1592,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.2216,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

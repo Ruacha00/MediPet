@@ -1,0 +1,117 @@
+{
+  "id": "aq28-unlisted-fasting",
+  "query": "我没说具体检验项目。明天所有检验统一要空腹多久、几点采样？给我确定安排。",
+  "required_doc_ids": [
+    "lab-process"
+  ],
+  "group": "answer",
+  "arms": {
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 16.936168
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.208333,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.2261,
+          "lexical_score": 2.535276
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.188034,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": 0.2062,
+          "lexical_score": 2.42197
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "lab-process:0",
+          "doc_id": "lab-process",
+          "title": "检验办理流程",
+          "source_id": "visit-process",
+          "source": "knowledge/lab-process.md",
+          "content": "# 检验办理流程\n\n明和虚构医院检验科位于门诊楼一层。按院方明确的检验项目和凭证，到检验科接待处了解办理安排。\n\n本演示提供“门诊大厅到检验科”及“儿科诊区到检验科”的文字指引，均含普通与无障碍模式。是否空腹、采样时间等项目要求未包含在演示事实中，应向办理人员确认，不由助手推断。\n\n本项目可以整理用户提供的报告原文、项目、数值、单位和报告参考区间，解释有限通用术语；不能仅凭报告作出诊断。检查结果的实际意义需由医生结合病史和检查判断。",
+          "score": 0.0602,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "first-visit-materials:0",
+          "doc_id": "first-visit-materials",
+          "title": "首次就诊材料",
+          "source_id": "first-materials",
+          "source": "knowledge/first-visit-materials.md",
+          "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+          "score": 0.2495,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "general-preparation:0",
+          "doc_id": "general-preparation",
+          "title": "门诊就诊材料",
+          "source_id": "visit-materials",
+          "source": "knowledge/general-preparation.md",
+          "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+          "score": 0.2261,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}

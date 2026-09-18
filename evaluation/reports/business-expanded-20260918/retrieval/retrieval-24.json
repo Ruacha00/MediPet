@@ -1,0 +1,114 @@
+{
+  "id": "retrieval-24",
+  "query": "对乙酰氨基酚为什么不能和同成分药重复使用？",
+  "required_doc_ids": [
+    "health-acetaminophen-label"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "department-pediatrics:0",
+        "doc_id": "department-pediatrics",
+        "title": "儿科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-pediatrics.md",
+        "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+        "score": 0.2672,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "first-visit-materials:0",
+        "doc_id": "first-visit-materials",
+        "title": "首次就诊材料",
+        "source_id": "first-materials",
+        "source": "knowledge/first-visit-materials.md",
+        "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+        "score": 0.2423,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "child-visit-materials:0",
+        "doc_id": "child-visit-materials",
+        "title": "儿童就诊材料",
+        "source_id": "child-materials",
+        "source": "knowledge/child-visit-materials.md",
+        "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+        "score": 0.1158,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "child-visit-materials",
+        "department-pediatrics",
+        "first-visit-materials"
+      ]
+    },
+    "elapsed_seconds": 0.02048467900021933
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "medicine-pickup:0",
+          "doc_id": "medicine-pickup",
+          "title": "取药流程说明",
+          "source_id": "visit-process",
+          "source": "knowledge/medicine-pickup.md",
+          "content": "# 取药流程说明\n\n明和虚构医院药房位于门诊楼一层。静态流程说明为：根据院方给出的有效取药凭证，到药房窗口核对就诊人和相关资料后办理。\n\n查询“门诊大厅到药房”可获得已收录的普通或无障碍文字指引。MediPet 可另行提供有限药品目录的具体标签资料和来源，但不开具处方、不选择个人药物或剂量。标签问答不等于本医院取药事实，个人用药问题仍由医师或药师处理。",
+          "score": 0.197,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.2672,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "child-visit-materials:0",
+          "doc_id": "child-visit-materials",
+          "title": "儿童就诊材料",
+          "source_id": "child-materials",
+          "source": "knowledge/child-visit-materials.md",
+          "content": "# 儿童就诊材料\n\n在明和虚构医院为儿童办理就诊，准备以下材料：\n\n1. 儿童就诊人的身份证明。\n2. 陪同监护人的身份证明。\n3. 本次预约信息和已有的儿童就诊资料。\n\n就诊时由监护人陪同。页面应先选择家属就诊人，使用其专属事项查询和准备预约，避免把本人的事项与儿童事项混用。",
+          "score": 0.1158,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "child-visit-materials",
+        "department-pediatrics",
+        "medicine-pickup"
+      ]
+    },
+    "elapsed_seconds": 1.3427323779978906,
+    "model_calls": 2
+  }
+}

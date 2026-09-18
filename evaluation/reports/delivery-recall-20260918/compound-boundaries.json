@@ -1,0 +1,213 @@
+{
+  "storage": "real Redis, own random prefix",
+  "model_calls": 0,
+  "checks": {
+    "declined_query_keeps_selection": true,
+    "other_patient_untouched": true,
+    "current_self_first": true,
+    "explicit_child_corrected": true
+  },
+  "declined_result": {
+    "success": false,
+    "data": {},
+    "artifacts": [],
+    "error_code": "invalid_input",
+    "error": "本轮明确不执行号源查询，可仅说明查询流程。",
+    "retryable": false
+  },
+  "before": {
+    "user_id": "anonymous",
+    "patient_id": "patient_self",
+    "conv_id": "visit-437bcb50b1204059b19f6d7af97ab542",
+    "status": "ready",
+    "list_id": "list-5b1fc36f80e64c60b23357f031806fd5",
+    "query": {
+      "department_id": "dep_internal",
+      "doctor_id": null,
+      "date": "2026-09-17",
+      "period": null
+    },
+    "slots": [
+      {
+        "slot_id": "slot:2026-09-17:schedule_doctor_lin_morning",
+        "hospital_name": "明和虚构医院",
+        "department_id": "dep_internal",
+        "department_name": "内科",
+        "doctor_id": "doctor_lin",
+        "doctor_name": "林知远",
+        "date": "2026-09-17",
+        "period": "morning",
+        "start_time": "09:00",
+        "end_time": "11:00",
+        "fee_fen": 1500,
+        "location_id": "internal-room",
+        "location_name": "门诊楼二层内科诊区",
+        "capacity": 5,
+        "remaining": 5
+      },
+      {
+        "slot_id": "slot:2026-09-17:schedule_doctor_lin_afternoon",
+        "hospital_name": "明和虚构医院",
+        "department_id": "dep_internal",
+        "department_name": "内科",
+        "doctor_id": "doctor_lin",
+        "doctor_name": "林知远",
+        "date": "2026-09-17",
+        "period": "afternoon",
+        "start_time": "14:00",
+        "end_time": "16:00",
+        "fee_fen": 1500,
+        "location_id": "internal-room",
+        "location_name": "门诊楼二层内科诊区",
+        "capacity": 5,
+        "remaining": 5
+      }
+    ],
+    "queried_at": "2026-09-16T10:00:00+08:00",
+    "current_proposal_id": null
+  },
+  "after": {
+    "user_id": "anonymous",
+    "patient_id": "patient_self",
+    "conv_id": "visit-437bcb50b1204059b19f6d7af97ab542",
+    "status": "ready",
+    "list_id": "list-5b1fc36f80e64c60b23357f031806fd5",
+    "query": {
+      "department_id": "dep_internal",
+      "doctor_id": null,
+      "date": "2026-09-17",
+      "period": null
+    },
+    "slots": [
+      {
+        "slot_id": "slot:2026-09-17:schedule_doctor_lin_morning",
+        "hospital_name": "明和虚构医院",
+        "department_id": "dep_internal",
+        "department_name": "内科",
+        "doctor_id": "doctor_lin",
+        "doctor_name": "林知远",
+        "date": "2026-09-17",
+        "period": "morning",
+        "start_time": "09:00",
+        "end_time": "11:00",
+        "fee_fen": 1500,
+        "location_id": "internal-room",
+        "location_name": "门诊楼二层内科诊区",
+        "capacity": 5,
+        "remaining": 5
+      },
+      {
+        "slot_id": "slot:2026-09-17:schedule_doctor_lin_afternoon",
+        "hospital_name": "明和虚构医院",
+        "department_id": "dep_internal",
+        "department_name": "内科",
+        "doctor_id": "doctor_lin",
+        "doctor_name": "林知远",
+        "date": "2026-09-17",
+        "period": "afternoon",
+        "start_time": "14:00",
+        "end_time": "16:00",
+        "fee_fen": 1500,
+        "location_id": "internal-room",
+        "location_name": "门诊楼二层内科诊区",
+        "capacity": 5,
+        "remaining": 5
+      }
+    ],
+    "queried_at": "2026-09-16T10:00:00+08:00",
+    "current_proposal_id": null
+  },
+  "own_materials": {
+    "success": true,
+    "data": {
+      "checklist_id": "first-materials",
+      "department_id": null,
+      "visit_type": "first",
+      "title": "首次就诊材料",
+      "items": [
+        "就诊人的身份证明",
+        "本次预约信息",
+        "已有的相关就诊资料；到院后先到门诊大厅导诊台了解报到位置"
+      ],
+      "source": {
+        "source_id": "first-materials",
+        "title": "明和虚构医院首次就诊说明"
+      }
+    },
+    "artifacts": [
+      {
+        "id": "visit_checklist:edae2dd8e51d486486b7b8bc96ef4309",
+        "type": "visit_checklist",
+        "data": {
+          "checklist_id": "first-materials",
+          "department_id": null,
+          "visit_type": "first",
+          "title": "首次就诊材料",
+          "items": [
+            "就诊人的身份证明",
+            "本次预约信息",
+            "已有的相关就诊资料；到院后先到门诊大厅导诊台了解报到位置"
+          ],
+          "source": {
+            "source_id": "first-materials",
+            "title": "明和虚构医院首次就诊说明"
+          }
+        }
+      }
+    ],
+    "error_code": null,
+    "error": null,
+    "retryable": false,
+    "effective_input": {
+      "department": "内科",
+      "visit_type": "first"
+    }
+  },
+  "child_materials": {
+    "success": true,
+    "data": {
+      "checklist_id": "child-first",
+      "department_id": "dep_pediatrics",
+      "visit_type": "child",
+      "title": "儿童就诊材料",
+      "items": [
+        "儿童就诊人的身份证明",
+        "陪同监护人的身份证明",
+        "本次预约信息和已有的儿童就诊资料"
+      ],
+      "source": {
+        "source_id": "child-materials",
+        "title": "明和虚构医院儿童就诊准备说明"
+      }
+    },
+    "artifacts": [
+      {
+        "id": "visit_checklist:7a1a891187a1434bbdab7387df650db2",
+        "type": "visit_checklist",
+        "data": {
+          "checklist_id": "child-first",
+          "department_id": "dep_pediatrics",
+          "visit_type": "child",
+          "title": "儿童就诊材料",
+          "items": [
+            "儿童就诊人的身份证明",
+            "陪同监护人的身份证明",
+            "本次预约信息和已有的儿童就诊资料"
+          ],
+          "source": {
+            "source_id": "child-materials",
+            "title": "明和虚构医院儿童就诊准备说明"
+          }
+        }
+      }
+    ],
+    "error_code": null,
+    "error": null,
+    "retryable": false,
+    "effective_input": {
+      "department": "儿科",
+      "visit_type": "child"
+    }
+  },
+  "owned_keys_remaining": 0
+}

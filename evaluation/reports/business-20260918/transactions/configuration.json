@@ -1,0 +1,17 @@
+{
+  "started_at": "2026-09-18T07:27:02.710257+00:00",
+  "clock": "2026-09-18T10:00:00+08:00",
+  "python": "3.12.14 (main, Aug 25 2026, 01:18:35) [GCC 12.2.0]",
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+  "concurrency": 10,
+  "duplicate_groups": 50,
+  "race_groups": 30,
+  "model_calls": 0,
+  "script_sha256": "0ffe58d73ee9d12cfc97466fda2471b9d513ade25db89d7fe4076547c68af9f4",
+  "sources": {
+    "hospital/service.py": "0fe842921824b0726f46f7a7e024aa99144fc678fa28ac9dd247fd894f50a0b3",
+    "hospital/store.py": "c353b42a30eb567c59dd705268ddf1766016f4d70061f7d2016411c986d22c51",
+    "hospital/models.py": "d4c132da0bd95f6543d0f3e4f386083c7ed0f0fc898faf920e1c9591dec5c340",
+    "memory/visit_store.py": "2669519c19c5e224a473ed3fd3d0d7ec70e4be5ffe6228e0bd76530bb4d6500a"
+  }
+}

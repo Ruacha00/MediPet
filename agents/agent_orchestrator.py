@@ -36,6 +36,7 @@ from agents.tools import (
     build_hospital_tools,
     build_shared_rag_tools,
 )
+from agents.task_requirements import compound_visit_request
 from core.intent_recognizer import IntentCategory, IntentRecognizer, UrgencyLevel
 from core.llm_utils import extract_text_content, llm_request_options
 from core.emergency import EMERGENCY_RESPONSE, detect_emergency, is_emergency_reference
@@ -317,6 +318,14 @@ class BaseAgent:
                     }
                     for spec in tools.values()
                 ]
+                # A compound task must query both kinds of facts. Each specialist
+                # starts with its read-only tool, then resumes the existing bounded loop.
+                required_tool = {
+                    AgentType.GUIDANCE: "get_visit_checklist",
+                    AgentType.APPOINTMENT: "search_slots",
+                }.get(self.agent_type) if compound_visit_request(req.message) else None
+                if required_tool in tools and not tool_traces:
+                    request_kwargs["tool_choice"] = {"type": "tool", "name": required_tool}
             resp = await self._client.messages.create(**request_kwargs)
             tool_uses = [block for block in (resp.content or []) if self._block_type(block) == "tool_use"]
             if not tool_uses:
@@ -379,6 +388,7 @@ class BaseAgent:
                         "tool_name": name,
                         "tool_use_id": tool_use_id,
                         "input": dict(args) if isinstance(args, dict) else args,
+                        **({"effective_input": result["effective_input"]} if isinstance(result, dict) and "effective_input" in result else {}),
                         "kind": "tool_call",
                         "success": call_success and result_success is not False,
                         "call_success": call_success,
@@ -459,6 +469,14 @@ class BaseAgent:
             "患者和事项身份由请求绑定，不能根据消息中的自称或模型推测更换。"
         )
         base_prompt = f"{self.system_prompt}{profile_prompt}"
+        if compound_visit_request(req.message):
+            base_prompt += (
+                "\n[本轮复合交付] 用户同时需要号源和就诊材料。预约角色负责调用 search_slots，"
+                "指引角色负责调用 get_visit_checklist；不能用文字或知识检索代替对应业务卡片。"
+                "只处理本角色任务，另一任务由协作角色处理。儿童材料用 child，成人首次用 first。"
+                "保留用户明确给出的科室、日期和时段；条件缺失仅澄清缺失字段。"
+                "查询失败如实说明，不能声称另一分工已经成功。"
+            )
         if self._skill_manager is None:
             return base_prompt
         skill_prompt = self._skill_manager.prompt_for(req.message, self.agent_type.value)
@@ -1127,6 +1145,9 @@ class AgentOrchestrator:
         scores[AgentType.GENERAL] += min(0.35, general_hits * 0.12)
         scores[AgentType.TRIAGE] += min(0.45, sum(1 for kw in self._TRIAGE_KEYWORDS if kw in msg) * 0.18)
         scores[AgentType.MEDICATION] += min(0.45, sum(1 for kw in self._MEDICATION_KEYWORDS if kw in msg) * 0.18)
+        if compound_visit_request(req.message):
+            scores[AgentType.APPOINTMENT] += 0.75
+            scores[AgentType.GUIDANCE] += 0.75
 
         entities = req.entities or {}
         if any(entities.get(key) for key in ("origin", "destination", "accessibility")):
@@ -1167,6 +1188,8 @@ class AgentOrchestrator:
         """
         msg = req.message.lower()
         targets: List[AgentType] = []
+        if compound_visit_request(req.message):
+            targets.extend((AgentType.APPOINTMENT, AgentType.GUIDANCE))
 
         intent_target = self._INTENT_ROUTING.get(req.intent, AgentType.GENERAL)
         if intent_target is AgentType.GUIDANCE or any(kw in msg for kw in self._GUIDANCE_KEYWORDS):
@@ -1186,6 +1209,8 @@ class AgentOrchestrator:
     def _needs_clarification(req: Request) -> bool:
         """低置信度且无明确意图时，先追问，避免误路由。"""
         if req.intent != IntentCategory.OTHER:
+            return False
+        if compound_visit_request(req.message):
             return False
         text = (req.message or "").strip()
         if len(text) <= 2:

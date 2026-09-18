@@ -1,0 +1,114 @@
+{
+  "id": "retrieval-32",
+  "query": "已有布洛芬标签资料能否判断所有未知合用药都安全？",
+  "required_doc_ids": [
+    "health-ibuprofen-label"
+  ],
+  "direct": {
+    "success": true,
+    "items": [
+      {
+        "chunk_id": "first-visit-materials:0",
+        "doc_id": "first-visit-materials",
+        "title": "首次就诊材料",
+        "source_id": "first-materials",
+        "source": "knowledge/first-visit-materials.md",
+        "content": "# 首次就诊材料\n\n首次前往明和虚构医院，准备就诊人的身份证明、本次预约信息、已有的相关就诊资料。\n\n到院后先到门诊大厅导诊台了解报到位置，再按预约上的科室和时段办理。页面可以展示对应准备清单及其来源；这份静态说明不会自动创建预约，也不保存个人就诊结果。",
+        "score": 0.206,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "department-pediatrics:0",
+        "doc_id": "department-pediatrics",
+        "title": "儿科公开说明",
+        "source_id": "hospital-public",
+        "source": "knowledge/department-pediatrics.md",
+        "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+        "score": 0.1823,
+        "chunk": 0
+      },
+      {
+        "chunk_id": "general-preparation:0",
+        "doc_id": "general-preparation",
+        "title": "门诊就诊材料",
+        "source_id": "visit-materials",
+        "source": "knowledge/general-preparation.md",
+        "content": "# 门诊就诊材料\n\n明和虚构医院的一般门诊准备清单包含：就诊人的身份证明、本次预约信息或就诊凭证、已有的相关就诊资料。\n\n可以根据科室和就诊类型查询具体清单；没有收录的项目应向导诊台询问，不自动补充检查或用药要求。实时预约信息以当前患者的预约查询为准。",
+        "score": 0.0975,
+        "chunk": 0
+      }
+    ],
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "department-pediatrics",
+        "first-visit-materials",
+        "general-preparation"
+      ]
+    },
+    "elapsed_seconds": 0.022965015003137523
+  },
+  "enhanced": {
+    "result": {
+      "success": true,
+      "data": [
+        {
+          "chunk_id": "health-red-eye:0",
+          "doc_id": "health-red-eye",
+          "title": "常见病问答：结膜炎与红眼的一般知识",
+          "source_id": "nhs-conjunctivitis",
+          "source": "https://www.nhs.uk/conditions/conjunctivitis/",
+          "content": "# 常见病问答：结膜炎与红眼的一般知识\n\n红眼一定是结膜炎吗？不是。NHS 说明结膜炎可能与感染或过敏有关，可出现眼红、眼痒、流泪或分泌物；但其他眼部问题也会出现类似表现，在线文字不能确诊。\n\n日常如何减少传播？注意洗手，不共用毛巾和枕头；眼部不适期间避免佩戴隐形眼镜。是否需要滴眼液或其他治疗由专业人员评估，助手不推荐个人处方。\n\n哪些表现需要及时评估？眼痛、畏光、视力变化或明显眼红应尽快就医；不足30天的新生儿出现红眼和黏性分泌物也需及时就医。不能仅安排普通眼科预约而延误评估。\n\n核对日期2026-09-16；这是一般健康信息，不是个人诊断，不评论其他医师的诊疗方案。",
+          "score": 0.0636,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.0603,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": 0.1823,
+          "chunk": 0
+        }
+      ],
+      "tool_name": "knowledge_search",
+      "error": null,
+      "cached": false,
+      "latency_ms": 0.0,
+      "reranked": true,
+      "rewrite_error": null,
+      "rerank_error": null,
+      "recall_errors": [],
+      "fallback_used": false,
+      "partial": false,
+      "error_code": null
+    },
+    "success": true,
+    "metrics": {
+      "recall_at_3": 0.0,
+      "hit_at_3": 0,
+      "all_required_at_3": 0,
+      "doc_ids": [
+        "department-internal",
+        "department-pediatrics",
+        "health-red-eye"
+      ]
+    },
+    "elapsed_seconds": 1.6502013560020714,
+    "model_calls": 2
+  }
+}

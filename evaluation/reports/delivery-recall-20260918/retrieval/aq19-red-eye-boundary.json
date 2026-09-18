@@ -1,0 +1,117 @@
+{
+  "id": "aq19-red-eye-boundary",
+  "query": "仓库的红眼科普是否说眼红一定是结膜炎？它怎样界定在线文字和个人治疗方案的能力？",
+  "required_doc_ids": [
+    "health-red-eye"
+  ],
+  "group": "answer",
+  "arms": {
+    "current": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": -0.0047,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "department-pediatrics:0",
+          "doc_id": "department-pediatrics",
+          "title": "儿科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-pediatrics.md",
+          "content": "# 儿科公开说明\n\n明和虚构医院儿科诊区位于门诊楼二层。演示医生许知宁承担儿科普通门诊排班。\n\n儿童就诊由监护人陪同，准备儿童就诊人的身份证明、陪同监护人的身份证明、本次预约信息和已有的儿童就诊资料。\n\n为家属办理时先在页面选择家属就诊人，再新建或继续其事项。具体出诊日期和剩余号源使用业务查询，不从此文档推断。",
+          "score": -0.0395,
+          "chunk": 0
+        },
+        {
+          "chunk_id": "hospital-overview:0",
+          "doc_id": "hospital-overview",
+          "title": "医院概况",
+          "source_id": "hospital-public",
+          "source": "knowledge/hospital-overview.md",
+          "content": "# 医院概况\n\n明和虚构医院是 MediPet 使用的单医院演示场景。医院、人员、地址和联系方式均为虚构内容。\n\n门诊开放时间为 08:00—17:00，地址为演示市明和路1号（虚构）。门诊楼设内科、儿科、眼科，入口为一层门诊大厅，导诊台位于大厅。\n\n医院公开信息通过医院目录查询；医生出诊日期、剩余号源和个人预约状态应通过对应业务查询获取，本说明不保存这些实时结果。",
+          "score": -0.0292,
+          "chunk": 0
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    },
+    "improved": {
+      "success": true,
+      "results": [
+        {
+          "chunk_id": "health-red-eye:0",
+          "doc_id": "health-red-eye",
+          "title": "常见病问答：结膜炎与红眼的一般知识",
+          "source_id": "nhs-conjunctivitis",
+          "source": "https://www.nhs.uk/conditions/conjunctivitis/",
+          "content": "# 常见病问答：结膜炎与红眼的一般知识\n\n红眼一定是结膜炎吗？不是。NHS 说明结膜炎可能与感染或过敏有关，可出现眼红、眼痒、流泪或分泌物；但其他眼部问题也会出现类似表现，在线文字不能确诊。\n\n日常如何减少传播？注意洗手，不共用毛巾和枕头；眼部不适期间避免佩戴隐形眼镜。是否需要滴眼液或其他治疗由专业人员评估，助手不推荐个人处方。\n\n哪些表现需要及时评估？眼痛、畏光、视力变化或明显眼红应尽快就医；不足30天的新生儿出现红眼和黏性分泌物也需及时就医。不能仅安排普通眼科预约而延误评估。\n\n核对日期2026-09-16；这是一般健康信息，不是个人诊断，不评论其他医师的诊疗方案。",
+          "chunk": 0,
+          "score": 0.181818,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 37.763648
+        },
+        {
+          "chunk_id": "health-report-terms:0",
+          "doc_id": "health-report-terms",
+          "title": "报告术语与参考区间说明",
+          "source_id": "medlineplus-lab-results",
+          "source": "https://medlineplus.gov/lab-tests/how-to-understand-your-lab-results/",
+          "content": "# 报告术语与参考区间说明\n\n参考区间是实验室根据特定人群和方法建立的比较范围。不同年龄、实验室、检测方法和单位可能不同，应使用用户这份报告自身的区间；不能用网上数字填补缺失范围，或不经核实比较不同单位。\n\n数值超出区间并不自动等于患病，数值在区间内也不保证没有疾病。阳性/阴性/不确定是检查结果描述，其个人意义仍需医生结合病史、症状和其他检查判断；不能凭单份报告确诊或开药。\n\nMediPet 的预处理只整理报告原文、项目、数值、单位及提供的参考区间，解释这些有限术语。上传PDF或图片后应核对提取文字，模糊数字、缺失单位和范围均保留待确认；不补造检查结果，不评论其他医师的诊疗方案。\n\n核对日期2026-09-16；来源为美国国家医学图书馆 MedlinePlus，提供一般信息，不替代专业医疗服务。",
+          "chunk": 0,
+          "score": 0.142857,
+          "score_type": "hybrid_rrf",
+          "vector_score": null,
+          "lexical_score": 5.86828
+        },
+        {
+          "chunk_id": "department-internal:0",
+          "doc_id": "department-internal",
+          "title": "内科公开说明",
+          "source_id": "hospital-public",
+          "source": "knowledge/department-internal.md",
+          "content": "# 内科公开说明\n\n明和虚构医院内科诊区位于门诊楼二层。演示医生林知远承担内科普通门诊排班。\n\n这里提供科室、医生及就诊流程的公开说明。查询指定日期是否出诊或是否有号，需要使用医生排班或号源查询，并提供日期、所需时段等条件。症状初步科室方向由分诊工具单独给出并说明边界；这份公开介绍本身不诊断疾病，也不证明科室适合个人病情。",
+          "score": 0.185965,
+          "chunk": 0,
+          "score_type": "hybrid_rrf",
+          "vector_score": -0.0733,
+          "lexical_score": 4.996085
+        }
+      ],
+      "metadata": {
+        "success": true,
+        "tool_name": "knowledge_search",
+        "error": null,
+        "cached": false,
+        "latency_ms": 0.0,
+        "reranked": true,
+        "rewrite_error": null,
+        "rerank_error": null,
+        "recall_errors": [],
+        "fallback_used": false,
+        "partial": false,
+        "error_code": null
+      }
+    }
+  }
+}
