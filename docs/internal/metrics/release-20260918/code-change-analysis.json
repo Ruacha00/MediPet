@@ -1,0 +1,2307 @@
+{
+  "summary": {
+    "changed_count": 229,
+    "affected_count": 44,
+    "changed_files": 423,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Section:IMPLEMENTATION_PLAN.md:L1:MediPet 场景适配与重构实施计划",
+      "name": "MediPet 场景适配与重构实施计划",
+      "type": "Section",
+      "filePath": "IMPLEMENTATION_PLAN.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:agents/agent_orchestrator.py:BaseAgent",
+      "name": "BaseAgent",
+      "type": "Class",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:agents/agent_orchestrator.py:BaseAgent._call_llm#2",
+      "name": "_call_llm",
+      "type": "Method",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:agents/agent_orchestrator.py:BaseAgent._build_system_prompt#1",
+      "name": "_build_system_prompt",
+      "type": "Method",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:agents/agent_orchestrator.py:AgentOrchestrator",
+      "name": "AgentOrchestrator",
+      "type": "Class",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator._domain_scores#1",
+      "name": "_domain_scores",
+      "type": "Method",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator._collaboration_targets#1",
+      "name": "_collaboration_targets",
+      "type": "Method",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:agents/agent_orchestrator.py:AgentOrchestrator._needs_clarification#1",
+      "name": "_needs_clarification",
+      "type": "Method",
+      "filePath": "agents/agent_orchestrator.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:active_request_text",
+      "name": "active_request_text",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:wants_checklist",
+      "name": "wants_checklist",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:declines_slot_query",
+      "name": "declines_slot_query",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:wants_slots",
+      "name": "wants_slots",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:compound_visit_request",
+      "name": "compound_visit_request",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/task_requirements.py:explicit_visit_type",
+      "name": "explicit_visit_type",
+      "type": "Function",
+      "filePath": "agents/task_requirements.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/tools.py:build_hospital_tools",
+      "name": "build_hospital_tools",
+      "type": "Function",
+      "filePath": "agents/tools.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/tools.py:build_hospital_tools.handler_for@105:4",
+      "name": "handler_for",
+      "type": "Function",
+      "filePath": "agents/tools.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:agents/tools.py:build_hospital_tools.handler_for@105:4.handler@106:8",
+      "name": "handler",
+      "type": "Function",
+      "filePath": "agents/tools.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/evaluation.md:L1:MediPet 评测、监控与证据",
+      "name": "MediPet 评测、监控与证据",
+      "type": "Section",
+      "filePath": "docs/evaluation.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/intent-routing.md:L1:MediPet 意图识别与主辅路由",
+      "name": "MediPet 意图识别与主辅路由",
+      "type": "Section",
+      "filePath": "docs/intent-routing.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/intent-routing.md:L23:实体是线索，身份来自事项",
+      "name": "实体是线索，身份来自事项",
+      "type": "Section",
+      "filePath": "docs/intent-routing.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/intent-routing.md:L45:领域分工与并行",
+      "name": "领域分工与并行",
+      "type": "Section",
+      "filePath": "docs/intent-routing.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-business-plan.md:L1:简历业务指标专项：冻结计划",
+      "name": "简历业务指标专项：冻结计划",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-business-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-business-plan.md:L5:描述与指标对应",
+      "name": "描述与指标对应",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-business-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-business-plan.md:L17:冻结输入与执行",
+      "name": "冻结输入与执行",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-business-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-business-plan.md:L28:交付",
+      "name": "交付",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-business-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-delivery-recall-plan.md:L1:复合交付与知识回答改进",
+      "name": "复合交付与知识回答改进",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-delivery-recall-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-delivery-recall-plan.md:L5:工作与所有权",
+      "name": "工作与所有权",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-delivery-recall-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-delivery-recall-plan.md:L12:验收",
+      "name": "验收",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-delivery-recall-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-expanded-plan.md:L1:简历效果指标扩测",
+      "name": "简历效果指标扩测",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-expanded-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-expanded-plan.md:L5:固定工作量与口径",
+      "name": "固定工作量与口径",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-expanded-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/metrics/20260918-expanded-plan.md:L17:交付写法",
+      "name": "交付写法",
+      "type": "Section",
+      "filePath": "docs/internal/metrics/20260918-expanded-plan.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/rebuild/EXECUTION.md:L1:重构执行检查点",
+      "name": "重构执行检查点",
+      "type": "Section",
+      "filePath": "docs/internal/rebuild/EXECUTION.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/rebuild/evidence/knowledge-recall-20260918.md:L1:中文知识召回修复：专项验证",
+      "name": "中文知识召回修复：专项验证",
+      "type": "Section",
+      "filePath": "docs/internal/rebuild/evidence/knowledge-recall-20260918.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/rebuild/evidence/knowledge-recall-20260918.md:L5:诊断与修改前影响",
+      "name": "诊断与修改前影响",
+      "type": "Section",
+      "filePath": "docs/internal/rebuild/evidence/knowledge-recall-20260918.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/rebuild/evidence/knowledge-recall-20260918.md:L14:最小实现",
+      "name": "最小实现",
+      "type": "Section",
+      "filePath": "docs/internal/rebuild/evidence/knowledge-recall-20260918.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/internal/rebuild/evidence/knowledge-recall-20260918.md:L22:验证结果与限制",
+      "name": "验证结果与限制",
+      "type": "Section",
+      "filePath": "docs/internal/rebuild/evidence/knowledge-recall-20260918.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/tools-rag.md:L1:MediPet 工具调用与知识检索",
+      "name": "MediPet 工具调用与知识检索",
+      "type": "Section",
+      "filePath": "docs/tools-rag.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/tools-rag.md:L5:从模型请求到实际函数",
+      "name": "从模型请求到实际函数",
+      "type": "Section",
+      "filePath": "docs/tools-rag.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/tools-rag.md:L51:检索链路与失败语义",
+      "name": "检索链路与失败语义",
+      "type": "Section",
+      "filePath": "docs/tools-rag.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/tools-rag.md:L64:文档如何进入 Chroma",
+      "name": "文档如何进入 Chroma",
+      "type": "Section",
+      "filePath": "docs/tools-rag.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/tools-rag.md:L78:已测证据与取舍",
+      "name": "已测证据与取舍",
+      "type": "Section",
+      "filePath": "docs/tools-rag.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L1:有据回答效果对照",
+      "name": "有据回答效果对照",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L5:固定问题与参考事实",
+      "name": "固定问题与参考事实",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L11:召回输入",
+      "name": "召回输入",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L39:执行方式",
+      "name": "执行方式",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L57:评分与分母",
+      "name": "评分与分母",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/answer-quality.md:L70:原始证据和恢复",
+      "name": "原始证据和恢复",
+      "type": "Section",
+      "filePath": "evaluation/answer-quality.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:ROOT",
+      "name": "ROOT",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:DEFAULT_CASES",
+      "name": "DEFAULT_CASES",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:ARMS",
+      "name": "ARMS",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:DIMENSIONS",
+      "name": "DIMENSIONS",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:EVIDENCE_FIELDS",
+      "name": "EVIDENCE_FIELDS",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:ANSWER_SYSTEM",
+      "name": "ANSWER_SYSTEM",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/answer_quality.py:JUDGE_SYSTEM",
+      "name": "JUDGE_SYSTEM",
+      "type": "Variable",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:fingerprint",
+      "name": "fingerprint",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:read_json",
+      "name": "read_json",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:write_json",
+      "name": "write_json",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:_nonempty_strings",
+      "name": "_nonempty_strings",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:load_cases",
+      "name": "load_cases",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:validate_retrievals",
+      "name": "validate_retrievals",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:answer_input",
+      "name": "answer_input",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:judge_input",
+      "name": "judge_input",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:parse_judgment",
+      "name": "parse_judgment",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:judgment_passed",
+      "name": "judgment_passed",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:evaluation/answer_quality.py:Journal",
+      "name": "Journal",
+      "type": "Class",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:evaluation/answer_quality.py:Journal.__init__#1",
+      "name": "__init__",
+      "type": "Method",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:evaluation/answer_quality.py:Journal.record",
+      "name": "record",
+      "type": "Method",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:evaluation/answer_quality.py:Journal.call#5",
+      "name": "call",
+      "type": "Method",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:aggregate",
+      "name": "aggregate",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:run_identity",
+      "name": "run_identity",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:run_comparison",
+      "name": "run_comparison",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:run_comparison.publish@319:8",
+      "name": "publish",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:sdk_invoker",
+      "name": "sdk_invoker",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:sdk_invoker.invoke@379:4",
+      "name": "invoke",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/answer_quality.py:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "evaluation/answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/business_metrics.py:ROOT",
+      "name": "ROOT",
+      "type": "Variable",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:save",
+      "name": "save",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:sha",
+      "name": "sha",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:frozen_inputs",
+      "name": "frozen_inputs",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:deployment_probe",
+      "name": "deployment_probe",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:summarize",
+      "name": "summarize",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:summarize.success@97:4",
+      "name": "success",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:summarize.group@102:4",
+      "name": "group",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/business_metrics.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "evaluation/business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/expanded_cases.py:ROOT",
+      "name": "ROOT",
+      "type": "Variable",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/expanded_cases.py:CLOCK",
+      "name": "CLOCK",
+      "type": "Variable",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:evaluation/expanded_cases.py:DEPARTMENTS",
+      "name": "DEPARTMENTS",
+      "type": "Variable",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_cases.py:business_cases",
+      "name": "business_cases",
+      "type": "Function",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_cases.py:business_cases.make@40:4",
+      "name": "make",
+      "type": "Function",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_cases.py:retrieval_cases",
+      "name": "retrieval_cases",
+      "type": "Function",
+      "filePath": "evaluation/expanded_cases.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_metrics.py:score",
+      "name": "score",
+      "type": "Function",
+      "filePath": "evaluation/expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_metrics.py:aggregate",
+      "name": "aggregate",
+      "type": "Function",
+      "filePath": "evaluation/expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/expanded_metrics.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "evaluation/expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/README.md:L1:MediPet 实际模型候选报告",
+      "name": "MediPet 实际模型候选报告",
+      "type": "Section",
+      "filePath": "evaluation/reports/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-20260918/notes.md:L1:2026-09-18 简历业务指标专项",
+      "name": "2026-09-18 简历业务指标专项",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-20260918/notes.md:L5:可用指标与对应简历内容",
+      "name": "可用指标与对应简历内容",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-20260918/notes.md:L24:必须保留的失败与观察",
+      "name": "必须保留的失败与观察",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-20260918/notes.md:L34:简历使用结论",
+      "name": "简历使用结论",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-20260918/notes.md:L40:证据与复现",
+      "name": "证据与复现",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L1:2026-09-18 简历效果指标扩测",
+      "name": "2026-09-18 简历效果指标扩测",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L5:评测范围",
+      "name": "评测范围",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L15:统计规则",
+      "name": "统计规则",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L25:已完成的独立专项",
+      "name": "已完成的独立专项",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L38:业务失败",
+      "name": "业务失败",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/business-expanded-20260918/notes.md:L48:复现与原始证据",
+      "name": "复现与原始证据",
+      "type": "Section",
+      "filePath": "evaluation/reports/business-expanded-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/delivery-recall-20260918/notes.md:L1:复合交付、知识召回与回答效果",
+      "name": "复合交付、知识召回与回答效果",
+      "type": "Section",
+      "filePath": "evaluation/reports/delivery-recall-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/delivery-recall-20260918/notes.md:L5:修改与诊断",
+      "name": "修改与诊断",
+      "type": "Section",
+      "filePath": "evaluation/reports/delivery-recall-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/delivery-recall-20260918/notes.md:L12:检索配对结果（已完成）",
+      "name": "检索配对结果（已完成）",
+      "type": "Section",
+      "filePath": "evaluation/reports/delivery-recall-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/delivery-recall-20260918/notes.md:L26:业务与回答评测",
+      "name": "业务与回答评测",
+      "type": "Section",
+      "filePath": "evaluation/reports/delivery-recall-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:evaluation/reports/delivery-recall-20260918/notes.md:L62:测试及已知限制",
+      "name": "测试及已知限制",
+      "type": "Section",
+      "filePath": "evaluation/reports/delivery-recall-20260918/notes.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/retrieval_comparison.py:save",
+      "name": "save",
+      "type": "Function",
+      "filePath": "evaluation/retrieval_comparison.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/retrieval_comparison.py:module",
+      "name": "module",
+      "type": "Function",
+      "filePath": "evaluation/retrieval_comparison.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:evaluation/retrieval_comparison.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "evaluation/retrieval_comparison.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:mcp/knowledge_base.py:KnowledgeBase",
+      "name": "KnowledgeBase",
+      "type": "Class",
+      "filePath": "mcp/knowledge_base.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:mcp/knowledge_base.py:KnowledgeBase.search#2",
+      "name": "search",
+      "type": "Method",
+      "filePath": "mcp/knowledge_base.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:mcp/knowledge_retrieval.py:lexical_terms",
+      "name": "lexical_terms",
+      "type": "Function",
+      "filePath": "mcp/knowledge_retrieval.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:mcp/knowledge_retrieval.py:lexical_ranking",
+      "name": "lexical_ranking",
+      "type": "Function",
+      "filePath": "mcp/knowledge_retrieval.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:mcp/knowledge_retrieval.py:fuse_rankings",
+      "name": "fuse_rankings",
+      "type": "Function",
+      "filePath": "mcp/knowledge_retrieval.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:mcp/knowledge_retrieval.py:fuse_rankings.scores@48:4",
+      "name": "scores",
+      "type": "Property",
+      "filePath": "mcp/knowledge_retrieval.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:mcp/tool_manager.py:MCPToolManager",
+      "name": "MCPToolManager",
+      "type": "Class",
+      "filePath": "mcp/tool_manager.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:mcp/tool_manager.py:MCPToolManager._rerank#3",
+      "name": "_rerank",
+      "type": "Method",
+      "filePath": "mcp/tool_manager.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:tests/benchmarks/business_transactions.py:CLOCK",
+      "name": "CLOCK",
+      "type": "Variable",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:compact",
+      "name": "compact",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:require",
+      "name": "require",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:simultaneous",
+      "name": "simultaneous",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:simultaneous.call@40:4",
+      "name": "call",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:one_group",
+      "name": "one_group",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:one_group.identity@61:8",
+      "name": "identity",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:await_result",
+      "name": "await_result",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/business_transactions.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/benchmarks/business_transactions.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/compound_boundaries.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/benchmarks/compound_boundaries.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/compound_boundaries.py:run.now@25:4",
+      "name": "now",
+      "type": "Function",
+      "filePath": "tests/benchmarks/compound_boundaries.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/intent_regression_metrics.py:save",
+      "name": "save",
+      "type": "Function",
+      "filePath": "tests/benchmarks/intent_regression_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/intent_regression_metrics.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/benchmarks/intent_regression_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/intent_regression_metrics.py:run.counted@33:4",
+      "name": "counted",
+      "type": "Function",
+      "filePath": "tests/benchmarks/intent_regression_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/retrieval_metrics.py:save",
+      "name": "save",
+      "type": "Function",
+      "filePath": "tests/benchmarks/retrieval_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/retrieval_metrics.py:metrics",
+      "name": "metrics",
+      "type": "Function",
+      "filePath": "tests/benchmarks/retrieval_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/retrieval_metrics.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/benchmarks/retrieval_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/benchmarks/retrieval_metrics.py:run.counted@43:4",
+      "name": "counted",
+      "type": "Function",
+      "filePath": "tests/benchmarks/retrieval_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:sample_case",
+      "name": "sample_case",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:sample_retrieval",
+      "name": "sample_retrieval",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:inputs",
+      "name": "inputs",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:good_judgment",
+      "name": "good_judgment",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:tests/test_answer_quality.py:FakeModel",
+      "name": "FakeModel",
+      "type": "Class",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_answer_quality.py:FakeModel.__init__#0",
+      "name": "__init__",
+      "type": "Method",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_answer_quality.py:FakeModel.__call__#3",
+      "name": "__call__",
+      "type": "Method",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:run",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_frozen_dataset_covers_all_24_documents_and_negative_controls",
+      "name": "test_frozen_dataset_covers_all_24_documents_and_negative_controls",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_answer_input_cannot_leak_labels_groups_arm_or_retrieval_metadata",
+      "name": "test_answer_input_cannot_leak_labels_groups_arm_or_retrieval_metadata",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_judge_rejects_invalid_or_nonfinite_scores",
+      "name": "test_judge_rejects_invalid_or_nonfinite_scores",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_judge_response_requires_complete_auditable_basis",
+      "name": "test_judge_response_requires_complete_auditable_basis",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_high_scores_do_not_override_unsupported_claim_or_missing_requirement",
+      "name": "test_high_scores_do_not_override_unsupported_claim_or_missing_requirement",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_no_evidence_case_requires_observed_appropriate_abstention",
+      "name": "test_no_evidence_case_requires_observed_appropriate_abstention",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_paired_run_keeps_raw_answers_evidence_judge_background_and_candidate",
+      "name": "test_paired_run_keeps_raw_answers_evidence_judge_background_and_candidate",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_full_denominator_includes_missing_retrieval_and_judge_failure",
+      "name": "test_full_denominator_includes_missing_retrieval_and_judge_failure",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_full_denominator_includes_missing_retrieval_and_judge_failure.malformed@155:4",
+      "name": "malformed",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_partial_failures_cannot_improve_average_by_removing_failed_rows",
+      "name": "test_partial_failures_cannot_improve_average_by_removing_failed_rows",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_answer_call_failure_is_preserved_and_judge_not_called",
+      "name": "test_answer_call_failure_is_preserved_and_judge_not_called",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_answer_call_failure_is_preserved_and_judge_not_called.broken@184:4",
+      "name": "broken",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_resume_reuses_completed_and_failed_requests_without_rebilling",
+      "name": "test_resume_reuses_completed_and_failed_requests_without_rebilling",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_started_request_is_fsynced_before_call_and_uncertain_never_retried",
+      "name": "test_started_request_is_fsynced_before_call_and_uncertain_never_retried",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_started_request_is_fsynced_before_call_and_uncertain_never_retried.interrupted@212:4",
+      "name": "interrupted",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_failed_request_is_not_automatically_retried",
+      "name": "test_failed_request_is_not_automatically_retried",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_failed_request_is_not_automatically_retried.broken@228:4",
+      "name": "broken",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_truncated_generation_preserves_raw_and_is_not_judged",
+      "name": "test_truncated_generation_preserves_raw_and_is_not_judged",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_truncated_generation_preserves_raw_and_is_not_judged.truncated@239:4",
+      "name": "truncated",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_prepare_makes_no_calls_and_refuses_existing_or_concurrent_output",
+      "name": "test_prepare_makes_no_calls_and_refuses_existing_or_concurrent_output",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_retrieval_input_rejects_ambiguous_or_unsourced_results",
+      "name": "test_retrieval_input_rejects_ambiguous_or_unsourced_results",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_sdk_adapter_uses_identical_fixed_parameters_and_retains_raw_usage",
+      "name": "test_sdk_adapter_uses_identical_fixed_parameters_and_retains_raw_usage",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_answer_quality.py:test_sdk_adapter_uses_identical_fixed_parameters_and_retains_raw_usage.create@276:4",
+      "name": "create",
+      "type": "Function",
+      "filePath": "tests/test_answer_quality.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_business_metrics.py:test_missing_requests_remain_in_denominators",
+      "name": "test_missing_requests_remain_in_denominators",
+      "type": "Function",
+      "filePath": "tests/test_business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_business_metrics.py:test_compound_cards_cannot_be_pooled_across_turns",
+      "name": "test_compound_cards_cannot_be_pooled_across_turns",
+      "type": "Function",
+      "filePath": "tests/test_business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_business_metrics.py:test_execution_failure_cannot_be_masked_by_business_pass",
+      "name": "test_execution_failure_cannot_be_masked_by_business_pass",
+      "type": "Function",
+      "filePath": "tests/test_business_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_explicit_compound_survives_low_confidence_other",
+      "name": "test_explicit_compound_survives_low_confidence_other",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_checklist_uses_explicit_child_requirement_over_generic_model_args",
+      "name": "test_checklist_uses_explicit_child_requirement_over_generic_model_args",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_compound_guidance_first_call_requires_real_checklist",
+      "name": "test_compound_guidance_first_call_requires_real_checklist",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_declined_or_unrelated_tasks_do_not_force_compound_tools",
+      "name": "test_declined_or_unrelated_tasks_do_not_force_compound_tools",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_family_identity_does_not_invent_child_age",
+      "name": "test_family_identity_does_not_invent_child_age",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_explicit_decline_overrides_earlier_topic_mention",
+      "name": "test_explicit_decline_overrides_earlier_topic_mention",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_previous_child_subject_does_not_override_current_self_materials",
+      "name": "test_previous_child_subject_does_not_override_current_self_materials",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_declined_slot_query_cannot_replace_existing_selection",
+      "name": "test_declined_slot_query_cannot_replace_existing_selection",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_declining_cancellation_does_not_block_read_only_query",
+      "name": "test_declining_cancellation_does_not_block_read_only_query",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_compound_delivery.py:test_compound_tool_failure_remains_visible_without_fabricated_card",
+      "name": "test_compound_tool_failure_remains_visible_without_fabricated_card",
+      "type": "Function",
+      "filePath": "tests/test_compound_delivery.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_expanded_metrics.py:business_report",
+      "name": "business_report",
+      "type": "Function",
+      "filePath": "tests/test_expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_expanded_metrics.py:test_frozen_workload_has_expected_denominators_and_labels",
+      "name": "test_frozen_workload_has_expected_denominators_and_labels",
+      "type": "Function",
+      "filePath": "tests/test_expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_expanded_metrics.py:test_wrong_patient_receipt_does_not_pass_on_inventory_assertions",
+      "name": "test_wrong_patient_receipt_does_not_pass_on_inventory_assertions",
+      "type": "Function",
+      "filePath": "tests/test_expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_expanded_metrics.py:test_compound_empty_or_wrong_patient_checklist_is_not_delivery",
+      "name": "test_compound_empty_or_wrong_patient_checklist_is_not_delivery",
+      "type": "Function",
+      "filePath": "tests/test_expanded_metrics.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:tests/test_knowledge_recall.py:ReplayCollection",
+      "name": "ReplayCollection",
+      "type": "Class",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.__init__#0",
+      "name": "__init__",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.count#0",
+      "name": "count",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.get#3",
+      "name": "get",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.upsert#3",
+      "name": "upsert",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:tests/test_knowledge_recall.py:add",
+      "name": "add",
+      "type": "Variable",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.delete#1",
+      "name": "delete",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_knowledge_recall.py:ReplayCollection.query#2",
+      "name": "query",
+      "type": "Method",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:replay_kb",
+      "name": "replay_kb",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_observed_chinese_vector_misses_are_recalled",
+      "name": "test_observed_chinese_vector_misses_are_recalled",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_new_uploads_without_predefined_ids_are_lexically_recalled",
+      "name": "test_new_uploads_without_predefined_ids_are_lexically_recalled",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_current_collection_text_is_used_after_same_count_update",
+      "name": "test_current_collection_text_is_used_after_same_count_update",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_semantic_only_match_and_empty_result_keep_existing_semantics",
+      "name": "test_semantic_only_match_and_empty_result_keep_existing_semantics",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_vector_errors_are_not_hidden_as_success",
+      "name": "test_vector_errors_are_not_hidden_as_success",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_vector_errors_are_not_hidden_as_success.unavailable@110:4",
+      "name": "unavailable",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_tokenization_respects_word_boundaries_and_width",
+      "name": "test_tokenization_respects_word_boundaries_and_width",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_parallel_queries_return_independent_bounded_candidates",
+      "name": "test_parallel_queries_return_independent_bounded_candidates",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_parallel_queries_return_independent_bounded_candidates.run@124:4",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_knowledge_recall.py:test_real_ephemeral_chroma_recalls_chinese_topics_without_migrating_collection",
+      "name": "test_real_ephemeral_chroma_recalls_chinese_topics_without_migrating_collection",
+      "type": "Function",
+      "filePath": "tests/test_knowledge_recall.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_rerank_evidence.py:test_reranker_receives_body_even_when_source_metadata_is_long",
+      "name": "test_reranker_receives_body_even_when_source_metadata_is_long",
+      "type": "Function",
+      "filePath": "tests/test_rerank_evidence.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_rerank_evidence.py:test_reranker_receives_body_even_when_source_metadata_is_long.create@10:4",
+      "name": "create",
+      "type": "Function",
+      "filePath": "tests/test_rerank_evidence.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L1:带数据指标的简历模板",
+      "name": "带数据指标的简历模板",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L19:简历顶部摘要",
+      "name": "简历顶部摘要",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L27:项目经历",
+      "name": "项目经历",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L35:强指标版",
+      "name": "强指标版",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L62:精简投递版",
+      "name": "精简投递版",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L73:面试介绍模板",
+      "name": "面试介绍模板",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L139:指标口径补充",
+      "name": "指标口径补充",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L141:当前正文采用的扩测指标",
+      "name": "当前正文采用的扩测指标",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L154:2026-09-18首轮小样本专项（历史记录）",
+      "name": "2026-09-18首轮小样本专项（历史记录）",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/带数据指标的加强版简历模板.md:L187:U002语义专项：可以使用的数字与限制",
+      "name": "U002语义专项：可以使用的数字与限制",
+      "type": "Section",
+      "filePath": "文档+简历/带数据指标的加强版简历模板.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/文档中心.md:L1:MediPet 文档中心",
+      "name": "MediPet 文档中心",
+      "type": "Section",
+      "filePath": "文档+简历/文档中心.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/文档中心.md:L27:建议阅读顺序",
+      "name": "建议阅读顺序",
+      "type": "Section",
+      "filePath": "文档+简历/文档中心.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L1:MediPet 简历包装指南",
+      "name": "MediPet 简历包装指南",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L5:项目一句话描述",
+      "name": "项目一句话描述",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L9:简历项目经历写法",
+      "name": "简历项目经历写法",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L11:通用版本",
+      "name": "通用版本",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L44:Python 后端 / AI 应用版本",
+      "name": "Python 后端 / AI 应用版本",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L58:另一个简洁版本",
+      "name": "另一个简洁版本",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L67:端到端 Agent 怎么评测？",
+      "name": "端到端 Agent 怎么评测？",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L92:面试提示：模块沿用、项目增量与本人职责",
+      "name": "面试提示：模块沿用、项目增量与本人职责",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:文档+简历/简历包装.md:L121:技术栈关键词",
+      "name": "技术栈关键词",
+      "type": "Section",
+      "filePath": "文档+简历/简历包装.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_1_run_parallel",
+      "name": "Run_parallel → Active_request_text",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "_build_system_prompt",
+          "step": 5
+        },
+        {
+          "symbol": "_call_llm",
+          "step": 4
+        },
+        {
+          "symbol": "compound_visit_request",
+          "step": 6
+        },
+        {
+          "symbol": "wants_checklist",
+          "step": 7
+        },
+        {
+          "symbol": "active_request_text",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "id": "proc_2_run_parallel",
+      "name": "Run_parallel → Declines_slot_query",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "_build_system_prompt",
+          "step": 5
+        },
+        {
+          "symbol": "_call_llm",
+          "step": 4
+        },
+        {
+          "symbol": "compound_visit_request",
+          "step": 6
+        },
+        {
+          "symbol": "wants_slots",
+          "step": 7
+        },
+        {
+          "symbol": "declines_slot_query",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "id": "proc_20_run",
+      "name": "Run → Slot_key",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_21_run",
+      "name": "Run → Fallback",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_22_run",
+      "name": "Run → _cache_key",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_23_run",
+      "name": "Run → Handler",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_24_run_parallel",
+      "name": "Run_parallel → _block_type",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "_call_llm",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_25_run_parallel",
+      "name": "Run_parallel → _build_role_packet",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "_call_llm",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_26_run_parallel",
+      "name": "Run_parallel → Get_tools",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "_call_llm",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_42_run",
+      "name": "Run → _failure",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_43_run",
+      "name": "Run → _window_slots",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_44_run",
+      "name": "Run → Now",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_45_run",
+      "name": "Run → _require_identity",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_46_run",
+      "name": "Run → _find",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_47_run",
+      "name": "Run → Extract_text_content",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "_rerank",
+          "step": 3
+        },
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_48_run",
+      "name": "Run → Llm_request_options",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "_rerank",
+          "step": 3
+        },
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_49_run",
+      "name": "Run → _clean_text",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "_rerank",
+          "step": 3
+        },
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_50_run",
+      "name": "Run → _validate_params",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_65_main",
+      "name": "Main → _nonempty_strings",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "main",
+          "step": 1
+        },
+        {
+          "symbol": "load_cases",
+          "step": 2
+        },
+        {
+          "symbol": "_nonempty_strings",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_66_main",
+      "name": "Main → Read_json",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "main",
+          "step": 1
+        },
+        {
+          "symbol": "load_cases",
+          "step": 2
+        },
+        {
+          "symbol": "read_json",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_67_run_comparison",
+      "name": "Run_comparison → Fingerprint",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run_comparison",
+          "step": 1
+        },
+        {
+          "symbol": "run_identity",
+          "step": 2
+        },
+        {
+          "symbol": "fingerprint",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_68_run_comparison",
+      "name": "Run_comparison → Record",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "call",
+          "step": 2
+        },
+        {
+          "symbol": "record",
+          "step": 3
+        },
+        {
+          "symbol": "run_comparison",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_69_summarize",
+      "name": "Summarize → Success",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "group",
+          "step": 2
+        },
+        {
+          "symbol": "success",
+          "step": 3
+        },
+        {
+          "symbol": "summarize",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_70_run",
+      "name": "Run → Score",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "aggregate",
+          "step": 2
+        },
+        {
+          "symbol": "score",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_85_simultaneous",
+      "name": "Simultaneous → Compact",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "call",
+          "step": 2
+        },
+        {
+          "symbol": "simultaneous",
+          "step": 1
+        },
+        {
+          "symbol": "compact",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_102_run",
+      "name": "Run → Active_request_text",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "_needs_clarification",
+          "step": 2
+        },
+        {
+          "symbol": "compound_visit_request",
+          "step": 3
+        },
+        {
+          "symbol": "wants_checklist",
+          "step": 4
+        },
+        {
+          "symbol": "active_request_text",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_103_run",
+      "name": "Run → Declines_slot_query",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "_needs_clarification",
+          "step": 2
+        },
+        {
+          "symbol": "compound_visit_request",
+          "step": 3
+        },
+        {
+          "symbol": "wants_slots",
+          "step": 4
+        },
+        {
+          "symbol": "declines_slot_query",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_111_run",
+      "name": "Run → _strip_entity_prefix",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_112_run",
+      "name": "Run → _today",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_113_run",
+      "name": "Run → _unique",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_126_run",
+      "name": "Run → _classification_version",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_136_identity",
+      "name": "Identity → Now",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "identity",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_146_handler",
+      "name": "Handler → Active_request_text",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "handler",
+          "step": 1
+        },
+        {
+          "symbol": "explicit_visit_type",
+          "step": 2
+        },
+        {
+          "symbol": "wants_checklist",
+          "step": 3
+        },
+        {
+          "symbol": "active_request_text",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_151_run",
+      "name": "Run → _clean_text",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_171_run",
+      "name": "Run → Now",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_190_run",
+      "name": "Run → Slot_key",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_195_run",
+      "name": "Run → _failure",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_196_run",
+      "name": "Run → _window_slots",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_197_run",
+      "name": "Run → Now",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_260_identity",
+      "name": "Identity → _storage_error",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "identity",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_268_run",
+      "name": "Run → _storage_error",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        },
+        {
+          "symbol": "one_group",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_275_identity",
+      "name": "Identity → _identifier",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "identity",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_276_run",
+      "name": "Run → _storage_error",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_282_run",
+      "name": "Run → _identifier",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "run",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}
