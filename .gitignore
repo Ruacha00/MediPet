@@ -37,3 +37,10 @@ repomix-output.*
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Local AI workflow and learning material
+/AGENTS.md
+/CLAUDE.md
+/IMPLEMENTATION_PLAN.md
+/文档+简历/
+/docs/internal/

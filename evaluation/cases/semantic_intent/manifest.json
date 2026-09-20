@@ -104,7 +104,7 @@
   "review": {
     "status": "approved",
     "reviewer": "/root/spec_agents_knowledge",
-    "evidence": "../../../docs/internal/updates/U002-semantic-intent/evidence/dataset/review-changes.json"
+    "evidence": "review-changes.json"
   },
   "file_sha256": {
     "authoring-families.json": "0d56b63c681e59a4a80c3f94e81d20983b1c0693c761a81f33c49827170adf4e",

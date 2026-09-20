@@ -2,8 +2,6 @@
 
 MediPet 是面向门诊就诊与健康咨询场景的多 Agent 服务系统。它围绕医院查询、预约、就诊指引，以及有限症状分诊、药品说明书查询和报告整理组织对话，使用 Python/FastAPI、Vue/Vite、Redis 和 Chroma。模型负责理解、选择可用工具和组织回答；患者归属、库存、预约状态及医疗信息卡片由程序校验或生成。
 
-本文对应 U001 医疗扩展的当前源码。旧基准 `c712e87` 的接口、存储、浏览器、容器和两份模型报告保留为历史证据；本轮验收已记录（含完整候选失败与定点复测），见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。候选仍需人工接受，各层测试不能互相替代。
-
 ## 一次聊天怎样完成
 
 入口是 [api/main.py](../api/main.py) 的 `chat`。页面提交消息、参与者和事项标识；`_load_visit` 先读取事项绑定的患者。已有事项不能被请求中的另一患者覆盖；无事项时，服务创建指定患者或默认本人的事项。
@@ -66,13 +64,9 @@ flowchart TD
 
 页面通过 [PatientVisitPanel.vue](../frontend/src/components/PatientVisitPanel.vue) 管理患者与事项，通过 [BusinessArtifacts.vue](../frontend/src/components/BusinessArtifacts.vue) 消费固定类型卡片。聊天响应含文字、`artifacts`、本轮 `tool_traces`、主辅角色及路由理由；确认响应只含身份、回执与卡片，二者协议分开。详见[预约闭环](appointments.md)。
 
-## 已验证内容与取舍
+## 验证与范围
 
-以下预约/存储数量属于医疗扩展前的旧基准；本轮分诊、药品与知识/Skill 的 97 项局部确定性检查见[来源证据](internal/updates/U001-health-consultation/evidence/medical-sources.md)，不能替代 OCR、浏览器或真实模型验收。
-
-- [API 闭环测试](../tests/test_demo_workflow.py) 和 [API 边界测试](../tests/test_chat_api.py) 共 **24 项通过**：执行真实 API 函数、Agent 工具及业务服务，模型、Redis、Chroma 为确定性替身。覆盖孩子预约至取消、文字确认不执行、重复确认、患者隔离和历史恢复。
-- [真实存储证据](internal/rebuild/evidence/storage.md)记录 **18 项真实 Redis/Chroma 检查通过**，证明事务竞争、患者过滤、真实过期和重新初始化语义。摘要模型仍为替身。
-- [评测说明](evaluation.md)区分模型质量与业务状态；浏览器、容器和完整真实模型验收需各自的运行证据，不能用接口替身测试代替。
+[API闭环测试](../tests/test_demo_workflow.py)与[API边界测试](../tests/test_chat_api.py)覆盖预约确认、患者隔离及历史恢复；[评测说明](evaluation.md)分别记录确定性测试、真实存储检查和实际模型结果。业务字段与前后端卡片以[数据契约](api-contracts.md)为准。
 
 采用一套具体医院服务和有限角色，使调用路径与失败状态可以直接追踪。代价是业务范围固定：分诊只使用现有内科、儿科、眼科，药品只覆盖两个指定美国标签；不连接真实医院、不诊断或开处方、不评价其他医生方案、不计算实时导航。当前预置参与者也不是生产身份认证系统。模型上下文用于理解，实时号源和预约事实仍须查询业务存储。
 

@@ -1,12 +1,12 @@
-# H01 共享业务契约
+# MediPet 业务数据与接口契约
 
-本文件与 [`hospital/models.py`](../../../hospital/models.py) 是 H02—H06、M01—M04、A01—A05、I01—I04、U01—U05 的共同输入。模型及样例已实现；服务、存储、Agent/API 接入和页面由各自 issue 实施。本文件不表示这些能力已经接通。
+本文约定医院业务数据、身份作用域、HTTP 响应和业务卡片结构，与 [`hospital/models.py`](../hospital/models.py) 保持一致。前后端契约测试共同读取文末 JSON 样例。
 
 ## 类型与序列化
 
-- 继续使用基准的 dataclass 请求/编排结果及 Pydantic API 模型。新增具体领域模型集中于 `hospital/models.py`，无新业务框架或通用仓储。
-- `ContractModel` 拒绝未定义字段。构造用 `Model.model_validate(data)`，Redis 保存用 `model_dump_json()`、恢复用 `model_validate_json(raw)`；工具/HTTP 输出用 `model_dump(mode="json")`。禁止将模型、datetime 或枚举原对象直接传给基准工具的 `json.dumps(result)`。
-- ID 是区分大小写的非空 ASCII 字符串，匹配 `[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}`；用户正文及姓名不充当 ID。静态数据 ID 由 H02 固定；运行创建的事项、方案、预约、消息、列表用类型前缀加完整 UUID hex，例如 `visit-<uuid32>`。基准短 `request_id` 仅用于追踪，不作为业务主键。
+- 使用现有的 dataclass 请求/编排结果及 Pydantic API 模型。新增具体领域模型集中于 `hospital/models.py`，无新业务框架或通用仓储。
+- `ContractModel` 拒绝未定义字段。构造用 `Model.model_validate(data)`，Redis 保存用 `model_dump_json()`、恢复用 `model_validate_json(raw)`；工具/HTTP 输出用 `model_dump(mode="json")`。禁止将模型、datetime 或枚举原对象直接传给工具的 `json.dumps(result)`。
+- ID 是区分大小写的非空 ASCII 字符串，匹配 `[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}`；用户正文及姓名不充当 ID。静态数据 ID 由预置数据固定；运行创建的事项、方案、预约、消息、列表用类型前缀加完整 UUID hex，例如 `visit-<uuid32>`。现有短 `request_id` 仅用于追踪，不作为业务主键。
 - 日期固定为 `YYYY-MM-DD`；排班时刻为本地 `HH:MM`；星期 1=周一、7=周日；时段为 `morning/afternoon`。今天、明天、后天均按 `Asia/Shanghai` 求日期。
 - `created_at/updated_at/queried_at/expires_at/executed_at/cancelled_at` 为带时区 ISO 8601 时间；服务写入上海时区 `+08:00`，模型也能读取合法 UTC/其他偏移并比较同一时刻。拒绝无时区、数值纪元时间和无效日期；测试注入固定时钟。
 - 费用统一 `fee_fen: int >= 0`，容量和剩余数也是严格整数，拒绝布尔值、浮点值和数字字符串。展示时转换为元，不用浮点字段保存费用。
@@ -14,28 +14,28 @@
 
 ## 身份、事项与现有消费者
 
-默认演示参与者固定为 `DEFAULT_USER_ID = "anonymous"`，保留现有 `ChatRequest` 默认。H02 为该参与者预置本人、家属；前端后续使用同一默认值，不保留 `u1001` 与后端不一致的默认。未知参与关系返回业务错误，不自动把其他 ID 映射到 anonymous；这不是登录系统。
+默认演示参与者固定为 `DEFAULT_USER_ID = "anonymous"`，保留现有 `ChatRequest` 默认。预置数据为该参与者提供本人、家属；前端使用同一默认值，不保留 `u1001` 与后端不一致的默认。未知参与关系返回业务错误，不自动把其他 ID 映射到 anonymous；这不是登录系统。
 
 `Patient` 保存 `patient_id/user_id/name/relationship(self|family)`，足够表达本次一名参与者的两名就诊人，不建设患者共享或身份核验平台。默认患者为该参与者唯一的 `self` 患者。`Visit` 保存 `user_id/patient_id/conv_id/title/archived/created_at/updated_at`；`conv_id` 就是事项 ID，一个事项创建后患者不可变。
 
-| 消费者 | 必要接入变化 |
+| 消费者 | 接口约定 |
 | --- | --- |
-| `api/main.py::ChatRequest`（I01/I02） | 保留 `message/user_id/conv_id`；新增 `patient_id: Optional[str] = None`。无事项时根据所选或默认患者创建；已有事项加载绑定患者，显式冲突返回 `identity_conflict`；显式未知 conv_id 不隐式新建。 |
-| `agents/...::Request`（A02） | 末尾新增默认 None 的 `patient_id`，保留旧直接调用形状；业务工具仅处理服务器已校验的非空身份。测试/评测的业务路径必须提供受控身份上下文。 |
-| `VisitIdentity`（I01、H、M） | 从服务器加载事项后构造必填的 `user_id/patient_id/conv_id`，传入服务；模型 args 不含这些字段。医院服务也核对目标记录归属。 |
-| `AgentResponse/OrchestratorResult`（A04） | 新增 `artifacts: list[Artifact]`，dataclass 使用 `field(default_factory=list)`；保留原路由与 trace 字段。 |
-| `ChatResponse`（I02） | 保留原字段和 `conv_id`，增加 `patient_id: str`、`visit: Visit`、`artifacts: list[Artifact]`。患者详情从 `/patients` 获取；visit 必须与响应 IDs 一致。 |
-| `entities`（A01/A02/I02） | 继续 `dict[str,list[str]]`。键为 `department/doctor/date/period/slot_id/appointment_id/origin/destination/accessibility/selection_index`；日期值用 ISO 日期、时段用枚举、选择位置用 `"1"` 等一基数字字符串，无障碍用 `"normal"/"accessible"`。科室/医生可以是待解析名称，服务解析至固定 ID；身份不从实体提取。 |
+| `api/main.py::ChatRequest` | 保留 `message/user_id/conv_id`；新增 `patient_id: Optional[str] = None`。无事项时根据所选或默认患者创建；已有事项加载绑定患者，显式冲突返回 `identity_conflict`；显式未知 conv_id 不隐式新建。 |
+| `agents/...::Request` | 末尾新增默认 None 的 `patient_id`，保留旧直接调用形状；业务工具仅处理服务器已校验的非空身份。测试/评测的业务路径必须提供受控身份上下文。 |
+| `VisitIdentity` | 从服务器加载事项后构造必填的 `user_id/patient_id/conv_id`，传入服务；模型 args 不含这些字段。医院服务也核对目标记录归属。 |
+| `AgentResponse/OrchestratorResult` | 新增 `artifacts: list[Artifact]`，dataclass 使用 `field(default_factory=list)`；保留原路由与 trace 字段。 |
+| `ChatResponse` | 保留原字段和 `conv_id`，增加 `patient_id: str`、`visit: Visit`、`artifacts: list[Artifact]`。患者详情从 `/patients` 获取；visit 必须与响应 IDs 一致。 |
+| `entities` | 继续 `dict[str,list[str]]`。键为 `department/doctor/date/period/slot_id/appointment_id/origin/destination/accessibility/selection_index`；日期值用 ISO 日期、时段用枚举、选择位置用 `"1"` 等一基数字字符串，无障碍用 `"normal"/"accessible"`。科室/医生可以是待解析名称，服务解析至固定 ID；身份不从实体提取。 |
 
 归档只影响默认列表，保留历史和预约。归档事项可读取但不得发送新消息或确认新操作；先恢复事项。事项改名、归档、恢复的 `updated_at` 不早于 `created_at`。
 
 ## 静态事实与号源
 
-`DemoData` 对应 H02 的 `hospital/demo_data.json`：`hospital,departments,doctors,locations,schedules,checklists,wayfinding,contact_info,patients`。具体类型为 `HospitalInfo/Department/Doctor/Location/ScheduleTemplate/VisitChecklist/Wayfinding/ContactInfo/Patient`。模型检查静态 ID 重复、目录引用、排班医生与科室关联、指引地点；H02 另验收范围及内容一致性。
+`DemoData` 对应 `hospital/demo_data.json`：`hospital,departments,doctors,locations,schedules,checklists,wayfinding,contact_info,patients`。具体类型为 `HospitalInfo/Department/Doctor/Location/ScheduleTemplate/VisitChecklist/Wayfinding/ContactInfo/Patient`。模型检查静态 ID 重复、目录引用、排班医生与科室关联、指引地点；范围及内容一致性由预置数据测试校验。
 
 `Source{source_id,title}` 是清单、目录、指引和联系信息可展示的来源；知识文档另沿用检索结果中的标题/来源字段。`ContactInfo.delivery` 固定 `contact_only`，`summary` 是可复制文字，不代表已提交人工。
 
-`ScheduleTemplate` 固定医生/科室、星期、时段、起止、容量、费用。H04 用固定日期、排班 ID 和时段构建稳定号源 ID，同一天重复初始化不得产生新 ID。`SlotDetails` 保存展示事实，`Slot` 再增加 `capacity/remaining`；`0 <= remaining <= capacity`。未来七天窗口含当天至第六天，使用上海日期；当天已结束时段不可选择，具体筛选由 H04 固定时钟验证。
+`ScheduleTemplate` 固定医生/科室、星期、时段、起止、容量、费用。号源服务用固定日期、排班 ID 和时段构建稳定号源 ID，同一天重复初始化不得产生新 ID。`SlotDetails` 保存展示事实，`Slot` 再增加 `capacity/remaining`；`0 <= remaining <= capacity`。未来七天窗口含当天至第六天，使用上海日期；当天已结束时段不可选择，具体筛选由固定时钟测试验证。
 
 `SlotQuery` 的科室、医生、日期、时段均可缺省，缺省表示不按该条件筛选。`SlotList{list_id,query,slots,queried_at}` 反映一次真实查询；无号源返回 `ServiceResult(success=false,error_code="no_slots",...)`，可附空 `slot_list` 用于展示。该列表只作查询快照，选择及确认都需重读库存。
 
@@ -58,17 +58,17 @@
 `SelectionState` 包含身份、`status(ready|empty|failed)`、`list_id/query/slots/queried_at/current_proposal_id`，按事项持久保存。
 
 - 成功且非空的号源查询替换完整列表并置 ready；成功空结果置 empty，清空 list_id/slots；查询失败置 failed，同样清除旧可选列表。保留本次 query 以支持后续“明天呢”，但不能据失效列表选“第一个”。
-- `selection_index` 是一基位置，只能在当前 ready 列表上解释；直接 slot_id 也必须验证真实数据。排序由 H04 固定为日期、时段起点、医生 ID、号源 ID。
+- `selection_index` 是一基位置，只能在当前 ready 列表上解释；直接 slot_id 也必须验证真实数据。排序固定为日期、时段起点、医生 ID、号源 ID。
 - 列表更新本身不执行预约，也不自动取消当前方案。选择变化、准备创建或取消的新方案时，将旧 pending 方案标为 superseded，再设置新引用；同事项最多一个当前待确认方案。
-- `HospitalStore` 与 `VisitStore` 复用同一 Redis 连接/数据库。选择及当前方案键集中由 VisitStore 构建；它必须给医院服务提供可纳入同一事务的最小键/操作访问，不能只提供内部自行提交的更新函数。H05/H06 在一个事务里比较当前引用、淘汰旧方案、保存新方案，或确认执行。具体方法由 M02/H05 按实现选定，不预造通用事务层。
+- `HospitalStore` 与 `VisitStore` 复用同一 Redis 连接/数据库。选择及当前方案键集中由 VisitStore 构建；它必须给医院服务提供可纳入同一事务的最小键/操作访问，不能只提供内部自行提交的更新函数。医院服务在一个事务里比较当前引用、淘汰旧方案、保存新方案，或确认执行。选择状态与预约服务共享事务所需的键。
 
 `VisitMessage` 是完整历史记录，字段为身份、`message_id/role/content/created_at/kind/artifacts/metadata/proposal_id/receipt_id`。`role` 沿用 user/assistant/system；`kind` 为 chat、confirmation_event、operation_result。确认事件必须带 proposal_id，成功业务结果还带 receipt_id。确认成功的两条消息使用 `confirm:<receipt_id>`、`result:<receipt_id>` 作为稳定消息 ID，并以一次追加操作去重；重复请求不得新增第二条预约成功事实。
 
-完整历史的消息/卡片不设工作记忆 TTL，不因归档、压缩而删除。M03/M04 恢复工作窗口时，将 `created_at` 转为既有 `Message.timestamp`，其余普通 role/content/metadata 直接使用；工作记忆 JSON 的旧 `ts` 是内部字段，不对外复用。历史接口按最早到最新返回，`message_id` 供前端去重。恢复不能重新执行历史工具或确认事件。
+完整历史的消息/卡片不设工作记忆 TTL，不因归档、压缩而删除。恢复工作窗口时，将 `created_at` 转为既有 `Message.timestamp`，其余普通 role/content/metadata 直接使用；工作记忆 JSON 的旧 `ts` 是内部字段，不对外复用。历史接口按最早到最新返回，`message_id` 供前端去重。恢复不能重新执行历史工具或确认事件。
 
 ## Artifact 与本轮结果
 
-固定包装 `Artifact{id,type,data}`，首次重构的七类 data 对应下表；U001 另新增 triage_guidance、medication_info、report_summary，总计十类，见[更新契约](../updates/U001-health-consultation/contracts.md)。模型按 type 检查 data 并生成可 JSON 序列化的字典。旧 RAG 的 `results/reranked` 等字段保持其接口，不强行塞入业务卡片。
+固定包装 `Artifact{id,type,data}`，十类data对应下表。模型按type检查data并生成可JSON序列化的字典；RAG的`results/reranked`保留独立检索接口。
 
 | type | data 模型 |
 | --- | --- |
@@ -79,14 +79,17 @@
 | visit_checklist | `VisitChecklist` |
 | wayfinding | `Wayfinding` |
 | contact_info | `ContactInfo` |
+| triage_guidance | `TriageGuidance` |
+| medication_info | `MedicationInfo` |
+| report_summary | `ReportSummary` |
 
-ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `proposal:<proposal_id>:<status>`；确认产生的预约卡为 `appointment:<appointment_id>:<receipt_id>`；列表为 `slots:<list_id>`；独立查询/静态卡可用 `type:<uuid32>`。相同业务快照跨透传环节保持 ID，相同 ID/data 去重；同 ID 不同 data 属于契约错误，A04 丢弃该冲突 ID 的所有版本、保留其他卡片，并记录 `artifact_conflict` trace，不让模型选版本。服务生成的资源 ID 按上述短类别前缀加 UUID hex 格式，组合卡片 ID 可保持在 128 字符内。
+ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `proposal:<proposal_id>:<status>`；确认产生的预约卡为 `appointment:<appointment_id>:<receipt_id>`；列表为 `slots:<list_id>`；独立查询/静态卡可用 `type:<uuid32>`。相同业务快照跨透传环节保持 ID，相同 ID/data 去重；同 ID 不同 data 属于契约错误，响应整合器丢弃该冲突 ID 的所有版本、保留其他卡片，并记录 `artifact_conflict` trace，不让模型选版本。服务生成的资源 ID 按上述短类别前缀加 UUID hex 格式，组合卡片 ID 可保持在 128 字符内。
 
-透传路径为工具结果 → 本轮 AgentResponse → OrchestratorResult → ChatResponse → VisitMessage；整合器只改文字。`BaseAgent._last_tools_used/_last_tool_traces` 现存共享状态不能扩展出 `_last_artifacts`；A04 使用请求局部结果返回文字、trace 和 artifacts，避免同实例并发污染，保留三次模型请求上限。
+透传路径为工具结果 → 本轮AgentResponse → OrchestratorResult → ChatResponse → VisitMessage；整合器只改文字。工具轨迹与卡片保存在请求局部结果中，避免同实例并发污染，保留三次模型请求上限。
 
 ## 接口与错误
 
-新增接口由 I01— I03 实施；现有健康、知识、Skills、监控和评测接口维持原契约。以下列表输出均按 `items` 包装，字段值用本文件模型的 JSON 形式。
+以下为患者事项与预约接口；其他接口以服务生成的OpenAPI文档为准。以下列表输出均按 `items` 包装，字段值用本文件模型的 JSON 形式。
 
 | 接口 | 输入 | 成功输出 |
 | --- | --- | --- |
@@ -114,11 +117,11 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
 | storage_unavailable | 所需存储不可用 | 503 | true |
 | artifact_conflict | 同轮相同卡片 ID 内容冲突 | 500（仅直接业务失败时） | false |
 
-工具查询失败通过 ServiceResult 留在聊天/trace 中，普通聊天仍返回自身成功完成的响应；不是每个工具空结果都把 `/chat` 变成非 2xx。业务失败不得生成成功预约卡。一个独立工具结果只含该工具的数据；已有其他成功工具卡片由 A04 保留。
+工具查询失败通过 ServiceResult 留在聊天/trace 中，普通聊天仍返回自身成功完成的响应；不是每个工具空结果都把 `/chat` 变成非 2xx。业务失败不得生成成功预约卡。一个独立工具结果只含该工具的数据；已有其他成功工具卡片由响应整合器保留。
 
-## 十类卡片完整样例（含 U001 扩展）
+## 十类卡片完整样例
 
-以下为契约测试夹具，不是已生成预约或最终医院数据。H02 统一发布演示内容；ID 和名称可以替换，字段不可各自更名。测试会读取此 JSON 并验证原七类及 U001 新增三类 Artifact 以及嵌套模型。
+以下为契约测试夹具，不是已生成预约或最终医院数据。演示内容统一由预置数据提供；ID 和名称可以替换，字段不可各自更名。测试会读取此 JSON 并验证十类 Artifact 以及嵌套模型。
 
 <!-- artifact-examples -->
 ```json
@@ -353,13 +356,3 @@ ID 代表具体业务快照，不直接使用可变预约 ID：方案为 `propos
   }
 }
 ```
-
-## 下游交接与验收边界
-
-- H02：按 DemoData 编写文件；H03/H04：按 ServiceResult 输出 CatalogData/SlotList/VisitChecklist/Wayfinding，固定实时查询与排序。
-- M01/M02：使用 Patient/Visit/VisitIdentity/VisitMessage/SelectionState；约定可参与医院事务的当前方案操作，持久化与工作记忆分开。
-- H05/H06：使用 AppointmentSnapshot/Proposal/Record/ExecutionReceipt；实现身份、当前引用、有效期、库存与 Redis 原子操作，不能因模型中已有状态字段而省略业务检查。
-- A01/A02/A03/A04：按上表实体名/身份传递、白名单及序列化接入；直接调用的非业务基准测试可继续缺省 patient_id，业务测试明确提供。结果与 trace 请求局部保存。
-- I01/I02/I03：实现此处接口，ChatResponse 复用原模型增字段；ConfirmResponse 与 BusinessError 单独使用；HTTP 已校验身份不来自模型正文。
-- U01/U02：使用 JSON 样例写请求适配与卡片展示；标题、正文和明细数据不解析为执行指令，确认按钮只发送 proposal_id 和当前事项上下文。
-- H01 验收仅覆盖模型、静态引用、样例序列化及拒绝输入。Redis 事务、持久化、API、前端和真实模型验收仍由对应后续 issue 完成。

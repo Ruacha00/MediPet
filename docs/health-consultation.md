@@ -1,6 +1,6 @@
 # MediPet 健康咨询与报告整理
 
-U001 在原预约助手上增加症状初步分诊、药品说明书查询和报告整理。它提供有来源、可核对的信息，不替代医生诊断，不开处方，不评价其他医院或医生的治疗方案。医院目录来自预置演示数据；医学资料来自官方公开页面，两类来源不混用。
+MediPet 支持症状初步分诊、药品说明书查询和报告整理。它提供有来源、可核对的信息，不替代医生诊断，不开处方，不评价其他医院或医生的治疗方案。医院目录来自预置演示数据；医学资料来自官方公开页面，两类来源不混用。
 
 ## 症状只给初步科室方向
 
@@ -43,6 +43,6 @@ U001 在原预约助手上增加症状初步分诊、药品说明书查询和报
 
 当前 **24 份知识文档、6 组 Skills、6 个角色**。新增的 7 份医疗知识涵盖常见症状 FAQ、两个标签与报告术语；新增 `health_triage` 和 `medication_information` Skill，全局服务边界常驻六角色。Skill 文件修改后须主动重载，规则才用于后续请求。
 
-来源的 `reviewed_at` 表示本次资料核对日期，不是医学专家审查或自动更新保证。[来源及确定性验收](internal/updates/U001-health-consultation/evidence/medical-sources.md)记录分诊、药品、知识和 Skill 的 **97 项局部检查通过**；这不证明临床有效性、真实模型始终遵守、OCR 准确率或 RAG 效果。本轮全量684项通过、前端35项通过，真实组件/OCR/浏览器与模型验收已记录，见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。旧版 389 项后端回归及 54/12/12 真实评测属于医疗扩展前基准，不能移作本轮结论。
+来源的 `reviewed_at` 表示资料核对日期，不是医学专家审查或自动更新保证。分诊、药品与报告的程序边界由 [tests](../tests) 中对应测试验证；真实OCR、模型回答与业务状态分别评测，见[评测说明](evaluation.md)。
 
-继续阅读：[演示脚本](demo-script.md) · [架构](architecture.md) · [工具与 RAG](tools-rag.md) · [记忆与 Skills](memory-skills.md)。
+继续阅读：[架构](architecture.md) · [工具与 RAG](tools-rag.md) · [记忆与 Skills](memory-skills.md)。

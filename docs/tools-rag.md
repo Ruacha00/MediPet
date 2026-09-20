@@ -63,9 +63,9 @@ flowchart LR
 
 ## 文档如何进入 Chroma
 
-[mcp/knowledge_base.py](../mcp/knowledge_base.py) 从 [knowledge](../knowledge) 的 Markdown 读取 `doc_id/title/source_id/source`，按句号和换行组织约 500 字的片段；单个长句并不强制截成严格 500 字。稳定 ID 为 `doc_id:片段序号`。初始化会同步本次内置文档的内容和元数据，并删除这些文档已失效的旧片段；不变内容无需重新嵌入。用户上传仍按稳定ID去重，其他文档和集合保留，见[升级验证](internal/updates/U001-health-consultation/evidence/knowledge-upgrade.md)。
+[mcp/knowledge_base.py](../mcp/knowledge_base.py) 从 [knowledge](../knowledge) 的 Markdown 读取 `doc_id/title/source_id/source`，按句号和换行组织约 500 字的片段；单个长句并不强制截成严格 500 字。稳定 ID 为 `doc_id:片段序号`。初始化会同步本次内置文档的内容和元数据，并删除这些文档已失效的旧片段；不变内容无需重新嵌入。用户上传仍按稳定ID去重，其他文档和集合保留。
 
-当前为 **24 份文档**：原 17 份医院资料加 7 份医疗知识，覆盖普通感冒、眼部不适、儿童发热、腹部不适、两个药品标签和报告术语。医院资料标明演示来源；新增医学资料保留 NHS、DailyMed、MedlinePlus 的官方 URL，详见[来源清单](internal/updates/U001-health-consultation/evidence/medical-sources.md)。检索到一段资料不代表已验证患者诊断或合并用药安全；工具卡片来源与检索 trace 中的实际片段来源也需分别核对。
+当前为 **24 份文档**：原 17 份医院资料加 7 份医疗知识，覆盖普通感冒、眼部不适、儿童发热、腹部不适、两个药品标签和报告术语。医院资料标明演示来源；新增医学资料保留 NHS、DailyMed、MedlinePlus 的官方 URL，来源及核对日期保存在各[知识文档](../knowledge)和[健康资料目录](../health/data)。检索到一段资料不代表已验证患者诊断或合并用药安全；工具卡片来源与检索 trace 中的实际片段来源也需分别核对。
 
 `medipet_knowledge` 与情景、画像集合分开。HTTP 模式同样由 Chroma 客户端默认的 `all-MiniLM-L6-v2` 计算向量，再由存储端检索；不调用 Anthropic Embeddings API，也不同于意图分类的中文BGE向量分支。
 
@@ -75,8 +75,8 @@ flowchart LR
 
 Chroma 服务连接失败时，知识库允许使用本地持久模式，运行时应区分实际使用的存储。首次默认 embedding 可能下载模型。默认医院文档不能为空；测试空检索通过清空独立测试集合完成，不改变初始化契约。
 
-## 已测证据与取舍
+## 验证与取舍
 
-[知识与 Skill 测试](../tests/test_knowledge_skills.py)覆盖改写、并行召回、稳定去重、无结果、超时、熔断、重排无效索引和并发错误隔离。U001 已将文档与 Skill 契约更新为 24/6，与健康信息检查合计 **97 项局部确定性测试通过**，不与旧 [K03 记录](internal/rebuild/specs/S05-knowledge/issues/K03.md)叠加。工具白名单、三次上限、身份覆盖拒绝和真实服务结果透传见 [Agent 测试](../tests/test_agent_orchestrator.py)，新增医疗接线见 [test_health_routing.py](../tests/test_health_routing.py)。
+[知识与Skill测试](../tests/test_knowledge_skills.py)覆盖改写、并行召回、去重、超时、熔断与失败隔离；[召回测试](../tests/test_knowledge_recall.py)覆盖中文主题、上传文档及现有集合更新；[重排测试](../tests/test_rerank_evidence.py)检查长元数据不会挤占正文预算。工具白名单与三轮上限见[Agent测试](../tests/test_agent_orchestrator.py)。
 
-旧基准的[真实存储验证](internal/rebuild/evidence/storage.md)另外验证 HTTP Chroma 查询来源、重复导入、缺失片段补齐和空集合语义；新增医疗场景的真实模型答复已验证，真实存储升级与范围限制已记录，见 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)。查询改写与重排增加了模型请求及失败点。2026-09-18的[同条件检索对照](../evaluation/reports/delivery-recall-20260918/notes.md)中，40条已知问题的完整链Recall@3从51.25%提升到97.5%；两组均保留真实降级与失败。该结果只说明本题集上的召回改善，不代表回答准确率或速度提升。
+[2026-09-18配对评测](../evaluation/reports/delivery-recall-20260918/notes.md)中，40条问题的完整检索链Recall@3从51.25%提升至97.5%；失败与降级均保留。这是混合召回与重排修复的组合结果，不表示大规模语料吞吐、线上回答准确率或时延提升。

@@ -5,4 +5,3 @@ evaluation/reports/live-*/** -text
 evaluation/reports/business-*/** -text
 evaluation/reports/delivery-recall-*/** -text
 evaluation/cases/semantic_intent/** -text
-docs/internal/updates/U002-semantic-intent/evidence/** -text

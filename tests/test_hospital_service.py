@@ -34,7 +34,7 @@ from hospital.service import HospitalService
 from hospital.store import HospitalStore
 
 
-CONTRACT_PATH = Path(__file__).parents[1] / "docs/internal/rebuild/contracts.md"
+CONTRACT_PATH = Path(__file__).parents[1] / "docs/api-contracts.md"
 IDENTITY = {"user_id": "anonymous", "patient_id": "patient_child", "conv_id": "visit-example"}
 
 

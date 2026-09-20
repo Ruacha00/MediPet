@@ -56,12 +56,8 @@
 
 文件修改不会自动进入已加载对象。`GET /skills` 查看已加载内容摘要和解析错误，`POST /skills/reload` 重新扫描并更新编排器，后续请求使用新内容。单个文件解析失败会记录错误，其他文件仍可加载。Skill 是提示规则，不改变工具白名单、身份权限或预约事务校验。
 
-## 证据与取舍
+## 验证与边界
 
-下面的存储/API 数量属于 `c712e87` 旧基准。U001 的真实加载器与角色 prompt 捕获已检查 6 组 Skill 注入、修改前后显式重载和 24 份知识加载，见[97 项局部确定性记录](internal/updates/U001-health-consultation/evidence/medical-sources.md)；新增报告隔离、真实组件及模型验收以 [U001 检查点](internal/updates/U001-health-consultation/EXECUTION.md)为准，最终汇总见验收记录。
-
-[真实存储记录](internal/rebuild/evidence/storage.md)中的 4 项真实记忆检查使用 Redis 和 Chroma，验证真实 TTL、压缩、患者过滤、画像范围及恢复；摘要/画像模型使用替身。另有 2 项事项与完整历史真实检查，见 [test_visit_memory.py](../tests/test_visit_memory.py) 和 [test_conversation_memory.py](../tests/test_conversation_memory.py)。
-
-[24 项 API 验证](internal/rebuild/specs/S06-api/issues/I04.md)覆盖压缩后继续、模拟窗口过期、归档恢复、确认回执进入下一轮上下文及急症阈值零模型调用；这里的存储是替身。[Skill 测试](../tests/test_knowledge_skills.py)验证改文件但未 reload 时仍用原规则、reload 后相应角色获得新文本。
+[test_visit_memory.py](../tests/test_visit_memory.py)和[test_conversation_memory.py](../tests/test_conversation_memory.py)覆盖身份过滤、工作窗口与完整历史恢复；[Skill测试](../tests/test_knowledge_skills.py)检查修改规则与显式重载后的行为。真实组件检查需要独立测试存储，运行方法见[评测说明](evaluation.md)。
 
 这种设计保留可展示、可核查的完整记录，同时限制模型上下文长度。代价是摘要和召回可能遗漏信息，Chroma 与 Redis 也没有共同事务；关键业务判断因此始终回到患者范围内的医院服务，完整历史不会被宣传成每轮全部送入模型。

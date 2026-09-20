@@ -62,10 +62,8 @@ Content-Type: application/json
 
 事项相关接口为 `GET /patients`、`GET/POST /visits`、`PATCH /visits/{conv_id}` 和 `GET /visits/{conv_id}/messages`。重命名、归档和恢复只改变事项元数据，保留历史卡片及预约记录。
 
-## 已测证据与取舍
+## 验证与边界
 
-[test_demo_workflow.py](../tests/test_demo_workflow.py) 和 [test_chat_api.py](../tests/test_chat_api.py)共 **24 项替身测试通过**，包括孩子查号与材料、选择、文字确认不执行、按钮确认、查询、取消与重复确认；完整流程在两个独立 fixture 中重复运行。还覆盖目标不可用、患者/事项冲突、过期/改选、确认后窗口失败重试和历史不重复。详见 [API 验证记录](internal/rebuild/specs/S06-api/issues/I04.md)。
-
-[真实存储证据](internal/rebuild/evidence/storage.md)的 10 项预约检查实际使用 Redis，包含同步两次 EXEC 的 WATCH 竞争：同方案并发只创建一次、不同方案竞争最后一个号源不超卖、并发取消只恢复一次。真实归档时序注入用例跳过，未算作通过。
+[test_demo_workflow.py](../tests/test_demo_workflow.py)和[test_chat_api.py](../tests/test_chat_api.py)覆盖选择、显式确认、取消、重复确认、患者隔离、过期及确认后历史恢复。[并发事务检查](../tests/benchmarks/business_transactions.py)使用真实Redis验证幂等操作与末号竞争，原始结果见[事务报告](../evaluation/reports/business-20260918/transactions)。
 
 事务边界覆盖业务事实，后续历史写入通过原回执重试恢复；它不是跨 Redis/Chroma 的分布式事务，也没有支付或真实医院履约。原始回执与当前预约状态分开，既便于重复请求安全处理，也要求页面明确展示正在查看的是方案结果还是当前记录。

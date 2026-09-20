@@ -333,7 +333,7 @@ test('empty successes and chat tool failures do not become HTTP business failure
 })
 
 test('seven-card and cancellation fixtures stay aligned with the frozen H01 examples', async () => {
-  const contract = await readFile(new URL('../../docs/internal/rebuild/contracts.md', import.meta.url), 'utf8')
+  const contract = await readFile(new URL('../../docs/api-contracts.md', import.meta.url), 'utf8')
   const examples = marker => JSON.parse(contract.split(`<!-- ${marker} -->`)[1].match(/```json\s*([\s\S]*?)```/)[1])
   const artifacts = await fixture('artifacts')
   // The shared contract now also contains three U001 health card types.

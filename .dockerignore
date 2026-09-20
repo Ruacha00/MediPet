@@ -23,3 +23,8 @@ docs/internal
 tests
 requirements-embedding-build.txt
 
+
+AGENTS.md
+CLAUDE.md
+IMPLEMENTATION_PLAN.md
+文档+简历
