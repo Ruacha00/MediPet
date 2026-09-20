@@ -1,14 +1,9 @@
 # MediPet
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue?style=flat)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/Ruacha00/MediPet?style=flat&logo=github)](https://github.com/Ruacha00/MediPet/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/Ruacha00/MediPet?style=flat&logo=github)](https://github.com/Ruacha00/MediPet/issues)
-[![Last Commit](https://img.shields.io/github/last-commit/Ruacha00/MediPet/main?style=flat&logo=github)](https://github.com/Ruacha00/MediPet/commits/main/)
 
-![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?style=flat&logo=vuedotjs&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-555555?style=flat)
 ![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)
 
