@@ -204,4 +204,4 @@ docker compose up -d
 
 ## 许可证
 
-本项目基于 EchoMind 多 Agent 架构扩展，采用 [Apache License 2.0](LICENSE)。
+本项目采用 [Apache License 2.0](LICENSE)。
