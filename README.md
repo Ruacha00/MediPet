@@ -1,17 +1,40 @@
-# MediPet
+<a id="top"></a>
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue?style=flat)](LICENSE)
+<div align="center">
 
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
-![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?style=flat&logo=vuedotjs&logoColor=white)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-555555?style=flat)
-![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)
+<h1>🩺 MediPet</h1>
+
+<p><strong>面向就诊服务场景的多 Agent 助手</strong></p>
+<p>查询号源 · 准备就诊 · 确认预约 · 核对报告</p>
+
+<p>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-2563EB?style=flat-square" alt="License: Apache 2.0"></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white" alt="FastAPI"></a>
+  <a href="https://vuejs.org/"><img src="https://img.shields.io/badge/Vue-3-4FC08D?style=flat-square&amp;logo=vuedotjs&amp;logoColor=white" alt="Vue 3"></a>
+  <a href="https://www.trychroma.com/"><img src="https://img.shields.io/badge/ChromaDB-555555?style=flat-square" alt="ChromaDB"></a>
+  <a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker Compose"></a>
+</p>
+
+<p>
+  <a href="#快速开始"><strong>快速开始</strong></a> ·
+  <a href="#功能概览">功能概览</a> ·
+  <a href="docs/architecture.md">架构文档</a> ·
+  <a href="docs/evaluation.md">评测说明</a>
+</p>
+
+</div>
+
+---
 
 MediPet 是面向医院、诊所及健康服务平台就诊服务场景的多 Agent 助手。用户为本人或家属建立独立事项后，可以查询医院与号源、准备就诊材料、确认或取消预约，也可以获取初步分诊信息、查询已收录药品标签、上传报告并核对原文数值。
 
 项目使用 Python/FastAPI、Vue/Vite、Redis 和 Chroma，结合领域知识库、分层记忆、动态 Skills、运行监控与评测组织服务链路。模型负责理解请求、选择工具和组织回答；患者归属、号源库存、预约状态和幂等回执由业务服务校验。
 
-## 目录
+> [!NOTE]
+> **演示环境**：默认医院、医生、排班与联系资料均为模拟数据，未连接真实医院系统。项目用于就诊服务辅助，不替代医生诊断。
+
+<details>
+<summary><strong>🧭 阅读导航</strong></summary>
 
 - [功能概览](#功能概览)
 - [架构设计](#架构设计)
@@ -20,35 +43,46 @@ MediPet 是面向医院、诊所及健康服务平台就诊服务场景的多 Ag
 - [测试与评测](#测试与评测)
 - [许可证](#许可证)
 
-## 功能概览
+</details>
+
+<a id="功能概览"></a>
+
+## ✨ 功能概览
 
 | 功能 | 页面上的结果 |
 | --- | --- |
-| 医院、科室、医生与号源查询 | 目录、可选号源及资料来源 |
-| 创建和取消预约 | 先核对方案，再点击卡片确认，取得服务端办理回执 |
-| 就诊准备与院内指引 | 材料清单、报到步骤、普通或无障碍文字路线 |
-| 症状与科室方向 | 有来源的初步方向、缺失信息和就医提示 |
-| 药品标签信息 | 已收录药品的用途、用法用量、禁忌和相互作用警示 |
-| 报告文字、PDF 与图片 | 本地提取原文、整理项目和参考范围，同一事项可继续追问 |
-| 本人与家属事项 | 独立记录、事项重命名、归档、恢复和完整历史 |
-| 知识与 Skills | 检索或导入公开资料，查看并主动重载场景规则 |
-| 运行与评测 | 查看工具轨迹、来源、运行统计、失败样本和候选报告 |
+| 🏥 **医院与号源** | 查询医院、科室、医生目录、可选号源及资料来源 |
+| 📅 **预约办理** | 创建或取消预约：先核对方案，再点击卡片确认，取得服务端办理回执 |
+| 🧭 **就诊准备** | 材料清单、报到步骤、普通或无障碍文字路线 |
+| 🩺 **症状与科室方向** | 有来源的初步方向、缺失信息和就医提示 |
+| 💊 **药品标签** | 已收录药品的用途、用法用量、禁忌和相互作用警示 |
+| 📄 **报告核对** | 支持文字、PDF 与图片，本地提取原文、整理项目和参考范围，同一事项可继续追问 |
+| 👥 **本人及家属事项** | 独立记录、事项重命名、归档、恢复和完整历史 |
+| 📚 **知识与 Skills** | 检索或导入公开资料，查看并主动重载场景规则 |
+| 📊 **运行与评测** | 查看工具轨迹、来源、运行统计、失败样本和候选报告 |
 
 首页以就诊操作为主，患者、事项、消息、报告上传和预约卡片保持在同一工作区。知识库、Skills、监控、评测和 API 文档位于“管理与调试”入口，进入对应页面时才读取管理数据；进入评测页不会自动调用模型。
 
-预约方案不会预占库存，聊天中的“确认”不会执行预约；只有卡片按钮会调用确认接口。若确认请求中断，页面会暂停重复提交，并通过完整历史核对服务端回执。人工导诊只提供联系资料，不向工作人员发送消息。
+> [!IMPORTANT]
+> **预约以卡片确认为准**：预约方案不会预占库存，聊天中的“确认”不会执行预约；只有卡片按钮会调用确认接口。若确认请求中断，页面会暂停重复提交，并通过完整历史核对服务端回执。
 
-项目不接入真实医院，不替代医生诊断、不开处方、不评价其他医院或医生的诊疗方案，也不提供支付或实时地图导航。药品范围和报告边界见[健康咨询说明](docs/health-consultation.md)：当前药品资料仅覆盖两个指定公开标签，未知药物、剂型或组合不能据此判断安全；报告原件不保留，提取文字和卡片保存在所选患者的当前事项。
+**服务范围与数据边界**
 
-## 架构设计
+- **服务范围**：项目不接入真实医院，不替代医生诊断、不开处方、不评价其他医院或医生的诊疗方案，也不提供支付或实时地图导航。人工导诊只提供联系资料，不向工作人员发送消息。
+- **药品资料**：当前仅覆盖两个指定公开标签，未知药物、剂型或组合不能据此判断安全，详见[健康咨询说明](docs/health-consultation.md)。
+- **报告存储**：原件不保留，提取文字和卡片保存在所选患者的当前事项。
+
+<a id="架构设计"></a>
+
+## 🧩 架构设计
 
 | 能力 | 实现方式 |
 | --- | --- |
-| 多源证据融合的意图识别 | 结合 LLM、关键词与中文语义向量，保留字符哈希降级和实际后端状态 |
-| 多 Agent 协作 | 按领域选择主辅角色，并行执行、汇总回答和真实工具卡片 |
-| 知识检索与来源追踪 | 查询改写、混合召回、重排、缓存与工具轨迹 |
-| 分层记忆与动态规则 | 工作记忆、情景记忆和用户画像，按患者与事项隔离，支持 Skills 重载 |
-| 可验证的业务办理 | 用户点击确认后执行业务事务，校验归属、库存、状态和幂等回执 |
+| **多源证据融合的意图识别** | 结合 LLM、关键词与中文语义向量，保留字符哈希降级和实际后端状态 |
+| **多 Agent 协作** | 按领域选择主辅角色，并行执行、汇总回答和真实工具卡片 |
+| **知识检索与来源追踪** | 查询改写、混合召回、重排、缓存与工具轨迹 |
+| **分层记忆与动态规则** | 工作记忆、情景记忆和用户画像，按患者与事项隔离，支持 Skills 重载 |
+| **可验证的业务办理** | 用户点击确认后执行业务事务，校验归属、库存、状态和幂等回执 |
 
 ```mermaid
 flowchart LR
@@ -65,15 +99,26 @@ flowchart LR
 
 上图展示聊天与预约确认的主要路径；报告上传通过独立接口在本地提取文字。完整流程、角色职责及存储边界见[架构文档](docs/architecture.md)。
 
-## 快速开始
+<a id="快速开始"></a>
+
+## 🚀 快速开始
 
 **配置模型 → 准备中文语义模型 → 启动容器 → 打开就诊工作区**
 
+### 环境准备
+
+| 准备项 | 要求 |
+| --- | --- |
+| 容器环境 | 已启动的 Docker 引擎、Docker Compose **2.24+** |
+| 模型构建环境 | Python **3.12**，用于准备中文语义模型 |
+| 模型服务 | 可用的 DeepSeek API Key |
+| 网络与磁盘 | 首次准备和构建需要联网，为模型、导出环境和镜像预留数 GB 磁盘 |
+
+以下宿主机命令均使用 **Windows PowerShell**，请在**仓库根目录**执行。预约状态由本项目服务持久化，未连接真实医院系统。
+
 ### 1. 配置模型
 
-> **运行数据说明**：默认加载预置医院、医生、排班与联系资料，均为模拟数据。预约状态由本项目服务持久化，未连接真实医院系统。
-
-以下宿主机命令使用 Windows PowerShell。在仓库根目录操作，需要已启动的 Docker 引擎、Docker Compose 2.24+ 和 Python 3.12。首次复制配置；已有 `.env` 时保留自己的文件：
+首次复制配置；已有 `.env` 时保留自己的文件：
 
 ```powershell
 if (-not (Test-Path -LiteralPath .env)) { Copy-Item .env.example .env }
@@ -117,7 +162,12 @@ Invoke-RestMethod http://localhost:8000/health
 Invoke-RestMethod http://localhost:8088/api/python/health
 ```
 
-首次构建会下载 Python、Node 和系统依赖，并缓存 Chroma 客户端的默认向量模型；因此首次构建不是离线过程。API 镜像包含 Tesseract 及中英文 OCR 语言包，用于本地扫描报告识别。上述健康检查只证明应用和本地依赖已就绪，不证明 DeepSeek 密钥、余额、模型权限或一次实际模型调用成功；实际演示会访问外部模型并产生相应调用。服务健康后，打开 [MediPet 页面](http://localhost:8088)。
+服务健康后，打开 **[MediPet 就诊工作区 →](http://localhost:8088)**。
+
+首次构建会下载 Python、Node 和系统依赖，并缓存 Chroma 客户端的默认向量模型；因此首次构建不是离线过程。API 镜像包含 Tesseract 及中英文 OCR 语言包，用于本地扫描报告识别。
+
+> [!NOTE]
+> **健康检查的范围**：上述检查只证明应用和本地依赖已就绪，不证明 DeepSeek 密钥、余额、模型权限或一次实际模型调用成功；实际演示会访问外部模型并产生相应调用。
 
 | 入口 | 默认地址 | 用途 |
 | --- | --- | --- |
@@ -128,10 +178,10 @@ Invoke-RestMethod http://localhost:8088/api/python/health
 
 宿主机端口可通过 [.env.example](.env.example) 中的 `MEDIPET_*_PORT` 调整。容器之间使用 `redis:6379`、`chromadb:8000` 和 `api:8000`，不使用宿主机地址。
 
-### 日常维护
+### 🛠️ 日常维护
 
 <details>
-<summary><strong>停止、更新、数据持久化与 Skills 重载</strong></summary>
+<summary><strong>🔄 停止、更新、数据持久化与 Skills 重载</strong></summary>
 
 日常停止、再次启动和代码更新：
 
@@ -146,7 +196,7 @@ Redis、Chroma 和 API 运行数据使用命名卷；`docker compose down` 不�
 </details>
 
 <details>
-<summary><strong>启用 Prometheus 监控</strong></summary>
+<summary><strong>📈 启用 Prometheus 监控</strong></summary>
 
 可选 Prometheus 使用同一份 Compose：
 
@@ -159,7 +209,7 @@ docker compose --profile monitoring up -d
 </details>
 
 <details>
-<summary><strong>重置演示数据（会删除业务记录）</strong></summary>
+<summary><strong>🗑️ 重置演示数据（会删除业务记录）</strong></summary>
 
 日常停止不需要重置。需要清空本项目演示记录时，先停止应用写入，再预览目标并显式执行：
 
@@ -174,7 +224,11 @@ docker compose up -d
 
 </details>
 
-## 项目结构与文档
+<a id="项目结构与文档"></a>
+
+## 📂 项目结构与文档
+
+按模块查找实现与说明：
 
 | 目录 | 职责 | 进一步阅读 |
 | --- | --- | --- |
@@ -186,11 +240,13 @@ docker compose up -d
 | `memory/`、`skills/` | 完整历史、工作/情景记忆、画像和规则 | [记忆与 Skills](docs/memory-skills.md) |
 | `evaluation/`、`monitor/`、`tests/` | 评测、监控和分层验证 | [评测说明](docs/evaluation.md) |
 
-## 测试与评测
+<a id="测试与评测"></a>
+
+## 📊 测试与评测
 
 测试入口、环境要求和评分口径见[测试与评测](docs/evaluation.md)，固定输入位于 `evaluation/cases/`，完整结果位于 [evaluation/reports](evaluation/reports/README.md)。
 
-**固定集实测 · 2026-09-18**
+### 固定集实测 · 2026-09-18
 
 | 评测维度 | 测试范围 | 结果 |
 | --- | --- | ---: |
@@ -198,10 +254,20 @@ docker compose up -d
 | 知识检索覆盖 | 40 题完整检索链，Recall@3 | **97.5%** |
 | 检索证据问答 | 30 题综合通过数 | **28 / 30** |
 
-回答专项保留 1 条无效 Judge 与 1 条跨文档信息缺失。这些结果分别衡量业务状态、检索覆盖和回答质量，不代表任意输入或线上服务准确率。
+回答专项保留 **1 条无效 Judge** 与 **1 条跨文档信息缺失**。这些结果分别衡量业务状态、检索覆盖和回答质量，不代表任意输入或线上服务准确率。
 
-最近全量后端结果为839通过、28跳过、1处既有冻结题集指纹不一致。中文语义分支的LLM故障接受准确率仍未达到预声明门槛，详见评测说明。候选报告须经人工复核才能接受为基线，程序测试通过不会自动接受模型评测结果。
+### 当前验证状态
 
-## 许可证
+| 检查项 | 已记录结果 |
+| --- | --- |
+| 最近全量后端测试 | **839 通过**、28 跳过、1 处既有冻结题集指纹不一致 |
+| 中文语义分支 | LLM 故障接受准确率仍未达到预声明门槛，详见[评测说明](docs/evaluation.md) |
+| 评测基线 | 候选报告须经人工复核才能接受；程序测试通过不会自动接受模型评测结果 |
+
+<a id="许可证"></a>
+
+## 📄 许可证
 
 本项目采用 [Apache License 2.0](LICENSE)。
+
+<p align="center"><a href="#top">↑ 返回顶部</a></p>
